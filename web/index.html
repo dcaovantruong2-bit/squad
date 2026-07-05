@@ -1193,6 +1193,21 @@ function detectSynergies(field, synergyCards) {
                     results[p.id].firedSynergies.push(`${syn.name} (×${m})`);
                 });
             }
+        } else if (t === 'overload') {
+            // 2+ players at same position: +chips to each
+            const posCounts = {};
+            for (const [p, pos] of field) {
+                if (!posCounts[pos]) posCounts[pos] = [];
+                posCounts[pos].push(p);
+            }
+            for (const pos in posCounts) {
+                if (posCounts[pos].length >= (tr.min_duplicates||2)) {
+                    for (const p of posCounts[pos]) {
+                        results[p.id].addChips += eff.add_chips||0;
+                        results[p.id].firedSynergies.push(syn.name);
+                    }
+                }
+            }
         }
     }
     
@@ -1215,6 +1230,11 @@ function detectSquadSynergies(squad, synergyCards) {
         } else if (syn.triggerType === 'squad_trait_present') {
             matching = traitMap[syn.trigger.trait] || [];
             triggered = matching.length > 0;
+        } else if (syn.triggerType === 'squad_trait_combo') {
+            // Players with ALL specified traits
+            const requiredTraits = syn.trigger.traits || [];
+            matching = squad.filter(p => requiredTraits.every(t => p.traits.includes(t)));
+            triggered = matching.length >= (syn.trigger.min_count||1);
         }
         
         if (triggered) {
@@ -1231,6 +1251,14 @@ function detectSquadSynergies(squad, synergyCards) {
                         }
                     }
                 }
+                if (eff.target_trait_combo) {
+                    const traits = eff.target_trait_combo;
+                    for (const p of squad) {
+                        if (traits.every(t => p.traits.includes(t))) {
+                            buffs.player_mult[p.id] = (buffs.player_mult[p.id]||1) * mult;
+                        }
+                    }
+                }
                 if (eff.target_position) {
                     for (const pos of eff.target_position) {
                         buffs.position_mult[pos] = (buffs.position_mult[pos]||1) * mult;
@@ -1242,6 +1270,14 @@ function detectSquadSynergies(squad, synergyCards) {
                 if (eff.target_position) {
                     for (const pos of eff.target_position) {
                         buffs.position_add[pos] = (buffs.position_add[pos]||0) + chips;
+                    }
+                }
+                if (eff.target_trait_combo) {
+                    const traits = eff.target_trait_combo;
+                    for (const p of squad) {
+                        if (traits.every(t => p.traits.includes(t))) {
+                            buffs.player_add[p.id] = (buffs.player_add[p.id]||0) + chips;
+                        }
                     }
                 }
             }

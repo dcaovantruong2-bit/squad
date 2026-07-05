@@ -22,7 +22,7 @@ from src.scoring import (detect_squad_synergies, calculate_chips,
 # ─── Rich formatting (optional) ──────────────────────────────────────
 try:
     from rich.console import Console
-    from rich.table import Table
+    from rich.table import Table as RichTable
     from rich.panel import Panel
     from rich.text import Text
     from rich import box
@@ -30,6 +30,10 @@ try:
     HAS_RICH = True
 except ImportError:
     HAS_RICH = False
+
+# ─── UI Components ───────────────────────────────────────────────────
+from src.ui import ContextBar, PlayerCardView, SynergyBox
+from src.ui.table import Table
 
 
 def cprint(text: str, style: str = "", end: str = "\n") -> None:
@@ -127,72 +131,50 @@ def show_field(field: list[tuple], fatigue: dict) -> None:
 
 def show_phase_result(result: dict) -> None:
     """Show detailed scoring result for a phase with full math breakdown."""
-    cprint(f"\n  ═══ [bold]{result['phase_name']}[/bold] RESULT ═══", style="bold yellow")
-
-    for entry in result["breakdown"]:
-        # Build formula string showing every component
-        base = entry['base_chips']
-        add = entry['add_chips']
-        mult = entry['multiply']
-        fat = entry['fatigue']
-
-        parts = [f"  {base:3d} base"]
-        if add:
-            parts.append(f"+{add:2d} syn")
-        else:
-            parts.append(f" +0 syn")
-        if mult != 1.0:
-            parts.append(f"×{mult:.2f} mult")
-        else:
-            parts.append(f"×1.00 mult")
-        if fat != 1.0:
-            parts.append(f"×{fat:.2f} fat")
-        else:
-            parts.append(f"×1.00 fat")
-        parts.append(f"= {entry['subtotal']:4d}")
-
-        line = (f"  {entry['player']:20s} →{entry['position']:3s}: "
-                + "  ".join(parts))
-        cprint(line, style="cyan" if entry['fatigue'] >= 1.0 else "yellow")
-
-    cprint(f"  {'─' * 58}", style="dim")
-    cprint(f"  {'Sum':20s} {'':13s} {result['subtotal_before_globals']:4d}",
+    # Context bar at top
+    cprint("\n  [bold yellow]⚽ PHASE COMPLETE[/bold yellow]", style="bold yellow")
+    cprint("  " + "─" * 55, style="dim")
+    
+    # Phase name
+    cprint(f"\n  [bold]{result['phase_name']}[/bold] RESULT", style="bold yellow")
+    cprint("  " + "━" * 55, style="bold yellow")
+    
+    # Scoring breakdown table
+    cprint("")
+    Table.render_phase_breakdown(result["breakdown"])
+    
+    # Subtotal
+    cprint("  " + "─" * 58, style="dim")
+    cprint(f"  {'Subtotal':20s}  {'':13s}  {result['subtotal_before_globals']:6d}",
            style="bold")
-
+    
+    # Global effects
     if result.get("global_mult", 1.0) != 1.0:
-        cprint(f"  × {'Global mult':20s} {'':13s} ×{result['global_mult']}",
+        cprint(f"  × {'Global mult':20s}  {'':13s}  ×{result['global_mult']}",
                style="magenta")
     if result.get("global_add", 0) != 0:
-        cprint(f"  + {'Global bonus':20s} {'':13s} +{result['global_add']}",
+        cprint(f"  + {'Global bonus':20s}  {'':13s}  +{result['global_add']}",
                style="magenta")
     if result.get("formation_mult", 1.0) != 1.0:
         cprint(f"  × {'Formation':20s} ({result.get('formation_name', '')})  "
-               f"{'':13s} ×{result['formation_mult']}",
+               f"{'':13s}  ×{result['formation_mult']}",
                style="cyan")
-
-    cprint(f"  {'═' * 58}", style="bold yellow")
-    cprint(f"  [bold]PHASE TOTAL:[/bold] {result['total']:4d}",
-           style="bold green")
+    
+    # Phase total - BIG and centered
+    cprint("\n  " + "═" * 58, style="bold yellow")
+    cprint(f"  [bold]PHASE TOTAL:[/bold]  [bold green]{result['total']:6d}[/bold green]",
+           style="bold yellow")
+    cprint("  " + "═" * 58, style="bold yellow")
+    
+    # Synergies
     if result.get("fired_synergies"):
-        # Only show phase-specific synergies (filter out persistent ones)
-        phase_syns = [s for s in result["fired_synergies"] if "(persistent)" not in s]
-        if not phase_syns:
-            return
-
-        cprint(f"  ⚡ {'Synergies:':20s} {', '.join(phase_syns)}",
-               style="yellow")
-        # Show which players enabled each synergy and the rule met
         contributors = result.get("synergy_contributors", {})
         descriptions = result.get("synergy_descriptions", {})
-        for syn_name in phase_syns:
-            clean_name = syn_name.split(" (")[0]
-            if clean_name in contributors and clean_name != "__persistent__":
-                players = contributors[clean_name]
-                desc = descriptions.get(clean_name, "")
-                cprint(f"      {clean_name:22s} → {', '.join(players)}",
-                       style="dim")
-                if desc:
-                    cprint(f"      {'':22s}   {desc}", style="dim")
+        SynergyBox.render_phase_synergies(
+            result["fired_synergies"],
+            contributors,
+            descriptions,
+        )
 
 
 def show_round_result(score: int, target: int, won: bool) -> None:
