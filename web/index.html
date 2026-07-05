@@ -1542,28 +1542,11 @@ function renderSquadBuilder() {
     
     document.getElementById('squad-players-list').innerHTML = html;
     
-    // Requirements
+    // Requirements (replaced by inline role bar)
     const missing = checkMinimums();
-    let reqHtml = '';
-    const posCounts = {};
-    for (const p of state.selectedSquad) posCounts[p.position] = (posCounts[p.position]||0) + 1;
-    
-    const reqs = [
-        { label: '1 GK', have: posCounts['GK']||0, need: 1 },
-        { label: '3+ Defenders (CB/FB)', have: (posCounts['CB']||0)+(posCounts['FB']||0), need: 3 },
-        { label: '3+ Midfielders (CM/CDM/CAM)', have: (posCounts['CM']||0)+(posCounts['CDM']||0)+(posCounts['CAM']||0), need: 3 },
-        { label: '2+ Attackers (ST/LW/RW)', have: (posCounts['ST']||0)+(posCounts['LW']||0)+(posCounts['RW']||0), need: 2 },
-        { label: `${MIN_PLAYERS} players total`, have: state.selectedSquad.length, need: MIN_PLAYERS },
-    ];
-    
-    for (const r of reqs) {
-        const met = r.have >= r.need;
-        reqHtml += `<div class="req-item ${met?'met':'unmet'}">
-            <span class="icon">${met?'✓':'✗'}</span>
-            <span>${r.label} (${r.have}/${r.need})</span>
-        </div>`;
-    }
-    document.getElementById('squad-requirements').innerHTML = reqHtml;
+    document.getElementById('squad-requirements').innerHTML = missing.length 
+        ? `<div class="req-item unmet">⚠️ ${missing.join(', ')}</div>`
+        : `<div class="req-item met">✅ All minimums met</div>`;
     document.getElementById('btn-confirm-squad').disabled = missing.length > 0;
 }
 
