@@ -738,6 +738,7 @@
         .mt-12 { margin-top: 12px; }
         .mb-8 { margin-bottom: 8px; }
         .fw-700 { font-weight: 700; }
+        .fs-9 { font-size: 9px; }
         .fs-10 { font-size: 10px; }
         .fs-11 { font-size: 11px; }
         .fs-12 { font-size: 12px; }
@@ -1407,7 +1408,7 @@ function isEligible(player, slot) {
 function slotFieldPos(player, slot) {
     if (slot.type === 'pos') return slot.pos;
     if (slot.type === 'stat') return slot.as;
-    return player.position;
+    return player ? player.position : '?';
 }
 
 function slotLabel(slot) {
@@ -1759,80 +1760,150 @@ function renderPhasePlacement() {
     if (!phase) return;
     
     const weightIcons = {DEF:'🛡️',PAS:'🔄',PAC:'⚡',ATK:'🎯',SPC:'✨'};
+    const weightColor = {DEF:'var(--blue)',PAS:'var(--green)',PAC:'var(--cyan)',ATK:'var(--red)',SPC:'var(--magenta)'};
+    
+    // Pitch zone mapping
+    const PITCH_ZONES = [
+        { name:'ATTACK', color:'var(--red)', positions:['ST','LW','RW','CAM'] },
+        { name:'MIDFIELD', color:'var(--yellow)', positions:['CM','CDM'] },
+        { name:'DEFENSE', color:'var(--blue)', positions:['CB','FB','GK'] },
+    ];
+    
+    // Sort phase slots into pitch zones based on their field position
+    function slotZone(slot) {
+        let pos;
+        if (slot.type === 'pos') pos = slot.pos;
+        else if (slot.type === 'stat') pos = slot.as;
+        else pos = '';
+        for (const zone of PITCH_ZONES) {
+            if (zone.positions.includes(pos)) return zone;
+        }
+        return null;
+    }
+    
+    // Group slots by zone
+    const zonedSlots = [];
+    const usedSlots = new Set();
+    for (const zone of PITCH_ZONES) {
+        const slots = [];
+        for (let i = 0; i < phase.slots.length; i++) {
+            const slot = phase.slots[i];
+            if (!usedSlots.has(i) && slotZone(slot) === zone) {
+                slots.push({ index: i, slot });
+                usedSlots.add(i);
+            }
+        }
+        if (slots.length) zonedSlots.push({ zone, slots });
+    }
+    // Any uncategorized slots go to a default zone
+    const remaining = [];
+    for (let i = 0; i < phase.slots.length; i++) {
+        if (!usedSlots.has(i)) remaining.push({ index:i, slot:phase.slots[i] });
+    }
+    if (remaining.length) zonedSlots.push({ zone: null, slots: remaining });
     
     let contentHtml = `
-        <div class="phase-header">
-            <div class="phase-meta">
-                <span>${weightIcons[phase.weight]||'⚽'} ${phase.weight}</span>
-                <span>Phase ${m.currentPhaseIdx+1}/6</span>
-            </div>
-            <div class="phase-name">${phase.name}</div>
-            <div class="phase-desc">${phase.desc}</div>
-        </div>
         <div style="padding:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                <div style="font-size:16px;font-weight:900;letter-spacing:1px;">
+                    <span style="color:${weightColor[phase.weight]||'var(--text)'}">${weightIcons[phase.weight]||'⚽'}</span>
+                    <span style="color:var(--yellow);">${phase.name}</span>
+                </div>
+                <div style="display:flex;gap:6px;align-items:center;">
+                    <span style="font-size:10px;padding:2px 6px;background:${weightColor[phase.weight]||'var(--border)'}20;color:${weightColor[phase.weight]||'var(--text-dim)'};border-radius:2px;font-weight:700;">${phase.weight}</span>
+                    <span class="text-dim fs-10">P${m.currentPhaseIdx+1}/6</span>
+                </div>
+            </div>
+            <div class="fs-10 text-dim" style="margin-bottom:12px;">${phase.desc}</div>
     `;
     
-    // Persistent synergies section kept here (shown each phase)
-    const pBuffs = m.persistentBuffs || {};
-    if (pBuffs.fired_synergies && pBuffs.fired_synergies.length) {
-        contentHtml += `<div style="margin-bottom:12px;">
-            <div class="fs-10 fw-700 text-magenta mb-8">PERSISTENT</div>`;
-        for (const name of pBuffs.fired_synergies) {
-            const syn = SYNERGIES.find(s => s.name === name);
-            contentHtml += `<div class="persistent-syn">
-                <span class="syn-icon">✦</span>
-                <div>
-                    <div class="syn-name">${name}</div>
-                    <div class="syn-desc">${syn ? syn.desc : ''}</div>
-                </div>
-            </div>`;
+    // ─── PITCH ZONES ───
+    for (const z of zonedSlots) {
+        if (z.zone) {
+            contentHtml += `<div style="margin-bottom:8px;">
+                <div class="fs-9 fw-700" style="color:${z.zone.color};letter-spacing:1px;margin-bottom:4px;">${z.zone.name}</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">`;
+        } else {
+            contentHtml += `<div style="margin-bottom:8px;">
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">`;
         }
-        contentHtml += `</div>`;
-    }
-    
-    // Slot requirements
-    contentHtml += `<div class="fs-10 fw-700 text-dim mb-8">SLOTS</div>`;
-    for (let i = 0; i < phase.slots.length; i++) {
-        const slot = phase.slots[i];
-        const filled = i < m.field.length;
-        const active = i === m.field.length;
-        const [player, pos] = filled ? m.field[i] : [null, null];
         
-        contentHtml += `<div class="slot-req">
-            <span class="dot ${filled?'done':active?'active':''}"></span>
-            <span style="color:${filled?'var(--green)':active?'var(--yellow)':'var(--text-dim)'};">${slotLabel(slot)}</span>
-        </div>`;
+        for (const { index, slot } of z.slots) {
+            const filled = index < m.field.length;
+            const isActive = index === m.field.length;
+            const [player, pos] = filled ? m.field[index] : [null, null];
+            
+            if (filled) {
+                const chips = calcChips(player, pos);
+                const fat = m.fatigue[player.id] || 1;
+                const fatCls = fat >= 1 ? 'fatigue-fresh' : fat >= 0.7 ? 'fatigue-tired' : 'fatigue-exhausted';
+                const fatStr = fat >= 1 ? 'FRESH' : `${Math.round(fat*100)}%`;
+                
+                contentHtml += `<div style="flex:1;min-width:80px;padding:8px;background:rgba(0,230,118,0.08);border:1px solid var(--green-dim);border-radius:2px;">
+                    <div style="font-size:10px;font-weight:700;color:var(--green);">${pos}</div>
+                    <div style="font-size:12px;font-weight:700;color:var(--text-bright);margin-top:2px;">${player.name}</div>
+                    <div style="display:flex;justify-content:space-between;margin-top:4px;">
+                        <span style="font-size:11px;font-weight:700;color:var(--green);">${chips}</span>
+                        <span style="font-size:9px;${fatCls}">${fatStr}</span>
+                    </div>
+                </div>`;
+            } else if (isActive) {
+                // Current slot to fill — glowing
+                contentHtml += `<div onclick="openPlayerPicker()" style="flex:1;min-width:80px;padding:8px;background:rgba(255,214,0,0.05);border:1px solid var(--yellow);border-radius:2px;cursor:pointer;box-shadow:0 0 12px rgba(255,214,0,0.3);">
+                    <div style="font-size:10px;font-weight:700;color:var(--yellow);">${slotFieldPos(null, slot)}</div>
+                    <div style="font-size:14px;font-weight:700;color:var(--yellow);margin-top:4px;">+ PICK</div>
+                    <div style="font-size:9px;color:var(--text-dim);margin-top:2px;">${slotLabel(slot)}</div>
+                </div>`;
+            } else {
+                // Future slot — dimmed
+                contentHtml += `<div style="flex:1;min-width:80px;padding:8px;background:var(--bg-card);border:1px dashed var(--border);border-radius:2px;opacity:0.5;">
+                    <div style="font-size:10px;font-weight:700;color:var(--text-dim);">${slotFieldPos(null, slot)}</div>
+                    <div style="font-size:9px;color:var(--text-dim);margin-top:4px;">${slotLabel(slot)}</div>
+                </div>`;
+            }
+        }
+        
+        contentHtml += `</div></div>`;
     }
     
-    // Field
-    contentHtml += `<div class="divider"></div>`;
-    contentHtml += `<div class="fs-10 fw-700 text-dim mb-8">ON THE PITCH</div>`;
+    // ─── RUNNING TOTAL ───
+    const allFilled = m.field.length >= phase.slots.length;
+    contentHtml += `<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding:8px 0;border-top:1px solid var(--border);">
+        <span style="font-size:11px;color:var(--text-dim);">Running total</span>
+        <span style="font-size:16px;font-weight:900;color:var(--green);">${m.roundScore} / ${m.roundTargets[m.currentRound]}</span>
+    </div>`;
     
-    if (m.field.length === 0) {
-        contentHtml += `<div class="text-dim fs-11 text-center" style="padding:16px;">No players placed yet</div>`;
-    } else {
-        for (const [p, pos] of m.field) {
-            const chips = calcChips(p, pos);
-            const fat = m.fatigue[p.id] || 1;
-            const fatCls = fat >= 1 ? 'fatigue-fresh' : fat >= 0.7 ? 'fatigue-tired' : 'fatigue-exhausted';
-            const fatStr = fat >= 1 ? 'FRESH' : `${Math.round(fat*100)}%`;
-            contentHtml += `<div class="field-slot filled">
-                <span class="slot-pos">${pos}</span>
-                <span class="slot-player">${p.name}</span>
-                <span class="slot-chips">${chips}</span>
-                <span class="fatigue-indicator ${fatCls}">${fatStr}</span>
-            </div>`;
+    // Phase running preview if any players placed
+    if (m.field.length > 0) {
+        const preview = calculateRoundScore(m.field, m.synergies, m.formation, m.fatigue, m.carryover, m.persistentBuffs);
+        contentHtml += `<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--yellow);margin-bottom:4px;">
+            <span>Phase so far: ${preview.total} pts</span>
+            <span>${m.field.length}/${phase.slots.length} cards placed</span>
+        </div>`;
+        if (preview.firedSynergies) {
+            const activeSyns = preview.firedSynergies.filter(s => !s.includes('(persistent)'));
+            if (activeSyns.length) {
+                contentHtml += `<div style="font-size:9px;color:var(--yellow);margin-bottom:4px;">⚡ ${activeSyns.join(', ')}</div>`;
+            }
         }
     }
+    
+    // Slot progress dots
+    contentHtml += `<div style="display:flex;justify-content:center;gap:6px;margin-top:4px;">`;
+    for (let i = 0; i < phase.slots.length; i++) {
+        const done = i < m.field.length;
+        contentHtml += `<div style="width:8px;height:8px;border-radius:50%;background:${done?'var(--green)':i===m.field.length?'var(--yellow)':'var(--border)'};${i===m.field.length?'box-shadow:0 0 6px var(--yellow);':''}"></div>`;
+    }
+    contentHtml += `</div>`;
     
     contentHtml += `</div>`;
     document.getElementById('match-content').innerHTML = contentHtml;
     
     // Footer
-    const allFilled = m.field.length >= phase.slots.length;
     let footerHtml = '';
     if (!allFilled) {
         footerHtml += `<button class="btn btn-primary" onclick="openPlayerPicker()">SELECT PLAYER</button>`;
+        footerHtml += `<button class="btn btn-secondary mt-4" onclick="skipSlot()" style="display:none;">SKIP</button>`;
     } else {
         footerHtml += `<button class="btn btn-primary glow" onclick="resolvePhase()">RESOLVE PHASE</button>`;
     }
