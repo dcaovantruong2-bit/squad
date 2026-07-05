@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SQUAD — Phase Result</title>
+  <link rel="stylesheet" href="../game.css">
+  <script src="../game-engine.js"></script>
+  <style>
+    .screen-center { min-height:100vh; padding:var(--space-6); }
+    .result-card { max-width:650px; width:100%; margin:0 auto; }
+    .result-header { text-align:center; margin-bottom:var(--space-6); }
+    .result-verdict { font-family:var(--font-display); font-size:clamp(24px,8vw,48px); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:var(--space-2); }
+    .result-verdict.win { color:var(--success); text-shadow:0 0 20px var(--success-glow),0 0 60px var(--success-glow); animation:neonPulse 2s ease-in-out infinite; }
+    .result-verdict.lose { color:var(--danger); text-shadow:0 0 20px var(--danger-glow),0 0 60px var(--danger-glow); }
+    .result-phase-name { font-family:var(--font-display); font-size:8px; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); }
+    .score-compare { display:flex; align-items:center; justify-content:center; gap:var(--space-8); margin:var(--space-6) 0; }
+    .score-side { text-align:center; }
+    .score-side .score-label { font-family:var(--font-display); font-size:7px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:var(--space-2); }
+    .score-side .score-num { font-family:var(--font-display); font-size:28px; }
+    .score-side.you .score-num { color:var(--accent); text-shadow:0 0 12px var(--accent-glow); }
+    .score-side.target .score-num { color:var(--gold); text-shadow:0 0 12px var(--gold-glow); }
+    .score-vs { font-family:var(--font-display); font-size:14px; color:var(--muted); }
+    .breakdown-section { margin:var(--space-6) 0; }
+    .section-title { font-family:var(--font-display); font-size:10px; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:var(--space-4); color:var(--fg); }
+    .contrib-row { display:flex; align-items:center; gap:var(--space-3); padding:var(--space-3); background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:var(--space-2); }
+    .contrib-pos { font-family:var(--font-display); font-size:7px; color:var(--accent); min-width:32px; }
+    .contrib-name { font-family:var(--font-mono); font-size:var(--text-sm); flex:1; }
+    .contrib-stat { font-family:var(--font-mono); font-size:var(--text-sm); color:var(--muted); min-width:40px; text-align:center; }
+    .contrib-base { font-family:var(--font-mono); font-size:var(--text-sm); color:var(--gold); min-width:40px; text-align:right; }
+    .contrib-mult { font-family:var(--font-mono); font-size:var(--text-sm); color:var(--info); min-width:40px; text-align:right; }
+    .contrib-fatigue { font-family:var(--font-mono); font-size:var(--text-sm); min-width:36px; text-align:right; }
+    .contrib-subtotal { font-family:var(--font-mono); font-size:var(--text-sm); font-weight:700; color:var(--success); min-width:44px; text-align:right; text-shadow:0 0 6px var(--success-glow); }
+    .globals-row { display:flex; justify-content:space-between; padding:var(--space-3); background:var(--surface); border:2px solid var(--border-bright); border-radius:var(--radius-sm); margin-bottom:var(--space-2); font-family:var(--font-mono); font-size:var(--text-sm); }
+    .synergy-fired-item { display:flex; align-items:flex-start; gap:var(--space-3); padding:var(--space-3); background:rgba(57,255,20,0.05); border:1px solid var(--accent); border-radius:var(--radius-sm); margin-bottom:var(--space-2); box-shadow:0 0 8px var(--accent-glow); }
+    .synergy-fired-icon { font-size:var(--text-lg); }
+    .synergy-fired-name { font-family:var(--font-display); font-size:8px; color:var(--accent); text-shadow:0 0 6px var(--accent-glow); }
+    .synergy-fired-desc { font-family:var(--font-mono); font-size:var(--text-sm); color:var(--muted); }
+    .synergy-contribs { font-family:var(--font-mono); font-size:12px; color:var(--fg-dim); margin-top:2px; }
+    .no-synergies { font-family:var(--font-mono); font-size:var(--text-sm); color:var(--muted); text-align:center; padding:var(--space-4); }
+    .total-row { display:flex; justify-content:space-between; align-items:center; padding:var(--space-4); background:var(--surface); border:2px solid var(--accent); border-radius:var(--radius-md); margin:var(--space-6) 0; box-shadow:0 0 16px var(--accent-glow); }
+    .total-label { font-family:var(--font-display); font-size:10px; text-transform:uppercase; color:var(--fg); }
+    .total-num { font-family:var(--font-display); font-size:22px; color:var(--accent); text-shadow:0 0 12px var(--accent-glow); }
+    .continue-section { text-align:center; padding:var(--space-6) 0; }
+  </style>
+</head>
+<body>
+  <div class="screen-center">
+    <div class="result-card" data-od-id="phase-result">
+      <div class="result-header">
+        <div class="result-verdict" id="verdict">PHASE SCORE</div>
+        <div class="result-phase-name" id="phase-name">Goal Kick</div>
+      </div>
+
+      <div class="score-compare">
+        <div class="score-side you">
+          <div class="score-label">Phase Score</div>
+          <div class="score-num" id="your-score">0</div>
+        </div>
+        <div class="score-vs">→</div>
+        <div class="score-side target">
+          <div class="score-label">Round Progress</div>
+          <div class="score-num" id="round-progress">0 / 500</div>
+        </div>
+      </div>
+
+      <div class="breakdown-section">
+        <div class="section-title">Player Breakdown</div>
+        <div id="contrib-list"></div>
+      </div>
+
+      <div class="breakdown-section">
+        <div class="section-title">Synergies Fired</div>
+        <div id="synergy-list"></div>
+      </div>
+
+      <div class="total-row">
+        <span class="total-label">Phase Total</span>
+        <span class="total-num" id="phase-total">0</span>
+      </div>
+
+      <div class="continue-section">
+        <button class="btn btn-primary btn-lg" id="continue-btn">Continue ▸</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const data = JSON.parse(localStorage.getItem('phaseResult') || '{}');
+    const result = data.result || {};
+    const phase = data.phase || {};
+    const roundScore = data.roundScore || 0;
+    const target = data.target || 500;
+
+    function render() {
+      document.getElementById('phase-name').textContent = (phase.icon || '') + ' ' + (phase.name || 'Phase');
+      document.getElementById('your-score').textContent = result.total || 0;
+      document.getElementById('round-progress').textContent = roundScore + ' / ' + target;
+      document.getElementById('phase-total').textContent = result.total || 0;
+
+      // Verdict
+      const verdict = document.getElementById('verdict');
+      if (roundScore >= target) {
+        verdict.textContent = 'TARGET REACHED!';
+        verdict.className = 'result-verdict win';
+      } else {
+        verdict.textContent = 'PHASE SCORE';
+        verdict.className = 'result-verdict';
+      }
+
+      // Player breakdown
+      const contribList = document.getElementById('contrib-list');
+      const breakdown = result.breakdown || [];
+      if (breakdown.length === 0) {
+        contribList.innerHTML = '<div class="no-synergies">No players placed</div>';
+      } else {
+        contribList.innerHTML = breakdown.map(b => {
+          const statColor = phase.weight === 'DEF' ? 'var(--success)' :
+                           phase.weight === 'PAC' ? 'var(--gold)' :
+                           phase.weight === 'PAS' ? 'var(--info)' :
+                           phase.weight === 'ATK' ? 'var(--danger)' : 'var(--fg)';
+          return `<div class="contrib-row">
+            <span class="contrib-pos">${b.position}</span>
+            <span class="contrib-name">${b.player}</span>
+            <span class="contrib-stat" style="color:${statColor}">${phase.weight}: ${b.base_chips}</span>
+            <span class="contrib-base">base:${b.base_chips}</span>
+            <span class="contrib-mult">${b.multiply > 1 ? '×' + b.multiply : ''}</span>
+            <span class="contrib-fatigue" style="color:${b.fatigue < 0.7 ? 'var(--danger)' : b.fatigue < 1 ? 'var(--warn)' : 'var(--muted)'}">${b.fatigue < 1 ? '×' + b.fatigue : ''}</span>
+            <span class="contrib-subtotal">${b.subtotal}</span>
+          </div>`;
+        }).join('');
+      }
+
+      // Synergies fired
+      const synergyList = document.getElementById('synergy-list');
+      const fired = result.fired_synergies || [];
+      const contributors = result.synergy_contributors || {};
+      const descriptions = result.synergy_descriptions || {};
+
+      if (fired.length === 0) {
+        synergyList.innerHTML = '<div class="no-synergies">No synergies fired this phase</div>';
+      } else {
+        synergyList.innerHTML = fired.map(name => {
+          const contribs = contributors[name] || [];
+          const desc = descriptions[name] || '';
+          return `<div class="synergy-fired-item">
+            <span class="synergy-fired-icon">⚡</span>
+            <div>
+              <div class="synergy-fired-name">${name}</div>
+              <div class="synergy-fired-desc">${desc}</div>
+              ${contribs.length > 0 ? `<div class="synergy-contribs">Players: ${contribs.join(', ')}</div>` : ''}
+            </div>
+          </div>`;
+        }).join('');
+      }
+    }
+
+    function continueGame() {
+      const round = data.round || 0;
+      const phaseIdx = data.phaseIdx || 0;
+      const nextPhase = phaseIdx + 1;
+
+      if (nextPhase >= 6) {
+        // Round complete — go to round result
+        const won = roundScore >= target;
+        try {
+          localStorage.setItem('roundResult', JSON.stringify({
+            round: round,
+            won: won,
+            score: roundScore,
+            target: target,
+          }));
+        } catch(e) { console.warn('[PHASE] localStorage failed:', e); }
+        window.location.href = 'round-result.html';
+      } else {
+        // Next phase — save progress and go back to match
+        try {
+          localStorage.setItem('matchState', JSON.stringify({
+            roundScore: roundScore,
+            phaseIdx: nextPhase,
+            round: data.round || 0,
+            roundsWon: data.roundsWon || 0,
+            roundsLost: data.roundsLost || 0,
+            roundWins: data.roundWins || [false,false,false],
+            fatigue: data.fatigue || {},
+            roundPhases: data.roundPhases || [],
+          }));
+        } catch(e) { console.warn('[PHASE] localStorage failed:', e); }
+        window.location.href = 'match.html';
+      }
+    }
+
+    render();
+    document.getElementById('continue-btn').addEventListener('click', continueGame);
+  </script>
+</body>
+</html>

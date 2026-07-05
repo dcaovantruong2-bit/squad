@@ -43,6 +43,20 @@
       "kind": "html",
       "contentPath": "0003-73c8aeda-64d8-4d98-9aee-52cb2f1c9625.html",
       "promptSource": "message"
+    },
+    {
+      "id": "3bcad7ad-81fc-4099-bd53-5dfd3a7f581c",
+      "fileName": "screens/campaign-complete.html",
+      "version": 4,
+      "label": "Version 4",
+      "createdAt": 1783285565693,
+      "source": "ai",
+      "prompt": "im stuck on the match.html, I cant see a pitch slot and it says squad not loaded? what's happened?",
+      "size": 7740,
+      "mime": "text/html; charset=utf-8",
+      "kind": "html",
+      "contentPath": "0004-3bcad7ad-81fc-4099-bd53-5dfd3a7f581c.html",
+      "promptSource": "message"
     }
   ]
 }

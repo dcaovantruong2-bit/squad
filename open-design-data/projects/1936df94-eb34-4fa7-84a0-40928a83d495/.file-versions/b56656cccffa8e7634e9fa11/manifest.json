@@ -71,6 +71,34 @@
       "kind": "html",
       "contentPath": "0005-8bc2350e-5af6-41d4-875b-fc2397e84e8c.html",
       "promptSource": "message"
+    },
+    {
+      "id": "e33ed2d2-c686-4345-9200-ba38d62b1f4d",
+      "fileName": "screens/match.html",
+      "version": 6,
+      "label": "Version 6",
+      "createdAt": 1783285565693,
+      "source": "ai",
+      "prompt": "im stuck on the match.html, I cant see a pitch slot and it says squad not loaded? what's happened?",
+      "size": 29624,
+      "mime": "text/html; charset=utf-8",
+      "kind": "html",
+      "contentPath": "0006-e33ed2d2-c686-4345-9200-ba38d62b1f4d.html",
+      "promptSource": "message"
+    },
+    {
+      "id": "a9494a80-da13-4343-a576-a0cb79c6b85a",
+      "fileName": "screens/match.html",
+      "version": 7,
+      "label": "Version 7",
+      "createdAt": 1783285782986,
+      "source": "ai",
+      "prompt": "dont make me click a pitch slot to pick a player, use a different system and visualize where the phase is happening on the field element",
+      "size": 38159,
+      "mime": "text/html; charset=utf-8",
+      "kind": "html",
+      "contentPath": "0007-a9494a80-da13-4343-a576-a0cb79c6b85a.html",
+      "promptSource": "message"
     }
   ]
 }

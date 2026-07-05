@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SQUAD — Campaign Complete</title>
+  <link rel="stylesheet" href="../game.css">
+  <script src="../game-engine.js"></script>
+  <style>
+    body { background:var(--bg-deep); color:var(--fg); }
+    .screen-center { min-height:100vh; padding:var(--space-6); }
+    .campaign-card { max-width:700px; width:100%; margin:0 auto; text-align:center; }
+    .campaign-title { font-family:var(--font-display); font-size:clamp(24px,8vw,48px); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:var(--space-2); }
+    .campaign-title.win { color:var(--accent); text-shadow:0 0 20px var(--accent-glow),0 0 60px var(--accent-glow); animation:neonPulse 3s ease-in-out infinite; }
+    .campaign-title.lose { color:var(--danger); text-shadow:0 0 20px var(--danger-glow),0 0 60px var(--danger-glow); }
+    .campaign-subtitle { font-family:var(--font-mono); font-size:var(--text-lg); color:var(--muted); margin-bottom:var(--space-8); }
+    .matches-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:var(--space-4); margin:var(--space-8) 0; }
+    .match-result-card { background:var(--surface); border:2px solid var(--border); border-radius:var(--radius-md); padding:var(--space-5); text-align:center; transition:all var(--motion-fast) ease; }
+    .match-result-card.won { border-color:var(--success); background:rgba(57,255,20,0.05); box-shadow:0 0 8px var(--success-glow); }
+    .match-result-card.lost { border-color:var(--danger); background:rgba(255,51,68,0.05); }
+    .match-result-card.pending { border-style:dashed; opacity:0.4; }
+    .match-num { font-family:var(--font-display); font-size:7px; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:var(--space-2); }
+    .match-opponent { font-family:var(--font-mono); font-size:var(--text-sm); color:var(--fg-dim); margin-bottom:var(--space-2); }
+    .match-stage { font-family:var(--font-display); font-size:7px; color:var(--muted); margin-bottom:var(--space-2); text-transform:uppercase; }
+    .match-verdict { font-family:var(--font-display); font-size:14px; text-transform:uppercase; }
+    .match-verdict.win { color:var(--success); text-shadow:0 0 8px var(--success-glow); }
+    .match-verdict.lose { color:var(--danger); text-shadow:0 0 8px var(--danger-glow); }
+    .campaign-stats { display:flex; justify-content:center; gap:var(--space-10); margin:var(--space-8) 0; flex-wrap:wrap; }
+    .stat-item { text-align:center; }
+    .stat-num { font-family:var(--font-display); font-size:28px; color:var(--accent); text-shadow:0 0 12px var(--accent-glow); line-height:1; }
+    .stat-label { font-family:var(--font-display); font-size:7px; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-top:var(--space-2); }
+    .title-line { width:120px; height:2px; background:var(--accent); margin:var(--space-6) auto; box-shadow:0 0 8px var(--accent-glow); }
+    .play-again { padding:var(--space-8) 0; }
+    .play-again-btn { display:inline-flex; align-items:center; gap:var(--space-3); padding:var(--space-4) var(--space-10); background:transparent; color:var(--accent); border:2px solid var(--accent); border-radius:var(--radius-md); font-family:var(--font-display); font-size:12px; text-transform:uppercase; letter-spacing:0.1em; cursor:pointer; transition:all var(--motion-base) ease; box-shadow:0 0 16px var(--accent-glow); }
+    .play-again-btn:hover { background:rgba(57,255,20,0.1); box-shadow:0 0 32px var(--accent-glow),0 0 60px rgba(57,255,20,0.1); transform:translateY(-1px); }
+    .play-again-btn:active { transform:translateY(1px); box-shadow:0 0 8px var(--accent-glow); }
+  </style>
+</head>
+<body>
+  <div class="screen-center">
+    <div class="campaign-card">
+      <div class="campaign-title" id="campaign-title">CAMPAIGN COMPLETE</div>
+      <div class="campaign-subtitle" id="campaign-subtitle"></div>
+
+      <div class="title-line"></div>
+
+      <div class="matches-grid" id="matches-grid"></div>
+
+      <div class="campaign-stats">
+        <div class="stat-item">
+          <div class="stat-num" id="stat-wins">0</div>
+          <div class="stat-label">Wins</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" id="stat-losses">0</div>
+          <div class="stat-label">Losses</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" id="stat-winrate">0%</div>
+          <div class="stat-label">Win Rate</div>
+        </div>
+      </div>
+
+      <div class="play-again">
+        <button class="play-again-btn" id="play-again-btn">Play Again ▸</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const campaign = JSON.parse(localStorage.getItem('campaign') || '{}');
+    const matches = campaign.matches || [];
+    const totalPlayed = matches.length;
+    const wins = matches.filter(m => m && m.won).length;
+    const losses = totalPlayed - wins;
+    const winrate = totalPlayed > 0 ? Math.round((wins / totalPlayed) * 100) : 0;
+
+    // Did they win all 5?
+    const allWon = wins >= 5;
+    const mostWon = wins >= 3;
+
+    function render() {
+      const title = document.getElementById('campaign-title');
+      if (allWon) {
+        title.textContent = '🏆 LEGENDARY';
+        title.className = 'campaign-title win';
+      } else if (mostWon) {
+        title.textContent = 'STRONG RUN';
+        title.className = 'campaign-title win';
+      } else if (wins >= 1) {
+        title.textContent = 'CAMPAIGN OVER';
+        title.className = 'campaign-title';
+      } else {
+        title.textContent = 'TOUGH CAMPAIGN';
+        title.className = 'campaign-title lose';
+      }
+
+      document.getElementById('campaign-subtitle').textContent =
+        `${wins} win${wins !== 1 ? 's' : ''}, ${losses} loss${losses !== 1 ? 'es' : ''} across ${Math.min(totalPlayed, 5)} matches`;
+
+      // Match cards — show all 5 campaign matches, filled or pending
+      const grid = document.getElementById('matches-grid');
+      grid.innerHTML = CAMPAIGN_MATCHES.map((cm, i) => {
+        const m = matches[i];
+        if (m) {
+          return `<div class="match-result-card ${m.won ? 'won' : 'lost'}" data-od-id="match-${i+1}">
+            <div class="match-num">Match ${i + 1}</div>
+            <div class="match-stage">${cm.name}</div>
+            <div class="match-opponent">${m.opponent || cm.opponent}</div>
+            <div class="match-verdict ${m.won ? 'win' : 'lose'}">${m.won ? 'WIN' : 'LOSS'}</div>
+          </div>`;
+        } else {
+          return `<div class="match-result-card pending" data-od-id="match-${i+1}">
+            <div class="match-num">Match ${i + 1}</div>
+            <div class="match-stage">${cm.name}</div>
+            <div class="match-opponent">${cm.opponent}</div>
+            <div class="match-verdict" style="color:var(--muted)">—</div>
+          </div>`;
+        }
+      }).join('');
+
+      document.getElementById('stat-wins').textContent = wins;
+      document.getElementById('stat-losses').textContent = losses;
+      document.getElementById('stat-winrate').textContent = winrate + '%';
+    }
+
+    function playAgain() {
+      try {
+        localStorage.removeItem('squad');
+        localStorage.removeItem('formation');
+        localStorage.removeItem('fatigue');
+        localStorage.removeItem('matchState');
+        localStorage.removeItem('campaign');
+        localStorage.removeItem('phaseResult');
+        localStorage.removeItem('roundResult');
+      } catch(e) {}
+      window.location.href = '../index.html';
+    }
+
+    render();
+    document.getElementById('play-again-btn').addEventListener('click', playAgain);
+  </script>
+</body>
+</html>
