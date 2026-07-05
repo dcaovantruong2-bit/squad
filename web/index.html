@@ -1392,6 +1392,16 @@ function getFiredNames(playerEffects) {
 
 // ─── SLOT HELPERS ───
 function isEligible(player, slot) {
+    // GK can ONLY fill GK slots
+    if (player.position === 'GK') {
+        if (slot.type === 'pos') return slot.pos === 'GK';
+        if (slot.type === 'stat') return slot.as === 'GK';
+        return false;
+    }
+    // Non-GK cannot fill GK slots
+    if (slot.type === 'pos' && slot.pos === 'GK') return false;
+    if (slot.type === 'stat' && slot.as === 'GK') return false;
+    
     if (slot.type === 'pos') return player.position === slot.pos;
     if (slot.type === 'stat') {
         if (slot.minAtk && player.atk < slot.minAtk) return false;
@@ -2056,9 +2066,22 @@ function openPlayerPicker() {
             const pos = slotFieldPos(p, currentPickerSlot);
             const chips = calcChips(p, pos);
             const fat = m.fatigue[p.id] || 1;
-            const effective = Math.round(chips * fat);
             const fatCls = fat >= 1 ? 'fatigue-fresh' : fat >= 0.7 ? 'fatigue-tired' : 'fatigue-exhausted';
             const fatStr = fat >= 1 ? 'FRESH' : `${Math.round(fat*100)}%`;
+            
+            // Calculate projected total score if this player is added
+            const projectedField = [...m.field.filter(f => f !== null), [p, pos]];
+            const projectedResult = calculateRoundScore(
+                projectedField, m.synergies, m.formation, m.fatigue, m.carryover, m.persistentBuffs
+            );
+            const projectedTotal = projectedResult.total;
+            
+            // Current field total (before adding this player)
+            const currentActive = m.field.filter(f => f !== null);
+            const currentResult = currentActive.length ? calculateRoundScore(
+                currentActive, m.synergies, m.formation, m.fatigue, m.carryover, m.persistentBuffs
+            ) : { total: 0 };
+            const scoreDelta = projectedTotal - currentResult.total;
             
             // Synergy preview
             const newSyns = computeSynergyPreview(p, pos, m.field, m.synergies);
@@ -2067,12 +2090,23 @@ function openPlayerPicker() {
                 synHtml = `<div class="syn-preview">${[...newSyns].slice(0,3).map(s => `<span class="syn-tag">⚡${s}</span>`).join('')}${newSyns.size > 3 ? `<span class="syn-tag">+${newSyns.size-3}</span>` : ''}</div>`;
             }
             
+            // Show active synergies
+            let activeSynHtml = '';
+            if (projectedResult.firedSynergies) {
+                const activeSyns = projectedResult.firedSynergies.filter(s => !s.includes('(persistent)'));
+                if (activeSyns.length) {
+                    activeSynHtml = `<div style="font-size:8px;color:var(--yellow);margin-top:2px;">⚡ ${activeSyns.slice(0,2).join(', ')}</div>`;
+                }
+            }
+            
             html += `<div class="player-row" onclick="pickPlayer('${p.id}')" style="flex-wrap:wrap;">
                 <span class="pos-badge" style="margin-right:8px;">${p.position}→${pos}</span>
                 <span class="name">${p.name}</span>
                 <span class="${fatCls}" style="font-size:9px;margin:0 6px;">${fatStr}</span>
-                <span style="color:var(--green);font-weight:700;font-size:12px;margin-right:8px;">${effective}chips</span>
+                <span style="color:var(--green);font-weight:700;font-size:14px;">+${scoreDelta}</span>
+                <span style="font-size:9px;color:var(--text-dim);margin-left:4px;">→ ${projectedTotal} pts</span>
                 ${synHtml}
+                ${activeSynHtml}
                 <div class="stats-row" style="width:100%;margin-top:4px;">
                     <div class="stat-badge stat-atk"><span class="value" style="font-size:11px;">${p.atk}</span></div>
                     <div class="stat-badge stat-pac"><span class="value" style="font-size:11px;">${p.pac}</span></div>
