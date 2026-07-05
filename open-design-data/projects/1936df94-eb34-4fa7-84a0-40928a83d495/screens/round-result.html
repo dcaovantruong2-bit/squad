@@ -67,8 +67,8 @@
   </div>
 
   <script>
-    const result = JSON.parse(sessionStorage.getItem('roundResult') || '{}');
-    const campaign = JSON.parse(sessionStorage.getItem('campaign') || '{}');
+    const result = JSON.parse(localStorage.getItem('roundResult') || '{}');
+    const campaign = JSON.parse(localStorage.getItem('campaign') || '{}');
     const matchIdx = campaign.currentMatch || 0;
     const matchData = CAMPAIGN_MATCHES[matchIdx] || CAMPAIGN_MATCHES[0];
 
@@ -107,7 +107,7 @@
           if (!campaign.matches) campaign.matches = [];
           campaign.matches[matchIdx] = { won: true, opponent: matchData.opponent, name: matchData.name };
           campaign.currentMatch = matchIdx + 1;
-          try { sessionStorage.setItem('campaign', JSON.stringify(campaign)); } catch(e) {}
+          try { localStorage.setItem('campaign', JSON.stringify(campaign)); } catch(e) {}
           window.location.href = 'campaign-complete.html';
         };
       } else if (roundsLost >= 2) {
@@ -118,7 +118,7 @@
           if (!campaign.matches) campaign.matches = [];
           campaign.matches[matchIdx] = { won: false, opponent: matchData.opponent, name: matchData.name };
           campaign.currentMatch = matchIdx + 1;
-          try { sessionStorage.setItem('campaign', JSON.stringify(campaign)); } catch(e) {}
+          try { localStorage.setItem('campaign', JSON.stringify(campaign)); } catch(e) {}
           window.location.href = 'campaign-complete.html';
         };
       } else {

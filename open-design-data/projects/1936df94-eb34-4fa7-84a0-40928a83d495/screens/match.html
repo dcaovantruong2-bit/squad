@@ -181,34 +181,58 @@
 
     function loadState() {
       try {
-        squad = JSON.parse(sessionStorage.getItem('squad') || '[]');
-        formation = JSON.parse(sessionStorage.getItem('formation') || '{}');
-        campaign = JSON.parse(sessionStorage.getItem('campaign') || '{}');
+        squad = JSON.parse(localStorage.getItem('squad') || '[]');
+        formation = JSON.parse(localStorage.getItem('formation') || '{}');
+        campaign = JSON.parse(localStorage.getItem('campaign') || '{}');
       } catch(e) {
         squad = []; formation = {}; campaign = {};
       }
 
       if (!campaign.matches) campaign.matches = [];
       if (!campaign.currentMatch) campaign.currentMatch = 0;
-      if (!campaign.roundWins) campaign.roundWins = [0,0,0]; // per-match round wins
+      if (!campaign.roundWins) campaign.roundWins = [0,0,0];
 
       currentMatch = campaign.currentMatch;
-      currentRound = 0;
-      currentPhase = 0;
       roundsWon = 0;
       roundsLost = 0;
-      roundScore = 0;
-      fatigue = {};
-      carryover = null;
-      journeymanUsed = false;
+      roundWins = [false, false, false];
       activeSlot = null;
       phasePlacement = {};
 
+      // Check for saved match state (returning from phase-result)
+      try {
+        const saved = JSON.parse(localStorage.getItem('matchState') || 'null');
+        if (saved && saved.roundScore !== undefined) {
+          currentRound = saved.round || 0;
+          currentPhase = saved.phaseIdx || 0;
+          roundScore = saved.roundScore || 0;
+          fatigue = saved.fatigue || {};
+          roundsWon = saved.roundsWon || 0;
+          roundsLost = saved.roundsLost || 0;
+          roundWins = saved.roundWins || [false, false, false];
+          roundPhases = (saved.roundPhases && saved.roundPhases.length > 0) ? saved.roundPhases : pickRandomPhases(6);
+          localStorage.removeItem('matchState');
+        } else {
+          currentRound = 0;
+          currentPhase = 0;
+          roundScore = 0;
+          fatigue = {};
+          carryover = null;
+          journeymanUsed = false;
+          roundPhases = pickRandomPhases(6);
+        }
+      } catch(e) {
+        currentRound = 0;
+        currentPhase = 0;
+        roundScore = 0;
+        fatigue = {};
+        carryover = null;
+        journeymanUsed = false;
+        roundPhases = pickRandomPhases(6);
+      }
+
       // Compute persistent synergies from squad
       persistentBuffs = detectSquadSynergies(squad, SYNERGIES);
-
-      // Pick 6 phases for this round
-      roundPhases = pickRandomPhases(6);
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -506,16 +530,20 @@
 
       // Store result for phase-result screen
       try {
-        sessionStorage.setItem('phaseResult', JSON.stringify({
+        localStorage.setItem('phaseResult', JSON.stringify({
           phase: { name: phase.name, weight: phase.weight, icon: phase.icon },
           result: result,
           round: currentRound,
           phaseIdx: currentPhase,
           roundScore: roundScore,
           target: CAMPAIGN_MATCHES[currentMatch].targets[currentRound],
+          roundsWon: roundsWon,
+          roundsLost: roundsLost,
+          fatigue: fatigue,
+          roundPhases: roundPhases,
         }));
-        sessionStorage.setItem('fatigue', JSON.stringify(fatigue));
-      } catch(e) { console.warn('[MATCH] sessionStorage failed:', e); }
+        localStorage.setItem('fatigue', JSON.stringify(fatigue));
+      } catch(e) { console.warn('[MATCH] localStorage failed:', e); }
 
       window.location.href = 'phase-result.html';
     }
@@ -537,15 +565,16 @@
       else roundsLost++;
 
       try {
-        sessionStorage.setItem('roundResult', JSON.stringify({
+        localStorage.setItem('roundResult', JSON.stringify({
           round: currentRound,
           won: won,
           score: roundScore,
           target: CAMPAIGN_MATCHES[currentMatch].targets[currentRound],
           roundsWon: roundsWon,
           roundsLost: roundsLost,
+          matchIdx: currentMatch,
         }));
-      } catch(e) { console.warn('[MATCH] sessionStorage failed:', e); }
+      } catch(e) { console.warn('[MATCH] localStorage failed:', e); }
 
       window.location.href = 'round-result.html';
     }
@@ -560,7 +589,8 @@
     });
 
     loadState();
-    roundWins = [false, false, false];
+    // roundWins is reset each new match; loadState restores it from matchState if returning mid-match
+    if (typeof roundWins === 'undefined' || roundWins === null) roundWins = [false, false, false];
     renderMatch();
     renderPhase();
   </script>

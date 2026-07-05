@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SQUAD — Match</title>
+  <link rel="stylesheet" href="../game.css">
+  <script src="../game-engine.js"></script>
+  <style>
+    .screen { padding-top: var(--space-4); max-width: 1400px; }
+    .match-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:var(--space-6); flex-wrap:wrap; gap:var(--space-4); }
+    .match-vs { display:flex; align-items:center; gap:var(--space-4); }
+    .match-team { text-align:center; }
+    .match-team-name { font-family:var(--font-display); font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:var(--fg-dim); }
+    .match-team.you .match-team-name { color:var(--accent); text-shadow:0 0 8px var(--accent-glow); }
+    .match-score { font-family:var(--font-display); font-size:24px; min-width:120px; text-align:center; color:var(--fg); }
+    .match-score .score-dash { color:var(--muted); margin:0 var(--space-2); }
+    .match-progress { display:flex; gap:var(--space-6); margin-bottom:var(--space-6); flex-wrap:wrap; }
+    .progress-group { flex:1; min-width:200px; }
+    .progress-label { font-family:var(--font-display); font-size:7px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:var(--space-2); }
+    .phase-info { background:var(--surface); border:2px solid var(--border); border-radius:var(--radius-md); padding:var(--space-5); margin-bottom:var(--space-6); display:grid; grid-template-columns:auto 1fr; gap:var(--space-4); align-items:center; }
+    .phase-icon { width:56px; height:56px; background:var(--surface-raised); border:2px solid var(--accent); border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size:24px; box-shadow:0 0 12px var(--accent-glow); }
+    .phase-details h2 { font-family:var(--font-display); font-size:12px; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:var(--space-1); color:var(--fg); }
+    .phase-weight-badge { display:inline-flex; align-items:center; gap:var(--space-1); padding:2px 8px; background:var(--accent); color:var(--accent-on); border-radius:var(--radius-sm); font-family:var(--font-display); font-size:7px; text-transform:uppercase; margin-bottom:var(--space-2); box-shadow:0 0 8px var(--accent-glow); }
+    .phase-desc { font-family:var(--font-mono); font-size:var(--text-sm); color:var(--muted); }
+    .game-area { display:grid; grid-template-columns:1fr 300px; gap:var(--space-6); }
+    .match-pitch { background:var(--pitch-green); border:2px solid var(--pitch-dark); border-radius:var(--radius-md); aspect-ratio:68/105; max-height:500px; position:relative; overflow:hidden; box-shadow:inset 0 0 40px rgba(0,0,0,0.4); }
+    .match-pitch::before { content:''; position:absolute; top:50%; left:0; right:0; height:1px; background:var(--pitch-line); }
+    .match-pitch::after { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:80px; height:80px; border:1px solid var(--pitch-line); border-radius:50%; }
+    .pitch-slot { position:absolute; width:52px; height:52px; border:2px dashed rgba(57,255,20,0.3); border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:7px; color:rgba(57,255,20,0.5); text-transform:uppercase; transition:all var(--motion-base) ease; cursor:pointer; transform:translate(-50%,-50%); flex-direction:column; gap:2px; }
+    .pitch-slot:hover { border-color:rgba(57,255,20,0.7); background:rgba(57,255,20,0.08); box-shadow:0 0 12px var(--accent-glow); }
+    .pitch-slot.filled { background:rgba(57,255,20,0.15); border-style:solid; border-color:var(--accent); color:var(--accent); box-shadow:0 0 8px var(--accent-glow); }
+    .pitch-slot.active { border-color:var(--gold); box-shadow:0 0 20px var(--gold-glow); }
+    .pitch-slot .slot-player-name { font-size:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:48px; text-align:center; }
+    .pitch-slot .slot-chips { font-size:7px; opacity:0.8; }
+    .pitch-slot.hint-pulse { animation:slot-hint 1.5s ease-in-out infinite; }
+    @keyframes slot-hint { 0%,100%{border-color:rgba(57,255,20,0.3);} 50%{border-color:rgba(57,255,20,0.8);box-shadow:0 0 16px var(--accent-glow);} }
+    .instruction-banner { background:var(--surface); border:2px solid var(--accent); border-radius:var(--radius-md); padding:var(--space-3) var(--space-4); margin-bottom:var(--space-4); font-family:var(--font-mono); font-size:var(--text-sm); color:var(--accent); text-align:center; box-shadow:0 0 12px var(--accent-glow); }
+    .instruction-banner .step-num { display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; background:var(--accent); color:var(--accent-on); border-radius:50%; font-family:var(--font-display); font-size:8px; margin-right:6px; }
+    .match-sidebar { display:flex; flex-direction:column; gap:var(--space-4); }
+    .available-panel, .fatigue-panel, .synergy-preview, .phase-slots-summary { background:var(--surface); border:2px solid var(--border); border-radius:var(--radius-md); padding:var(--space-4); }
+    .panel-title { font-family:var(--font-display); font-size:8px; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:var(--space-3); color:var(--fg-dim); }
+    .available-player { display:flex; align-items:center; gap:var(--space-3); padding:var(--space-2); border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:var(--space-2); cursor:pointer; transition:all var(--motion-fast) ease; }
+    .available-player:hover { border-color:var(--accent); background:var(--surface-hover); box-shadow:0 0 8px var(--accent-glow); }
+    .available-player.disabled { opacity:0.3; cursor:not-allowed; }
+    .available-player .ap-pos { font-family:var(--font-display); font-size:7px; color:var(--accent); min-width:28px; }
+    .available-player .ap-name { font-family:var(--font-mono); font-size:var(--text-sm); flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .available-player .ap-chips { font-family:var(--font-mono); font-size:var(--text-sm); color:var(--gold); min-width:30px; text-align:right; }
+    .fatigue-player { display:flex; align-items:center; gap:var(--space-2); margin-bottom:var(--space-2); font-family:var(--font-mono); font-size:var(--text-sm); }
+    .fatigue-bar { flex:1; height:6px; background:var(--bg-deep); border-radius:1px; overflow:hidden; border:1px solid var(--border); }
+    .fatigue-fill { height:100%; border-radius:1px; transition:width var(--motion-base) ease; }
+    .fatigue-fill.fresh { background:var(--success); box-shadow:0 0 4px var(--success-glow); }
+    .fatigue-fill.tired { background:var(--warn); box-shadow:0 0 4px var(--warn-glow); }
+    .fatigue-fill.exhausted { background:var(--danger); box-shadow:0 0 4px var(--danger-glow); }
+    .synergy-item { display:flex; align-items:center; gap:var(--space-2); margin-bottom:var(--space-2); font-family:var(--font-mono); font-size:var(--text-sm); color:var(--gold); }
+    .synergy-dot { width:6px; height:6px; border-radius:var(--radius-sm); flex-shrink:0; }
+    .synergy-dot.potential { background:var(--gold); box-shadow:0 0 4px var(--gold-glow); }
+    .slot-req { display:flex; align-items:center; gap:var(--space-2); padding:var(--space-1) 0; font-family:var(--font-mono); font-size:var(--text-sm); }
+    .slot-req .slot-status { width:16px; text-align:center; }
+    .slot-req .slot-status.filled { color:var(--success); text-shadow:0 0 4px var(--success-glow); }
+    .slot-req .slot-status.empty { color:var(--muted); }
+    .submit-section { text-align:center; padding:var(--space-4) 0; }
+    .empty-state { text-align:center; padding:var(--space-8) var(--space-4); color:var(--muted); font-family:var(--font-mono); font-size:var(--text-sm); }
+    .empty-state .big-icon { font-size:48px; margin-bottom:var(--space-4); display:block; }
+    .target-display { background:var(--surface); border:2px solid var(--border); border-radius:var(--radius-md); padding:var(--space-4); text-align:center; }
+    .target-label { font-family:var(--font-display); font-size:7px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:var(--space-2); }
+    .target-num { font-family:var(--font-display); font-size:18px; color:var(--gold); text-shadow:0 0 10px var(--gold-glow); }
+    .round-score-live { font-family:var(--font-display); font-size:10px; color:var(--accent); margin-top:var(--space-2); }
+    @media (max-width:920px) { .game-area { grid-template-columns:1fr; } .match-pitch { max-height:400px; } }
+  </style>
+</head>
+<body>
+  <div class="screen">
+    <!-- Match header -->
+    <div class="match-header">
+      <div class="match-vs">
+        <div class="match-team you">
+          <div class="match-team-name">Your XI</div>
+        </div>
+        <div class="match-score">
+          <span id="rounds-won">0</span>
+          <span class="score-dash">-</span>
+          <span id="rounds-lost">0</span>
+        </div>
+        <div class="match-team">
+          <div class="match-team-name" id="opponent-name">—</div>
+        </div>
+      </div>
+      <div>
+        <span class="text-xs text-muted" id="match-label"></span>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="match-progress">
+      <div class="progress-group">
+        <div class="progress-label">Round <span id="round-num">1</span> / 3</div>
+        <div class="progress-dots" id="round-dots"></div>
+      </div>
+      <div class="progress-group">
+        <div class="progress-label">Phase <span id="phase-num">1</span> / 6</div>
+        <div class="progress-dots" id="phase-dots"></div>
+      </div>
+    </div>
+
+    <!-- Phase info -->
+    <div class="phase-info" data-od-id="phase-info">
+      <div class="phase-icon" id="phase-icon">⚽</div>
+      <div class="phase-details">
+        <div class="phase-weight-badge" id="phase-weight">DEF</div>
+        <h2 id="phase-name">Goal Kick</h2>
+        <p class="phase-desc" id="phase-desc"></p>
+      </div>
+    </div>
+
+    <!-- Instruction banner -->
+    <div class="instruction-banner" id="instruction-banner">
+      <span class="step"><span class="step-num">1</span> Click a <strong>pitch slot</strong></span>
+      &nbsp;→&nbsp;
+      <span class="step"><span class="step-num">2</span> Click an <strong>eligible player</strong> from the right</span>
+    </div>
+
+    <!-- Game area -->
+    <div class="game-area">
+      <!-- Pitch -->
+      <div class="match-pitch" id="pitch"></div>
+
+      <!-- Sidebar -->
+      <div class="match-sidebar">
+        <!-- Round target -->
+        <div class="target-display">
+          <div class="target-label">Round Target</div>
+          <div class="target-num" id="target-num">500</div>
+          <div class="round-score-live">Your score: <span id="live-score">0</span></div>
+        </div>
+
+        <!-- Phase slots -->
+        <div class="phase-slots-summary">
+          <div class="panel-title">Required Slots</div>
+          <div id="slot-reqs"></div>
+        </div>
+
+        <!-- Available players -->
+        <div class="available-panel">
+          <div class="panel-title">Available Players</div>
+          <div id="available-list"></div>
+        </div>
+
+        <!-- Fatigue -->
+        <div class="fatigue-panel">
+          <div class="panel-title">Fatigue</div>
+          <div id="fatigue-list"></div>
+        </div>
+
+        <!-- Synergy preview -->
+        <div class="synergy-preview">
+          <div class="panel-title">Active Synergies</div>
+          <div id="synergy-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-section">
+      <button class="btn btn-primary btn-lg" id="submit-btn" disabled>Submit Phase ▸</button>
+    </div>
+  </div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════════════
+    // GAME STATE
+    // ═══════════════════════════════════════════════════════════════════
+
+    let squad, formation, campaign;
+    let currentMatch, currentRound, currentPhase;
+    let roundPhases, phasePlacement, roundScore, fatigue;
+    let roundsWon, roundsLost, activeSlot;
+    let persistentBuffs, carryover;
+    let journeymanUsed;
+    let roundWins, matchResults; // Track wins across campaign
+
+    function loadState() {
+      try {
+        squad = JSON.parse(sessionStorage.getItem('squad') || '[]');
+        formation = JSON.parse(sessionStorage.getItem('formation') || '{}');
+        campaign = JSON.parse(sessionStorage.getItem('campaign') || '{}');
+      } catch(e) {
+        squad = []; formation = {}; campaign = {};
+      }
+
+      if (!campaign.matches) campaign.matches = [];
+      if (!campaign.currentMatch) campaign.currentMatch = 0;
+      if (!campaign.roundWins) campaign.roundWins = [0,0,0]; // per-match round wins
+
+      currentMatch = campaign.currentMatch;
+      currentRound = 0;
+      currentPhase = 0;
+      roundsWon = 0;
+      roundsLost = 0;
+      roundScore = 0;
+      fatigue = {};
+      carryover = null;
+      journeymanUsed = false;
+      activeSlot = null;
+      phasePlacement = {};
+
+      // Compute persistent synergies from squad
+      persistentBuffs = detectSquadSynergies(squad, SYNERGIES);
+
+      // Pick 6 phases for this round
+      roundPhases = pickRandomPhases(6);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // RENDERING
+    // ═══════════════════════════════════════════════════════════════════
+
+    function renderMatch() {
+      const matchData = CAMPAIGN_MATCHES[currentMatch] || CAMPAIGN_MATCHES[0];
+      document.getElementById('opponent-name').textContent = matchData.opponent;
+      document.getElementById('match-label').textContent = matchData.tier;
+      document.getElementById('rounds-won').textContent = roundsWon;
+      document.getElementById('rounds-lost').textContent = roundsLost;
+      document.getElementById('round-num').textContent = currentRound + 1;
+      document.getElementById('phase-num').textContent = currentPhase + 1;
+
+      const target = matchData.targets[currentRound] || 999;
+      document.getElementById('target-num').textContent = target;
+      document.getElementById('live-score').textContent = roundScore;
+
+      // Round dots
+      const roundDots = document.getElementById('round-dots');
+      roundDots.innerHTML = '';
+      for (let i = 0; i < 3; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'progress-dot';
+        if (i < currentRound) dot.classList.add(roundWins && roundWins[i] ? 'done' : 'lose');
+        else if (i === currentRound) dot.classList.add('active');
+        roundDots.appendChild(dot);
+      }
+
+      // Phase dots
+      const phaseDots = document.getElementById('phase-dots');
+      phaseDots.innerHTML = '';
+      for (let i = 0; i < 6; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'progress-dot';
+        if (i < currentPhase) dot.classList.add('done');
+        else if (i === currentPhase) dot.classList.add('active');
+        phaseDots.appendChild(dot);
+      }
+    }
+
+    function renderPhase() {
+      const phase = roundPhases[currentPhase];
+      document.getElementById('phase-icon').textContent = phase.icon;
+      document.getElementById('phase-name').textContent = phase.name;
+      document.getElementById('phase-desc').textContent = phase.desc;
+      document.getElementById('phase-weight').textContent = phase.weight;
+
+      phasePlacement = {};
+      activeSlot = null;
+      renderPitch(phase);
+      renderSlotReqs(phase);
+      renderAvailablePlayers(phase);
+      renderFatigue();
+      renderSynergyPreview();
+      document.getElementById('submit-btn').disabled = true;
+      document.getElementById('instruction-banner').style.display = '';
+    }
+
+    function renderPitch(phase) {
+      const pitch = document.getElementById('pitch');
+      if (squad.length === 0) {
+        pitch.innerHTML = '<div class="empty-state"><span class="big-icon">⚽</span>Squad not loaded.</div>';
+        return;
+      }
+
+      // Position slots on pitch based on which slots we need
+      const slotPositions = getSlotPositions(phase);
+      pitch.innerHTML = slotPositions.map((pos, i) => {
+        const placed = phasePlacement[i];
+        const player = placed ? squad.find(p => p.id === placed) : null;
+        const filled = player ? 'filled' : '';
+        const active = activeSlot === i ? 'active' : '';
+        const hint = !player && activeSlot === null && Object.keys(phasePlacement).length === 0 && i === 0 ? 'hint-pulse' : '';
+        return `<div class="pitch-slot ${filled} ${active} ${hint}" style="left:${pos.x}%;top:${pos.y}%" onclick="selectSlot(${i})" data-od-id="pitch-slot-${i}">
+          ${player
+            ? `<span class="slot-player-name">${player.name.split(' ').pop()}</span><span class="slot-chips">${slotLabel(phase.slots[i])}</span>`
+            : `<span>${slotLabel(phase.slots[i]).substring(0,8)}</span>`
+          }
+        </div>`;
+      }).join('');
+    }
+
+    function getSlotPositions(phase) {
+      // Map slot index to pitch coordinates based on field position
+      const positions = [];
+      const slotCount = phase.slots.length;
+      // Defensive slots at back, attacking at front
+      const yPositions = {
+        GK: 90, CB: 72, FB: 55, CDM: 60, CM: 42, CAM: 35, LW: 22, RW: 22, ST: 15
+      };
+      const xCenter = { GK:50, CB:50, FB:50, CDM:50, CM:50, CAM:50, LW:25, RW:75, ST:50 };
+      const xSpread = { GK:0, CB:25, FB:40, CDM:0, CM:25, CAM:0, LW:0, RW:0, ST:0 };
+
+      for (let i = 0; i < slotCount; i++) {
+        const slot = phase.slots[i];
+        const fp = slotFieldPosition(slot);
+        const y = yPositions[fp] || 50;
+        let x = xCenter[fp] || 50;
+        const spread = xSpread[fp] || 0;
+        // Offset if multiple same-position slots
+        const sameBefore = phase.slots.slice(0, i).filter(s => slotFieldPosition(s) === fp).length;
+        const totalSame = phase.slots.filter(s => slotFieldPosition(s) === fp).length;
+        if (totalSame > 1 && spread > 0) {
+          x = x - spread + (spread * 2 * sameBefore / (totalSame - 1));
+        }
+        positions.push({ x, y });
+      }
+      return positions;
+    }
+
+    function renderSlotReqs(phase) {
+      const container = document.getElementById('slot-reqs');
+      container.innerHTML = phase.slots.map((slot, i) => {
+        const placed = phasePlacement[i] !== undefined;
+        const lbl = slotLabel(slot);
+        return `<div class="slot-req">
+          <span class="slot-status ${placed ? 'filled' : 'empty'}">${placed ? '✓' : '○'}</span>
+          <span>${lbl}</span>
+        </div>`;
+      }).join('');
+    }
+
+    function renderAvailablePlayers(phase) {
+      const container = document.getElementById('available-list');
+      const usedIds = new Set(Object.values(phasePlacement));
+
+      if (squad.length === 0) {
+        container.innerHTML = '<div class="empty-state">No players loaded.</div>';
+        return;
+      }
+
+      // For each slot, determine which players are eligible
+      // Show all players, but mark ineligible ones as disabled
+      const entries = squad.map(p => {
+        const used = usedIds.has(p.id);
+        const tired = (fatigue[p.id] || 1.0) < 1.0;
+
+        // Check eligibility for the active slot
+        let eligible = true;
+        if (activeSlot !== null && !used) {
+          eligible = isPlayerEligible(p, phase.slots[activeSlot]);
+        }
+
+        // Calculate chips if placed in active slot
+        let chips = 0;
+        if (activeSlot !== null) {
+          const fp = slotFieldPosition(phase.slots[activeSlot]);
+          chips = calculateChips(p, fp);
+        }
+
+        const fatigueMult = fatigue[p.id] !== undefined ? fatigue[p.id] : 1.0;
+        const displayChips = activeSlot !== null ? Math.round(chips * fatigueMult) : '';
+
+        return { player: p, used, eligible, chips: displayChips, tired };
+      });
+
+      // Sort: eligible first, then by chips desc, then used last
+      entries.sort((a, b) => {
+        if (a.used !== b.used) return a.used ? 1 : -1;
+        if (activeSlot !== null && a.eligible !== b.eligible) return a.eligible ? -1 : 1;
+        return (b.chips || 0) - (a.chips || 0);
+      });
+
+      container.innerHTML = entries.map(e => {
+        const cls = e.used ? 'disabled' : (activeSlot !== null && !e.eligible ? 'disabled' : '');
+        const tiredLabel = e.tired ? ' 💤' : '';
+        const chipLabel = e.chips !== '' ? `<span class="ap-chips">${e.chips}</span>` : '';
+        return `<div class="available-player ${cls}" onclick="placePlayer('${e.player.id}')" data-od-id="avail-${e.player.id}">
+          <span class="ap-pos">${e.player.position}</span>
+          <span class="ap-name">${e.player.name}${tiredLabel}</span>
+          ${chipLabel}
+        </div>`;
+      }).join('');
+    }
+
+    function renderFatigue() {
+      const container = document.getElementById('fatigue-list');
+      const used = squad.filter(p => fatigue[p.id] !== undefined && fatigue[p.id] < 1.0);
+      if (used.length === 0) {
+        container.innerHTML = '<div class="text-xs text-muted">All players fresh</div>';
+        return;
+      }
+      container.innerHTML = used.map(p => {
+        const level = fatigue[p.id];
+        const pct = Math.round(level * 100);
+        const cls = pct > 70 ? 'fresh' : pct > 40 ? 'tired' : 'exhausted';
+        return `<div class="fatigue-player">
+          <span style="min-width:70px">${p.name.split(' ').pop()}</span>
+          <div class="fatigue-bar"><div class="fatigue-fill ${cls}" style="width:${pct}%"></div></div>
+          <span>${pct}%</span>
+        </div>`;
+      }).join('');
+    }
+
+    function renderSynergyPreview() {
+      const container = document.getElementById('synergy-list');
+      // Show which phase-specific synergies could fire based on placed players
+      const placed = [];
+      for (const [idx, pid] of Object.entries(phasePlacement)) {
+        const player = squad.find(p => p.id === pid);
+        const slot = roundPhases[currentPhase].slots[parseInt(idx)];
+        if (player && slot) {
+          placed.push([player, slotFieldPosition(slot)]);
+        }
+      }
+
+      if (placed.length < 2) {
+        container.innerHTML = '<div class="text-xs text-muted">Place 2+ players to see synergies</div>';
+        return;
+      }
+
+      // Quick synergy check
+      const result = detectSynergies(placed, SYNERGIES);
+      const fired = new Set();
+      for (const pid of Object.keys(result)) {
+        if (pid === '__global__' || pid === '__carryover__') continue;
+        for (const name of (result[pid].fired_synergies || [])) {
+          fired.add(name.split(' (')[0]);
+        }
+      }
+
+      if (fired.size === 0) {
+        container.innerHTML = '<div class="text-xs text-muted">No synergies yet</div>';
+      } else {
+        container.innerHTML = [...fired].map(s =>
+          `<div class="synergy-item"><div class="synergy-dot potential"></div>${s}</div>`
+        ).join('');
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ACTIONS
+    // ═══════════════════════════════════════════════════════════════════
+
+    function selectSlot(index) {
+      activeSlot = index;
+      document.querySelectorAll('.pitch-slot').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.pitch-slot')[index]?.classList.add('active');
+      // Re-render available players with eligibility for this slot
+      renderAvailablePlayers(roundPhases[currentPhase]);
+    }
+
+    function placePlayer(playerId) {
+      if (activeSlot === null) return;
+      const usedIds = new Set(Object.values(phasePlacement));
+      if (usedIds.has(playerId)) return;
+
+      // Check eligibility
+      const player = squad.find(p => p.id === playerId);
+      const slot = roundPhases[currentPhase].slots[activeSlot];
+      if (!isPlayerEligible(player, slot)) return;
+
+      phasePlacement[activeSlot] = playerId;
+      activeSlot = null;
+
+      const banner = document.getElementById('instruction-banner');
+      if (banner) banner.style.display = 'none';
+
+      const phase = roundPhases[currentPhase];
+      renderPitch(phase);
+      renderSlotReqs(phase);
+      renderAvailablePlayers(phase);
+      renderSynergyPreview();
+
+      // Check if all slots filled
+      const allFilled = phase.slots.every((_, i) => phasePlacement[i] !== undefined);
+      document.getElementById('submit-btn').disabled = !allFilled;
+    }
+
+    function submitPhase() {
+      const phase = roundPhases[currentPhase];
+
+      // Build field: [(player, fieldPosition)]
+      const field = [];
+      for (const [idx, pid] of Object.entries(phasePlacement)) {
+        const player = squad.find(p => p.id === pid);
+        const slot = phase.slots[parseInt(idx)];
+        if (player) {
+          field.push([player, slotFieldPosition(slot)]);
+          // Apply fatigue
+          const penalty = persistentBuffs.fatigue_penalty || 0.7;
+          fatigue[player.id] = (fatigue[player.id] !== undefined ? fatigue[player.id] : 1.0) * penalty;
+        }
+      }
+
+      // Calculate real score using the game engine
+      const result = calculateRoundScore(field, SYNERGIES, formation, fatigue, carryover, persistentBuffs);
+
+      // Handle carryover
+      carryover = result.next_carryover || null;
+
+      roundScore += result.total;
+
+      // Store result for phase-result screen
+      try {
+        sessionStorage.setItem('phaseResult', JSON.stringify({
+          phase: { name: phase.name, weight: phase.weight, icon: phase.icon },
+          result: result,
+          round: currentRound,
+          phaseIdx: currentPhase,
+          roundScore: roundScore,
+          target: CAMPAIGN_MATCHES[currentMatch].targets[currentRound],
+        }));
+        sessionStorage.setItem('fatigue', JSON.stringify(fatigue));
+      } catch(e) { console.warn('[MATCH] sessionStorage failed:', e); }
+
+      window.location.href = 'phase-result.html';
+    }
+
+    function startNewRound() {
+      currentRound++;
+      currentPhase = 0;
+      roundScore = 0;
+      carryover = null;
+      fatigue = {}; // Fatigue resets each round
+      roundPhases = pickRandomPhases(6);
+      renderMatch();
+      renderPhase();
+    }
+
+    function endRound(won) {
+      roundWins[currentRound] = won;
+      if (won) roundsWon++;
+      else roundsLost++;
+
+      try {
+        sessionStorage.setItem('roundResult', JSON.stringify({
+          round: currentRound,
+          won: won,
+          score: roundScore,
+          target: CAMPAIGN_MATCHES[currentMatch].targets[currentRound],
+          roundsWon: roundsWon,
+          roundsLost: roundsLost,
+        }));
+      } catch(e) { console.warn('[MATCH] sessionStorage failed:', e); }
+
+      window.location.href = 'round-result.html';
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // INIT
+    // ═══════════════════════════════════════════════════════════════════
+
+    document.getElementById('submit-btn').addEventListener('click', function(e) {
+      e.preventDefault();
+      submitPhase();
+    });
+
+    loadState();
+    roundWins = [false, false, false];
+    renderMatch();
+    renderPhase();
+  </script>
+</body>
+</html>

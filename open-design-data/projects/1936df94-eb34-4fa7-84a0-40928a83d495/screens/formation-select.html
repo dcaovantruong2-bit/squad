@@ -247,7 +247,7 @@
       if (!selectedFormation) return;
       const formation = FORMATIONS.find(f => f.id === selectedFormation);
       console.log('[FORM] Navigating to match.html with formation:', formation.name);
-      try { sessionStorage.setItem('formation', JSON.stringify(formation)); } catch(e) { console.warn('[FORM] sessionStorage failed:', e); }
+      try { localStorage.setItem('formation', JSON.stringify(formation)); } catch(e) { console.warn('[FORM] localStorage failed:', e); }
       window.location.href = 'match.html';
     }
 

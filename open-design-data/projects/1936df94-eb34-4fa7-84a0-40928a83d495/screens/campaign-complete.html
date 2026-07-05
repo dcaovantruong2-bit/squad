@@ -68,7 +68,7 @@
   </div>
 
   <script>
-    const campaign = JSON.parse(sessionStorage.getItem('campaign') || '{}');
+    const campaign = JSON.parse(localStorage.getItem('campaign') || '{}');
     const matches = campaign.matches || [];
     const totalPlayed = matches.length;
     const wins = matches.filter(m => m && m.won).length;
@@ -126,13 +126,13 @@
 
     function playAgain() {
       try {
-        sessionStorage.removeItem('squad');
-        sessionStorage.removeItem('formation');
-        sessionStorage.removeItem('fatigue');
-        sessionStorage.removeItem('matchState');
-        sessionStorage.removeItem('campaign');
-        sessionStorage.removeItem('phaseResult');
-        sessionStorage.removeItem('roundResult');
+        localStorage.removeItem('squad');
+        localStorage.removeItem('formation');
+        localStorage.removeItem('fatigue');
+        localStorage.removeItem('matchState');
+        localStorage.removeItem('campaign');
+        localStorage.removeItem('phaseResult');
+        localStorage.removeItem('roundResult');
       } catch(e) {}
       window.location.href = '../index.html';
     }

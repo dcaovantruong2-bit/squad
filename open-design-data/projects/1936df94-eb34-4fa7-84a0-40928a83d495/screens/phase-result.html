@@ -86,7 +86,7 @@
   </div>
 
   <script>
-    const data = JSON.parse(sessionStorage.getItem('phaseResult') || '{}');
+    const data = JSON.parse(localStorage.getItem('phaseResult') || '{}');
     const result = data.result || {};
     const phase = data.phase || {};
     const roundScore = data.roundScore || 0;
@@ -164,16 +164,28 @@
         // Round complete — go to round result
         const won = roundScore >= target;
         try {
-          sessionStorage.setItem('roundResult', JSON.stringify({
+          localStorage.setItem('roundResult', JSON.stringify({
             round: round,
             won: won,
             score: roundScore,
             target: target,
           }));
-        } catch(e) { console.warn('[PHASE] sessionStorage failed:', e); }
+        } catch(e) { console.warn('[PHASE] localStorage failed:', e); }
         window.location.href = 'round-result.html';
       } else {
-        // Next phase — back to match
+        // Next phase — save progress and go back to match
+        try {
+          localStorage.setItem('matchState', JSON.stringify({
+            roundScore: roundScore,
+            phaseIdx: nextPhase,
+            round: data.round || 0,
+            roundsWon: data.roundsWon || 0,
+            roundsLost: data.roundsLost || 0,
+            roundWins: data.roundWins || [false,false,false],
+            fatigue: data.fatigue || {},
+            roundPhases: data.roundPhases || [],
+          }));
+        } catch(e) { console.warn('[PHASE] localStorage failed:', e); }
         window.location.href = 'match.html';
       }
     }

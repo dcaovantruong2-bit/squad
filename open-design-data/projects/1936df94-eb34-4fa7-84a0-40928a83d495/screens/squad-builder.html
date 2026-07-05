@@ -506,7 +506,7 @@
       confirmBtn.style.background = 'var(--success)';
       confirmBtn.style.boxShadow = '0 0 20px var(--success-glow)';
       confirmBtn.disabled = true;
-      try { sessionStorage.setItem('squad', JSON.stringify(selected)); } catch(e) { console.warn('[SQUAD] sessionStorage failed:', e); }
+      try { localStorage.setItem('squad', JSON.stringify(selected)); } catch(e) { console.warn('[SQUAD] localStorage failed:', e); }
       setTimeout(() => {
         console.log('[SQUAD] Navigating now...');
         window.location.href = './formation-select.html';

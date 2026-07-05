@@ -29,6 +29,20 @@
       "kind": "html",
       "contentPath": "0002-b4d6ac1c-e8a5-4bd3-a5aa-90f466f765d6.html",
       "promptSource": "message"
+    },
+    {
+      "id": "73c8aeda-64d8-4d98-9aee-52cb2f1c9625",
+      "fileName": "screens/campaign-complete.html",
+      "version": 3,
+      "label": "Version 3",
+      "createdAt": 1783285199750,
+      "source": "ai",
+      "prompt": "is it done",
+      "size": 7756,
+      "mime": "text/html; charset=utf-8",
+      "kind": "html",
+      "contentPath": "0003-73c8aeda-64d8-4d98-9aee-52cb2f1c9625.html",
+      "promptSource": "message"
     }
   ]
 }
