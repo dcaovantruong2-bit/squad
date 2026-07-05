@@ -15,6 +15,7 @@ from collections import Counter, defaultdict
 from src.cards import PlayerCard
 from src.loader import load_synergies
 from src.scoring import compute_synergy_potential
+from src.ui.console import cprint, clear_screen
 
 # ─── Constants ──────────────────────────────────────────────────────────
 BUDGET = 360
@@ -26,11 +27,25 @@ _ALL_SYNERGIES = load_synergies()
 # Role groups — flexible buckets instead of rigid per-position minimums.
 # You must fill each group with the specified minimum across any of its positions.
 ROLE_GROUPS = {
-    "GK": {"positions": ["GK"], "min": 1, "label": "1 GK"},
-    "Defenders": {"positions": ["CB", "FB"], "min": 3, "label": "3+ Defenders (CB/FB)"},
-    "Midfielders": {"positions": ["CM", "CDM", "CAM"], "min": 3, "label": "3+ Midfielders (CM/CDM/CAM)"},
-    "Attackers": {"positions": ["ST", "LW", "RW"], "min": 2, "label": "2+ Attackers (ST/LW/RW)"},
+    "GK": {"positions": ["GK"], "min": 1, "label": "Goalkeeper", "icon": "🧤"},
+    "Defenders": {"positions": ["CB", "FB"], "min": 3, "label": "Defenders (CB/FB)", "icon": "🛡️"},
+    "Midfielders": {"positions": ["CM", "CDM", "CAM"], "min": 3, "label": "Midfielders (CM/CDM/CAM)", "icon": "🔄"},
+    "Attackers": {"positions": ["ST", "LW", "RW"], "min": 2, "label": "Attackers (ST/LW/RW)", "icon": "⚽"},
 }
+
+# Position display config
+POSITION_CONFIG = {
+    "GK": {"icon": "🧤", "color": "cyan"},
+    "CB": {"icon": "🛡️", "color": "blue"},
+    "FB": {"icon": "↔️", "color": "cyan"},
+    "CDM": {"icon": "🔧", "color": "yellow"},
+    "CM": {"icon": "🔄", "color": "yellow"},
+    "CAM": {"icon": "🎯", "color": "yellow"},
+    "LW": {"icon": "⬅️", "color": "green"},
+    "RW": {"icon": "➡️", "color": "green"},
+    "ST": {"icon": "⚽", "color": "green"},
+}
+POSITION_ORDER = ["GK", "CB", "FB", "CDM", "CM", "CAM", "LW", "RW", "ST"]
 
 
 def check_minimums(squad: list[PlayerCard]) -> list[str]:
@@ -77,104 +92,104 @@ def build_squad(all_players: list[PlayerCard]) -> list[PlayerCard]:
     selected: list[PlayerCard] = []
     spent = 0
 
-    position_order = ["GK", "CB", "FB", "CDM", "CM", "CAM", "LW", "RW", "ST"]
+    def render_role_bar():
+        """Show role requirements as a compact progress bar."""
+        pos_counts = Counter(p.position for p in selected)
+        parts = []
+        for group_name, cfg in ROLE_GROUPS.items():
+            total = sum(pos_counts.get(pos, 0) for pos in cfg["positions"])
+            ok = total >= cfg["min"]
+            status = f"[green]{total}[/green]" if ok else f"[red]{total}[/red]"
+            parts.append(f"  {cfg['icon']} {cfg['icon'] if ok else ''} {cfg['label']}: {status}/{cfg['min']}")
+        cprint("  " + " │".join(parts), style="bold")
 
-    def pos_label(pos):
-        icons = {"GK": "🧤", "CB": "🛡️", "FB": "↔️", "CDM": "🔧", "CM": "🔄",
-                 "CAM": "🎯", "LW": "⬅️", "RW": "➡️", "ST": "⚽"}
-        return icons.get(pos, "")
-
-    def clear():
-        print("\033[2J\033[H", end="")
-
-    def show_screen():
-        clear()
-        # ── Header ──
+    def render_budget_bar():
+        """Show visual budget bar."""
         remaining = BUDGET - spent
-        bar_len = 20
+        bar_len = 25
         filled = int((spent / BUDGET) * bar_len) if BUDGET > 0 else 0
         bar = "█" * min(filled, bar_len) + "░" * (bar_len - min(filled, bar_len))
+        bar_color = "green" if remaining > BUDGET * 0.2 else "yellow" if remaining > BUDGET * 0.1 else "red"
+        cprint(f"\n  Budget: [bold {bar_color}]{spent:3d} / {BUDGET}[/bold {bar_color}]  [{bar_color}]{bar}[/{bar_color}]  [bold]{remaining:3d} left[/bold]", style="bold")
+        cprint(f"  Squad: [bold]{len(selected)}[/bold] players  (min {MIN_TOTAL} required)", style="dim")
 
-        print(f"  ╔═══════════════════════════════════════════════════╗")
-        print(f"  ║           ⚽  BUILD YOUR SQUAD  ⚽              ║")
-        print(f"  ╚═══════════════════════════════════════════════════╝")
-        print(f"\n  Budget: {spent:3d} / {BUDGET} spent  [{bar}]  {remaining:3d} remaining")
-        print(f"  Squad: {len(selected)} players  |  Minimum: {MIN_TOTAL} required")
-
-        # ── Available players ──
-        selected_ids = {p.id for p in selected}
-        # Pre-compute synergy potential for each player (considering current selected squad)
+    def render_selected_squad():
+        """Show currently selected players with synergy tags."""
+        cprint("\n  [bold underline]YOUR SQUAD[/bold underline]", style="bold green")
+        
+        if not selected:
+            cprint("    [dim](no players picked yet)[/dim]", style="dim")
+            return
+        
+        # Pre-compute synergy potential for the current selection
         syn_cache = {}
         if selected:
-            for p in by_pos.values():
-                for player in p:
+            for p in selected:
+                other = [s for s in selected if s.id != p.id]
+                syns = compute_synergy_potential(p, other + [p], _ALL_SYNERGIES)
+                syn_cache[p.id] = syns
+        
+        for i, p in enumerate(selected):
+            syn_tags = syn_cache.get(p.id, [])
+            syn_str = ""
+            if syn_tags:
+                shown = syn_tags[:2]
+                syn_str = f"  [yellow]⚡{', '.join(shown)}[/yellow]"
+                if len(syn_tags) > 2:
+                    syn_str += f"[yellow]+{len(syn_tags)-2}[/yellow]"
+            
+            cprint(f"    [{i:2d}] {p.name:22s}  [{p.position:3s}]  cost:[bold]{p.cost:2d}[/bold]{syn_str}", style="bold")
+
+    def render_available_players():
+        """Show available players grouped by position."""
+        cprint("\n  [bold underline]AVAILABLE PLAYERS[/bold underline]", style="bold cyan")
+        
+        selected_ids = {p.id for p in selected}
+        remaining = BUDGET - spent
+        
+        # Pre-compute synergy potential for each player
+        syn_cache = {}
+        if selected:
+            for players in by_pos.values():
+                for player in players:
                     if player.id not in selected_ids:
                         syns = compute_synergy_potential(player, selected + [player], _ALL_SYNERGIES)
                         syn_cache[player.id] = len(syns)
-        print(f"\n  [bold]AVAILABLE PLAYERS:[/bold]")
+        
+        # Flat index for picking
         idx = 0
-        for pos in position_order:
+        for pos in POSITION_ORDER:
             players = by_pos.get(pos, [])
-            if not players:
+            avail = [p for p in players if p.id not in selected_ids]
+            if not avail:
                 continue
-            print(f"\n  {pos_label(pos)} {pos}:")
-            for p in players:
-                if p.id in selected_ids:
-                    continue
-                cost_display = f"{'*CAN AFFORD' if remaining >= p.cost else '⬆ TOO EXPENSIVE':14s}"
+            
+            cfg = POSITION_CONFIG.get(pos, {"icon": "", "color": "dim"})
+            cprint(f"\n  {cfg['icon']} [bold underline]{pos}[/bold underline] ({len(avail)} available)", style=cfg['color'])
+            
+            for p in avail:
+                can_afford = remaining >= p.cost
+                cost_style = "bold green" if can_afford else "bold red"
+                cost_label = "CAN AFFORD" if can_afford else "TOO EXPENSIVE"
+                
                 syn_tag = ""
                 if p.id in syn_cache:
                     sc = syn_cache[p.id]
                     if sc > 0:
-                        syn_tag = f" ⚡{sc}"
-                if remaining >= p.cost:
-                    print(f"    [{idx:2d}] {p.name:22s}  cost:{p.cost:2d}  CAN AFFORD{syn_tag}  "
-                           f"ATK:{p.atk} PAC:{p.pac} PAS:{p.pas} DEF:{p.def_} SPC:{p.spc}")
-                else:
-                    print(f"    [{idx:2d}] {p.name:22s}  cost:{p.cost:2d}  TOO EXPENSIVE{syn_tag}  "
-                           f"ATK:{p.atk} PAC:{p.pac} PAS:{p.pas} DEF:{p.def_} SPC:{p.spc}")
+                        syn_tag = f"  [yellow]⚡{sc}[/yellow]"
+                
+                cprint(f"    [{idx:2d}] {p.name:22s}  cost:[{cost_style}]{p.cost:2d}[/{cost_style}]  {cost_label:12s}"
+                       f"  ATK:{p.atk} PAC:{p.pac} PAS:{p.pas} DEF:{p.def_} SPC:{p.spc}{syn_tag}",
+                       style="dim" if not can_afford else "")
                 idx += 1
+        
+        return idx
 
-        # ── Selected players ──
-        print(f"\n  [bold]YOUR SQUAD ({len(selected)} players, {spent} coins):[/bold]")
-        if selected:
-            for i, p in enumerate(selected):
-                print(f"    [{i:2d}] {p.name:22s}  [{p.position:3s}]  cost:{p.cost:2d}")
-        else:
-            print(f"    (no players picked yet)")
-
-        # ── Role-group requirements status ──
-        missing = check_minimums(selected)
-        if missing:
-            print(f"\n  ⚠️  Unmet requirements:")
-            for m in missing:
-                print(f"      ✗ {m}")
-        else:
-            print(f"\n  ✅  Minimum requirements met! Type 'done' to proceed.")
-
-        # Show a quick role-group summary
-        pos_counts = Counter(p.position for p in selected)
-        total_positions = sum(pos_counts.values())
-        if total_positions > 0:
-            print(f"\n  [bold]Role breakdown:[/bold]")
-            for group_name, cfg in ROLE_GROUPS.items():
-                total = sum(pos_counts.get(pos, 0) for pos in cfg["positions"])
-                ok = total >= cfg["min"]
-                icon = "✅" if ok else "⬜"
-                positions_str = "/".join(cfg["positions"])
-                print(f"    {icon} {cfg['label']:30s}  ({total}/{cfg['min']})  [{positions_str}]")
-
-        print(f"\n  Commands:")
-        print(f"    <number>  — Pick a player by their [number] above")
-        print(f"    drop <#>  — Remove a player from your squad by index")
-        print(f"    done      — Finalize squad and start match")
-        print(f"    help      — Show this help")
-
-    # Map flat index → player for picking
+    # Build flat index → player mapping
     def build_available_list():
         selected_ids = {p.id for p in selected}
         result = []
-        for pos in position_order:
+        for pos in POSITION_ORDER:
             for p in by_pos.get(pos, []):
                 if p.id not in selected_ids:
                     result.append(p)
@@ -182,8 +197,34 @@ def build_squad(all_players: list[PlayerCard]) -> list[PlayerCard]:
 
     # ── Main loop ──
     while True:
-        show_screen()
-
+        clear_screen()
+        
+        # ── Zone 1: Header + Budget ──
+        cprint("  ╔═══════════════════════════════════════════════════╗", style="bold cyan")
+        cprint("  ║           ⚽  BUILD YOUR SQUAD  ⚽              ║", style="bold cyan")
+        cprint("  ╚═══════════════════════════════════════════════════╝", style="bold cyan")
+        render_budget_bar()
+        
+        # ── Zone 1b: Role requirements ──
+        cprint("")
+        render_role_bar()
+        missing = check_minimums(selected)
+        if missing:
+            cprint("    [red]" + "  ✗ ".join([""] + missing) + "[/red]", style="red")
+        else:
+            cprint("    [green]✅ All minimum requirements met![/green]", style="green")
+        
+        # ── Zone 2: Your Squad ──
+        cprint("\n  " + "─" * 55, style="dim")
+        render_selected_squad()
+        
+        # ── Zone 3: Available Players ──
+        cprint("\n  " + "─" * 55, style="dim")
+        render_available_players()
+        
+        # ── Commands ──
+        cprint("\n  [dim]Commands: <number>=pick  |  drop <#>=remove  |  done=finalize  |  help[/dim]", style="dim")
+        
         try:
             cmd = input("\n  > ").strip().lower()
         except (EOFError, KeyboardInterrupt):
@@ -194,19 +235,19 @@ def build_squad(all_players: list[PlayerCard]) -> list[PlayerCard]:
             continue
 
         if cmd == "help":
-            input("\n  Press Enter to continue...")
+            input("  Press Enter to continue...")
             continue
 
         if cmd == "done":
             missing = check_minimums(selected)
             if missing:
-                print(f"\n  ❌  Can't start — missing:")
+                cprint("  [red]❌ Can't start — missing requirements:[/red]", style="red")
                 for m in missing:
-                    print(f"      ✗ {m}")
+                    cprint(f"      ✗ {m}", style="red")
                 input("  Press Enter to continue building...")
                 continue
             if len(selected) < MIN_TOTAL:
-                print(f"\n  ❌  Need at least {MIN_TOTAL} players (have {len(selected)}).")
+                cprint(f"  [red]❌ Need at least {MIN_TOTAL} players (have {len(selected)}).[/red]", style="red")
                 input("  Press Enter to continue building...")
                 continue
             break
@@ -217,13 +258,13 @@ def build_squad(all_players: list[PlayerCard]) -> list[PlayerCard]:
                 if 0 <= idx < len(selected):
                     dropped = selected.pop(idx)
                     spent -= dropped.cost
-                    print(f"\n  Dropped {dropped.name}. Refunded {dropped.cost} coins.")
+                    cprint(f"\n  [green]Dropped {dropped.name}. Refunded {dropped.cost} coins.[/green]", style="green")
                     input("  Press Enter...")
                 else:
-                    print(f"\n  Invalid squad index. Pick 0-{len(selected)-1}.")
+                    cprint(f"\n  [red]Invalid squad index. Pick 0-{len(selected)-1}.[/red]", style="red")
                     input("  Press Enter...")
             except (ValueError, IndexError):
-                print("\n  Usage: drop <squad_index>")
+                cprint("\n  [red]Usage: drop <squad_index>[/red]", style="red")
                 input("  Press Enter...")
             continue
 
@@ -231,7 +272,7 @@ def build_squad(all_players: list[PlayerCard]) -> list[PlayerCard]:
         try:
             pick_idx = int(cmd)
         except ValueError:
-            print(f"\n  Unknown command: '{cmd}'")
+            cprint(f"\n  [red]Unknown command: '{cmd}'[/red]", style="red")
             input("  Press Enter...")
             continue
 
@@ -240,26 +281,27 @@ def build_squad(all_players: list[PlayerCard]) -> list[PlayerCard]:
             player = available[pick_idx]
             remaining = BUDGET - spent
             if remaining < player.cost:
-                print(f"\n  ❌  {player.name} costs {player.cost}, you only have {remaining} coins.")
+                cprint(f"\n  [red]❌ {player.name} costs {player.cost}, you only have {remaining} coins.[/red]", style="red")
                 input("  Press Enter...")
                 continue
             selected.append(player)
             spent += player.cost
-            print(f"\n  ✅  Picked {player.name} [{player.position}] for {player.cost} coins.")
+            cprint(f"\n  [green]✅ Picked {player.name} [{player.position}] for {player.cost} coins.[/green]", style="green")
             input("  Press Enter...")
         else:
-            print(f"\n  Invalid number. Pick 0-{len(available)-1}.")
+            cprint(f"\n  [red]Invalid number. Pick 0-{len(available)-1}.[/red]", style="red")
             input("  Press Enter...")
 
     # ── Done ──
-    clear()
+    clear_screen()
     total = sum(p.cost for p in selected)
-    print(f"\n  ╔═══════════════════════════════════════════════════╗")
-    print(f"  ║           SQUAD FINALIZED                        ║")
-    print(f"  ╚═══════════════════════════════════════════════════╝")
-    print(f"\n  Your Squad ({len(selected)} players, {total} / {BUDGET} coins):")
-    print(f"\n{format_squad_report(selected)}")
-    print(f"\n  Remaining budget: {BUDGET - total} coins (unused)")
+    cprint("  ╔═══════════════════════════════════════════════════╗", style="bold cyan")
+    cprint("  ║           SQUAD FINALIZED                        ║", style="bold cyan")
+    cprint("  ╚═══════════════════════════════════════════════════╝", style="bold cyan")
+    cprint(f"\n  [bold]Your Squad ({len(selected)} players, {total} / {BUDGET} coins):[/bold]", style="bold")
+    cprint(f"\n{format_squad_report(selected)}", style="bold")
+    if BUDGET - total > 0:
+        cprint(f"\n  Remaining budget: {BUDGET - total} coins (unused)", style="dim")
     input("\n  Press Enter to continue...")
 
     return selected

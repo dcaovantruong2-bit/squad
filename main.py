@@ -19,34 +19,9 @@ from src.scoring import (detect_squad_synergies, calculate_chips,
                          compute_synergy_preview, calculate_round_score)
 
 
-# ─── Rich formatting (optional) ──────────────────────────────────────
-try:
-    from rich.console import Console
-    from rich.table import Table as RichTable
-    from rich.panel import Panel
-    from rich.text import Text
-    from rich import box
-    console = Console()
-    HAS_RICH = True
-except ImportError:
-    HAS_RICH = False
-
-# ─── UI Components ───────────────────────────────────────────────────
-from src.ui import ContextBar, PlayerCardView, SynergyBox
+from src.ui.console import cprint, clear_screen
 from src.ui.table import Table
-
-
-def cprint(text: str, style: str = "", end: str = "\n") -> None:
-    if HAS_RICH:
-        console.print(text, style=style, end=end)
-    else:
-        print(text, end=end)
-
-
-def clear_screen() -> None:
-    print("\033[2J\033[H", end="")
-
-
+from src.ui.synergy_box import SynergyBox
 # ─── Display Helpers ─────────────────────────────────────────────────
 
 def player_short(p, fatigue_mult: float = 1.0) -> str:
@@ -92,23 +67,53 @@ def show_squad_full(squad: list, fatigue: dict) -> None:
 def show_phase_header(phase, phase_idx: int, round_num: int, target: int,
                        round_score: int, round_won: int, round_lost: int,
                        carryover: dict | None = None) -> None:
-    """Show the current phase header."""
+    """Show the current phase header with context bar."""
     clear_screen()
+    
+    # Context bar at top
+    cprint("", style="")  # blank line
+    cprint(f"  [bold]R{round_num}/3[/bold]  │  "
+           f"Score: [bold cyan]{round_score}/{target}[/bold cyan]  │  "
+           f"[bold]{round_won}-{round_lost}[/bold]  │  "
+           f"Phase {phase_idx+1}/6", style="bold")
+    cprint("  " + "─" * 55, style="dim")
+    
+    # Phase info
     weight_icons = {"DEF": "🛡️", "PAS": "🔄", "PAC": "⚡", "ATK": "🎯", "SPC": "✨"}
     icon = weight_icons.get(phase.weight, "⚽")
     slots_str = " → ".join(slot_label(s) for s in phase.slots)
-    cprint(f"\n  ╔═══════════════════════════════════════════════════╗", style="bold cyan")
-    cprint(f"  ║  ROUND {round_num}/3  —  Phase {phase_idx+1}/6                ║", style="bold cyan")
-    cprint(f"  ║  Target: {target:4d}  |  Score: {round_score:4d}  ({round_won}-{round_lost})  ║", style="bold cyan")
-    cprint(f"  ╚═══════════════════════════════════════════════════╝", style="bold cyan")
-    cprint(f"\n  {icon} [bold]{phase.name}[/bold] — {phase.description}", style="bold yellow")
-    cprint(f"  Slots needed: {slots_str}  |  Cards: {len(phase.slots)}", style="dim")
+    
+    cprint(f"\n  {icon} [bold]{phase.name}[/bold]", style="bold yellow")
+    cprint(f"  [dim]{phase.description}[/dim]", style="dim")
+    cprint(f"  Slots: {slots_str}  │  Cards: {len(phase.slots)}", style="dim")
+    
     # Show carryover bonus from previous phase
     if carryover:
         bonus = carryover.get("add_chips", 0)
         source = carryover.get("source_synergy", "Previous phase")
         cprint(f"\n  ⚡ [bold yellow]CARRYOVER:[/bold yellow] {source} — "
                f"first attacker gets +{bonus} chips!", style="bold yellow")
+
+
+def show_pitch(field: list[tuple], phase_slots: list, fatigue: dict) -> None:
+    """Show the pitch with slot status (filled/empty)."""
+    cprint("\n  [bold]─── ON THE PITCH ───[/bold]", style="bold green")
+    
+    for i, slot_def in enumerate(phase_slots):
+        slot_lbl = slot_label(slot_def)
+        
+        # Check if this slot is filled
+        if i < len(field):
+            player, pos = field[i]
+            chips = calculate_chips(player, pos)
+            fm = fatigue.get(player.id, 1.0)
+            fat_str = f" {int(fm*100)}%" if fm < 1.0 else " FRESH"
+            cprint(f"  │  Slot {i+1}: {slot_lbl:20s} │  [green]✅[/green] {player.name:18s}  "
+                   f"{chips:3d} chips{fat_str}", style="green")
+        else:
+            cprint(f"  │  Slot {i+1}: {slot_lbl:20s} │  [dim][EMPTY][/dim]", style="dim")
+    
+    cprint("  " + "─" * 60, style="dim")
 
 
 def show_field(field: list[tuple], fatigue: dict) -> None:
@@ -177,12 +182,61 @@ def show_phase_result(result: dict) -> None:
         )
 
 
-def show_round_result(score: int, target: int, won: bool) -> None:
-    """Show round result."""
+def show_round_result(score: int, target: int, won: bool,
+                      phase_results: list | None = None,
+                      match_state=None) -> None:
+    """Show round result with phase breakdown bar chart and fatigue summary."""
     if won:
-        cprint(f"\n  🎉 [bold green]ROUND WON![/bold green] {score} / {target}", style="bold green")
+        cprint(f"\n  🎉 [bold green]ROUND WON![/bold green]  {score} / {target}", style="bold green")
     else:
-        cprint(f"\n  💔 [bold red]ROUND LOST[/bold red] {score} / {target}", style="bold red")
+        cprint(f"\n  💔 [bold red]ROUND LOST[/bold red]  {score} / {target}", style="bold red")
+    
+    # Phase breakdown bars
+    if phase_results:
+        cprint(f"\n  [bold]Phase Breakdown:[/bold]", style="bold")
+        max_phase = max((pr.get("total", 0) for pr in phase_results), default=1)
+        if max_phase == 0:
+            max_phase = 1
+        bar_max = 20
+        
+        for i, pr in enumerate(phase_results):
+            phase_total = pr.get("total", 0)
+            bar_filled = int((phase_total / max_phase) * bar_max) if max_phase > 0 else 0
+            bar = "█" * min(bar_filled, bar_max) + "░" * (bar_max - min(bar_filled, bar_max))
+            
+            # Count synergies for this phase
+            syn_count = len([s for s in pr.get("fired_synergies", [])
+                           if "(persistent)" not in s])
+            syn_tag = f"  ⚡×{syn_count}" if syn_count > 0 else ""
+            
+            cprint(f"    {i+1}. {pr.get('phase_name', 'Unknown'):15s}  "
+                   f"{phase_total:4d} pts  {bar}{syn_tag}",
+                   style="bold green" if syn_count > 0 else "dim")
+    
+    cprint(f"    {'─' * 50}", style="dim")
+    cprint(f"    {'Total':15s}  {score:4d} / {target}", style="bold")
+    
+    # Fatigue summary (if match state provided)
+    if match_state and hasattr(match_state, 'fatigue') and match_state.fatigue:
+        fresh = sum(1 for fm in match_state.fatigue.values() if fm >= 1.0)
+        tired = sum(1 for fm in match_state.fatigue.values() if 0.7 <= fm < 1.0)
+        exhausted = sum(1 for fm in match_state.fatigue.values() if fm < 0.7)
+        
+        if fresh + tired + exhausted > 0:
+            cprint(f"\n  [bold]Squad Fatigue:[/bold]", style="bold")
+            parts = []
+            if fresh > 0:
+                parts.append(f"[green]{fresh} fresh[/green]")
+            if tired > 0:
+                parts.append(f"[yellow]{tired} at 70%[/yellow]")
+            if exhausted > 0:
+                parts.append(f"[red]{exhausted} below 50%[/red]")
+            cprint(f"    {', '.join(parts)}")
+    
+    # Match record
+    if match_state:
+        cprint(f"\n  Match: [bold]{match_state.rounds_won}-{match_state.rounds_lost}[/bold] "
+               f"(need 2 to win)", style="bold")
 
 
 # ─── Phase Placement UI ───────────────────────────────────────────────
@@ -296,13 +350,13 @@ def run_phase_placement(match: MatchState) -> None:
     if phase is None:
         return
 
-    for slot_def in phase.slots:
-        # Show current state
+    for slot_idx, slot_def in enumerate(phase.slots):
+        # Show current state with pitch view
         show_phase_header(phase, match.current_phase_idx,
                           match.current_round + 1, match.current_target,
                           match.round_score, match.rounds_won, match.rounds_lost,
                           carryover=match.carryover)
-        show_field(match.field, match.fatigue)
+        show_pitch(match.field, phase.slots, match.fatigue)
 
         # If this slot already filled (shouldn't happen but guard)
         if len(match.field) >= phase.max_cards:
@@ -313,6 +367,9 @@ def run_phase_placement(match: MatchState) -> None:
         placed_ids = {p.id for p, _ in match.field}
         journeyman_avail = bool(match.persistent_buffs and match.persistent_buffs.get("journeyman_available"))
         journeyman_ref = [match.journeyman_used]
+        
+        cprint(f"\n  [bold]Fill Slot {slot_idx+1}: {slot_label(slot_def)}[/bold]", style="bold")
+        
         player = select_slot_player(match.squad, match.fatigue, slot_def, placed_ids,
                                      match.field, match.synergies,
                                      carryover=match.carryover,
@@ -340,45 +397,97 @@ def run_phase_placement(match: MatchState) -> None:
         # Recalculate phase score with current field to show running total
         preview = calculate_round_score(match.field, match.synergies, fatigue=match.fatigue)
         preview_total = preview["total"]
-        cprint(f"\n  [bold]→ Phase running: {preview_total} pts[/bold]"
-               f"  (from {len(match.field)}/{phase.max_cards} cards)",
+        
+        cprint(f"\n  [bold]→ Running total: {preview_total} pts[/bold]"
+               f"  ({len(match.field)}/{phase.max_cards} cards placed)",
                style="bold cyan")
+        
         if preview.get("fired_synergies"):
-            cprint(f"    ⚡ {', '.join(preview['fired_synergies'])} active",
-                   style="yellow")
-        # Show per-player breakdown inline
-        for entry in preview["breakdown"]:
-            fatigue_str = f" ×{entry['fatigue']}" if entry['fatigue'] < 1.0 else ""
-            cprint(f"      {entry['player']:18s} [{entry['position']:3s}] "
-                   f"→ {entry['subtotal']:4d} pts"
-                   f"  (base {entry['base_chips']}{' +'+str(entry['add_chips']) if entry['add_chips'] else ''}"
-                   f" ×{entry['multiply']}{fatigue_str})",
-                   style="dim")
+            phase_syns = [s for s in preview["fired_synergies"] if "(persistent)" not in s]
+            if phase_syns:
+                cprint(f"    ⚡ {', '.join(phase_syns)} active", style="yellow")
 
         # Wait for player to acknowledge before next slot
         if len(match.field) < phase.max_cards:
-            cprint("  Press Enter to continue filling...", style="dim")
+            cprint("  Press Enter for next slot...", style="dim")
             input()
 
-    # Phase placement done
+    # Phase placement done — show final pitch
     show_phase_header(phase, match.current_phase_idx,
                       match.current_round + 1, match.current_target,
                       match.round_score, match.rounds_won, match.rounds_lost,
                       carryover=match.carryover)
-    show_field(match.field, match.fatigue)
-    cprint("\n  [bold green]Phase field set![/bold green]", style="bold")
+    show_pitch(match.field, phase.slots, match.fatigue)
+    cprint("\n  [bold green]✓ Phase field set![/bold green]", style="bold")
     input("  Press Enter to score this phase...")
 
 
 # ─── Formation Selection ─────────────────────────────────────────────
 
+# ASCII pitch diagrams for each formation
+FORMATION_PITCHES = {
+    "4-4-2": [
+        "           ST      ST           ",
+        "                                 ",
+        "        CM      CM              ",
+        "                                 ",
+        "   FB                      FB   ",
+        "        CB      CB              ",
+        "             GK                 ",
+    ],
+    "4-3-3": [
+        "              ST                ",
+        "    LW                  RW      ",
+        "        CM    CM    CM          ",
+        "                                 ",
+        "   FB                      FB   ",
+        "        CB      CB              ",
+        "             GK                 ",
+    ],
+    "5-3-2": [
+        "           ST      ST           ",
+        "                                 ",
+        "        CM      CM              ",
+        "            CDM                 ",
+        "                                 ",
+        "   CB  CB  CB  CB  CB           ",
+        "             GK                 ",
+    ],
+    "3-4-3": [
+        "           ST      ST           ",
+        "    LW                  RW      ",
+        "        CM      CM              ",
+        "                                 ",
+        "   FB                      FB   ",
+        "        CB      CB              ",
+        "             GK                 ",
+    ],
+    "4-2-3-1": [
+        "              ST                ",
+        "    LW      CAM      RW         ",
+        "                                 ",
+        "        CM      CM              ",
+        "                                 ",
+        "   FB                      FB   ",
+        "        CB      CB              ",
+        "             GK                 ",
+    ],
+    "4-5-1": [
+        "              ST                ",
+        "    LW                  RW      ",
+        "    CM    CM    CM    CM       ",
+        "            CDM                 ",
+        "                                 ",
+        "   FB                      FB   ",
+        "        CB      CB              ",
+        "             GK                 ",
+    ],
+}
+
+
 def select_formation(squad) -> object:
     """Let the player pick a formation. Shows fit score based on squad."""
     formations = get_all_formations()
-
-    cprint("\n  ╔═══════════════════════════════════════════════════╗", style="bold cyan")
-    cprint(  "  ║         Choose Your Formation                    ║", style="bold cyan")
-    cprint(  "  ╚═══════════════════════════════════════════════════╝", style="bold cyan")
 
     # Pre-compute fit scores
     def formation_fit(f, squad):
@@ -477,6 +586,7 @@ def select_formation(squad) -> object:
 
         return score, reasons
 
+    # Score all formations
     scored = []
     for i, f in enumerate(formations):
         score, reasons = formation_fit(f, squad)
@@ -485,6 +595,35 @@ def select_formation(squad) -> object:
     scored.sort(key=lambda x: -x[0])
     best_score = scored[0][0] if scored else 0
 
+    # Show the recommended formation with pitch diagram
+    clear_screen()
+    cprint("  ╔═══════════════════════════════════════════════════╗", style="bold cyan")
+    cprint(  "  ║         Choose Your Formation                    ║", style="bold cyan")
+    cprint(  "  ╚═══════════════════════════════════════════════════╝", style="bold cyan")
+
+    # Find the best formation and show its pitch
+    best_f = scored[0][2] if scored else formations[0]
+    best_reasons = scored[0][3] if scored else []
+    
+    # ⭐ RECOMMENDED
+    if best_score > 0:
+        cprint(f"\n  [bold yellow]⭐ RECOMMENDED: {best_f.name}[/bold yellow]"
+               f"  (fit: [bold]{best_score}[/bold])", style="bold yellow")
+        
+        # ASCII pitch diagram
+        pitch_lines = FORMATION_PITCHES.get(best_f.id, [])
+        if pitch_lines:
+            cprint("  [dim]┌──────────────────────────────────────┐[/dim]", style="dim")
+            for line in pitch_lines:
+                cprint(f"  [dim]│[/dim]{line}[dim]│[/dim]", style="dim")
+            cprint("  [dim]└──────────────────────────────────────┘[/dim]", style="dim")
+        
+        if best_reasons:
+            cprint(f"      [cyan]📊 {', '.join(best_reasons[:3])}[/cyan]", style="cyan")
+    else:
+        cprint("\n  [dim]No formation has a strong fit for your squad.[/dim]", style="dim")
+
+    # List all formations
     for score, i, f, reasons in scored:
         is_best = score > 0 and score == best_score
         star = " ⭐" if is_best else ""
@@ -501,8 +640,10 @@ def select_formation(squad) -> object:
         cprint(desc, style="bold yellow" if is_best else "yellow")
         cprint(f"      {f.description}", style="dim")
         if score > 0 and reasons:
-            cprint(f"      📊 Fit: {', '.join(reasons[:3])}", style="cyan")
-    cprint(f"\n      ⭐ = recommended for your squad", style="dim")
+            cprint(f"      [cyan]📊 Fit: {', '.join(reasons[:3])}[/cyan]", style="cyan")
+    
+    cprint(f"\n      [dim]⭐ = recommended for your squad[/dim]", style="dim")
+    cprint("      [dim]0 = default choice[/dim]", style="dim")
 
     try:
         choice = input("\n  Pick formation # (default 0): ").strip()
@@ -531,11 +672,29 @@ def play_match(match: MatchState) -> bool:
         match.current_round = round_num
         start_round(match)
 
-        # Show this round's 5 random phase synergies
+        # Show this round's 5 random phase synergies as a tactical briefing
         if match.synergies:
-            cprint(f"\n  [bold]Round {round_num+1} Synergies:[/bold]", style="bold yellow")
+            clear_screen()
+            cprint("\n  [bold]📋 ROUND SYNERGIES[/bold]", style="bold yellow")
+            cprint(f"  [dim]Round {round_num+1} / 3 — Target: {match.current_target} — "
+                   f"Score: {match.round_score}[/dim]", style="dim")
+            cprint("  " + "─" * 55, style="dim")
+            
             for s in match.synergies:
-                cprint(f"    ✦ {s.name} [{s.rarity}] — {s.description}", style="yellow")
+                rarity_color = {
+                    "Common": "dim",
+                    "Uncommon": "cyan",
+                    "Rare": "yellow",
+                    "Epic": "magenta",
+                    "Legendary": "bold green",
+                }.get(s.rarity, "dim")
+                
+                cprint(f"    ✦ [bold]{s.name:22s}[/bold]  [{rarity_color}]{s.rarity:10s}[/{rarity_color}]"
+                       f"  [dim]{s.description}[/dim]", style="yellow")
+            
+            cprint(f"\n  [dim]These synergies apply to phases where conditions are met.[/dim]", style="dim")
+            cprint(f"  [dim]Build your phase selections around them![/dim]", style="dim")
+            input("\n  Press Enter to begin Round...")
 
         # Run 6 phases
         for phase_idx in range(6):
@@ -565,11 +724,9 @@ def play_match(match: MatchState) -> bool:
         # Check round result
         won = check_round(match)
         clear_screen()
-        show_round_result(match.round_score, match.current_target, won)
-        cprint(f"\n  Round phases:")
-        for i, pr in enumerate(match.phase_results):
-            cprint(f"    Phase {i+1}: {pr['phase_name']:15s} → {pr['total']:4d} pts")
-        cprint(f"    {'─'*30}\n    {'Total':15s} → {match.round_score:4d} / {match.current_target}")
+        show_round_result(match.round_score, match.current_target, won,
+                          phase_results=match.phase_results,
+                          match_state=match)
 
         if not match.is_match_over:
             cprint(f"\n  Match: {match.rounds_won}-{match.rounds_lost}", style="bold")
@@ -590,6 +747,15 @@ def play_match(match: MatchState) -> bool:
 
 
 # ─── Campaign Display ────────────────────────────────────────────────
+
+# Scouting reports — color commentary for each opponent
+OPPONENT_SCOUTING = {
+    "Wolves FC": "\"Relegation battlers. Forwards can't finish — exploit set pieces.\"",
+    "Inter Your-Nan": "\"Defensively organised. Test them early, they tire in R3.\"",
+    "Borussia Mönchen-flapjack": "\"Midfield maestros. Match their PAS output or get overrun.\"",
+    "Man City Oilers": "\"Possession monsters. Need high PAC phases to break their press.\"",
+    "Galácticos FC": "\"No weaknesses. Perfect execution required across all 6 phases.\"",
+}
 
 def _show_campaign_bracket(current_match: int) -> None:
     """Show a compact bracket showing campaign progress.
@@ -692,6 +858,10 @@ def _run_game():
         cprint(f"  ╚═══════════════════════════════════════════════════╝", style="bold cyan")
 
         cprint(f"\n  🆚 [bold]{match_def['opponent']}[/bold]", style="bold red")
+        # Scouting report
+        scouting = OPPONENT_SCOUTING.get(match_def["opponent"], "")
+        if scouting:
+            cprint(f"     [cyan]🔍 {scouting}[/cyan]", style="cyan")
         cprint(f"  Targets: R1={match.round_targets[0]}  "
                f"R2={match.round_targets[1]}  "
                f"R3={match.round_targets[2]}", style="dim")

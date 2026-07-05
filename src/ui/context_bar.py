@@ -1,6 +1,6 @@
 """Persistent context bar — always-visible game state at top of screen."""
 
-from main import cprint
+from src.ui.console import cprint
 
 
 class ContextBar:

@@ -1,6 +1,6 @@
 """Compact player card display with fatigue and synergy info."""
 
-from main import cprint
+from src.ui.console import cprint
 from src.ui.colors import color_for_fatigue, fatigue_label
 from src.scoring import calculate_chips
 

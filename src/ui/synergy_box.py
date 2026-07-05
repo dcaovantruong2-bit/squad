@@ -1,6 +1,6 @@
 """Synergy info panel — shows fired synergies with contributors and rules."""
 
-from main import cprint
+from src.ui.console import cprint
 
 
 class SynergyBox:
