@@ -1586,23 +1586,108 @@ function confirmSquad() {
 // ─── FORMATION SELECT ───
 let selectedFormationIdx = 0;
 
+function formationFit(f, squad) {
+    let score = 0;
+    const reasons = [];
+    const posCounts = {};
+    for (const p of squad) posCounts[p.position] = (posCounts[p.position]||0) + 1;
+    
+    // Position bonus utilization
+    for (const [pos, bonus] of Object.entries(f.positionBonus)) {
+        const count = posCounts[pos] || 0;
+        if (bonus > 0 && count > 0) {
+            score += count * count * 2;
+            reasons.push(`${count}×${pos} get +${bonus}`);
+        } else if (bonus < 0 && count > 0) {
+            score -= count * count * 2;
+            reasons.push(`⚠ ${count}×${pos} penalised ${bonus}`);
+        }
+    }
+    
+    // Squad composition scoring
+    const cms = squad.filter(p => p.position === 'CM');
+    const pas8Cms = cms.filter(p => p.pas >= 8);
+    const wingers = squad.filter(p => ['LW','RW'].includes(p.position));
+    const paceyWingers = wingers.filter(p => p.traits.includes('pacey'));
+    const sts = squad.filter(p => p.position === 'ST');
+    const fbs = squad.filter(p => p.position === 'FB');
+    const cbs = squad.filter(p => p.position === 'CB');
+    const cams = squad.filter(p => p.position === 'CAM');
+    const cdms = squad.filter(p => p.position === 'CDM');
+    
+    if (f.id === '4-4-2') {
+        if (sts.length >= 2) { score += Math.min(sts.length,4) * Math.min(sts.length,4) * 3; reasons.push(`${sts.length} STs`); }
+        if (sts.some(p => p.traits.includes('physical'))) { score += 15; reasons.push('Physical ST → Big Man'); }
+    } else if (f.id === '4-3-3') {
+        if (pas8Cms.length >= 3) { score += 30; reasons.push(`${pas8Cms.length} CMs PAS8+ → Tiki-Taka`); }
+        if (paceyWingers.length >= 1 || wingers.some(p => p.traits.includes('clinical'))) { score += 20; reasons.push('Wingers → Cut Inside'); }
+    } else if (f.id === '5-3-2') {
+        if (cbs.length >= 3) { score += 25; reasons.push(`${cbs.length} CBs → Defensive Shield`); }
+        if (sts.length >= 2) { score += 15; reasons.push(`${sts.length} STs`); }
+    } else if (f.id === '3-4-3') {
+        if (wingers.length >= 2) { score += 25; reasons.push(`${wingers.length} wingers`); }
+        if (fbs.some(p => p.traits.includes('pacey'))) { score += 10; reasons.push('Pacey FB → Overlap'); }
+        if (paceyWingers.length >= 1) { score += 15; reasons.push('Pacey wingers → Cut Inside'); }
+        score += 15; // High-risk bonus
+    } else if (f.id === '4-2-3-1') {
+        if (cams.length >= 1) { score += 30; reasons.push(`${cams.length} CAMs → No.10 role`); }
+        if (pas8Cms.length >= 2) { score += 20; reasons.push(`${pas8Cms.length} CMs PAS8+ → Double pivot`); }
+    } else if (f.id === '4-5-1') {
+        if (cdms.length >= 1) { score += 20; reasons.push(`${cdms.length} CDMs → Screen`); }
+        if (paceyWingers.length >= 2) { score += 25; reasons.push(`${paceyWingers.length} pacey wingers → Counter`); }
+    }
+    
+    return { score, reasons };
+}
+
 function renderFormationSelect() {
     selectedFormationIdx = 0;
+    const squad = state.selectedSquad;
+    
+    // Score all formations
+    const scored = FORMATIONS.map((f, i) => {
+        const fit = formationFit(f, squad);
+        return { ...fit, formation: f, index: i };
+    }).sort((a, b) => b.score - a.score);
+    
+    const bestScore = scored.length ? scored[0].score : 0;
+    
     let html = '';
-    FORMATIONS.forEach((f, i) => {
-        const bonusHtml = Object.entries(f.positionBonus).map(([pos,b]) =>
-            `<span class="formation-bonus ${b>0?'positive':'negative'}">${pos} ${b>0?'+':''}${b}</span>`
-        ).join('');
-        
-        html += `<div class="formation-card ${i===0?'selected':''}" id="fcard-${i}" onclick="selectFormation(${i})">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span class="fname">${f.name}</span>
-                <span style="color:var(--green);font-size:14px;display:${i===0?'block':'none'};" id="fcheck-${i}">✓</span>
+    
+    // Recommendation header
+    if (bestScore > 0) {
+        html += `<div class="panel panel-bright" style="border-color:var(--yellow);background:rgba(255,214,0,0.05);margin-bottom:12px;">
+            <div style="font-size:11px;font-weight:700;color:var(--yellow);letter-spacing:1px;">⭐ RECOMMENDED</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+                <span style="font-size:16px;font-weight:900;color:var(--text-bright);">${scored[0].formation.name}</span>
+                <span style="font-size:14px;font-weight:700;color:var(--green);">fit: ${scored[0].score}</span>
             </div>
-            <div class="fdesc">${f.desc}</div>
-            ${bonusHtml ? `<div class="formation-bonuses">${bonusHtml}</div>` : ''}
+            <div style="font-size:10px;color:var(--cyan);margin-top:4px;">📊 ${scored[0].reasons.slice(0,2).join(' | ')}</div>
+        </div>`;
+    }
+    
+    // All formations
+    scored.forEach((s, rank) => {
+    html += `<div class="formation-card ${rank===0?'selected':''}" id="fcard-${s.index}" onclick="selectFormation(${s.index})">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span class="fname">${s.formation.name}</span>
+                        <span style="color:var(--green);font-size:14px;display:${rank===0?'block':'none'};" id="fcheck-${s.index}">✓</span>
+                    </div>
+                    <div class="fdesc" style="margin-top:2px;">${s.formation.desc}</div>
+                </div>
+                <div style="text-align:right;">
+                    <span style="font-size:16px;font-weight:700;color:${s.score > 0 ? 'var(--green)' : 'var(--text-dim)'};">${s.score}</span>
+                </div>
+            </div>
+            ${s.score > 0 && s.reasons.length ? `<div style="font-size:9px;color:var(--cyan);margin-top:4px;">📊 ${s.reasons.slice(0,2).join(' • ')}</div>` : ''}
+            ${Object.keys(s.formation.positionBonus).length ? `<div class="formation-bonuses">${Object.entries(s.formation.positionBonus).map(([pos,b]) =>
+                `<span class="formation-bonus ${b>0?'positive':'negative'}">${pos} ${b>0?'+':''}${b}</span>`
+            ).join('')}</div>` : ''}
         </div>`;
     });
+    
     document.getElementById('formation-list').innerHTML = html;
 }
 
@@ -1707,6 +1792,27 @@ function renderRoundStart() {
             </div>`;
         }
         html += `<div class="fs-10 text-dim mt-8 text-center">Build your phase selections around these synergies!</div>`;
+    }
+    
+    // Persistent synergies
+    const pBuffs = m.persistentBuffs || {};
+    const pFired = pBuffs.fired_synergies || [];
+    if (pFired.length) {
+        html += `<div class="divider"></div>
+            <div class="fs-10 fw-700 text-magenta mb-8">🏷️ PERSISTENT SYNERGIES</div>`;
+        for (const name of pFired) {
+            const syn = SYNERGIES.find(s => s.name === name);
+            html += `<div class="persistent-syn">
+                <span class="syn-icon">✦</span>
+                <div>
+                    <div class="syn-name">${name}</div>
+                    <div class="syn-desc">${syn ? syn.desc : ''}</div>
+                </div>
+            </div>`;
+        }
+        if (pBuffs.fatigue_penalty && pBuffs.fatigue_penalty !== 0.7) {
+            html += `<div class="fs-10 text-dim mt-4">Fatigue penalty: ×${pBuffs.fatigue_penalty} (instead of ×0.7)</div>`;
+        }
     }
     
     html += `</div>`;
@@ -1829,11 +1935,17 @@ function renderPhasePlacement() {
         }
         
         for (const { index, slot } of z.slots) {
-            const filled = index < m.field.length;
-            const isActive = index === m.field.length;
-            const [player, pos] = filled ? m.field[index] : [null, null];
+            const filled = index < m.field.length && m.field[index] !== null;
+            const skipped = index < m.field.length && m.field[index] === null;
+            const isActive = index === m.field.length && !skipped;
+            const [player, pos] = (filled && m.field[index]) ? m.field[index] : [null, null];
             
-            if (filled) {
+            if (skipped) {
+                contentHtml += `<div style="flex:1;min-width:80px;padding:8px;background:rgba(255,23,68,0.05);border:1px dashed var(--red);border-radius:2px;opacity:0.6;">
+                    <div style="font-size:10px;font-weight:700;color:var(--text-dim);text-decoration:line-through;">${slotFieldPos(null, slot)}</div>
+                    <div style="font-size:11px;color:var(--red);margin-top:2px;">SKIPPED</div>
+                </div>`;
+            } else if (filled) {
                 const chips = calcChips(player, pos);
                 const fat = m.fatigue[player.id] || 1;
                 const fatCls = fat >= 1 ? 'fatigue-fresh' : fat >= 0.7 ? 'fatigue-tired' : 'fatigue-exhausted';
@@ -1868,6 +1980,7 @@ function renderPhasePlacement() {
     
     // ─── RUNNING TOTAL ───
     const allFilled = m.field.length >= phase.slots.length;
+    const hasActiveSlots = m.field.length < phase.slots.length;
     contentHtml += `<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding:8px 0;border-top:1px solid var(--border);">
         <span style="font-size:11px;color:var(--text-dim);">Running total</span>
         <span style="font-size:16px;font-weight:900;color:var(--green);">${m.roundScore} / ${m.roundTargets[m.currentRound]}</span>
@@ -1891,8 +2004,12 @@ function renderPhasePlacement() {
     // Slot progress dots
     contentHtml += `<div style="display:flex;justify-content:center;gap:6px;margin-top:4px;">`;
     for (let i = 0; i < phase.slots.length; i++) {
-        const done = i < m.field.length;
-        contentHtml += `<div style="width:8px;height:8px;border-radius:50%;background:${done?'var(--green)':i===m.field.length?'var(--yellow)':'var(--border)'};${i===m.field.length?'box-shadow:0 0 6px var(--yellow);':''}"></div>`;
+        const done = i < m.field.length && m.field[i] !== null;
+        const skipped = i < m.field.length && m.field[i] === null;
+        const current = i === m.field.length;
+        contentHtml += `<div style="width:8px;height:8px;border-radius:50%;
+            background:${done?'var(--green)':skipped?'var(--red)':current?'var(--yellow)':'var(--border)'};
+            ${current?'box-shadow:0 0 6px var(--yellow);':''}"></div>`;
     }
     contentHtml += `</div>`;
     
@@ -1902,8 +2019,13 @@ function renderPhasePlacement() {
     // Footer
     let footerHtml = '';
     if (!allFilled) {
+        const currentSlotIdx = m.field.length;
+        const currentSlot = currentSlotIdx < phase.slots.length ? phase.slots[currentSlotIdx] : null;
+        const usedIds = new Set((m.field.filter(f => f !== null) || []).map(f => f[0].id));
+        const hasEligible = currentSlot ? m.squad.some(p => !usedIds.has(p.id) && isEligible(p, currentSlot)) : false;
+        
         footerHtml += `<button class="btn btn-primary" onclick="openPlayerPicker()">SELECT PLAYER</button>`;
-        footerHtml += `<button class="btn btn-secondary mt-4" onclick="skipSlot()" style="display:none;">SKIP</button>`;
+        footerHtml += `<button class="btn btn-secondary mt-4" onclick="skipSlot()" style="margin-top:6px;">SKIP SLOT</button>`;
     } else {
         footerHtml += `<button class="btn btn-primary glow" onclick="resolvePhase()">RESOLVE PHASE</button>`;
     }
@@ -1964,6 +2086,14 @@ function openPlayerPicker() {
     
     document.getElementById('picker-player-list').innerHTML = html;
     document.getElementById('player-picker-modal').classList.add('active');
+    
+    // Add skip button to modal footer if no eligible players
+    const modalFooter = document.querySelector('#player-picker-modal .modal-footer');
+    if (!eligible.length) {
+        modalFooter.innerHTML = `<button class="btn btn-primary" onclick="skipSlot()">SKIP SLOT (no eligible players)</button>`;
+    } else {
+        modalFooter.innerHTML = `<button class="btn btn-secondary" onclick="skipSlot()">SKIP SLOT</button>`;
+    }
 }
 
 function pickPlayer(id) {
@@ -1977,7 +2107,19 @@ function pickPlayer(id) {
 }
 
 function skipSlot() {
+    const m = state.match;
+    const phase = m.phases[m.currentPhaseIdx];
+    // Push null to field to mark slot as skipped (scoring skips nulls)
+    m.field.push(null);
     document.getElementById('player-picker-modal').classList.remove('active');
+    
+    // Check if all slots are filled/skipped
+    if (m.field.length >= phase.slots.length) {
+        // Auto-resolve if all done
+        resolvePhase();
+    } else {
+        renderPhasePlacement();
+    }
 }
 
 // ─── RESOLVE PHASE ───
@@ -1987,20 +2129,26 @@ function resolvePhase() {
     const m = state.match;
     const phase = m.phases[m.currentPhaseIdx];
     
+    // Filter out skipped slots (null entries) for scoring
+    const activeField = m.field.filter(f => f !== null);
+    
     lastPhaseResult = calculateRoundScore(
-        m.field, m.synergies, m.formation, m.fatigue, m.carryover, m.persistentBuffs
+        activeField, m.synergies, m.formation, m.fatigue, m.carryover, m.persistentBuffs
     );
     
-    // Apply fatigue
+    // Apply fatigue only to active players
     const penalty = (m.persistentBuffs || {}).fatigue_penalty || FATIGUE_PENALTY;
-    for (const [p] of m.field) {
+    for (const entry of activeField) {
+        if (!entry) continue;
+        const [p] = entry;
         const cur = m.fatigue[p.id] || 1;
         m.fatigue[p.id] = cur * penalty;
     }
     
     m.carryover = lastPhaseResult.nextCarryover;
     m.roundScore += lastPhaseResult.total;
-    m.phaseResults.push({ phaseName: phase.name, total: lastPhaseResult.total });
+    m.phaseResults.push(lastPhaseResult);
+    m.phaseResults[m.phaseResults.length-1].phaseName = phase.name;
     m.matchPhase = 'phase-result';
     
     renderMatch();
@@ -2227,6 +2375,28 @@ function finishMatch() {
         // Game over
         const mdef = CAMPAIGN_MATCHES[state.campaignIndex];
         document.getElementById('gameover-text').textContent = `Lost at ${mdef.name} vs ${mdef.opponent} (${m.roundsWon}-${m.roundsLost})`;
+        
+        // Show persistent synergies on game over
+        const pb = state.persistentBuffs || {};
+        const pFired = pb.fired_synergies || [];
+        if (pFired.length) {
+            let synHtml = `<div class="panel mt-8" style="margin:12px 20px;">
+                <div class="fs-10 fw-700 text-magenta mb-8">🏷️ PERSISTENT SYNERGIES ACTIVE</div>`;
+            for (const name of pFired) {
+                const syns = SYNERGIES.filter(s => s.name === name);
+                const syn = syns.length ? syns[0] : null;
+                synHtml += `<div class="persistent-syn">
+                    <span class="syn-icon">✦</span>
+                    <div>
+                        <div class="syn-name">${name}</div>
+                        <div class="syn-desc">${syn ? syn.desc : ''}</div>
+                    </div>
+                </div>`;
+            }
+            synHtml += `</div>`;
+            document.getElementById('gameover-text').insertAdjacentHTML('afterend', synHtml);
+        }
+        
         showScreen('gameover');
     }
 }
@@ -2243,6 +2413,27 @@ function renderCampaignComplete() {
         </div>`;
     }
     document.getElementById('campaign-results-list').innerHTML = `<div class="panel">${html}</div>`;
+    
+    // Show persistent synergies that fired
+    const pb = state.persistentBuffs || {};
+    const pFired = pb.fired_synergies || [];
+    if (pFired.length) {
+        let synHtml = `<div class="panel mt-8">
+            <div class="fs-10 fw-700 text-magenta mb-8">🏷️ PERSISTENT SYNERGIES ACTIVE</div>`;
+        for (const name of pFired) {
+            const syns = SYNERGIES.filter(s => s.name === name);
+            const syn = syns.length ? syns[0] : null;
+            synHtml += `<div class="persistent-syn">
+                <span class="syn-icon">✦</span>
+                <div>
+                    <div class="syn-name">${name}</div>
+                    <div class="syn-desc">${syn ? syn.desc : ''}</div>
+                </div>
+            </div>`;
+        }
+        synHtml += `</div>`;
+        document.getElementById('campaign-results-list').innerHTML += synHtml;
+    }
 }
 
 function resetGame() {

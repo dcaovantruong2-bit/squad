@@ -34,17 +34,44 @@ Then access from iPhone: `http://100.82.27.85:8080`
 ## Game Flow
 
 1. **Squad Builder** — Pick 10+ players within 360 budget
-   - Must meet role requirements: 1 GK, 3+ defenders, 3+ midfielders, 2+ attackers
-   
-2. **Formation Select** — Choose tactical shape (4-4-2, 4-3-3, etc.)
-   - Each formation has position bonuses/penalties
-   
-3. **Campaign** — 5 escalating matches
-   - Each match: win 2 of 3 rounds
-   - Each round: 6 random phases of play
-   - Each phase: field players to meet slot requirements
-   - Synergies fire based on player combinations
-   - Fatigue system: players get tired (×0.7 per use)
+   - Role requirements bar shows group progress (GK, Defenders, Midfielders, Attackers)
+   - Your Squad section shows synergy tags per player (which persistent synergies they enable)
+   - Available players grouped by position with player count
+   - Tap to add, tap again to remove
+
+2. **Formation Select** — Choose tactical shape with fit score
+   - Each formation gets a **fit score** based on your squad composition
+   - ⭐ Recommended badge for best fit
+   - 📊 Fit reasons show why (e.g. "3 CMs PAS8+ → Tiki-Taka")
+   - Position bonuses shown in green, penalties in red
+
+3. **Round Start Briefing** — See all round synergies before first phase
+   - Rarity-colored synergy cards (Common/Uncommon/Rare/Epic/Legendary)
+   - Persistent synergies displayed with descriptions
+   - Build your phase strategy based on available synergies
+
+4. **Phase Placement** — Pitch-aligned slot cards
+   - Slots arranged by pitch zone (ATTACK / MIDFIELD / DEFENSE)
+   - Current slot glows yellow — tap to open player picker
+   - Filled slots show player name + chips + fatigue
+   - Skipped slots marked in red
+   - Live running total with phase score preview
+   - Progress dots (● green=done, ● red=skipped, ● yellow=current)
+
+5. **Phase Result** — Full math breakdown table
+   - Column-aligned breakdown (PLAYER | POS | BASE | +SYN | ×MULT | ×FAT | = SUB)
+   - Global effects and formation multipliers
+   - Synergy box with contributors + descriptions
+   - Running total toward round target
+
+6. **Round Result** — Bar chart visualization
+   - █░ bars showing relative phase performance
+   - Fatigue summary (fresh / at 70% / below 50%)
+   - Match record with progress to 2 wins
+
+7. **Campaign** — 5 escalating matches, win 2 of 3 rounds each
+   - Persistent synergies shown at match start and match end
+   - Game over screen shows active persistent synergies
 
 ## Aesthetic
 
