@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "screens/round-result.html",
+  "entry": "screens/round-result.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-07-05T19:00:56.926Z",
+  "updatedAt": "2026-07-05T19:00:56.926Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SQUAD — Match</title>
+  <link rel="stylesheet" href="../game.css">
+  <style>
+    .screen { padding-top: var(--space-4); max-width: 1400px; }
+
+    /* Match header */
+    .match-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-6);
+      flex-wrap: wrap;
+      gap: var(--space-4);
+    }
+    .match-vs {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+    .match-team { text-align: center; }
+    .match-team-name {
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--fg-dim);
+    }
+    .match-team.you .match-team-name {
+      color: var(--accent);
+      text-shadow: 0 0 8px var(--accent-glow);
+    }
+    .match-score {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 400;
+      min-width: 120px;
+      text-align: center;
+      color: var(--fg);
+    }
+    .match-score .score-dash { color: var(--muted); margin: 0 var(--space-2); }
+
+    /* Progress bars */
+    .match-progress {
+      display: flex;
+      gap: var(--space-6);
+      margin-bottom: var(--space-6);
+      flex-wrap: wrap;
+    }
+    .progress-group { flex: 1; min-width: 200px; }
+    .progress-label {
+      font-family: var(--font-display);
+      font-size: 7px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: var(--space-2);
+    }
+
+    /* Phase info */
+    .phase-info {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-5);
+      margin-bottom: var(--space-6);
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: var(--space-4);
+      align-items: center;
+    }
+    .phase-icon {
+      width: 56px;
+      height: 56px;
+      background: var(--surface-raised);
+      border: 2px solid var(--accent);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+    .phase-details h2 {
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: var(--space-1);
+      color: var(--fg);
+    }
+    .phase-weight-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: 2px 8px;
+      background: var(--accent);
+      color: var(--accent-on);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-display);
+      font-size: 7px;
+      text-transform: uppercase;
+      margin-bottom: var(--space-2);
+      box-shadow: 0 0 8px var(--accent-glow);
+      text-shadow: none;
+    }
+    .phase-desc {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: var(--muted);
+    }
+
+    /* Main game area */
+    .game-area {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: var(--space-6);
+    }
+
+    /* Pitch */
+    .match-pitch {
+      background: var(--pitch-green);
+      border: 2px solid var(--pitch-dark);
+      border-radius: var(--radius-md);
+      aspect-ratio: 68 / 105;
+      max-height: 500px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.4);
+    }
+    .match-pitch::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--pitch-line);
+    }
+    .match-pitch::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80px;
+      height: 80px;
+      border: 1px solid var(--pitch-line);
+      border-radius: 50%;
+    }
+
+    .pitch-slot {
+      position: absolute;
+      width: 52px;
+      height: 52px;
+      border: 2px dashed rgba(57, 255, 20, 0.3);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 7px;
+      color: rgba(57, 255, 20, 0.5);
+      text-transform: uppercase;
+      transition: all var(--motion-base) ease;
+      cursor: pointer;
+      transform: translate(-50%, -50%);
+    }
+    .pitch-slot:hover {
+      border-color: rgba(57, 255, 20, 0.7);
+      background: rgba(57, 255, 20, 0.08);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+    .pitch-slot.filled {
+      background: rgba(57, 255, 20, 0.15);
+      border-style: solid;
+      border-color: var(--accent);
+      color: var(--accent);
+      flex-direction: column;
+      gap: 2px;
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+    .pitch-slot .slot-player-name {
+      font-size: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 48px;
+      text-align: center;
+    }
+    .pitch-slot .slot-chips {
+      font-size: 8px;
+      opacity: 0.8;
+    }
+    .pitch-slot.active {
+      border-color: var(--gold);
+      box-shadow: 0 0 20px var(--gold-glow);
+    }
+
+    /* Sidebar */
+    .match-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    /* Available players list */
+    .available-panel {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+    }
+    .panel-title {
+      font-family: var(--font-display);
+      font-size: 8px;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: var(--space-3);
+      color: var(--fg-dim);
+    }
+    .available-player {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: var(--space-2);
+      cursor: pointer;
+      transition: all var(--motion-fast) ease;
+    }
+    .available-player:hover {
+      border-color: var(--accent);
+      background: var(--surface-hover);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+    .available-player.disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+    .available-player .ap-pos {
+      font-family: var(--font-display);
+      font-size: 7px;
+      color: var(--accent);
+      min-width: 28px;
+    }
+    .available-player .ap-name {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .available-player .ap-cost {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: var(--gold);
+    }
+
+    /* Fatigue */
+    .fatigue-panel {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+    }
+    .fatigue-player {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-2);
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+    }
+    .fatigue-bar {
+      flex: 1;
+      height: 6px;
+      background: var(--bg-deep);
+      border-radius: 1px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .fatigue-fill {
+      height: 100%;
+      border-radius: 1px;
+      transition: width var(--motion-base) ease;
+    }
+    .fatigue-fill.fresh { background: var(--success); box-shadow: 0 0 4px var(--success-glow); }
+    .fatigue-fill.tired { background: var(--warn); box-shadow: 0 0 4px var(--warn-glow); }
+    .fatigue-fill.exhausted { background: var(--danger); box-shadow: 0 0 4px var(--danger-glow); }
+
+    /* Synergy preview */
+    .synergy-preview {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+    }
+    .synergy-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-2);
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: var(--gold);
+    }
+    .synergy-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-sm);
+      flex-shrink: 0;
+    }
+    .synergy-dot.potential { background: var(--gold); box-shadow: 0 0 4px var(--gold-glow); }
+    .synergy-dot.fired { background: var(--success); box-shadow: 0 0 4px var(--success-glow); }
+
+    /* Phase slots summary */
+    .phase-slots-summary {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+    }
+    .slot-req {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-1) 0;
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+    }
+    .slot-req .slot-status {
+      width: 16px;
+      text-align: center;
+    }
+    .slot-req .slot-status.filled { color: var(--success); text-shadow: 0 0 4px var(--success-glow); }
+    .slot-req .slot-status.empty { color: var(--muted); }
+
+    /* Submit phase */
+    .submit-section {
+      text-align: center;
+      padding: var(--space-4) 0;
+    }
+
+    @media (max-width: 920px) {
+      .game-area { grid-template-columns: 1fr; }
+      .match-pitch { max-height: 400px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="screen">
+    <!-- Match header -->
+    <div class="match-header">
+      <div class="match-vs">
+        <div class="match-team you">
+          <div class="match-team-name">Your XI</div>
+        </div>
+        <div class="match-score">
+          <span id="score-you">0</span>
+          <span class="score-dash">-</span>
+          <span id="score-them">0</span>
+        </div>
+        <div class="match-team">
+          <div class="match-team-name" id="opponent-name">FC React</div>
+        </div>
+      </div>
+      <div class="row gap-4">
+        <a href="../index.html" class="btn btn-ghost btn-sm">Quit</a>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="match-progress">
+      <div class="progress-group">
+        <div class="progress-label">Round <span id="round-num">1</span> / 3</div>
+        <div class="progress-dots" id="round-dots"></div>
+      </div>
+      <div class="progress-group">
+        <div class="progress-label">Phase <span id="phase-num">1</span> / 6</div>
+        <div class="progress-dots" id="phase-dots"></div>
+      </div>
+    </div>
+
+    <!-- Phase info -->
+    <div class="phase-info" data-od-id="phase-info">
+      <div class="phase-icon" id="phase-icon">⚽</div>
+      <div class="phase-details">
+        <div class="phase-weight-badge" id="phase-weight">DEF</div>
+        <h2 id="phase-name">Goal Kick</h2>
+        <p class="phase-desc" id="phase-desc">Keeper launches long — your best defenders win the header</p>
+      </div>
+    </div>
+
+    <!-- Game area -->
+    <div class="game-area">
+      <!-- Pitch -->
+      <div class="match-pitch" id="pitch"></div>
+
+      <!-- Sidebar -->
+      <div class="match-sidebar">
+        <!-- Phase slots -->
+        <div class="phase-slots-summary">
+          <div class="panel-title">Required Slots</div>
+          <div id="slot-reqs"></div>
+        </div>
+
+        <!-- Available players -->
+        <div class="available-panel">
+          <div class="panel-title">Available Players</div>
+          <div id="available-list"></div>
+        </div>
+
+        <!-- Fatigue -->
+        <div class="fatigue-panel">
+          <div class="panel-title">Fatigue</div>
+          <div id="fatigue-list"></div>
+        </div>
+
+        <!-- Synergy preview -->
+        <div class="synergy-preview">
+          <div class="panel-title">Synergy Preview</div>
+          <div id="synergy-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-section">
+      <button class="btn btn-primary btn-lg" id="submit-btn" disabled onclick="submitPhase()">
+        Submit Phase ▸
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // ─── Phase definitions ───────────────────────────────────────────
+    const PHASES = [
+      { id: "goal_kick", name: "Goal Kick", weight: "DEF", icon: "🧤", desc: "Keeper launches long — your best defenders win the header",
+        slots: ["GK", {as:"CB",min_def:7}, {as:"CB",min_def:6}] },
+      { id: "build_up", name: "Build-Up", weight: "PAS", icon: "🔄", desc: "Play out from the back — any good passer can step up",
+        slots: [{as:"FB",min_pas:6}, {as:"FB",min_pas:6}, {as:"CM",min_pas:7}] },
+      { id: "wing_attack", name: "Wing Attack", weight: "PAC", icon: "💨", desc: "Overlap and cross — pace wins, position doesn't matter",
+        slots: [{as:"FB",min_pac:7}, {as:"LW",min_pac:7}] },
+      { id: "long_ball", name: "Long Ball", weight: "ATK", icon: "🎯", desc: "Bypass midfield — your best attackers chase it down",
+        slots: [{as:"CB",min_def:6,min_pac:5}, {as:"ST",min_atk:6}] },
+      { id: "defensive_block", name: "Defensive Block", weight: "DEF", icon: "🛡️", desc: "Park the bus — your toughest players, any position",
+        slots: [{as:"CB",min_def:8}, {as:"CB",min_def:7}, {as:"CDM",min_def:6}] },
+      { id: "tiki_taka", name: "Tiki-Taka", weight: "PAS", icon: "🎭", desc: "Pass, pass, pass — best passers control the game",
+        slots: [{as:"CM",min_pas:8}, {as:"CM",min_pas:7}, {as:"CM",min_pas:6}] },
+      { id: "counter_attack", name: "Counter-Attack", weight: "PAC", icon: "⚡", desc: "Explosive break — pacey wingers stretch the defence for a finisher",
+        slots: [{as:"LW",min_pac:7}, {as:"ST",min_atk:7}, {as:"RW",min_pac:7}] },
+      { id: "set_piece", name: "Set Piece", weight: "SPC", icon: "🎪", desc: "Corner or free kick — specialist delivery meets a physical target",
+        slots: [{as:"CAM",min_spc:7}, {as:"ST",min_atk:7,trait:"physical"}] },
+      { id: "high_press", name: "High Press", weight: "PAC", icon: "🔥", desc: "Suffocate the opponent — all three need pace to press high",
+        slots: [{as:"ST",min_pac:7}, {as:"RW",min_pac:7}, {as:"CM",min_pac:6}] },
+      { id: "through_ball", name: "Through Ball", weight: "ATK", icon: "🎯", desc: "One pass unlocks the defence — passer meets pace",
+        slots: [{as:"CM",min_pas:7}, {as:"ST",min_pac:7}] },
+      { id: "wingback_push", name: "Wingback Push", weight: "PAC", icon: "🏃", desc: "Fullback bombs forward to combine with the winger",
+        slots: [{as:"FB",min_pac:7}, {as:"LW",min_pas:6}] },
+    ];
+
+    const OPPONENTS = ["FC React", "Vue United", "Angular FC", "Svelte City", "Ember Rovers"];
+
+    // ─── Game State ──────────────────────────────────────────────────
+    let squad = JSON.parse(sessionStorage.getItem('squad') || '[]');
+    let formation = JSON.parse(sessionStorage.getItem('formation') || '{}');
+
+    let currentRound = 0;
+    let currentPhase = 0;
+    let totalRounds = 3;
+    let phasesPerRound = 6;
+    let scoreYou = 0;
+    let scoreThem = 0;
+    let roundScores = [];
+    let matchScores = [];
+
+    // Fatigue tracking: player_id -> times used
+    let fatigue = {};
+    squad.forEach(p => fatigue[p.id] = 0);
+
+    // Phase placement: slot_index -> player_id
+    let phasePlacement = {};
+    // Phases for this round (randomly selected)
+    let roundPhases = [];
+
+    // ─── Initialization ──────────────────────────────────────────────
+    function init() {
+      // Pick opponent
+      document.getElementById('opponent-name').textContent = OPPONENTS[Math.floor(Math.random() * OPPONENTS.length)];
+
+      // Generate phases for this round
+      const shuffled = [...PHASES].sort(() => Math.random() - 0.5);
+      roundPhases = shuffled.slice(0, phasesPerRound);
+
+      renderMatch();
+      renderPhase();
+    }
+
+    function renderMatch() {
+      document.getElementById('score-you').textContent = scoreYou;
+      document.getElementById('score-them').textContent = scoreThem;
+      document.getElementById('round-num').textContent = currentRound + 1;
+      document.getElementById('phase-num').textContent = currentPhase + 1;
+
+      // Round dots
+      const roundDots = document.getElementById('round-dots');
+      roundDots.innerHTML = '';
+      for (let i = 0; i < totalRounds; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'progress-dot';
+        if (i < currentRound) {
+          dot.classList.add(roundScores[i] ? 'done' : 'lose');
+        } else if (i === currentRound) {
+          dot.classList.add('active');
+        }
+        roundDots.appendChild(dot);
+      }
+
+      // Phase dots
+      const phaseDots = document.getElementById('phase-dots');
+      phaseDots.innerHTML = '';
+      for (let i = 0; i < phasesPerRound; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'progress-dot';
+        if (i < currentPhase) dot.classList.add('done');
+        else if (i === currentPhase) dot.classList.add('active');
+        phaseDots.appendChild(dot);
+      }
+    }
+
+    function renderPhase() {
+      const phase = roundPhases[currentPhase];
+      document.getElementById('phase-icon').textContent = phase.icon;
+      document.getElementById('phase-name').textContent = phase.name;
+      document.getElementById('phase-desc').textContent = phase.desc;
+      document.getElementById('phase-weight').textContent = phase.weight;
+
+      phasePlacement = {};
+      renderPitch(phase);
+      renderSlotReqs(phase);
+      renderAvailablePlayers(phase);
+      renderFatigue();
+      renderSynergyPreview();
+      document.getElementById('submit-btn').disabled = true;
+    }
+
+    function renderPitch(phase) {
+      const pitch = document.getElementById('pitch');
+      // Formation pitch positions (simplified for display)
+      const positions = getFormationPositions();
+
+      pitch.innerHTML = positions.map((pos, i) => {
+        const placed = phasePlacement[i];
+        const player = placed ? squad.find(p => p.id === placed) : null;
+        const filled = player ? 'filled' : '';
+        return `<div class="pitch-slot ${filled}" style="left:${pos.x}%;top:${pos.y}%" onclick="selectSlot(${i})" data-od-id="pitch-slot-${i}">
+          ${player ? `<span class="slot-player-name">${player.name.split(' ').pop()}</span><span class="slot-chips">${pos.label}</span>` : pos.label}
+        </div>`;
+      }).join('');
+    }
+
+    function getFormationPositions() {
+      // Simplified formation positions for the pitch
+      return [
+        {x:50, y:88, label:'GK'},
+        {x:20, y:72, label:'CB'}, {x:50, y:72, label:'CB'}, {x:80, y:72, label:'CB'},
+        {x:8, y:52, label:'FB'}, {x:92, y:52, label:'FB'},
+        {x:25, y:38, label:'CM'}, {x:50, y:38, label:'CM'}, {x:75, y:38, label:'CM'},
+        {x:10, y:20, label:'LW'}, {x:90, y:20, label:'RW'},
+        {x:50, y:12, label:'ST'}
+      ].filter((_, i) => {
+        const slots = formation.slots || ['CB','CB','FB','FB','CM','CM','ST','ST'];
+        return i === 0 || i <= slots.length + 1;
+      });
+    }
+
+    function renderSlotReqs(phase) {
+      const container = document.getElementById('slot-reqs');
+      container.innerHTML = phase.slots.map((slot, i) => {
+        const placed = phasePlacement[i] !== undefined;
+        const label = typeof slot === 'string' ? slot : `→${slot.as}`;
+        return `<div class="slot-req">
+          <span class="slot-status ${placed ? 'filled' : 'empty'}">${placed ? '✓' : '○'}</span>
+          <span>${label}</span>
+        </div>`;
+      }).join('');
+    }
+
+    function renderAvailablePlayers(phase) {
+      const container = document.getElementById('available-list');
+      const usedIds = new Set(Object.values(phasePlacement));
+
+      container.innerHTML = squad.map(p => {
+        const used = usedIds.has(p.id);
+        const tired = fatigue[p.id] > 0;
+        const fatiguePenalty = tired ? ' (fatigued)' : '';
+        return `<div class="available-player ${used ? 'disabled' : ''}" onclick="placePlayer('${p.id}')" data-od-id="avail-${p.id}">
+          <span class="ap-pos">${p.position}</span>
+          <span class="ap-name">${p.name}${fatiguePenalty}</span>
+          <span class="ap-cost">${p.atk+p.pac+p.pas+p.def+p.spc}</span>
+        </div>`;
+      }).join('');
+    }
+
+    function renderFatigue() {
+      const container = document.getElementById('fatigue-list');
+      const used = squad.filter(p => fatigue[p.id] > 0);
+      if (used.length === 0) {
+        container.innerHTML = '<div class="text-xs text-muted">All players fresh</div>';
+        return;
+      }
+      container.innerHTML = used.map(p => {
+        const level = fatigue[p.id];
+        const pct = Math.max(0, 100 - (level * 30));
+        const cls = pct > 70 ? 'fresh' : pct > 40 ? 'tired' : 'exhausted';
+        return `<div class="fatigue-player">
+          <span style="min-width:60px">${p.name.split(' ').pop()}</span>
+          <div class="fatigue-bar"><div class="fatigue-fill ${cls}" style="width:${pct}%"></div></div>
+          <span>${pct}%</span>
+        </div>`;
+      }).join('');
+    }
+
+    function renderSynergyPreview() {
+      const container = document.getElementById('synergy-list');
+      // Simple synergy preview based on placed players
+      const placed = Object.values(phasePlacement).map(id => squad.find(p => p.id === id)).filter(Boolean);
+      const synergies = [];
+
+      if (placed.length >= 2) {
+        const positions = placed.map(p => p.position);
+        if (positions.includes('GK') && positions.includes('CB')) synergies.push('Clean Sheet');
+        if (positions.filter(p => p === 'CB').length >= 2) synergies.push('Organised Defence');
+        if (positions.includes('FB') && positions.includes('CM')) synergies.push('Wingback Overlap');
+        if (positions.includes('FB') && positions.includes('LW')) synergies.push('Stretch Backline');
+        if (positions.includes('CB') && positions.includes('ST')) synergies.push('Route One');
+        if (positions.includes('CM') && positions.includes('ST')) synergies.push('One-Two');
+      }
+
+      if (synergies.length === 0) {
+        container.innerHTML = '<div class="text-xs text-muted">Place players to see synergies</div>';
+      } else {
+        container.innerHTML = synergies.map(s =>
+          `<div class="synergy-item"><div class="synergy-dot potential"></div>${s}</div>`
+        ).join('');
+      }
+    }
+
+    // ─── Actions ──────────────────────────────────────────────────────
+    let activeSlot = null;
+
+    function selectSlot(index) {
+      activeSlot = index;
+      document.querySelectorAll('.pitch-slot').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.pitch-slot')[index]?.classList.add('active');
+    }
+
+    function placePlayer(playerId) {
+      if (activeSlot === null) return;
+      const usedIds = new Set(Object.values(phasePlacement));
+      if (usedIds.has(playerId)) return;
+
+      phasePlacement[activeSlot] = playerId;
+      activeSlot = null;
+
+      const phase = roundPhases[currentPhase];
+      renderPitch(phase);
+      renderSlotReqs(phase);
+      renderAvailablePlayers(phase);
+      renderSynergyPreview();
+
+      // Check if all slots filled
+      const allFilled = phase.slots.every((_, i) => phasePlacement[i] !== undefined);
+      document.getElementById('submit-btn').disabled = !allFilled;
+    }
+
+    function submitPhase() {
+      const phase = roundPhases[currentPhase];
+
+      // Calculate score (simplified)
+      let phaseScore = 0;
+      Object.entries(phasePlacement).forEach(([slotIdx, playerId]) => {
+        const player = squad.find(p => p.id === playerId);
+        if (player) {
+          const weight = phase.weight.toLowerCase();
+          const statMap = {def: 'def', pac: 'pac', pas: 'pas', atk: 'atk', spc: 'spc'};
+          const stat = statMap[weight] || 'def';
+          phaseScore += (player[stat] || player.def) * 3;
+          // Track fatigue
+          fatigue[playerId] = (fatigue[playerId] || 0) + 1;
+        }
+      });
+
+      // Opponent scores randomly
+      const oppScore = Math.floor(Math.random() * 40) + 10;
+
+      // Store result and go to phase result screen
+      try { sessionStorage.setItem('phaseResult', JSON.stringify({
+        phase: phase,
+        score: phaseScore,
+        oppScore: oppScore,
+        won: phaseScore > oppScore,
+        placements: phasePlacement,
+        fatigue: fatigue,
+        round: currentRound,
+        phaseIdx: currentPhase
+      })); } catch(e) { console.warn('[MATCH] sessionStorage phaseResult failed:', e); }
+      try { sessionStorage.setItem('fatigue', JSON.stringify(fatigue)); } catch(e) { console.warn('[MATCH] sessionStorage fatigue failed:', e); }
+
+      window.location.href = 'phase-result.html';
+    }
+
+    // ─── Init ────────────────────────────────────────────────────────
+    init();
+  </script>
+</body>
+</html>

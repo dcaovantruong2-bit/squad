@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "screens/squad-builder.html",
+  "entry": "screens/squad-builder.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-07-05T18:58:07.891Z",
+  "updatedAt": "2026-07-05T18:58:07.891Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

@@ -1,0 +1,45 @@
+:root {
+  --cm93-retro-background: #ffffff;
+  --cm93-retro-surface: #ffffff;
+  --cm93-retro-surface-muted: #f4f1ec;
+  --cm93-retro-foreground: #f0f0f0;
+  --cm93-retro-muted: #706b65;
+  --cm93-retro-border: #d0d0d0;
+  --cm93-retro-accent: #eceb65;
+  --cm93-retro-success: #5d8f5a;
+  --cm93-retro-font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --cm93-retro-font-serif: Georgia, "Times New Roman", serif;
+  --cm93-retro-font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --cm93-retro-radius-sm: 6px;
+  --cm93-retro-radius-md: 10px;
+  --cm93-retro-radius-lg: 16px;
+  --cm93-retro-space-1: 4px;
+  --cm93-retro-space-2: 8px;
+  --cm93-retro-space-3: 12px;
+  --cm93-retro-space-4: 16px;
+  --cm93-retro-space-6: 24px;
+  --cm93-retro-space-8: 32px;
+
+  --color-background: var(--cm93-retro-background);
+  --color-surface: var(--cm93-retro-surface);
+  --color-background-soft: var(--cm93-retro-surface-muted);
+  --color-text: var(--cm93-retro-foreground);
+  --color-text-1: var(--cm93-retro-foreground);
+  --color-text-secondary: var(--cm93-retro-muted);
+  --color-border: var(--cm93-retro-border);
+  --color-primary: var(--cm93-retro-accent);
+  --color-primary-soft: color-mix(in srgb, var(--cm93-retro-accent) 14%, transparent);
+  --font-family: var(--cm93-retro-font-sans);
+  --code-font-family: var(--cm93-retro-font-mono);
+  --radius-control: var(--cm93-retro-radius-sm);
+  --radius-card: var(--cm93-retro-radius-md);
+  --space-2: var(--cm93-retro-space-2);
+  --space-3: var(--cm93-retro-space-3);
+  --space-4: var(--cm93-retro-space-4);
+}
+
+.od-design-system-preview {
+  color: var(--cm93-retro-foreground);
+  background: var(--cm93-retro-background);
+  font-family: var(--cm93-retro-font-sans);
+}

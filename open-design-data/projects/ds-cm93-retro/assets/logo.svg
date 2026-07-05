@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="160" viewBox="0 0 320 160" role="img" aria-label="CM93 Retro">
+  <rect width="320" height="160" rx="28" fill="#ffffff"/>
+  <circle cx="84" cy="80" r="38" fill="#eceb65"/>
+  <text x="84" y="92" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="700" fill="#ffffff">CR</text>
+  <text x="140" y="88" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" fill="#f0f0f0">CM93 Retro</text>
+</svg>

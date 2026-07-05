@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "screens/formation-select.html",
+  "entry": "screens/formation-select.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-07-05T18:58:35.492Z",
+  "updatedAt": "2026-07-05T18:58:35.492Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

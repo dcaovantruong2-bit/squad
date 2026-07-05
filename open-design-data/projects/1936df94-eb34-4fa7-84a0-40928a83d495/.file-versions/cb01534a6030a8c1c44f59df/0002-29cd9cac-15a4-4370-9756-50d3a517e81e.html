@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SQUAD — Phase Result</title>
+  <link rel="stylesheet" href="../game.css">
+  <style>
+    .screen-center {
+      min-height: 100vh;
+      padding: var(--space-6);
+    }
+
+    .result-card {
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .result-header {
+      text-align: center;
+      margin-bottom: var(--space-8);
+    }
+    .result-verdict {
+      font-family: var(--font-display);
+      font-size: clamp(24px, 8vw, 48px);
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: var(--space-2);
+    }
+    .result-verdict.win {
+      color: var(--success);
+      text-shadow: 0 0 20px var(--success-glow), 0 0 60px var(--success-glow);
+      animation: neonPulse 2s ease-in-out infinite;
+    }
+    .result-verdict.lose {
+      color: var(--danger);
+      text-shadow: 0 0 20px var(--danger-glow), 0 0 60px var(--danger-glow);
+    }
+
+    .result-phase-name {
+      font-family: var(--font-display);
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+
+    /* Score comparison */
+    .score-compare {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-8);
+      margin: var(--space-8) 0;
+    }
+    .score-side { text-align: center; }
+    .score-side .score-label {
+      font-family: var(--font-display);
+      font-size: 7px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: var(--space-2);
+    }
+    .score-side .score-num {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 400;
+    }
+    .score-side.you .score-num {
+      color: var(--accent);
+      text-shadow: 0 0 12px var(--accent-glow);
+    }
+    .score-vs {
+      font-family: var(--font-display);
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* Player contributions */
+    .contributions { margin: var(--space-6) 0; }
+    .contrib-title {
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: var(--space-4);
+      color: var(--fg);
+    }
+    .contrib-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: var(--space-2);
+    }
+    .contrib-pos {
+      font-family: var(--font-display);
+      font-size: 7px;
+      color: var(--accent);
+      min-width: 28px;
+    }
+    .contrib-name {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      flex: 1;
+    }
+    .contrib-chips {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      font-weight: 700;
+      color: var(--success);
+      text-shadow: 0 0 6px var(--success-glow);
+    }
+
+    /* Synergies fired */
+    .synergies-fired { margin: var(--space-6) 0; }
+    .synergy-fired-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      background: rgba(57, 255, 20, 0.05);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius-sm);
+      margin-bottom: var(--space-2);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+    .synergy-fired-icon {
+      font-size: var(--text-lg);
+    }
+    .synergy-fired-name {
+      font-family: var(--font-display);
+      font-size: 8px;
+      color: var(--accent);
+      text-shadow: 0 0 6px var(--accent-glow);
+    }
+    .synergy-fired-desc {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: var(--muted);
+    }
+
+    .no-synergies {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: var(--muted);
+      text-align: center;
+      padding: var(--space-4);
+    }
+
+    /* Continue button */
+    .continue-section {
+      text-align: center;
+      padding: var(--space-8) 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="screen-center">
+    <div class="result-card" data-od-id="phase-result">
+      <div class="result-header">
+        <div class="result-verdict" id="verdict">WIN</div>
+        <div class="result-phase-name" id="phase-name">Goal Kick</div>
+      </div>
+
+      <div class="score-compare">
+        <div class="score-side you">
+          <div class="score-label">Your Score</div>
+          <div class="score-num" id="your-score">42</div>
+        </div>
+        <div class="score-vs">vs</div>
+        <div class="score-side">
+          <div class="score-label">Opponent</div>
+          <div class="score-num" id="opp-score">28</div>
+        </div>
+      </div>
+
+      <div class="contributions">
+        <div class="contrib-title">Player Contributions</div>
+        <div id="contrib-list"></div>
+      </div>
+
+      <div class="synergies-fired">
+        <div class="contrib-title">Synergies Fired</div>
+        <div id="synergy-list"></div>
+      </div>
+
+      <div class="continue-section">
+        <button class="btn btn-primary btn-lg" onclick="continueGame()">
+          Continue ▸
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const result = JSON.parse(sessionStorage.getItem('phaseResult') || '{}');
+    const squad = JSON.parse(sessionStorage.getItem('squad') || '[]');
+    const fatigue = JSON.parse(sessionStorage.getItem('fatigue') || '{}');
+
+    function render() {
+      const won = result.won;
+      document.getElementById('verdict').textContent = won ? 'WON' : 'LOST';
+      document.getElementById('verdict').className = `result-verdict ${won ? 'win' : 'lose'}`;
+      document.getElementById('phase-name').textContent = result.phase?.name || 'Phase';
+      document.getElementById('your-score').textContent = result.score || 0;
+      document.getElementById('opp-score').textContent = result.oppScore || 0;
+
+      // Player contributions
+      const contribList = document.getElementById('contrib-list');
+      if (result.placements) {
+        const entries = Object.entries(result.placements).map(([slotIdx, playerId]) => {
+          const player = squad.find(p => p.id === playerId);
+          if (!player) return null;
+          const weight = (result.phase?.weight || 'DEF').toLowerCase();
+          const statMap = {def: 'def', pac: 'pac', pas: 'pas', atk: 'atk', spc: 'spc'};
+          const stat = statMap[weight] || 'def';
+          const chips = (player[stat] || player.def) * 3;
+          return { player, chips, position: player.position };
+        }).filter(Boolean);
+
+        contribList.innerHTML = entries.map(e => `
+          <div class="contrib-row">
+            <span class="contrib-pos">${e.position}</span>
+            <span class="contrib-name">${e.player.name}</span>
+            <span class="contrib-chips">+${e.chips}</span>
+          </div>
+        `).join('');
+      }
+
+      // Synergies (simplified)
+      const synergyList = document.getElementById('synergy-list');
+      const placed = result.placements ? Object.values(result.placements).map(id => squad.find(p => p.id === id)).filter(Boolean) : [];
+      const synergies = [];
+
+      if (placed.length >= 2) {
+        const positions = placed.map(p => p.position);
+        if (positions.includes('GK') && positions.includes('CB')) synergies.push({name: 'Clean Sheet', desc: 'GK + CB defensive solidity'});
+        if (positions.filter(p => p === 'CB').length >= 2) synergies.push({name: 'Organised Defence', desc: 'Two CBs marshalling the line'});
+        if (positions.includes('FB') && positions.includes('CM')) synergies.push({name: 'Wingback Overlap', desc: 'FB pace + CM vision'});
+        if (positions.includes('CM') && positions.includes('ST')) synergies.push({name: 'One-Two', desc: 'Quick passing combination'});
+      }
+
+      if (synergies.length === 0) {
+        synergyList.innerHTML = '<div class="no-synergies">No synergies fired this phase</div>';
+      } else {
+        synergyList.innerHTML = synergies.map(s => `
+          <div class="synergy-fired-item">
+            <span class="synergy-fired-icon">⚡</span>
+            <div>
+              <div class="synergy-fired-name">${s.name}</div>
+              <div class="synergy-fired-desc">${s.desc}</div>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function continueGame() {
+      const round = result.round || 0;
+      const phaseIdx = result.phaseIdx || 0;
+      const nextPhase = phaseIdx + 1;
+
+      if (nextPhase >= 6) {
+        // Round complete — go to round result
+        sessionStorage.setItem('roundResult', JSON.stringify({
+          round: round,
+          won: result.won,
+          score: result.score,
+          oppScore: result.oppScore
+        }));
+        window.location.href = 'round-result.html';
+      } else {
+        // Next phase — back to match
+        window.location.href = 'match.html';
+      }
+    }
+
+    render();
+  </script>
+</body>
+</html>

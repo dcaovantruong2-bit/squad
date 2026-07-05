@@ -1,0 +1,26 @@
+{
+  "telemetry": {
+    "metrics": true,
+    "content": true,
+    "artifactManifest": false
+  },
+  "onboardingCompleted": true,
+  "agentId": "hermes",
+  "agentModels": {
+    "hermes": {
+      "model": "opencode-go:mimo-v2.5"
+    }
+  },
+  "skillId": null,
+  "designSystemId": "default",
+  "orbit": {
+    "enabled": false,
+    "time": "08:00",
+    "templateSkillId": "orbit-general"
+  },
+  "installationId": "33e9d993-e9f4-4fd3-9e6f-b669fe462af2",
+  "privacyDecisionAt": 1783277021689,
+  "customInstructions": null,
+  "projectLocations": [],
+  "defaultProjectLocationId": "default"
+}

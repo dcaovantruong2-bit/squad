@@ -1,0 +1,8 @@
+{
+  "name": "cm93-retro",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "preview": "open index.html"
+  }
+}

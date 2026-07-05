@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SQUAD — Round Result</title>
+  <link rel="stylesheet" href="../game.css">
+  <style>
+    .screen-center {
+      min-height: 100vh;
+      padding: var(--space-6);
+    }
+
+    .result-card {
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .result-verdict {
+      font-family: var(--font-display);
+      font-size: clamp(48px, 12vw, 96px);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: var(--space-4);
+      animation: scaleIn 0.4s ease-out;
+    }
+    .result-verdict.win { color: var(--success); }
+    .result-verdict.lose { color: var(--danger); }
+
+    .result-subtitle {
+      font-family: var(--font-mono);
+      font-size: var(--text-lg);
+      color: var(--muted);
+      margin-bottom: var(--space-8);
+    }
+
+    /* Score breakdown */
+    .score-breakdown {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      margin-bottom: var(--space-8);
+    }
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-3) 0;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .breakdown-row:last-child { border-bottom: none; }
+    .breakdown-label {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: var(--muted);
+    }
+    .breakdown-value {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: 700;
+    }
+
+    /* Match score */
+    .match-score-display {
+      margin: var(--space-6) 0;
+    }
+    .match-score-label {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: var(--space-2);
+    }
+    .match-score-num {
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      font-weight: 700;
+    }
+
+    /* Status message */
+    .status-msg {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      padding: var(--space-4);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-6);
+    }
+    .status-msg.match-won {
+      background: var(--success-bg);
+      color: var(--success);
+      border: 2px solid var(--success);
+    }
+    .status-msg.match-lost {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 2px solid var(--danger);
+    }
+    .status-msg继续 {
+      background: var(--info-bg);
+      color: var(--info);
+      border: 2px solid var(--info);
+    }
+
+    .continue-section {
+      padding: var(--space-6) 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="screen-center">
+    <div class="result-card" data-od-id="round-result">
+      <div class="result-verdict" id="verdict">ROUND WON</div>
+      <div class="result-subtitle" id="subtitle">Round 1 of 3</div>
+
+      <div class="score-breakdown">
+        <div class="breakdown-row">
+          <span class="breakdown-label">Your Total</span>
+          <span class="breakdown-value" id="your-total">0</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="breakdown-label">Opponent Total</span>
+          <span class="breakdown-value" id="opp-total">0</span>
+        </div>
+        <div class="breakdown-row" style="border-top: 2px solid var(--fg); padding-top: var(--space-4);">
+          <span class="breakdown-label">Difference</span>
+          <span class="breakdown-value" id="diff">+0</span>
+        </div>
+      </div>
+
+      <div class="match-score-display">
+        <div class="match-score-label">Match Score</div>
+        <div class="match-score-num">
+          <span id="match-you">0</span>
+          <span style="color:var(--muted)"> — </span>
+          <span id="match-them">0</span>
+        </div>
+      </div>
+
+      <div class="status-msg" id="status-msg"></div>
+
+      <div class="continue-section">
+        <button class="btn btn-primary btn-lg" onclick="continueGame()" id="continue-btn">
+          Continue →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const result = JSON.parse(sessionStorage.getItem('roundResult') || '{}');
+    const matchState = JSON.parse(sessionStorage.getItem('matchState') || '{"roundsWon":0,"roundsLost":0}');
+
+    function render() {
+      const won = result.won;
+      const round = result.round || 0;
+
+      document.getElementById('verdict').textContent = won ? 'ROUND WON' : 'ROUND LOST';
+      document.getElementById('verdict').className = `result-verdict ${won ? 'win' : 'lose'}`;
+      document.getElementById('subtitle').textContent = `Round ${round + 1} of 3`;
+
+      document.getElementById('your-total').textContent = result.score || 0;
+      document.getElementById('opp-total').textContent = result.oppScore || 0;
+      const diff = (result.score || 0) - (result.oppScore || 0);
+      document.getElementById('diff').textContent = diff >= 0 ? `+${diff}` : diff;
+      document.getElementById('diff').style.color = diff >= 0 ? 'var(--success)' : 'var(--danger)';
+
+      // Update match state
+      if (won) matchState.roundsWon = (matchState.roundsWon || 0) + 1;
+      else matchState.roundsLost = (matchState.roundsLost || 0) + 1;
+
+      document.getElementById('match-you').textContent = matchState.roundsWon || 0;
+      document.getElementById('match-them').textContent = matchState.roundsLost || 0;
+
+      sessionStorage.setItem('matchState', JSON.stringify(matchState));
+
+      // Status message
+      const statusMsg = document.getElementById('status-msg');
+      const continueBtn = document.getElementById('continue-btn');
+
+      if (matchState.roundsWon >= 2) {
+        statusMsg.textContent = '🏆 MATCH WON! You dominated the tie.';
+        statusMsg.className = 'status-msg match-won';
+        continueBtn.textContent = 'View Campaign →';
+        continueBtn.onclick = () => {
+          const campaign = JSON.parse(sessionStorage.getItem('campaign') || '{"matches":[]}');
+          campaign.matches.push({ won: true, rounds: matchState });
+          sessionStorage.setItem('campaign', JSON.stringify(campaign));
+          window.location.href = 'campaign-complete.html';
+        };
+      } else if (matchState.roundsLost >= 2) {
+        statusMsg.textContent = '❌ MATCH LOST. Better luck next time.';
+        statusMsg.className = 'status-msg match-lost';
+        continueBtn.textContent = 'View Campaign →';
+        continueBtn.onclick = () => {
+          const campaign = JSON.parse(sessionStorage.getItem('campaign') || '{"matches":[]}');
+          campaign.matches.push({ won: false, rounds: matchState });
+          sessionStorage.setItem('campaign', JSON.stringify(campaign));
+          window.location.href = 'campaign-complete.html';
+        };
+      } else {
+        statusMsg.textContent = `Round ${round + 2} coming up. Stay focused.`;
+        statusMsg.className = 'status-msg';
+        statusMsg.style.background = 'var(--info-bg)';
+        statusMsg.style.color = 'var(--info)';
+        statusMsg.style.border = '2px solid var(--info)';
+        continueBtn.textContent = 'Next Round →';
+        continueBtn.onclick = () => {
+          // Reset for next round
+          sessionStorage.removeItem('roundResult');
+          window.location.href = 'match.html';
+        };
+      }
+    }
+
+    function continueGame() {
+      // Default handled in render()
+    }
+
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SQUAD — Campaign Complete</title>
+  <link rel="stylesheet" href="../game.css">
+  <style>
+    body {
+      background: var(--fg);
+      color: var(--bg);
+    }
+    .screen-center {
+      min-height: 100vh;
+      padding: var(--space-6);
+    }
+
+    .campaign-card {
+      max-width: 700px;
+      width: 100%;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .campaign-title {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 10vw, 72px);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: var(--space-2);
+    }
+    .campaign-title.win { color: var(--accent); }
+    .campaign-title.lose { color: var(--danger); }
+
+    .campaign-subtitle {
+      font-family: var(--font-mono);
+      font-size: var(--text-lg);
+      opacity: 0.7;
+      margin-bottom: var(--space-8);
+    }
+
+    /* Match results grid */
+    .matches-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: var(--space-4);
+      margin: var(--space-8) 0;
+    }
+    .match-result-card {
+      background: rgba(255,255,255,0.05);
+      border: 2px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      text-align: center;
+      transition: all var(--motion-base) ease;
+    }
+    .match-result-card.won {
+      border-color: var(--success);
+      background: rgba(61, 143, 79, 0.1);
+    }
+    .match-result-card.lost {
+      border-color: var(--danger);
+      background: rgba(184, 58, 47, 0.1);
+    }
+    .match-num {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      opacity: 0.5;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: var(--space-2);
+    }
+    .match-verdict {
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .match-verdict.win { color: var(--success); }
+    .match-verdict.lose { color: var(--danger); }
+
+    /* Stats */
+    .campaign-stats {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-10);
+      margin: var(--space-8) 0;
+      flex-wrap: wrap;
+    }
+    .stat-item {
+      text-align: center;
+    }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: var(--text-3xl);
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      opacity: 0.5;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: var(--space-2);
+    }
+
+    /* Decorative line */
+    .title-line {
+      width: 120px;
+      height: 2px;
+      background: var(--accent);
+      margin: var(--space-6) auto;
+      opacity: 0.5;
+    }
+
+    /* Play again */
+    .play-again {
+      padding: var(--space-8) 0;
+    }
+    .play-again-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-10);
+      background: var(--accent);
+      color: var(--bg);
+      border: 3px solid var(--accent);
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: all var(--motion-base) ease;
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+    }
+    .play-again-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 4px 6px 0 rgba(0,0,0,0.3);
+    }
+    .play-again-btn:active {
+      transform: translateY(2px);
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+    }
+
+    /* Scanlines */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.06) 2px,
+        rgba(0,0,0,0.06) 4px
+      );
+      pointer-events: none;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <div class="screen-center">
+    <div class="campaign-card">
+      <div class="campaign-title" id="campaign-title">CAMPAIGN COMPLETE</div>
+      <div class="campaign-subtitle" id="campaign-subtitle">5 matches played</div>
+
+      <div class="title-line"></div>
+
+      <div class="matches-grid" id="matches-grid"></div>
+
+      <div class="campaign-stats">
+        <div class="stat-item">
+          <div class="stat-num" id="stat-wins">0</div>
+          <div class="stat-label">Wins</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" id="stat-losses">0</div>
+          <div class="stat-label">Losses</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" id="stat-winrate">0%</div>
+          <div class="stat-label">Win Rate</div>
+        </div>
+      </div>
+
+      <div class="play-again">
+        <button class="play-again-btn" onclick="playAgain()">
+          Play Again →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Generate campaign data (5 matches)
+    let campaign = JSON.parse(sessionStorage.getItem('campaign') || '{"matches":[]}');
+
+    // If we don't have 5 matches yet, generate some
+    while (campaign.matches.length < 5) {
+      campaign.matches.push({
+        won: Math.random() > 0.4,
+        rounds: { roundsWon: Math.floor(Math.random() * 3), roundsLost: Math.floor(Math.random() * 3) }
+      });
+    }
+
+    function render() {
+      const matches = campaign.matches.slice(0, 5);
+      const wins = matches.filter(m => m.won).length;
+      const losses = matches.length - wins;
+      const winrate = Math.round((wins / matches.length) * 100);
+
+      // Title
+      const title = document.getElementById('campaign-title');
+      if (wins >= 4) {
+        title.textContent = 'LEGENDARY';
+        title.className = 'campaign-title win';
+      } else if (wins >= 3) {
+        title.textContent = 'STRONG RUN';
+        title.className = 'campaign-title win';
+      } else if (wins >= 2) {
+        title.textContent = 'CAMPAIGN OVER';
+        title.className = 'campaign-title';
+      } else {
+        title.textContent = 'TOUGH CAMPAIGN';
+        title.className = 'campaign-title lose';
+      }
+
+      document.getElementById('campaign-subtitle').textContent = `${wins} wins, ${losses} losses across 5 matches`;
+
+      // Match cards
+      const grid = document.getElementById('matches-grid');
+      grid.innerHTML = matches.map((m, i) => `
+        <div class="match-result-card ${m.won ? 'won' : 'lost'}" data-od-id="match-${i+1}">
+          <div class="match-num">Match ${i + 1}</div>
+          <div class="match-verdict ${m.won ? 'win' : 'lose'}">${m.won ? 'WIN' : 'LOSS'}</div>
+        </div>
+      `).join('');
+
+      // Stats
+      document.getElementById('stat-wins').textContent = wins;
+      document.getElementById('stat-losses').textContent = losses;
+      document.getElementById('stat-winrate').textContent = `${winrate}%`;
+    }
+
+    function playAgain() {
+      // Clear all game state
+      sessionStorage.removeItem('squad');
+      sessionStorage.removeItem('formation');
+      sessionStorage.removeItem('fatigue');
+      sessionStorage.removeItem('matchState');
+      sessionStorage.removeItem('campaign');
+      sessionStorage.removeItem('phaseResult');
+      sessionStorage.removeItem('roundResult');
+      window.location.href = '../index.html';
+    }
+
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "fileName": "screens/phase-result.html",
+  "entries": [
+    {
+      "id": "c24ea42f-6485-4a78-a2cc-519d5d6fdee3",
+      "fileName": "screens/phase-result.html",
+      "version": 1,
+      "label": "Version 1",
+      "createdAt": 1783278076857,
+      "source": "ai",
+      "prompt": "[form answers — discovery]\n- What are we making?: Multi-screen app prototype\n- Target platform: iOS app, Desktop web, Responsive web\n- Who is this for?: (skipped)\n- Visual tone: Championship Manager faithful, Modern-retro hybrid\n- Brand context: Pick a direction for me [value: pick_direction]\n- Which screens do you need?: Title Screen — Game logo \"SQUAD\", tagline \"FOOTBALL CARD ROGUELIKE\", START CAMPAIGN button, match info (5 matches, 3 rounds, 6 phases)\n\nSquad Builder — Player list grouped by position (GK, CB, FB, CDM, CM, CAM, LW, RW, ST), each with ATK/PAC/PAS/DEF/SPC stats and cost. Budget bar (360 max). Your selected squad shown below. Confirm button.\n\nFormation Select — Choose from formations like 4-4-2, 4-3-3, 3-5-2, 4-2-3-1, 5-3-2, 4-1-2-1-2. Each has position slots that determine which positions you can field.\n\nMatch Screen — Shows opponent name, current score, round progress, and the phase/round structure. Contains the pitch area where you place players for each phase.\n\nPhase Placement — Current phase name (Goal Kick, Tiki-Taka, Counter-Attack, etc.), weight icon, description. Shows slots to fill and your current player placements on the pitch. Choose which players to assign to each slot. Shows fatigue levels and synergy previews.\n\nPhase Result — Shows which synergies fired, per-player chip contributions, the total phase score. Continue button.\n\nRound Result — Shows won/lost, round score vs target, match score. States: WIN ROUND, LOSE ROUND, MATCH WON (if 2 rounds won), MATCH LOST.\n\nCampaign Complete — Shows results of all 5 matches (WIN/LOSE), play again button.\n\nPlayer Picker — Overlay/list showing available players for a position slot, with their stats and chips calculation. Confirm to place them on the pitch.\n- Anything else I should know?: (skipped)",
+      "size": 8796,
+      "mime": "text/html; charset=utf-8",
+      "kind": "html",
+      "contentPath": "0001-c24ea42f-6485-4a78-a2cc-519d5d6fdee3.html",
+      "promptSource": "message"
+    },
+    {
+      "id": "29cd9cac-15a4-4370-9756-50d3a517e81e",
+      "fileName": "screens/phase-result.html",
+      "version": 2,
+      "label": "Version 2",
+      "createdAt": 1783279132796,
+      "source": "ai",
+      "prompt": "lets lean into the pixel  art vibe, a don't want such a neeutral warm palette , make it llike championship manager met balatro ; redesign please",
+      "size": 9109,
+      "mime": "text/html; charset=utf-8",
+      "kind": "html",
+      "contentPath": "0002-29cd9cac-15a4-4370-9756-50d3a517e81e.html",
+      "promptSource": "message"
+    },
+    {
+      "id": "7b7e4a22-75c4-4199-8043-769f0ad7aeac",
+      "fileName": "screens/phase-result.html",
+      "version": 3,
+      "label": "Version 3",
+      "createdAt": 1783284289164,
+      "source": "ai",
+      "prompt": "I clicked confirm and it says squad locked, shouldn't it move me to the formation select? it does nothing?",
+      "size": 9181,
+      "mime": "text/html; charset=utf-8",
+      "kind": "html",
+      "contentPath": "0003-7b7e4a22-75c4-4199-8043-769f0ad7aeac.html",
+      "promptSource": "message"
+    }
+  ]
+}

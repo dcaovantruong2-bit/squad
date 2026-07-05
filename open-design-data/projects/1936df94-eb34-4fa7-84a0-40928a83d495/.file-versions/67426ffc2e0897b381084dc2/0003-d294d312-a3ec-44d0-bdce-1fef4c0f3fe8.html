@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SQUAD — Round Result</title>
+  <link rel="stylesheet" href="../game.css">
+  <style>
+    .screen-center {
+      min-height: 100vh;
+      padding: var(--space-6);
+    }
+
+    .result-card {
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .result-verdict {
+      font-family: var(--font-display);
+      font-size: clamp(24px, 10vw, 56px);
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: var(--space-4);
+      animation: scaleIn 0.4s ease-out;
+    }
+    .result-verdict.win {
+      color: var(--success);
+      text-shadow: 0 0 20px var(--success-glow), 0 0 60px var(--success-glow);
+    }
+    .result-verdict.lose {
+      color: var(--danger);
+      text-shadow: 0 0 20px var(--danger-glow), 0 0 60px var(--danger-glow);
+    }
+
+    .result-subtitle {
+      font-family: var(--font-mono);
+      font-size: var(--text-lg);
+      color: var(--muted);
+      margin-bottom: var(--space-8);
+    }
+
+    /* Score breakdown */
+    .score-breakdown {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-6);
+      margin-bottom: var(--space-8);
+    }
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-3) 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .breakdown-row:last-child { border-bottom: none; }
+    .breakdown-label {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: var(--muted);
+    }
+    .breakdown-value {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--fg);
+    }
+
+    /* Match score */
+    .match-score-display { margin: var(--space-6) 0; }
+    .match-score-label {
+      font-family: var(--font-display);
+      font-size: 7px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: var(--space-2);
+    }
+    .match-score-num {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--fg);
+    }
+
+    /* Status message */
+    .status-msg {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      padding: var(--space-4);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-6);
+    }
+    .status-msg.match-won {
+      background: rgba(57, 255, 20, 0.05);
+      color: var(--success);
+      border: 2px solid var(--success);
+      box-shadow: 0 0 12px var(--success-glow);
+    }
+    .status-msg.match-lost {
+      background: rgba(255, 51, 68, 0.05);
+      color: var(--danger);
+      border: 2px solid var(--danger);
+      box-shadow: 0 0 12px var(--danger-glow);
+    }
+
+    .continue-section {
+      padding: var(--space-6) 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="screen-center">
+    <div class="result-card" data-od-id="round-result">
+      <div class="result-verdict" id="verdict">ROUND WON</div>
+      <div class="result-subtitle" id="subtitle">Round 1 of 3</div>
+
+      <div class="score-breakdown">
+        <div class="breakdown-row">
+          <span class="breakdown-label">Your Total</span>
+          <span class="breakdown-value" id="your-total">0</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="breakdown-label">Opponent Total</span>
+          <span class="breakdown-value" id="opp-total">0</span>
+        </div>
+        <div class="breakdown-row" style="border-top: 2px solid var(--border-bright); padding-top: var(--space-4);">
+          <span class="breakdown-label">Difference</span>
+          <span class="breakdown-value" id="diff">+0</span>
+        </div>
+      </div>
+
+      <div class="match-score-display">
+        <div class="match-score-label">Match Score</div>
+        <div class="match-score-num">
+          <span id="match-you">0</span>
+          <span style="color:var(--muted)"> — </span>
+          <span id="match-them">0</span>
+        </div>
+      </div>
+
+      <div class="status-msg" id="status-msg"></div>
+
+      <div class="continue-section">
+        <button class="btn btn-primary btn-lg" onclick="continueGame()" id="continue-btn">
+          Continue ▸
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const result = JSON.parse(sessionStorage.getItem('roundResult') || '{}');
+    const matchState = JSON.parse(sessionStorage.getItem('matchState') || '{"roundsWon":0,"roundsLost":0}');
+
+    function render() {
+      const won = result.won;
+      const round = result.round || 0;
+
+      document.getElementById('verdict').textContent = won ? 'ROUND WON' : 'ROUND LOST';
+      document.getElementById('verdict').className = `result-verdict ${won ? 'win' : 'lose'}`;
+      document.getElementById('subtitle').textContent = `Round ${round + 1} of 3`;
+
+      document.getElementById('your-total').textContent = result.score || 0;
+      document.getElementById('opp-total').textContent = result.oppScore || 0;
+      const diff = (result.score || 0) - (result.oppScore || 0);
+      document.getElementById('diff').textContent = diff >= 0 ? `+${diff}` : diff;
+      document.getElementById('diff').style.color = diff >= 0 ? 'var(--success)' : 'var(--danger)';
+
+      // Update match state
+      if (won) matchState.roundsWon = (matchState.roundsWon || 0) + 1;
+      else matchState.roundsLost = (matchState.roundsLost || 0) + 1;
+
+      document.getElementById('match-you').textContent = matchState.roundsWon || 0;
+      document.getElementById('match-them').textContent = matchState.roundsLost || 0;
+      try { sessionStorage.setItem('matchState', JSON.stringify(matchState)); } catch(e) { console.warn('[ROUND] sessionStorage failed:', e); }
+
+      // Status message
+      const statusMsg = document.getElementById('status-msg');
+      const continueBtn = document.getElementById('continue-btn');
+
+      if (matchState.roundsWon >= 2) {
+        statusMsg.textContent = '🏆 MATCH WON! You dominated the tie.';
+        statusMsg.className = 'status-msg match-won';
+        continueBtn.textContent = 'View Campaign ▸';
+        continueBtn.onclick = () => {
+          const campaign = JSON.parse(sessionStorage.getItem('campaign') || '{"matches":[]}');
+          campaign.matches.push({ won: true, rounds: matchState });
+          try { sessionStorage.setItem('campaign', JSON.stringify(campaign)); } catch(e) { console.warn('[ROUND] sessionStorage failed:', e); }
+          window.location.href = 'campaign-complete.html';
+        };
+      } else if (matchState.roundsLost >= 2) {
+        statusMsg.textContent = '❌ MATCH LOST. Better luck next time.';
+        statusMsg.className = 'status-msg match-lost';
+        continueBtn.textContent = 'View Campaign ▸';
+        continueBtn.onclick = () => {
+          const campaign = JSON.parse(sessionStorage.getItem('campaign') || '{"matches":[]}');
+          campaign.matches.push({ won: false, rounds: matchState });
+          try { sessionStorage.setItem('campaign', JSON.stringify(campaign)); } catch(e) { console.warn('[ROUND] sessionStorage failed:', e); }
+          window.location.href = 'campaign-complete.html';
+        };
+      } else {
+        statusMsg.textContent = `Round ${round + 2} coming up. Stay focused.`;
+        statusMsg.className = 'status-msg';
+        statusMsg.style.background = 'rgba(0, 204, 255, 0.05)';
+        statusMsg.style.color = 'var(--info)';
+        statusMsg.style.border = '2px solid var(--info)';
+        statusMsg.style.boxShadow = '0 0 8px var(--info-glow)';
+        continueBtn.textContent = 'Next Round ▸';
+        continueBtn.onclick = () => {
+          // Reset for next round
+          sessionStorage.removeItem('roundResult');
+          window.location.href = 'match.html';
+        };
+      }
+    }
+
+    function continueGame() {
+      // Default handled in render()
+    }
+
+    render();
+  </script>
+</body>
+</html>
