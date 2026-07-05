@@ -1,0 +1,993 @@
+{"id":1,"event":"pipeline_stage_started","data":{"kind":"pipeline_stage_started","runId":"a33cf552-9665-4bcd-b797-38116bce005f","snapshotId":"d08765b3-7fc5-4a5d-a1b5-ba88d9d7b11e","stageId":"plan","iteration":0,"startedAt":1783287571642},"timestamp":1783287571642}
+{"id":2,"event":"pipeline_stage_completed","data":{"kind":"pipeline_stage_completed","runId":"a33cf552-9665-4bcd-b797-38116bce005f","snapshotId":"d08765b3-7fc5-4a5d-a1b5-ba88d9d7b11e","stageId":"plan","iteration":0,"completedAt":1783287571644,"converged":true},"timestamp":1783287571644}
+{"id":3,"event":"pipeline_stage_started","data":{"kind":"pipeline_stage_started","runId":"a33cf552-9665-4bcd-b797-38116bce005f","snapshotId":"d08765b3-7fc5-4a5d-a1b5-ba88d9d7b11e","stageId":"generate","iteration":0,"startedAt":1783287571644},"timestamp":1783287571644}
+{"id":4,"event":"pipeline_stage_completed","data":{"kind":"pipeline_stage_completed","runId":"a33cf552-9665-4bcd-b797-38116bce005f","snapshotId":"d08765b3-7fc5-4a5d-a1b5-ba88d9d7b11e","stageId":"generate","iteration":0,"completedAt":1783287571644,"converged":true},"timestamp":1783287571644}
+{"id":5,"event":"pipeline_stage_started","data":{"kind":"pipeline_stage_started","runId":"a33cf552-9665-4bcd-b797-38116bce005f","snapshotId":"d08765b3-7fc5-4a5d-a1b5-ba88d9d7b11e","stageId":"critique","iteration":0,"startedAt":1783287571644},"timestamp":1783287571644}
+{"id":6,"event":"pipeline_stage_completed","data":{"kind":"pipeline_stage_completed","runId":"a33cf552-9665-4bcd-b797-38116bce005f","snapshotId":"d08765b3-7fc5-4a5d-a1b5-ba88d9d7b11e","stageId":"critique","iteration":0,"completedAt":1783287571644,"converged":true},"timestamp":1783287571644}
+{"id":7,"event":"start","data":{"runId":"a33cf552-9665-4bcd-b797-38116bce005f","agentId":"hermes","bin":"hermes","streamFormat":"acp-json-rpc","projectId":"1936df94-eb34-4fa7-84a0-40928a83d495","cwd":"/home/hermes/games/squad/open-design-data/projects/1936df94-eb34-4fa7-84a0-40928a83d495","model":"opencode-go:mimo-v2.5","reasoning":null,"toolTokenExpiresAt":"2026-07-05T21:54:31.694Z"},"timestamp":1783287572374}
+{"id":8,"event":"stderr","data":{"chunk":"2026-07-05 23:39:33 [INFO] acp_adapter.entry: Loaded env from /home/hermes/.hermes/profiles/game/.env\n2026-07-05 23:39:33 [INFO] acp_adapter.entry: Starting hermes-agent ACP adapter\n"},"timestamp":1783287573051}
+{"id":9,"event":"stderr","data":{"chunk":"2026-07-05 23:39:33 [INFO] acp_adapter.server: ACP client connected\n"},"timestamp":1783287573785}
+{"id":10,"event":"stderr","data":{"chunk":"2026-07-05 23:39:33 [INFO] acp_adapter.server: Initialize from open-design (protocol v1)\n"},"timestamp":1783287573925}
+{"id":11,"event":"stderr","data":{"chunk":"2026-07-05 23:39:33 [INFO] run_agent: Loaded environment variables from /home/hermes/.hermes/profiles/game/.env\n"},"timestamp":1783287573937}
+{"id":12,"event":"stderr","data":{"chunk":"2026-07-05 23:39:35 [INFO] run_agent: OpenAI client created (agent_init, shared=True) thread=MainThread:125991843985216 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=deepseek-v4-flash\n"},"timestamp":1783287575566}
+{"id":13,"event":"stderr","data":{"chunk":"2026-07-05 23:39:35 [WARNING] tools.registry: check_fn _browser_cdp_check returned False; dependent tools will be unavailable this turn\n"},"timestamp":1783287575570}
+{"id":14,"event":"stderr","data":{"chunk":"2026-07-05 23:39:35 [WARNING] tools.registry: check_fn _browser_dialog_check returned False; dependent tools will be unavailable this turn\n"},"timestamp":1783287575570}
+{"id":15,"event":"stderr","data":{"chunk":"2026-07-05 23:39:35 [WARNING] agent.auxiliary_client: Auxiliary: marking openrouter unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 23:40:35.\n"},"timestamp":1783287575967}
+{"id":16,"event":"stderr","data":{"chunk":"2026-07-05 23:39:35 [WARNING] agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).\n"},"timestamp":1783287575973}
+{"id":17,"event":"stderr","data":{"chunk":"2026-07-05 23:39:35 [WARNING] agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 23:40:35.\n"},"timestamp":1783287575974}
+{"id":18,"event":"stderr","data":{"chunk":"2026-07-05 23:39:35 [WARNING] agent.auxiliary_client: Auxiliary: marking openrouter unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 23:40:35.\n"},"timestamp":1783287575982}
+{"id":19,"event":"stderr","data":{"chunk":"2026-07-05 23:39:35 [WARNING] agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).\n"},"timestamp":1783287575987}
+{"id":20,"event":"stderr","data":{"chunk":"2026-07-05 23:39:35 [WARNING] agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 23:40:35.\n2026-07-05 23:39:35 [WARNING] tools.registry: check_fn check_browser_vision_requirements returned False; dependent tools will be unavailable this turn\n"},"timestamp":1783287575987}
+{"id":21,"event":"stderr","data":{"chunk":"2026-07-05 23:39:36 [WARNING] agent.auxiliary_client: Auxiliary: marking openrouter unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 23:40:36.\n"},"timestamp":1783287576230}
+{"id":22,"event":"stderr","data":{"chunk":"2026-07-05 23:39:36 [WARNING] agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).\n"},"timestamp":1783287576234}
+{"id":23,"event":"stderr","data":{"chunk":"2026-07-05 23:39:36 [WARNING] agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 23:40:36.\n"},"timestamp":1783287576234}
+{"id":24,"event":"stderr","data":{"chunk":"2026-07-05 23:39:36 [WARNING] agent.auxiliary_client: Auxiliary: marking openrouter unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 23:40:36.\n"},"timestamp":1783287576241}
+{"id":25,"event":"stderr","data":{"chunk":"2026-07-05 23:39:36 [WARNING] agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).\n"},"timestamp":1783287576245}
+{"id":26,"event":"stderr","data":{"chunk":"2026-07-05 23:39:36 [WARNING] agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 23:40:36.\n"},"timestamp":1783287576246}
+{"id":27,"event":"stderr","data":{"chunk":"2026-07-05 23:39:36 [WARNING] tools.registry: check_fn check_vision_requirements returned False; dependent tools will be unavailable this turn\n"},"timestamp":1783287576248}
+{"id":28,"event":"stderr","data":{"chunk":"2026-07-05 23:39:36 [INFO] acp_adapter.session: Created ACP session 0952eaf2-7a49-4346-8702-b6b6dbcc7125 (cwd=/home/hermes/games/squad/open-design-data/projects/1936df94-eb34-4fa7-84a0-40928a83d495)\n"},"timestamp":1783287576341}
+{"id":29,"event":"stderr","data":{"chunk":"2026-07-05 23:39:36 [INFO] tools.mcp_tool: MCP server 'open-design-live-artifacts' (stdio): registered 6 tool(s): mcp_open_design_live_artifacts_live_artifacts_create, mcp_open_design_live_artifacts_live_artifacts_list, mcp_open_design_live_artifacts_live_artifacts_update, mcp_open_design_live_artifacts_live_artifacts_refresh, mcp_open_design_live_artifacts_connectors_list, mcp_open_design_live_artifacts_connectors_execute\n2026-07-05 23:39:36 [INFO] tools.mcp_tool: MCP: registered 6 tool(s) from 1 server(s)\n"},"timestamp":1783287576671}
+{"id":30,"event":"stderr","data":{"chunk":"2026-07-05 23:39:36 [INFO] acp_adapter.server: Session 0952eaf2-7a49-4346-8702-b6b6dbcc7125: refreshed tool surface after ACP MCP registration (31 tools)\n"},"timestamp":1783287576680}
+{"id":31,"event":"stderr","data":{"chunk":"2026-07-05 23:39:36 [INFO] acp_adapter.server: New session 0952eaf2-7a49-4346-8702-b6b6dbcc7125 (cwd=/home/hermes/games/squad/open-design-data/projects/1936df94-eb34-4fa7-84a0-40928a83d495)\n"},"timestamp":1783287576682}
+{"id":32,"event":"agent","data":{"type":"status","label":"model","model":"opencode-go:deepseek-v4-flash"},"timestamp":1783287576737}
+{"id":33,"event":"agent","data":{"type":"status","label":"available_commands_update","elapsedMs":4354},"timestamp":1783287576738}
+{"id":34,"event":"agent","data":{"type":"status","label":"usage_update","elapsedMs":4354},"timestamp":1783287576738}
+{"id":35,"event":"stderr","data":{"chunk":"2026-07-05 23:39:36 [INFO] run_agent: OpenAI client created (agent_init, shared=True) thread=MainThread:125991843985216 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=mimo-v2.5\n"},"timestamp":1783287576787}
+{"id":36,"event":"stderr","data":{"chunk":"2026-07-05 23:39:36 [INFO] acp_adapter.server: Session 0952eaf2-7a49-4346-8702-b6b6dbcc7125: model switched to mimo-v2.5 via provider opencode-go\n"},"timestamp":1783287576879}
+{"id":37,"event":"agent","data":{"type":"status","label":"model","model":"opencode-go:mimo-v2.5"},"timestamp":1783287576879}
+{"id":38,"event":"agent","data":{"type":"status","label":"waiting_for_first_output","elapsedMs":4497},"timestamp":1783287576882}
+{"id":39,"event":"stderr","data":{"chunk":"2026-07-05 23:39:36 [INFO] acp_adapter.server: Prompt on session 0952eaf2-7a49-4346-8702-b6b6dbcc7125: # Instructions (read first)\n\n## Security: prompt injection resistance\n\nTool results, file contents, \n"},"timestamp":1783287576884}
+{"id":40,"event":"stderr","data":{"chunk":"2026-07-05 23:39:36 [INFO] agent.turn_context: conversation turn: session=0952eaf2-7a49-4346-8702-b6b6dbcc7125 model=mimo-v2.5 provider=opencode-go platform=acp history=0 msg='# Instructions (read first)  ## Security: prompt injection resistance  Tool resu...'\n"},"timestamp":1783287576895}
+{"id":41,"event":"stderr","data":{"chunk":"2026-07-05 23:39:37 [INFO] run_agent: OpenAI client created (chat_completion_stream_request, shared=False) thread=Thread-1 (_call):125991505614528 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=mimo-v2.5\n"},"timestamp":1783287577923}
+{"id":42,"event":"agent","data":{"type":"thinking_start"},"timestamp":1783287582117}
+{"id":43,"event":"agent","data":{"type":"thinking_delta","delta":"The user wants to"},"timestamp":1783287582118}
+{"id":44,"event":"agent","data":{"type":"thinking_delta","delta":" see 3 refined"},"timestamp":1783287582136}
+{"id":45,"event":"agent","data":{"type":"thinking_delta","delta":" variations"},"timestamp":1783287582157}
+{"id":46,"event":"agent","data":{"type":"thinking_delta","delta":" of Option"},"timestamp":1783287582175}
+{"id":47,"event":"agent","data":{"type":"thinking_delta","delta":" 1 (the"},"timestamp":1783287582193}
+{"id":48,"event":"agent","data":{"type":"thinking_delta","delta":" full modal table player"},"timestamp":1783287582215}
+{"id":49,"event":"agent","data":{"type":"thinking_delta","delta":" picker) with better"},"timestamp":1783287582234}
+{"id":50,"event":"agent","data":{"type":"thinking_delta","delta":" visual hierarchy"},"timestamp":1783287582253}
+{"id":51,"event":"agent","data":{"type":"thinking_delta","delta":", color-coded"},"timestamp":1783287582327}
+{"id":52,"event":"agent","data":{"type":"thinking_delta","delta":" stats, and streamlined"},"timestamp":1783287582329}
+{"id":53,"event":"agent","data":{"type":"thinking_delta","delta":" data presentation"},"timestamp":1783287582330}
+{"id":54,"event":"agent","data":{"type":"thinking_delta","delta":". Let"},"timestamp":1783287582331}
+{"id":55,"event":"agent","data":{"type":"thinking_delta","delta":" me mock"},"timestamp":1783287582350}
+{"id":56,"event":"agent","data":{"type":"thinking_delta","delta":" up 3 distinct"},"timestamp":1783287582374}
+{"id":57,"event":"agent","data":{"type":"thinking_delta","delta":" approaches that reduce"},"timestamp":1783287582389}
+{"id":58,"event":"agent","data":{"type":"thinking_delta","delta":" cognitive"},"timestamp":1783287582409}
+{"id":59,"event":"agent","data":{"type":"thinking_delta","delta":" load"},"timestamp":1783287582428}
+{"id":60,"event":"agent","data":{"type":"thinking_delta","delta":" while keeping the CM"},"timestamp":1783287582451}
+{"id":61,"event":"agent","data":{"type":"thinking_delta","delta":" data"},"timestamp":1783287582467}
+{"id":62,"event":"agent","data":{"type":"thinking_delta","delta":"-d"},"timestamp":1783287582484}
+{"id":63,"event":"agent","data":{"type":"thinking_delta","delta":"ense feel"},"timestamp":1783287582507}
+{"id":64,"event":"agent","data":{"type":"thinking_delta","delta":".\n\nLet me think"},"timestamp":1783287582522}
+{"id":65,"event":"agent","data":{"type":"thinking_delta","delta":" about what"},"timestamp":1783287582543}
+{"id":66,"event":"agent","data":{"type":"thinking_delta","delta":" makes the current"},"timestamp":1783287582561}
+{"id":67,"event":"agent","data":{"type":"thinking_delta","delta":" approach"},"timestamp":1783287582581}
+{"id":68,"event":"agent","data":{"type":"thinking_delta","delta":" \""},"timestamp":1783287582601}
+{"id":69,"event":"agent","data":{"type":"thinking_delta","delta":"too many numbers\":\n"},"timestamp":1783287582620}
+{"id":70,"event":"agent","data":{"type":"thinking_delta","delta":"-"},"timestamp":1783287582640}
+{"id":71,"event":"agent","data":{"type":"thinking_delta","delta":" Raw"},"timestamp":1783287582660}
+{"id":72,"event":"agent","data":{"type":"thinking_delta","delta":" stats (5"},"timestamp":1783287582679}
+{"id":73,"event":"agent","data":{"type":"thinking_delta","delta":" columns"},"timestamp":1783287582701}
+{"id":74,"event":"agent","data":{"type":"thinking_delta","delta":" of"},"timestamp":1783287582718}
+{"id":75,"event":"agent","data":{"type":"thinking_delta","delta":" numbers"},"timestamp":1783287582737}
+{"id":76,"event":"agent","data":{"type":"thinking_delta","delta":")\n- Formula"},"timestamp":1783287582756}
+{"id":77,"event":"agent","data":{"type":"thinking_delta","delta":" breakdown ("},"timestamp":1783287582777}
+{"id":78,"event":"agent","data":{"type":"thinking_delta","delta":"math"},"timestamp":1783287582794}
+{"id":79,"event":"agent","data":{"type":"thinking_delta","delta":" expression"},"timestamp":1783287582816}
+{"id":80,"event":"agent","data":{"type":"thinking_delta","delta":")\n- Chips"},"timestamp":1783287582833}
+{"id":81,"event":"agent","data":{"type":"thinking_delta","delta":" result"},"timestamp":1783287582854}
+{"id":82,"event":"agent","data":{"type":"thinking_delta","delta":"\n- Synergy"},"timestamp":1783287582873}
+{"id":83,"event":"agent","data":{"type":"thinking_delta","delta":" badges\n- Traits"},"timestamp":1783287582892}
+{"id":84,"event":"agent","data":{"type":"thinking_delta","delta":"/t"},"timestamp":1783287582912}
+{"id":85,"event":"agent","data":{"type":"thinking_delta","delta":"raits"},"timestamp":1783287582935}
+{"id":86,"event":"agent","data":{"type":"thinking_delta","delta":"\n\n3"},"timestamp":1783287582950}
+{"id":87,"event":"agent","data":{"type":"thinking_delta","delta":" ways"},"timestamp":1783287582968}
+{"id":88,"event":"agent","data":{"type":"thinking_delta","delta":" to streamline"},"timestamp":1783287582987}
+{"id":89,"event":"agent","data":{"type":"thinking_delta","delta":":\n"},"timestamp":1783287583008}
+{"id":90,"event":"agent","data":{"type":"thinking_delta","delta":"1. **Visual"},"timestamp":1783287583073}
+{"id":91,"event":"agent","data":{"type":"thinking_delta","delta":" bars"},"timestamp":1783287583076}
+{"id":92,"event":"agent","data":{"type":"thinking_delta","delta":" + badges"},"timestamp":1783287583077}
+{"id":93,"event":"agent","data":{"type":"thinking_delta","delta":"** — replace"},"timestamp":1783287583092}
+{"id":94,"event":"agent","data":{"type":"thinking_delta","delta":" raw numbers"},"timestamp":1783287583106}
+{"id":95,"event":"agent","data":{"type":"thinking_delta","delta":" with colored stat bars"},"timestamp":1783287583124}
+{"id":96,"event":"agent","data":{"type":"thinking_delta","delta":", chips"},"timestamp":1783287583144}
+{"id":97,"event":"agent","data":{"type":"thinking_delta","delta":" as a big"},"timestamp":1783287583167}
+{"id":98,"event":"agent","data":{"type":"thinking_delta","delta":" number"},"timestamp":1783287583188}
+{"id":99,"event":"agent","data":{"type":"thinking_delta","delta":", synerg"},"timestamp":1783287583213}
+{"id":100,"event":"agent","data":{"type":"thinking_delta","delta":"ies as small icons"},"timestamp":1783287583226}
+{"id":101,"event":"agent","data":{"type":"thinking_delta","delta":"\n2. **"},"timestamp":1783287583247}
+{"id":102,"event":"agent","data":{"type":"thinking_delta","delta":"Card-per"},"timestamp":1783287583266}
+{"id":103,"event":"agent","data":{"type":"thinking_delta","delta":"-player** — each"},"timestamp":1783287583293}
+{"id":104,"event":"agent","data":{"type":"thinking_delta","delta":" player is"},"timestamp":1783287583310}
+{"id":105,"event":"agent","data":{"type":"thinking_delta","delta":" a card with a"},"timestamp":1783287583331}
+{"id":106,"event":"agent","data":{"type":"thinking_delta","delta":" radar"},"timestamp":1783287583348}
+{"id":107,"event":"agent","data":{"type":"thinking_delta","delta":"/sp"},"timestamp":1783287583381}
+{"id":108,"event":"agent","data":{"type":"thinking_delta","delta":"arkline"},"timestamp":1783287583392}
+{"id":109,"event":"agent","data":{"type":"thinking_delta","delta":" chart"},"timestamp":1783287583408}
+{"id":110,"event":"agent","data":{"type":"thinking_delta","delta":", chips"},"timestamp":1783287583429}
+{"id":111,"event":"agent","data":{"type":"thinking_delta","delta":" prominent"},"timestamp":1783287583450}
+{"id":112,"event":"agent","data":{"type":"thinking_delta","delta":", synerg"},"timestamp":1783287583478}
+{"id":113,"event":"agent","data":{"type":"thinking_delta","delta":"ies as a strip"},"timestamp":1783287583491}
+{"id":114,"event":"agent","data":{"type":"thinking_delta","delta":"\n3. **"},"timestamp":1783287583507}
+{"id":115,"event":"agent","data":{"type":"thinking_delta","delta":"Compact row"},"timestamp":1783287583527}
+{"id":116,"event":"agent","data":{"type":"thinking_delta","delta":" + hover"},"timestamp":1783287583545}
+{"id":117,"event":"agent","data":{"type":"thinking_delta","delta":" expand"},"timestamp":1783287583566}
+{"id":118,"event":"agent","data":{"type":"thinking_delta","delta":"** — thin"},"timestamp":1783287583585}
+{"id":119,"event":"agent","data":{"type":"thinking_delta","delta":" rows"},"timestamp":1783287583603}
+{"id":120,"event":"agent","data":{"type":"thinking_delta","delta":" by"},"timestamp":1783287583622}
+{"id":121,"event":"agent","data":{"type":"thinking_delta","delta":" default, hover"},"timestamp":1783287583644}
+{"id":122,"event":"agent","data":{"type":"thinking_delta","delta":"/c"},"timestamp":1783287583663}
+{"id":123,"event":"agent","data":{"type":"thinking_delta","delta":"lick reveals"},"timestamp":1783287583682}
+{"id":124,"event":"agent","data":{"type":"thinking_delta","delta":" full breakdown"},"timestamp":1783287583704}
+{"id":125,"event":"agent","data":{"type":"status","label":"streaming","ttftMs":11356},"timestamp":1783287583741}
+{"id":126,"event":"agent","data":{"type":"text_delta","delta":"Here are three"},"timestamp":1783287583741}
+{"id":127,"event":"agent","data":{"type":"text_delta","delta":" refined variations"},"timestamp":1783287583761}
+{"id":128,"event":"agent","data":{"type":"text_delta","delta":" of Option"},"timestamp":1783287583792}
+{"id":129,"event":"agent","data":{"type":"text_delta","delta":" 1 — each"},"timestamp":1783287583818}
+{"id":130,"event":"agent","data":{"type":"text_delta","delta":" tackles"},"timestamp":1783287583835}
+{"id":131,"event":"agent","data":{"type":"text_delta","delta":" the \""},"timestamp":1783287583843}
+{"id":132,"event":"agent","data":{"type":"text_delta","delta":"too many numbers\""},"timestamp":1783287583854}
+{"id":133,"event":"agent","data":{"type":"text_delta","delta":" problem differently while"},"timestamp":1783287583873}
+{"id":134,"event":"agent","data":{"type":"text_delta","delta":" keeping the data"},"timestamp":1783287583897}
+{"id":135,"event":"agent","data":{"type":"text_delta","delta":" density CM"},"timestamp":1783287583918}
+{"id":136,"event":"agent","data":{"type":"text_delta","delta":" fans"},"timestamp":1783287583936}
+{"id":137,"event":"agent","data":{"type":"text_delta","delta":" love"},"timestamp":1783287583958}
+{"id":138,"event":"agent","data":{"type":"text_delta","delta":":\n\n---\n\n"},"timestamp":1783287583978}
+{"id":139,"event":"agent","data":{"type":"text_delta","delta":"**Variant"},"timestamp":1783287583998}
+{"id":140,"event":"agent","data":{"type":"text_delta","delta":" A —"},"timestamp":1783287584019}
+{"id":141,"event":"agent","data":{"type":"text_delta","delta":" Visual"},"timestamp":1783287584039}
+{"id":142,"event":"agent","data":{"type":"text_delta","delta":" Stat"},"timestamp":1783287584062}
+{"id":143,"event":"agent","data":{"type":"text_delta","delta":" Bars + Chips Hero"},"timestamp":1783287584082}
+{"id":144,"event":"agent","data":{"type":"text_delta","delta":"**\n\nReplace"},"timestamp":1783287584103}
+{"id":145,"event":"agent","data":{"type":"text_delta","delta":" raw stat"},"timestamp":1783287584120}
+{"id":146,"event":"agent","data":{"type":"text_delta","delta":" numbers with colored"},"timestamp":1783287584141}
+{"id":147,"event":"agent","data":{"type":"text_delta","delta":" micro"},"timestamp":1783287584164}
+{"id":148,"event":"agent","data":{"type":"text_delta","delta":"-bars. Chips"},"timestamp":1783287584176}
+{"id":149,"event":"agent","data":{"type":"text_delta","delta":" is"},"timestamp":1783287584195}
+{"id":150,"event":"agent","data":{"type":"text_delta","delta":" the biggest"},"timestamp":1783287584213}
+{"id":151,"event":"agent","data":{"type":"text_delta","delta":" element"},"timestamp":1783287584235}
+{"id":152,"event":"agent","data":{"type":"text_delta","delta":". Sy"},"timestamp":1783287584251}
+{"id":153,"event":"agent","data":{"type":"text_delta","delta":"nergies as"},"timestamp":1783287584270}
+{"id":154,"event":"agent","data":{"type":"text_delta","delta":" icon"},"timestamp":1783287584290}
+{"id":155,"event":"agent","data":{"type":"text_delta","delta":" strip. Formula"},"timestamp":1783287584309}
+{"id":156,"event":"agent","data":{"type":"text_delta","delta":" visible"},"timestamp":1783287584327}
+{"id":157,"event":"agent","data":{"type":"text_delta","delta":" but"},"timestamp":1783287584345}
+{"id":158,"event":"agent","data":{"type":"text_delta","delta":" not"},"timestamp":1783287584365}
+{"id":159,"event":"agent","data":{"type":"text_delta","delta":" dominant.\n\n```\n"},"timestamp":1783287584384}
+{"id":160,"event":"agent","data":{"type":"text_delta","delta":"┌────────────────────────"},"timestamp":1783287584404}
+{"id":161,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783287584429}
+{"id":162,"event":"agent","data":{"type":"text_delta","delta":"─────────────"},"timestamp":1783287584442}
+{"id":163,"event":"agent","data":{"type":"text_delta","delta":"┐\n│ "},"timestamp":1783287584465}
+{"id":164,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783287584482}
+{"id":165,"event":"agent","data":{"type":"text_delta","delta":"🎯 ST SLOT"},"timestamp":1783287584519}
+{"id":166,"event":"agent","data":{"type":"text_delta","delta":"  ["},"timestamp":1783287584538}
+{"id":167,"event":"agent","data":{"type":"text_delta","delta":"ATK≥7"},"timestamp":1783287584596}
+{"id":168,"event":"agent","data":{"type":"text_delta","delta":"]                         "},"timestamp":1783287584616}
+{"id":169,"event":"agent","data":{"type":"text_delta","delta":" Formation"},"timestamp":1783287584619}
+{"id":170,"event":"agent","data":{"type":"text_delta","delta":": 4"},"timestamp":1783287584626}
+{"id":171,"event":"agent","data":{"type":"text_delta","delta":"-3-3"},"timestamp":1783287584654}
+{"id":172,"event":"agent","data":{"type":"text_delta","delta":" +"},"timestamp":1783287584674}
+{"id":173,"event":"agent","data":{"type":"text_delta","delta":"20│\n"},"timestamp":1783287584688}
+{"id":174,"event":"agent","data":{"type":"text_delta","delta":"│  Formula:"},"timestamp":1783287584828}
+{"id":175,"event":"agent","data":{"type":"text_delta","delta":" ATK×3 +"},"timestamp":1783287584830}
+{"id":176,"event":"agent","data":{"type":"text_delta","delta":" PAC×2 +"},"timestamp":1783287584832}
+{"id":177,"event":"agent","data":{"type":"text_delta","delta":" SPC×1"},"timestamp":1783287584834}
+{"id":178,"event":"agent","data":{"type":"text_delta","delta":"                                   "},"timestamp":1783287584836}
+{"id":179,"event":"agent","data":{"type":"text_delta","delta":" │\n├────────"},"timestamp":1783287584837}
+{"id":180,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783287584839}
+{"id":181,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────"},"timestamp":1783287584841}
+{"id":182,"event":"agent","data":{"type":"text_delta","delta":"─┤\n│"},"timestamp":1783287584845}
+{"id":183,"event":"agent","data":{"type":"text_delta","delta":"                                                                     │\n│"},"timestamp":1783287584903}
+{"id":184,"event":"agent","data":{"type":"text_delta","delta":"  "},"timestamp":1783287584906}
+{"id":185,"event":"agent","data":{"type":"text_delta","delta":"▸ Terry Henri        "},"timestamp":1783287584908}
+{"id":186,"event":"agent","data":{"type":"text_delta","delta":" [pacey]"},"timestamp":1783287584928}
+{"id":187,"event":"agent","data":{"type":"text_delta","delta":" [clinical]                         "},"timestamp":1783287584945}
+{"id":188,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783287584961}
+{"id":189,"event":"agent","data":{"type":"text_delta","delta":" ATK █████"},"timestamp":1783287584980}
+{"id":190,"event":"agent","data":{"type":"text_delta","delta":"████░ "},"timestamp":1783287584999}
+{"id":191,"event":"agent","data":{"type":"text_delta","delta":"9"},"timestamp":1783287585017}
+{"id":192,"event":"agent","data":{"type":"text_delta","delta":"  "},"timestamp":1783287585056}
+{"id":193,"event":"agent","data":{"type":"text_delta","delta":" PAC █████████░"},"timestamp":1783287585076}
+{"id":194,"event":"agent","data":{"type":"text_delta","delta":" 9   PAS"},"timestamp":1783287585095}
+{"id":195,"event":"agent","data":{"type":"text_delta","delta":" ██████"},"timestamp":1783287585118}
+{"id":196,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783287585136}
+{"id":197,"event":"agent","data":{"type":"text_delta","delta":" 6        "},"timestamp":1783287585161}
+{"id":198,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783287585176}
+{"id":199,"event":"agent","data":{"type":"text_delta","delta":" DEF █░░"},"timestamp":1783287585199}
+{"id":200,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783287585218}
+{"id":201,"event":"agent","data":{"type":"text_delta","delta":"░░░ "},"timestamp":1783287585235}
+{"id":202,"event":"agent","data":{"type":"text_delta","delta":"1   SPC"},"timestamp":1783287585255}
+{"id":203,"event":"agent","data":{"type":"text_delta","delta":" ████████░"},"timestamp":1783287585286}
+{"id":204,"event":"agent","data":{"type":"text_delta","delta":"░ 8                            "},"timestamp":1783287585298}
+{"id":205,"event":"agent","data":{"type":"text_delta","delta":" │\n│                                                                    "},"timestamp":1783287585315}
+{"id":206,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783287585334}
+{"id":207,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783287585356}
+{"id":208,"event":"agent","data":{"type":"text_delta","delta":"⚡ Clean"},"timestamp":1783287585374}
+{"id":209,"event":"agent","data":{"type":"text_delta","delta":" Sheet +"},"timestamp":1783287585394}
+{"id":210,"event":"agent","data":{"type":"text_delta","delta":"20  "},"timestamp":1783287585415}
+{"id":211,"event":"agent","data":{"type":"text_delta","delta":"⚡ Overload"},"timestamp":1783287585434}
+{"id":212,"event":"agent","data":{"type":"text_delta","delta":" +15 "},"timestamp":1783287585452}
+{"id":213,"event":"agent","data":{"type":"text_delta","delta":" ⚡ Clinical"},"timestamp":1783287585471}
+{"id":214,"event":"agent","data":{"type":"text_delta","delta":" Edge"},"timestamp":1783287585490}
+{"id":215,"event":"agent","data":{"type":"text_delta","delta":" +1"},"timestamp":1783287585509}
+{"id":216,"event":"agent","data":{"type":"text_delta","delta":"0        │\n"},"timestamp":1783287585530}
+{"id":217,"event":"agent","data":{"type":"text_delta","delta":"│    Fat"},"timestamp":1783287585550}
+{"id":218,"event":"agent","data":{"type":"text_delta","delta":"igue: ×1"},"timestamp":1783287585569}
+{"id":219,"event":"agent","data":{"type":"text_delta","delta":".0                                                   "},"timestamp":1783287585588}
+{"id":220,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783287585609}
+{"id":221,"event":"agent","data":{"type":"text_delta","delta":" ┌"},"timestamp":1783287585627}
+{"id":222,"event":"agent","data":{"type":"text_delta","delta":"──────────"},"timestamp":1783287585647}
+{"id":223,"event":"agent","data":{"type":"text_delta","delta":"─"},"timestamp":1783287585667}
+{"id":224,"event":"agent","data":{"type":"text_delta","delta":"┐                                                   "},"timestamp":1783287585689}
+{"id":225,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783287585706}
+{"id":226,"event":"agent","data":{"type":"text_delta","delta":" │  "},"timestamp":1783287585725}
+{"id":227,"event":"agent","data":{"type":"text_delta","delta":" 53 "},"timestamp":1783287585744}
+{"id":228,"event":"agent","data":{"type":"text_delta","delta":"♣    │ "},"timestamp":1783287585763}
+{"id":229,"event":"agent","data":{"type":"text_delta","delta":" ← big"},"timestamp":1783287585786}
+{"id":230,"event":"agent","data":{"type":"text_delta","delta":" chips number"},"timestamp":1783287585802}
+{"id":231,"event":"agent","data":{"type":"text_delta","delta":"                              "},"timestamp":1783287585822}
+{"id":232,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783287585843}
+{"id":233,"event":"agent","data":{"type":"text_delta","delta":" └──────────"},"timestamp":1783287585867}
+{"id":234,"event":"agent","data":{"type":"text_delta","delta":"─┘                                                    │"},"timestamp":1783287585880}
+{"id":235,"event":"agent","data":{"type":"text_delta","delta":"\n│                              "},"timestamp":1783287585899}
+{"id":236,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783287585954}
+{"id":237,"event":"agent","data":{"type":"text_delta","delta":"┌"},"timestamp":1783287585958}
+{"id":238,"event":"agent","data":{"type":"text_delta","delta":"────────────"},"timestamp":1783287585960}
+{"id":239,"event":"agent","data":{"type":"text_delta","delta":"┐"},"timestamp":1783287585977}
+{"id":240,"event":"agent","data":{"type":"text_delta","delta":"                       "},"timestamp":1783287585996}
+{"id":241,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783287586016}
+{"id":242,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783287586110}
+{"id":243,"event":"agent","data":{"type":"text_delta","delta":"9×3="},"timestamp":1783287586116}
+{"id":244,"event":"agent","data":{"type":"text_delta","delta":"27  "},"timestamp":1783287586118}
+{"id":245,"event":"agent","data":{"type":"text_delta","delta":"9×2="},"timestamp":1783287586119}
+{"id":246,"event":"agent","data":{"type":"text_delta","delta":"18  "},"timestamp":1783287586119}
+{"id":247,"event":"agent","data":{"type":"text_delta","delta":"8×1="},"timestamp":1783287586123}
+{"id":248,"event":"agent","data":{"type":"text_delta","delta":"8     │ PLACE"},"timestamp":1783287586143}
+{"id":249,"event":"agent","data":{"type":"text_delta","delta":" PLAYER│"},"timestamp":1783287586159}
+{"id":250,"event":"agent","data":{"type":"text_delta","delta":"                       "},"timestamp":1783287586179}
+{"id":251,"event":"agent","data":{"type":"text_delta","delta":" │\n│                              "},"timestamp":1783287586202}
+{"id":252,"event":"agent","data":{"type":"text_delta","delta":" └────────────"},"timestamp":1783287586214}
+{"id":253,"event":"agent","data":{"type":"text_delta","delta":"┘                       "},"timestamp":1783287586237}
+{"id":254,"event":"agent","data":{"type":"text_delta","delta":" │\n├"},"timestamp":1783287586351}
+{"id":255,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783287586351}
+{"id":256,"event":"agent","data":{"type":"text_delta","delta":"─ ─ "},"timestamp":1783287586353}
+{"id":257,"event":"agent","data":{"type":"text_delta","delta":"─ ─ "},"timestamp":1783287586353}
+{"id":258,"event":"agent","data":{"type":"text_delta","delta":"─ ─ "},"timestamp":1783287586355}
+{"id":259,"event":"agent","data":{"type":"text_delta","delta":"─ ─ "},"timestamp":1783287586356}
+{"id":260,"event":"agent","data":{"type":"text_delta","delta":"─ ─ "},"timestamp":1783287586368}
+{"id":261,"event":"agent","data":{"type":"text_delta","delta":"─ ─ "},"timestamp":1783287586387}
+{"id":262,"event":"agent","data":{"type":"text_delta","delta":"─ ─ "},"timestamp":1783287586408}
+{"id":263,"event":"agent","data":{"type":"text_delta","delta":"─ ─ "},"timestamp":1783287586427}
+{"id":264,"event":"agent","data":{"type":"text_delta","delta":"─ ─ "},"timestamp":1783287586446}
+{"id":265,"event":"agent","data":{"type":"text_delta","delta":"─ ─ "},"timestamp":1783287586465}
+{"id":266,"event":"agent","data":{"type":"text_delta","delta":"─ ─ "},"timestamp":1783287586484}
+{"id":267,"event":"agent","data":{"type":"text_delta","delta":"─ ─ "},"timestamp":1783287586503}
+{"id":268,"event":"agent","data":{"type":"text_delta","delta":"─ ─ "},"timestamp":1783287586523}
+{"id":269,"event":"agent","data":{"type":"text_delta","delta":"─ ─ "},"timestamp":1783287586541}
+{"id":270,"event":"agent","data":{"type":"text_delta","delta":"─ ─ "},"timestamp":1783287586558}
+{"id":271,"event":"agent","data":{"type":"text_delta","delta":"─ ┤"},"timestamp":1783287586600}
+{"id":272,"event":"agent","data":{"type":"text_delta","delta":"\n│ "},"timestamp":1783287586615}
+{"id":273,"event":"agent","data":{"type":"text_delta","delta":" ▸ Big Z"},"timestamp":1783287586635}
+{"id":274,"event":"agent","data":{"type":"text_delta","delta":"lat           "},"timestamp":1783287586654}
+{"id":275,"event":"agent","data":{"type":"text_delta","delta":" [physical] ["},"timestamp":1783287586674}
+{"id":276,"event":"agent","data":{"type":"text_delta","delta":"technical]                      "},"timestamp":1783287586693}
+{"id":277,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783287586714}
+{"id":278,"event":"agent","data":{"type":"text_delta","delta":" ATK ███████"},"timestamp":1783287586731}
+{"id":279,"event":"agent","data":{"type":"text_delta","delta":"█░░ "},"timestamp":1783287586750}
+{"id":280,"event":"agent","data":{"type":"text_delta","delta":"8   PAC █████"},"timestamp":1783287586770}
+{"id":281,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783287586791}
+{"id":282,"event":"agent","data":{"type":"text_delta","delta":"░ 5  "},"timestamp":1783287586814}
+{"id":283,"event":"agent","data":{"type":"text_delta","delta":" PAS ███████"},"timestamp":1783287586843}
+{"id":284,"event":"agent","data":{"type":"text_delta","delta":"░░░ "},"timestamp":1783287586853}
+{"id":285,"event":"agent","data":{"type":"text_delta","delta":"7          │\n"},"timestamp":1783287586870}
+{"id":286,"event":"agent","data":{"type":"text_delta","delta":"│    DEF ██"},"timestamp":1783287586888}
+{"id":287,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783287586919}
+{"id":288,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783287586947}
+{"id":289,"event":"agent","data":{"type":"text_delta","delta":" 2   S"},"timestamp":1783287586969}
+{"id":290,"event":"agent","data":{"type":"text_delta","delta":"PC ██████████"},"timestamp":1783287586995}
+{"id":291,"event":"agent","data":{"type":"text_delta","delta":" 10                            "},"timestamp":1783287587018}
+{"id":292,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783287587042}
+{"id":293,"event":"agent","data":{"type":"text_delta","delta":" Fat"},"timestamp":1783287587091}
+{"id":294,"event":"agent","data":{"type":"text_delta","delta":"igue: ×1"},"timestamp":1783287587114}
+{"id":295,"event":"agent","data":{"type":"text_delta","delta":".0                                                     │"},"timestamp":1783287587138}
+{"id":296,"event":"agent","data":{"type":"text_delta","delta":"\n│    "},"timestamp":1783287587140}
+{"id":297,"event":"agent","data":{"type":"text_delta","delta":"┌───────────"},"timestamp":1783287587146}
+{"id":298,"event":"agent","data":{"type":"text_delta","delta":"┐                                                    "},"timestamp":1783287587147}
+{"id":299,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783287587150}
+{"id":300,"event":"agent","data":{"type":"text_delta","delta":" │   4"},"timestamp":1783287587167}
+{"id":301,"event":"agent","data":{"type":"text_delta","delta":"4 ♣   "},"timestamp":1783287587186}
+{"id":302,"event":"agent","data":{"type":"text_delta","delta":" │                                                    "},"timestamp":1783287587206}
+{"id":303,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783287587225}
+{"id":304,"event":"agent","data":{"type":"text_delta","delta":" └──────────"},"timestamp":1783287587245}
+{"id":305,"event":"agent","data":{"type":"text_delta","delta":"─┘                                                     │"},"timestamp":1783287587265}
+{"id":306,"event":"agent","data":{"type":"text_delta","delta":"\n│    "},"timestamp":1783287587294}
+{"id":307,"event":"agent","data":{"type":"text_delta","delta":"8×3="},"timestamp":1783287587305}
+{"id":308,"event":"agent","data":{"type":"text_delta","delta":"24  "},"timestamp":1783287587327}
+{"id":309,"event":"agent","data":{"type":"text_delta","delta":"5×2="},"timestamp":1783287587344}
+{"id":310,"event":"agent","data":{"type":"text_delta","delta":"10  "},"timestamp":1783287587365}
+{"id":311,"event":"agent","data":{"type":"text_delta","delta":"10×1"},"timestamp":1783287587384}
+{"id":312,"event":"agent","data":{"type":"text_delta","delta":"=10        "},"timestamp":1783287587405}
+{"id":313,"event":"agent","data":{"type":"text_delta","delta":" ┌"},"timestamp":1783287587426}
+{"id":314,"event":"agent","data":{"type":"text_delta","delta":"────────────┐"},"timestamp":1783287587445}
+{"id":315,"event":"agent","data":{"type":"text_delta","delta":"                   │\n│"},"timestamp":1783287587465}
+{"id":316,"event":"agent","data":{"type":"text_delta","delta":"                                     │"},"timestamp":1783287587484}
+{"id":317,"event":"agent","data":{"type":"text_delta","delta":" PLACE PLAYER│                  "},"timestamp":1783287587506}
+{"id":318,"event":"agent","data":{"type":"text_delta","delta":" │\n│"},"timestamp":1783287587525}
+{"id":319,"event":"agent","data":{"type":"text_delta","delta":"                                     └────────"},"timestamp":1783287587545}
+{"id":320,"event":"agent","data":{"type":"text_delta","delta":"────┘                   │"},"timestamp":1783287587564}
+{"id":321,"event":"agent","data":{"type":"text_delta","delta":"\n└────────"},"timestamp":1783287587584}
+{"id":322,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783287587605}
+{"id":323,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────"},"timestamp":1783287587623}
+{"id":324,"event":"agent","data":{"type":"text_delta","delta":"─┘\n``"},"timestamp":1783287587643}
+{"id":325,"event":"agent","data":{"type":"text_delta","delta":"`\n\n**What"},"timestamp":1783287587665}
+{"id":326,"event":"agent","data":{"type":"text_delta","delta":" changed"},"timestamp":1783287587683}
+{"id":327,"event":"agent","data":{"type":"text_delta","delta":":** Stat"},"timestamp":1783287587704}
+{"id":328,"event":"agent","data":{"type":"text_delta","delta":" bars use"},"timestamp":1783287587723}
+{"id":329,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783287587741}
+{"id":330,"event":"agent","data":{"type":"text_delta","delta":"5 neon"},"timestamp":1783287587759}
+{"id":331,"event":"agent","data":{"type":"text_delta","delta":" colors (red"},"timestamp":1783287587780}
+{"id":332,"event":"agent","data":{"type":"text_delta","delta":"/g"},"timestamp":1783287587800}
+{"id":333,"event":"agent","data":{"type":"text_delta","delta":"old/blue/g"},"timestamp":1783287587819}
+{"id":334,"event":"agent","data":{"type":"text_delta","delta":"reen/purple)."},"timestamp":1783287587838}
+{"id":335,"event":"agent","data":{"type":"text_delta","delta":" Chips is"},"timestamp":1783287587859}
+{"id":336,"event":"agent","data":{"type":"text_delta","delta":" a big boxed"},"timestamp":1783287587878}
+{"id":337,"event":"agent","data":{"type":"text_delta","delta":" number. Formula"},"timestamp":1783287587898}
+{"id":338,"event":"agent","data":{"type":"text_delta","delta":" is a compact"},"timestamp":1783287587918}
+{"id":339,"event":"agent","data":{"type":"text_delta","delta":" one-liner below"},"timestamp":1783287587953}
+{"id":340,"event":"agent","data":{"type":"text_delta","delta":" it"},"timestamp":1783287587971}
+{"id":341,"event":"agent","data":{"type":"text_delta","delta":". Synerg"},"timestamp":1783287587991}
+{"id":342,"event":"agent","data":{"type":"text_delta","delta":"ies are"},"timestamp":1783287588010}
+{"id":343,"event":"agent","data":{"type":"text_delta","delta":" small"},"timestamp":1783287588031}
+{"id":344,"event":"agent","data":{"type":"text_delta","delta":" pills"},"timestamp":1783287588050}
+{"id":345,"event":"agent","data":{"type":"text_delta","delta":"."},"timestamp":1783287588069}
+{"id":346,"event":"agent","data":{"type":"text_delta","delta":" Trait"},"timestamp":1783287588088}
+{"id":347,"event":"agent","data":{"type":"text_delta","delta":" tags"},"timestamp":1783287588108}
+{"id":348,"event":"agent","data":{"type":"text_delta","delta":" are muted"},"timestamp":1783287588134}
+{"id":349,"event":"agent","data":{"type":"text_delta","delta":". Few"},"timestamp":1783287588151}
+{"id":350,"event":"agent","data":{"type":"text_delta","delta":"er numbers"},"timestamp":1783287588167}
+{"id":351,"event":"agent","data":{"type":"text_delta","delta":" compete"},"timestamp":1783287588185}
+{"id":352,"event":"agent","data":{"type":"text_delta","delta":" for attention —"},"timestamp":1783287588207}
+{"id":353,"event":"agent","data":{"type":"text_delta","delta":" your"},"timestamp":1783287588225}
+{"id":354,"event":"agent","data":{"type":"text_delta","delta":" eye goes"},"timestamp":1783287588244}
+{"id":355,"event":"agent","data":{"type":"text_delta","delta":":"},"timestamp":1783287588264}
+{"id":356,"event":"agent","data":{"type":"text_delta","delta":" player"},"timestamp":1783287588283}
+{"id":357,"event":"agent","data":{"type":"text_delta","delta":" name → stat"},"timestamp":1783287588302}
+{"id":358,"event":"agent","data":{"type":"text_delta","delta":" bars → chips →"},"timestamp":1783287588322}
+{"id":359,"event":"agent","data":{"type":"text_delta","delta":" place.\n\n---\n\n**"},"timestamp":1783287588343}
+{"id":360,"event":"agent","data":{"type":"text_delta","delta":"Variant B — Card"},"timestamp":1783287588365}
+{"id":361,"event":"agent","data":{"type":"text_delta","delta":" Layout"},"timestamp":1783287588379}
+{"id":362,"event":"agent","data":{"type":"text_delta","delta":" with Radar"},"timestamp":1783287588399}
+{"id":363,"event":"agent","data":{"type":"text_delta","delta":" Spark"},"timestamp":1783287588419}
+{"id":364,"event":"agent","data":{"type":"text_delta","delta":"line**\n\nEach player"},"timestamp":1783287588438}
+{"id":365,"event":"agent","data":{"type":"text_delta","delta":" is a mini"},"timestamp":1783287588457}
+{"id":366,"event":"agent","data":{"type":"text_delta","delta":"-card"},"timestamp":1783287588475}
+{"id":367,"event":"agent","data":{"type":"text_delta","delta":"."},"timestamp":1783287588495}
+{"id":368,"event":"agent","data":{"type":"text_delta","delta":" A"},"timestamp":1783287588518}
+{"id":369,"event":"agent","data":{"type":"text_delta","delta":" tiny"},"timestamp":1783287588534}
+{"id":370,"event":"agent","data":{"type":"text_delta","delta":" pent"},"timestamp":1783287588551}
+{"id":371,"event":"agent","data":{"type":"text_delta","delta":"agon/sp"},"timestamp":1783287588569}
+{"id":372,"event":"agent","data":{"type":"text_delta","delta":"arkline chart replaces"},"timestamp":1783287588589}
+{"id":373,"event":"agent","data":{"type":"text_delta","delta":" stat"},"timestamp":1783287588607}
+{"id":374,"event":"agent","data":{"type":"text_delta","delta":" bars. Chips and"},"timestamp":1783287588627}
+{"id":375,"event":"agent","data":{"type":"text_delta","delta":" synerg"},"timestamp":1783287588646}
+{"id":376,"event":"agent","data":{"type":"text_delta","delta":"ies are footer"},"timestamp":1783287588664}
+{"id":377,"event":"agent","data":{"type":"text_delta","delta":" elements. More"},"timestamp":1783287588685}
+{"id":378,"event":"agent","data":{"type":"text_delta","delta":" visual, less"},"timestamp":1783287588702}
+{"id":379,"event":"agent","data":{"type":"text_delta","delta":" spreadsheet"},"timestamp":1783287588720}
+{"id":380,"event":"agent","data":{"type":"text_delta","delta":".\n\n"},"timestamp":1783287588740}
+{"id":381,"event":"agent","data":{"type":"text_delta","delta":"```\n┌────────"},"timestamp":1783287588760}
+{"id":382,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783287588781}
+{"id":383,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────"},"timestamp":1783287588798}
+{"id":384,"event":"agent","data":{"type":"text_delta","delta":"─┐\n"},"timestamp":1783287588818}
+{"id":385,"event":"agent","data":{"type":"text_delta","delta":"│  "},"timestamp":1783287588837}
+{"id":386,"event":"agent","data":{"type":"text_delta","delta":"🎯 ST SLOT "},"timestamp":1783287588857}
+{"id":387,"event":"agent","data":{"type":"text_delta","delta":" [ATK≥"},"timestamp":1783287588888}
+{"id":388,"event":"agent","data":{"type":"text_delta","delta":"7]                         "},"timestamp":1783287588897}
+{"id":389,"event":"agent","data":{"type":"text_delta","delta":" Formation: 4"},"timestamp":1783287588914}
+{"id":390,"event":"agent","data":{"type":"text_delta","delta":"-3-3"},"timestamp":1783287588934}
+{"id":391,"event":"agent","data":{"type":"text_delta","delta":" +20│"},"timestamp":1783287588950}
+{"id":392,"event":"agent","data":{"type":"text_delta","delta":"\n├────────────────"},"timestamp":1783287588971}
+{"id":393,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783287588989}
+{"id":394,"event":"agent","data":{"type":"text_delta","delta":"─────────────────────"},"timestamp":1783287589019}
+{"id":395,"event":"agent","data":{"type":"text_delta","delta":"┤\n│                                                                    "},"timestamp":1783287589097}
+{"id":396,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783287589099}
+{"id":397,"event":"agent","data":{"type":"text_delta","delta":" ┌────────────────"},"timestamp":1783287589101}
+{"id":398,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783287589105}
+{"id":399,"event":"agent","data":{"type":"text_delta","delta":"──────────────"},"timestamp":1783287589127}
+{"id":400,"event":"agent","data":{"type":"text_delta","delta":"─"},"timestamp":1783287589147}
+{"id":401,"event":"agent","data":{"type":"text_delta","delta":"┐ "},"timestamp":1783287589170}
+{"id":402,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783287589187}
+{"id":403,"event":"agent","data":{"type":"text_delta","delta":" │  "},"timestamp":1783287589205}
+{"id":404,"event":"agent","data":{"type":"text_delta","delta":"┌────"},"timestamp":1783287589222}
+{"id":405,"event":"agent","data":{"type":"text_delta","delta":"──"},"timestamp":1783287589242}
+{"id":406,"event":"agent","data":{"type":"text_delta","delta":"┐                                                    "},"timestamp":1783287589261}
+{"id":407,"event":"agent","data":{"type":"text_delta","delta":" │  │\n"},"timestamp":1783287589281}
+{"id":408,"event":"agent","data":{"type":"text_delta","delta":"│  │ "},"timestamp":1783287589299}
+{"id":409,"event":"agent","data":{"type":"text_delta","delta":" │ "},"timestamp":1783287589318}
+{"id":410,"event":"agent","data":{"type":"text_delta","delta":"╱"},"timestamp":1783287589344}
+{"id":411,"event":"agent","data":{"type":"text_delta","delta":"╲  "},"timestamp":1783287589357}
+{"id":412,"event":"agent","data":{"type":"text_delta","delta":" │  Terry Henri"},"timestamp":1783287589376}
+{"id":413,"event":"agent","data":{"type":"text_delta","delta":"                                      "},"timestamp":1783287589393}
+{"id":414,"event":"agent","data":{"type":"text_delta","delta":" │  │\n"},"timestamp":1783287589414}
+{"id":415,"event":"agent","data":{"type":"text_delta","delta":"│  │ "},"timestamp":1783287589431}
+{"id":416,"event":"agent","data":{"type":"text_delta","delta":" │╱9"},"timestamp":1783287589459}
+{"id":417,"event":"agent","data":{"type":"text_delta","delta":" ╲  │"},"timestamp":1783287589468}
+{"id":418,"event":"agent","data":{"type":"text_delta","delta":"  [pacey"},"timestamp":1783287589506}
+{"id":419,"event":"agent","data":{"type":"text_delta","delta":"] [clinical]"},"timestamp":1783287589526}
+{"id":420,"event":"agent","data":{"type":"text_delta","delta":"                                │ "},"timestamp":1783287589544}
+{"id":421,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783287589564}
+{"id":422,"event":"agent","data":{"type":"text_delta","delta":" │  "},"timestamp":1783287589583}
+{"id":423,"event":"agent","data":{"type":"text_delta","delta":"╲  "},"timestamp":1783287589602}
+{"id":424,"event":"agent","data":{"type":"text_delta","delta":"9"},"timestamp":1783287589623}
+{"id":425,"event":"agent","data":{"type":"text_delta","delta":"╱"},"timestamp":1783287589648}
+{"id":426,"event":"agent","data":{"type":"text_delta","delta":"  │                                                    "},"timestamp":1783287589668}
+{"id":427,"event":"agent","data":{"type":"text_delta","delta":" │  │\n"},"timestamp":1783287589687}
+{"id":428,"event":"agent","data":{"type":"text_delta","delta":"│  │ "},"timestamp":1783287589707}
+{"id":429,"event":"agent","data":{"type":"text_delta","delta":" │"},"timestamp":1783287589728}
+{"id":430,"event":"agent","data":{"type":"text_delta","delta":"╲"},"timestamp":1783287589746}
+{"id":431,"event":"agent","data":{"type":"text_delta","delta":"8"},"timestamp":1783287589766}
+{"id":432,"event":"agent","data":{"type":"text_delta","delta":"╱  "},"timestamp":1783287589785}
+{"id":433,"event":"agent","data":{"type":"text_delta","delta":" │  "},"timestamp":1783287589806}
+{"id":434,"event":"agent","data":{"type":"text_delta","delta":"⚡ Clean Sheet"},"timestamp":1783287589828}
+{"id":435,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783287589854}
+{"id":436,"event":"agent","data":{"type":"text_delta","delta":" ⚡ Over"},"timestamp":1783287589864}
+{"id":437,"event":"agent","data":{"type":"text_delta","delta":"load  "},"timestamp":1783287589884}
+{"id":438,"event":"agent","data":{"type":"text_delta","delta":"⚡ Clinical Edge     "},"timestamp":1783287589905}
+{"id":439,"event":"agent","data":{"type":"text_delta","delta":" │  │\n"},"timestamp":1783287589923}
+{"id":440,"event":"agent","data":{"type":"text_delta","delta":"│  │ "},"timestamp":1783287589942}
+{"id":441,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783287589962}
+{"id":442,"event":"agent","data":{"type":"text_delta","delta":"└────"},"timestamp":1783287589980}
+{"id":443,"event":"agent","data":{"type":"text_delta","delta":"──┘                                                     │"},"timestamp":1783287590009}
+{"id":444,"event":"agent","data":{"type":"text_delta","delta":"  │\n│"},"timestamp":1783287590021}
+{"id":445,"event":"agent","data":{"type":"text_delta","delta":"  │                                                              "},"timestamp":1783287590042}
+{"id":446,"event":"agent","data":{"type":"text_delta","delta":" │  │\n"},"timestamp":1783287590058}
+{"id":447,"event":"agent","data":{"type":"text_delta","delta":"│  │ "},"timestamp":1783287590079}
+{"id":448,"event":"agent","data":{"type":"text_delta","delta":" FORM"},"timestamp":1783287590097}
+{"id":449,"event":"agent","data":{"type":"text_delta","delta":"ULA   "},"timestamp":1783287590117}
+{"id":450,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783287590143}
+{"id":451,"event":"agent","data":{"type":"text_delta","delta":"9×3 +"},"timestamp":1783287590157}
+{"id":452,"event":"agent","data":{"type":"text_delta","delta":" 9×"},"timestamp":1783287590176}
+{"id":453,"event":"agent","data":{"type":"text_delta","delta":"2 + 8"},"timestamp":1783287590196}
+{"id":454,"event":"agent","data":{"type":"text_delta","delta":"×1    "},"timestamp":1783287590221}
+{"id":455,"event":"agent","data":{"type":"text_delta","delta":" =  "},"timestamp":1783287590233}
+{"id":456,"event":"agent","data":{"type":"text_delta","delta":"53 "},"timestamp":1783287590253}
+{"id":457,"event":"agent","data":{"type":"text_delta","delta":"♣                     "},"timestamp":1783287590272}
+{"id":458,"event":"agent","data":{"type":"text_delta","delta":" │  │\n"},"timestamp":1783287590292}
+{"id":459,"event":"agent","data":{"type":"text_delta","delta":"│  │ "},"timestamp":1783287590311}
+{"id":460,"event":"agent","data":{"type":"text_delta","delta":" FAT"},"timestamp":1783287590337}
+{"id":461,"event":"agent","data":{"type":"text_delta","delta":"IGUE    ×"},"timestamp":1783287590350}
+{"id":462,"event":"agent","data":{"type":"text_delta","delta":"1.0                                              "},"timestamp":1783287590376}
+{"id":463,"event":"agent","data":{"type":"text_delta","delta":" │  │\n"},"timestamp":1783287590389}
+{"id":464,"event":"agent","data":{"type":"text_delta","delta":"│  │                                          "},"timestamp":1783287590410}
+{"id":465,"event":"agent","data":{"type":"text_delta","delta":" ┌────────────"},"timestamp":1783287590430}
+{"id":466,"event":"agent","data":{"type":"text_delta","delta":"──"},"timestamp":1783287590451}
+{"id":467,"event":"agent","data":{"type":"text_delta","delta":"┐   "},"timestamp":1783287590469}
+{"id":468,"event":"agent","data":{"type":"text_delta","delta":" │  │\n"},"timestamp":1783287590488}
+{"id":469,"event":"agent","data":{"type":"text_delta","delta":"│  │                                          "},"timestamp":1783287590509}
+{"id":470,"event":"agent","data":{"type":"text_delta","delta":" │ PLACE"},"timestamp":1783287590529}
+{"id":471,"event":"agent","data":{"type":"text_delta","delta":" PLAYER "},"timestamp":1783287590546}
+{"id":472,"event":"agent","data":{"type":"text_delta","delta":" │   "},"timestamp":1783287590570}
+{"id":473,"event":"agent","data":{"type":"text_delta","delta":" │  │\n"},"timestamp":1783287590595}
+{"id":474,"event":"agent","data":{"type":"text_delta","delta":"│  │                                          "},"timestamp":1783287590607}
+{"id":475,"event":"agent","data":{"type":"text_delta","delta":" └────────────"},"timestamp":1783287590623}
+{"id":476,"event":"agent","data":{"type":"text_delta","delta":"──┘    │"},"timestamp":1783287590647}
+{"id":477,"event":"agent","data":{"type":"text_delta","delta":"  │\n│"},"timestamp":1783287590662}
+{"id":478,"event":"agent","data":{"type":"text_delta","delta":"  └────────"},"timestamp":1783287590681}
+{"id":479,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783287590703}
+{"id":480,"event":"agent","data":{"type":"text_delta","delta":"──────────────────────"},"timestamp":1783287590720}
+{"id":481,"event":"agent","data":{"type":"text_delta","delta":"─┘  │"},"timestamp":1783287590739}
+{"id":482,"event":"agent","data":{"type":"text_delta","delta":"\n│                                                                     │"},"timestamp":1783287590758}
+{"id":483,"event":"agent","data":{"type":"text_delta","delta":"\n│  "},"timestamp":1783287590778}
+{"id":484,"event":"agent","data":{"type":"text_delta","delta":"┌────────────────────────"},"timestamp":1783287590795}
+{"id":485,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783287590820}
+{"id":486,"event":"agent","data":{"type":"text_delta","delta":"───────┐"},"timestamp":1783287590834}
+{"id":487,"event":"agent","data":{"type":"text_delta","delta":"  │\n│"},"timestamp":1783287590855}
+{"id":488,"event":"agent","data":{"type":"text_delta","delta":"  │  "},"timestamp":1783287590874}
+{"id":489,"event":"agent","data":{"type":"text_delta","delta":"┌──────┐"},"timestamp":1783287590891}
+{"id":490,"event":"agent","data":{"type":"text_delta","delta":"                                                     │  │"},"timestamp":1783287590911}
+{"id":491,"event":"agent","data":{"type":"text_delta","delta":"\n│  │"},"timestamp":1783287590931}
+{"id":492,"event":"agent","data":{"type":"text_delta","delta":"  │ ╱"},"timestamp":1783287590951}
+{"id":493,"event":"agent","data":{"type":"text_delta","delta":"╲   │ "},"timestamp":1783287590969}
+{"id":494,"event":"agent","data":{"type":"text_delta","delta":" Big Zlat                                         "},"timestamp":1783287590987}
+{"id":495,"event":"agent","data":{"type":"text_delta","delta":" │  │\n"},"timestamp":1783287591009}
+{"id":496,"event":"agent","data":{"type":"text_delta","delta":"│  │ "},"timestamp":1783287591026}
+{"id":497,"event":"agent","data":{"type":"text_delta","delta":" │╱8 "},"timestamp":1783287591046}
+{"id":498,"event":"agent","data":{"type":"text_delta","delta":"╲  │ "},"timestamp":1783287591085}
+{"id":499,"event":"agent","data":{"type":"text_delta","delta":" [physical] ["},"timestamp":1783287591086}
+{"id":500,"event":"agent","data":{"type":"text_delta","delta":"technical]                            "},"timestamp":1783287591104}
+{"id":501,"event":"agent","data":{"type":"text_delta","delta":" │  │\n"},"timestamp":1783287591123}
+{"id":502,"event":"agent","data":{"type":"text_delta","delta":"│  │ "},"timestamp":1783287591142}
+{"id":503,"event":"agent","data":{"type":"text_delta","delta":" ╲  "},"timestamp":1783287591161}
+{"id":504,"event":"agent","data":{"type":"text_delta","delta":"5╱  │"},"timestamp":1783287591180}
+{"id":505,"event":"agent","data":{"type":"text_delta","delta":"                                                     │  │"},"timestamp":1783287591203}
+{"id":506,"event":"agent","data":{"type":"text_delta","delta":"\n│  │"},"timestamp":1783287591222}
+{"id":507,"event":"agent","data":{"type":"text_delta","delta":"  │╲1"},"timestamp":1783287591240}
+{"id":508,"event":"agent","data":{"type":"text_delta","delta":"0╱  │"},"timestamp":1783287591268}
+{"id":509,"event":"agent","data":{"type":"text_delta","delta":"                                                    "},"timestamp":1783287591284}
+{"id":510,"event":"agent","data":{"type":"text_delta","delta":" │  │\n"},"timestamp":1783287591305}
+{"id":511,"event":"agent","data":{"type":"text_delta","delta":"│  │ "},"timestamp":1783287591324}
+{"id":512,"event":"agent","data":{"type":"text_delta","delta":" └──────"},"timestamp":1783287591344}
+{"id":513,"event":"agent","data":{"type":"text_delta","delta":"┘ "},"timestamp":1783287591365}
+{"id":514,"event":"agent","data":{"type":"text_delta","delta":" FORM"},"timestamp":1783287591382}
+{"id":515,"event":"agent","data":{"type":"text_delta","delta":"ULA    8"},"timestamp":1783287591402}
+{"id":516,"event":"agent","data":{"type":"text_delta","delta":"×3 + "},"timestamp":1783287591421}
+{"id":517,"event":"agent","data":{"type":"text_delta","delta":"5×2 +"},"timestamp":1783287591441}
+{"id":518,"event":"agent","data":{"type":"text_delta","delta":" 10×"},"timestamp":1783287591459}
+{"id":519,"event":"agent","data":{"type":"text_delta","delta":"1  = "},"timestamp":1783287591483}
+{"id":520,"event":"agent","data":{"type":"text_delta","delta":" 44 "},"timestamp":1783287591508}
+{"id":521,"event":"agent","data":{"type":"text_delta","delta":"♣             "},"timestamp":1783287591525}
+{"id":522,"event":"agent","data":{"type":"text_delta","delta":" │  │\n"},"timestamp":1783287591572}
+{"id":523,"event":"agent","data":{"type":"text_delta","delta":"│  │                                          "},"timestamp":1783287591579}
+{"id":524,"event":"agent","data":{"type":"text_delta","delta":" ┌────────────"},"timestamp":1783287591599}
+{"id":525,"event":"agent","data":{"type":"text_delta","delta":"──┐    │"},"timestamp":1783287591619}
+{"id":526,"event":"agent","data":{"type":"text_delta","delta":"  │\n│"},"timestamp":1783287591639}
+{"id":527,"event":"agent","data":{"type":"text_delta","delta":"  │                                           │"},"timestamp":1783287591659}
+{"id":528,"event":"agent","data":{"type":"text_delta","delta":" PLACE PLAYER  │"},"timestamp":1783287591678}
+{"id":529,"event":"agent","data":{"type":"text_delta","delta":"    │  │"},"timestamp":1783287591698}
+{"id":530,"event":"agent","data":{"type":"text_delta","delta":"\n│  │"},"timestamp":1783287591736}
+{"id":531,"event":"agent","data":{"type":"text_delta","delta":"                                           └────────"},"timestamp":1783287591761}
+{"id":532,"event":"agent","data":{"type":"text_delta","delta":"──────┘   "},"timestamp":1783287591779}
+{"id":533,"event":"agent","data":{"type":"text_delta","delta":" │  │\n"},"timestamp":1783287591799}
+{"id":534,"event":"agent","data":{"type":"text_delta","delta":"│  └"},"timestamp":1783287591817}
+{"id":535,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783287591838}
+{"id":536,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────"},"timestamp":1783287591859}
+{"id":537,"event":"agent","data":{"type":"text_delta","delta":"───┘ "},"timestamp":1783287591878}
+{"id":538,"event":"agent","data":{"type":"text_delta","delta":" │\n└────────"},"timestamp":1783287591902}
+{"id":539,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783287591922}
+{"id":540,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────"},"timestamp":1783287591941}
+{"id":541,"event":"agent","data":{"type":"text_delta","delta":"─┘\n``"},"timestamp":1783287591963}
+{"id":542,"event":"agent","data":{"type":"text_delta","delta":"`\n\n**What changed"},"timestamp":1783287591982}
+{"id":543,"event":"agent","data":{"type":"text_delta","delta":":** Pentagon"},"timestamp":1783287592003}
+{"id":544,"event":"agent","data":{"type":"text_delta","delta":" spark"},"timestamp":1783287592075}
+{"id":545,"event":"agent","data":{"type":"text_delta","delta":"line replaces"},"timestamp":1783287592077}
+{"id":546,"event":"agent","data":{"type":"text_delta","delta":" 5 separate"},"timestamp":1783287592078}
+{"id":547,"event":"agent","data":{"type":"text_delta","delta":" stat bars —"},"timestamp":1783287592086}
+{"id":548,"event":"agent","data":{"type":"text_delta","delta":" instant"},"timestamp":1783287592109}
+{"id":549,"event":"agent","data":{"type":"text_delta","delta":" visual shape"},"timestamp":1783287592130}
+{"id":550,"event":"agent","data":{"type":"text_delta","delta":" recognition"},"timestamp":1783287592148}
+{"id":551,"event":"agent","data":{"type":"text_delta","delta":" (balanced"},"timestamp":1783287592169}
+{"id":552,"event":"agent","data":{"type":"text_delta","delta":" players"},"timestamp":1783287592189}
+{"id":553,"event":"agent","data":{"type":"text_delta","delta":" look"},"timestamp":1783287592210}
+{"id":554,"event":"agent","data":{"type":"text_delta","delta":" round, specialists"},"timestamp":1783287592229}
+{"id":555,"event":"agent","data":{"type":"text_delta","delta":" look point"},"timestamp":1783287592251}
+{"id":556,"event":"agent","data":{"type":"text_delta","delta":"y). Chips"},"timestamp":1783287592270}
+{"id":557,"event":"agent","data":{"type":"text_delta","delta":" is"},"timestamp":1783287592297}
+{"id":558,"event":"agent","data":{"type":"text_delta","delta":" inline"},"timestamp":1783287592311}
+{"id":559,"event":"agent","data":{"type":"text_delta","delta":" with"},"timestamp":1783287592332}
+{"id":560,"event":"agent","data":{"type":"text_delta","delta":" formula"},"timestamp":1783287592354}
+{"id":561,"event":"agent","data":{"type":"text_delta","delta":". Each"},"timestamp":1783287592375}
+{"id":562,"event":"agent","data":{"type":"text_delta","delta":" player"},"timestamp":1783287592397}
+{"id":563,"event":"agent","data":{"type":"text_delta","delta":" is a self"},"timestamp":1783287592413}
+{"id":564,"event":"agent","data":{"type":"text_delta","delta":"-contained card. Few"},"timestamp":1783287592435}
+{"id":565,"event":"agent","data":{"type":"text_delta","delta":"er elements"},"timestamp":1783287592454}
+{"id":566,"event":"agent","data":{"type":"text_delta","delta":" compete"},"timestamp":1783287592473}
+{"id":567,"event":"agent","data":{"type":"text_delta","delta":" for attention"},"timestamp":1783287592494}
+{"id":568,"event":"agent","data":{"type":"text_delta","delta":","},"timestamp":1783287592515}
+{"id":569,"event":"agent","data":{"type":"text_delta","delta":" but you"},"timestamp":1783287592545}
+{"id":570,"event":"agent","data":{"type":"text_delta","delta":" still"},"timestamp":1783287592560}
+{"id":571,"event":"agent","data":{"type":"text_delta","delta":" get"},"timestamp":1783287592579}
+{"id":572,"event":"agent","data":{"type":"text_delta","delta":" the full breakdown.\n\n"},"timestamp":1783287592600}
+{"id":573,"event":"agent","data":{"type":"text_delta","delta":"---\n\n**Variant C"},"timestamp":1783287592620}
+{"id":574,"event":"agent","data":{"type":"text_delta","delta":" — Compact Rows"},"timestamp":1783287592640}
+{"id":575,"event":"agent","data":{"type":"text_delta","delta":" + Expand"},"timestamp":1783287592662}
+{"id":576,"event":"agent","data":{"type":"text_delta","delta":"-on"},"timestamp":1783287592687}
+{"id":577,"event":"agent","data":{"type":"text_delta","delta":"-Click**\n\nThin"},"timestamp":1783287592703}
+{"id":578,"event":"agent","data":{"type":"text_delta","delta":" rows by default ("},"timestamp":1783287592725}
+{"id":579,"event":"agent","data":{"type":"text_delta","delta":"name"},"timestamp":1783287592751}
+{"id":580,"event":"agent","data":{"type":"text_delta","delta":" + chips + synergy"},"timestamp":1783287592767}
+{"id":581,"event":"agent","data":{"type":"text_delta","delta":" count"},"timestamp":1783287592787}
+{"id":582,"event":"agent","data":{"type":"text_delta","delta":"). Click to"},"timestamp":1783287592808}
+{"id":583,"event":"agent","data":{"type":"text_delta","delta":" expand and"},"timestamp":1783287592830}
+{"id":584,"event":"agent","data":{"type":"text_delta","delta":" see the full breakdown"},"timestamp":1783287592850}
+{"id":585,"event":"agent","data":{"type":"text_delta","delta":". Red"},"timestamp":1783287592895}
+{"id":586,"event":"agent","data":{"type":"text_delta","delta":"uces visual"},"timestamp":1783287592896}
+{"id":587,"event":"agent","data":{"type":"text_delta","delta":" noise by "},"timestamp":1783287592913}
+{"id":588,"event":"agent","data":{"type":"text_delta","delta":"7"},"timestamp":1783287592934}
+{"id":589,"event":"agent","data":{"type":"text_delta","delta":"0% —"},"timestamp":1783287592955}
+{"id":590,"event":"agent","data":{"type":"text_delta","delta":" only shows"},"timestamp":1783287592988}
+{"id":591,"event":"agent","data":{"type":"text_delta","delta":" detail"},"timestamp":1783287593008}
+{"id":592,"event":"agent","data":{"type":"text_delta","delta":" for the"},"timestamp":1783287593030}
+{"id":593,"event":"agent","data":{"type":"text_delta","delta":" player you're considering"},"timestamp":1783287593051}
+{"id":594,"event":"agent","data":{"type":"text_delta","delta":".\n\n```\n┌"},"timestamp":1783287593070}
+{"id":595,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783287593092}
+{"id":596,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783287593110}
+{"id":597,"event":"agent","data":{"type":"text_delta","delta":"─────┐\n"},"timestamp":1783287593131}
+{"id":598,"event":"agent","data":{"type":"text_delta","delta":"│  "},"timestamp":1783287593151}
+{"id":599,"event":"agent","data":{"type":"text_delta","delta":"🎯 ST SLOT "},"timestamp":1783287593173}
+{"id":600,"event":"agent","data":{"type":"text_delta","delta":" [ATK≥"},"timestamp":1783287593192}
+{"id":601,"event":"agent","data":{"type":"text_delta","delta":"7]                          Formation"},"timestamp":1783287593210}
+{"id":602,"event":"agent","data":{"type":"text_delta","delta":": 4-"},"timestamp":1783287593232}
+{"id":603,"event":"agent","data":{"type":"text_delta","delta":"3-3 +"},"timestamp":1783287593254}
+{"id":604,"event":"agent","data":{"type":"text_delta","delta":"20│\n"},"timestamp":1783287593279}
+{"id":605,"event":"agent","data":{"type":"text_delta","delta":"├"},"timestamp":1783287593290}
+{"id":606,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783287593310}
+{"id":607,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783287593333}
+{"id":608,"event":"agent","data":{"type":"text_delta","delta":"─────┤\n"},"timestamp":1783287593350}
+{"id":609,"event":"agent","data":{"type":"text_delta","delta":"│                                                                     │\n"},"timestamp":1783287593371}
+{"id":610,"event":"agent","data":{"type":"text_delta","delta":"│  Player"},"timestamp":1783287593391}
+{"id":611,"event":"agent","data":{"type":"text_delta","delta":"          "},"timestamp":1783287593427}
+{"id":612,"event":"agent","data":{"type":"text_delta","delta":" ATK  PAC "},"timestamp":1783287593434}
+{"id":613,"event":"agent","data":{"type":"text_delta","delta":" PAS  DEF "},"timestamp":1783287593451}
+{"id":614,"event":"agent","data":{"type":"text_delta","delta":" SPC  "},"timestamp":1783287593473}
+{"id":615,"event":"agent","data":{"type":"text_delta","delta":" Chips   Synerg"},"timestamp":1783287593492}
+{"id":616,"event":"agent","data":{"type":"text_delta","delta":"ies     │\n"},"timestamp":1783287593512}
+{"id":617,"event":"agent","data":{"type":"text_delta","delta":"│  ┄"},"timestamp":1783287593531}
+{"id":618,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287593551}
+{"id":619,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287593570}
+{"id":620,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287593590}
+{"id":621,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287593612}
+{"id":622,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287593630}
+{"id":623,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287593650}
+{"id":624,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287593671}
+{"id":625,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287593690}
+{"id":626,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287593711}
+{"id":627,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287593730}
+{"id":628,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287593752}
+{"id":629,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287593772}
+{"id":630,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287593792}
+{"id":631,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287593812}
+{"id":632,"event":"agent","data":{"type":"text_delta","delta":"┄┄ "},"timestamp":1783287593832}
+{"id":633,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783287593853}
+{"id":634,"event":"agent","data":{"type":"text_delta","delta":" ▸ Terry Henri"},"timestamp":1783287593874}
+{"id":635,"event":"agent","data":{"type":"text_delta","delta":"     "},"timestamp":1783287593891}
+{"id":636,"event":"agent","data":{"type":"text_delta","delta":" 9   "},"timestamp":1783287593913}
+{"id":637,"event":"agent","data":{"type":"text_delta","delta":" 9    "},"timestamp":1783287593933}
+{"id":638,"event":"agent","data":{"type":"text_delta","delta":"6    1"},"timestamp":1783287593954}
+{"id":639,"event":"agent","data":{"type":"text_delta","delta":"    8   "},"timestamp":1783287593973}
+{"id":640,"event":"agent","data":{"type":"text_delta","delta":" 53 "},"timestamp":1783287593994}
+{"id":641,"event":"agent","data":{"type":"text_delta","delta":"♣    "},"timestamp":1783287594016}
+{"id":642,"event":"agent","data":{"type":"text_delta","delta":"⚡×"},"timestamp":1783287594037}
+{"id":643,"event":"agent","data":{"type":"text_delta","delta":"3         "},"timestamp":1783287594056}
+{"id":644,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783287594074}
+{"id":645,"event":"agent","data":{"type":"text_delta","delta":" ┄┄┄"},"timestamp":1783287594095}
+{"id":646,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287594115}
+{"id":647,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287594136}
+{"id":648,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287594155}
+{"id":649,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287594175}
+{"id":650,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287594195}
+{"id":651,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287594216}
+{"id":652,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287594235}
+{"id":653,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287594254}
+{"id":654,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287594275}
+{"id":655,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287594295}
+{"id":656,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287594314}
+{"id":657,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287594337}
+{"id":658,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287594359}
+{"id":659,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287594371}
+{"id":660,"event":"agent","data":{"type":"text_delta","delta":"  │\n│"},"timestamp":1783287594392}
+{"id":661,"event":"agent","data":{"type":"text_delta","delta":"                                                                    "},"timestamp":1783287594411}
+{"id":662,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783287594430}
+{"id":663,"event":"agent","data":{"type":"text_delta","delta":" ┌──"},"timestamp":1783287594457}
+{"id":664,"event":"agent","data":{"type":"text_delta","delta":"─ EXPANDED"},"timestamp":1783287594475}
+{"id":665,"event":"agent","data":{"type":"text_delta","delta":" BREAK"},"timestamp":1783287594494}
+{"id":666,"event":"agent","data":{"type":"text_delta","delta":"DOWN ("},"timestamp":1783287594513}
+{"id":667,"event":"agent","data":{"type":"text_delta","delta":"click"},"timestamp":1783287594534}
+{"id":668,"event":"agent","data":{"type":"text_delta","delta":" row"},"timestamp":1783287595500}
+{"id":669,"event":"agent","data":{"type":"text_delta","delta":" to toggle"},"timestamp":1783287595501}
+{"id":670,"event":"agent","data":{"type":"text_delta","delta":") ─────────"},"timestamp":1783287595502}
+{"id":671,"event":"agent","data":{"type":"text_delta","delta":"─────"},"timestamp":1783287595504}
+{"id":672,"event":"agent","data":{"type":"text_delta","delta":"┐  "},"timestamp":1783287595506}
+{"id":673,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783287595507}
+{"id":674,"event":"agent","data":{"type":"text_delta","delta":" │                                                           "},"timestamp":1783287595508}
+{"id":675,"event":"agent","data":{"type":"text_delta","delta":" │   │\n"},"timestamp":1783287595509}
+{"id":676,"event":"agent","data":{"type":"text_delta","delta":"│    │ "},"timestamp":1783287595511}
+{"id":677,"event":"agent","data":{"type":"text_delta","delta":" ["},"timestamp":1783287595512}
+{"id":678,"event":"agent","data":{"type":"text_delta","delta":"pacey] ["},"timestamp":1783287595727}
+{"id":679,"event":"agent","data":{"type":"text_delta","delta":"clinical]                                       "},"timestamp":1783287595728}
+{"id":680,"event":"agent","data":{"type":"text_delta","delta":" │   │\n"},"timestamp":1783287595730}
+{"id":681,"event":"agent","data":{"type":"text_delta","delta":"│    │                                                           "},"timestamp":1783287595732}
+{"id":682,"event":"agent","data":{"type":"text_delta","delta":" │   │\n"},"timestamp":1783287595734}
+{"id":683,"event":"agent","data":{"type":"text_delta","delta":"│    │ "},"timestamp":1783287595735}
+{"id":684,"event":"agent","data":{"type":"text_delta","delta":" ATK █████"},"timestamp":1783287595738}
+{"id":685,"event":"agent","data":{"type":"text_delta","delta":"████░ 9"},"timestamp":1783287595741}
+{"id":686,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783287595744}
+{"id":687,"event":"agent","data":{"type":"text_delta","delta":" ×3 = "},"timestamp":1783287595748}
+{"id":688,"event":"agent","data":{"type":"text_delta","delta":"27                                "},"timestamp":1783287595749}
+{"id":689,"event":"agent","data":{"type":"text_delta","delta":" │   │\n"},"timestamp":1783287595750}
+{"id":690,"event":"agent","data":{"type":"text_delta","delta":"│    │ "},"timestamp":1783287595751}
+{"id":691,"event":"agent","data":{"type":"text_delta","delta":" PAC █████████░"},"timestamp":1783287595751}
+{"id":692,"event":"agent","data":{"type":"text_delta","delta":" 9  ×"},"timestamp":1783287595753}
+{"id":693,"event":"agent","data":{"type":"text_delta","delta":"2 = 1"},"timestamp":1783287595754}
+{"id":694,"event":"agent","data":{"type":"text_delta","delta":"8                                 │  "},"timestamp":1783287595755}
+{"id":695,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783287595756}
+{"id":696,"event":"agent","data":{"type":"text_delta","delta":" │  SPC"},"timestamp":1783287595757}
+{"id":697,"event":"agent","data":{"type":"text_delta","delta":" ████████░"},"timestamp":1783287595758}
+{"id":698,"event":"agent","data":{"type":"text_delta","delta":"░ 8 "},"timestamp":1783287595770}
+{"id":699,"event":"agent","data":{"type":"text_delta","delta":" ×1 = "},"timestamp":1783287595774}
+{"id":700,"event":"agent","data":{"type":"text_delta","delta":" 8                                 │"},"timestamp":1783287595775}
+{"id":701,"event":"agent","data":{"type":"text_delta","delta":"   │\n│"},"timestamp":1783287595776}
+{"id":702,"event":"agent","data":{"type":"text_delta","delta":"    │  "},"timestamp":1783287595776}
+{"id":703,"event":"agent","data":{"type":"text_delta","delta":"─────────────────────"},"timestamp":1783287595777}
+{"id":704,"event":"agent","data":{"type":"text_delta","delta":"─"},"timestamp":1783287595778}
+{"id":705,"event":"agent","data":{"type":"text_delta","delta":"                                    │   │"},"timestamp":1783287595778}
+{"id":706,"event":"agent","data":{"type":"text_delta","delta":"\n│    │"},"timestamp":1783287595779}
+{"id":707,"event":"agent","data":{"type":"text_delta","delta":"  Base chips:"},"timestamp":1783287595779}
+{"id":708,"event":"agent","data":{"type":"text_delta","delta":" 53    "},"timestamp":1783287595780}
+{"id":709,"event":"agent","data":{"type":"text_delta","delta":" Formation bonus: +"},"timestamp":1783287595781}
+{"id":710,"event":"agent","data":{"type":"text_delta","delta":"0   "},"timestamp":1783287595781}
+{"id":711,"event":"agent","data":{"type":"text_delta","delta":" Fatigue: ×"},"timestamp":1783287595782}
+{"id":712,"event":"agent","data":{"type":"text_delta","delta":"1.0 "},"timestamp":1783287595782}
+{"id":713,"event":"agent","data":{"type":"text_delta","delta":" │   │\n"},"timestamp":1783287595784}
+{"id":714,"event":"agent","data":{"type":"text_delta","delta":"│    │ "},"timestamp":1783287595784}
+{"id":715,"event":"agent","data":{"type":"text_delta","delta":" Persistent"},"timestamp":1783287595785}
+{"id":716,"event":"agent","data":{"type":"text_delta","delta":" bonuses"},"timestamp":1783287595786}
+{"id":717,"event":"agent","data":{"type":"text_delta","delta":": +5 ("},"timestamp":1783287595786}
+{"id":718,"event":"agent","data":{"type":"text_delta","delta":"clinical edge)                   "},"timestamp":1783287595787}
+{"id":719,"event":"agent","data":{"type":"text_delta","delta":" │   │\n"},"timestamp":1783287595788}
+{"id":720,"event":"agent","data":{"type":"text_delta","delta":"│    │                                                           "},"timestamp":1783287595788}
+{"id":721,"event":"agent","data":{"type":"text_delta","delta":" │   │\n"},"timestamp":1783287595789}
+{"id":722,"event":"agent","data":{"type":"text_delta","delta":"│    │ "},"timestamp":1783287595790}
+{"id":723,"event":"agent","data":{"type":"text_delta","delta":" SYNERGIES"},"timestamp":1783287595790}
+{"id":724,"event":"agent","data":{"type":"text_delta","delta":" IF PLACED"},"timestamp":1783287595791}
+{"id":725,"event":"agent","data":{"type":"text_delta","delta":":                                     "},"timestamp":1783287595792}
+{"id":726,"event":"agent","data":{"type":"text_delta","delta":" │   │\n"},"timestamp":1783287595792}
+{"id":727,"event":"agent","data":{"type":"text_delta","delta":"│"},"timestamp":1783287595793}
+{"id":728,"event":"agent","data":{"type":"text_delta","delta":"    │  "},"timestamp":1783287595794}
+{"id":729,"event":"agent","data":{"type":"text_delta","delta":"⚡ Clean Sheet"},"timestamp":1783287595795}
+{"id":730,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783287595795}
+{"id":731,"event":"agent","data":{"type":"text_delta","delta":" — GK+CB"},"timestamp":1783287595796}
+{"id":732,"event":"agent","data":{"type":"text_delta","delta":" DEF≥"},"timestamp":1783287595800}
+{"id":733,"event":"agent","data":{"type":"text_delta","delta":"18:"},"timestamp":1783287595833}
+{"id":734,"event":"agent","data":{"type":"text_delta","delta":" +20    "},"timestamp":1783287595838}
+{"id":735,"event":"agent","data":{"type":"text_delta","delta":" ✓"},"timestamp":1783287595859}
+{"id":736,"event":"agent","data":{"type":"text_delta","delta":" TR"},"timestamp":1783287595877}
+{"id":737,"event":"agent","data":{"type":"text_delta","delta":"IGGER"},"timestamp":1783287595956}
+{"id":738,"event":"agent","data":{"type":"text_delta","delta":"ED      │  "},"timestamp":1783287595959}
+{"id":739,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783287595959}
+{"id":740,"event":"agent","data":{"type":"text_delta","delta":" │  "},"timestamp":1783287595960}
+{"id":741,"event":"agent","data":{"type":"text_delta","delta":"⚡ Overload    "},"timestamp":1783287595975}
+{"id":742,"event":"agent","data":{"type":"text_delta","delta":" — 2+"},"timestamp":1783287596000}
+{"id":743,"event":"agent","data":{"type":"text_delta","delta":" ST"},"timestamp":1783287596017}
+{"id":744,"event":"agent","data":{"type":"text_delta","delta":" in"},"timestamp":1783287596041}
+{"id":745,"event":"agent","data":{"type":"text_delta","delta":" squad"},"timestamp":1783287596073}
+{"id":746,"event":"agent","data":{"type":"text_delta","delta":": +15"},"timestamp":1783287596091}
+{"id":747,"event":"agent","data":{"type":"text_delta","delta":"    ✓ TRIGGER"},"timestamp":1783287596109}
+{"id":748,"event":"agent","data":{"type":"text_delta","delta":"ED      │  "},"timestamp":1783287596129}
+{"id":749,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783287596150}
+{"id":750,"event":"agent","data":{"type":"text_delta","delta":" │  "},"timestamp":1783287596168}
+{"id":751,"event":"agent","data":{"type":"text_delta","delta":"⚡ Clinical Edge —"},"timestamp":1783287596189}
+{"id":752,"event":"agent","data":{"type":"text_delta","delta":" all"},"timestamp":1783287596208}
+{"id":753,"event":"agent","data":{"type":"text_delta","delta":" ATK"},"timestamp":1783287596229}
+{"id":754,"event":"agent","data":{"type":"text_delta","delta":"≥7"},"timestamp":1783287596250}
+{"id":755,"event":"agent","data":{"type":"text_delta","delta":": +10"},"timestamp":1783287596267}
+{"id":756,"event":"agent","data":{"type":"text_delta","delta":"        ✓ TRIGGER"},"timestamp":1783287596288}
+{"id":757,"event":"agent","data":{"type":"text_delta","delta":"ED      │  "},"timestamp":1783287596307}
+{"id":758,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783287596326}
+{"id":759,"event":"agent","data":{"type":"text_delta","delta":" │                                                            │  "},"timestamp":1783287596345}
+{"id":760,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783287596364}
+{"id":761,"event":"agent","data":{"type":"text_delta","delta":" │                            "},"timestamp":1783287596384}
+{"id":762,"event":"agent","data":{"type":"text_delta","delta":" ┌────────────"},"timestamp":1783287596403}
+{"id":763,"event":"agent","data":{"type":"text_delta","delta":"──┐              "},"timestamp":1783287596423}
+{"id":764,"event":"agent","data":{"type":"text_delta","delta":" │   │\n"},"timestamp":1783287596446}
+{"id":765,"event":"agent","data":{"type":"text_delta","delta":"│    │                            "},"timestamp":1783287596461}
+{"id":766,"event":"agent","data":{"type":"text_delta","delta":" │ PLACE PLAYER "},"timestamp":1783287596481}
+{"id":767,"event":"agent","data":{"type":"text_delta","delta":" │              "},"timestamp":1783287596502}
+{"id":768,"event":"agent","data":{"type":"text_delta","delta":" │   │\n"},"timestamp":1783287596519}
+{"id":769,"event":"agent","data":{"type":"text_delta","delta":"│    │                            "},"timestamp":1783287596539}
+{"id":770,"event":"agent","data":{"type":"text_delta","delta":" └────────────"},"timestamp":1783287596562}
+{"id":771,"event":"agent","data":{"type":"text_delta","delta":"──┘               │"},"timestamp":1783287596579}
+{"id":772,"event":"agent","data":{"type":"text_delta","delta":"   │\n│"},"timestamp":1783287596597}
+{"id":773,"event":"agent","data":{"type":"text_delta","delta":"    └────────"},"timestamp":1783287596621}
+{"id":774,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783287596643}
+{"id":775,"event":"agent","data":{"type":"text_delta","delta":"────────────────────┘"},"timestamp":1783287596654}
+{"id":776,"event":"agent","data":{"type":"text_delta","delta":"   │\n│"},"timestamp":1783287596675}
+{"id":777,"event":"agent","data":{"type":"text_delta","delta":"  ┄┄"},"timestamp":1783287596693}
+{"id":778,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287596711}
+{"id":779,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287596730}
+{"id":780,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287596749}
+{"id":781,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287596770}
+{"id":782,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287596791}
+{"id":783,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287596808}
+{"id":784,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287596829}
+{"id":785,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287596848}
+{"id":786,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287596869}
+{"id":787,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287596887}
+{"id":788,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287596906}
+{"id":789,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287596926}
+{"id":790,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287596947}
+{"id":791,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287596966}
+{"id":792,"event":"agent","data":{"type":"text_delta","delta":"┄  │\n"},"timestamp":1783287596987}
+{"id":793,"event":"agent","data":{"type":"text_delta","delta":"│  ▸"},"timestamp":1783287597012}
+{"id":794,"event":"agent","data":{"type":"text_delta","delta":" Big Zlat         "},"timestamp":1783287597032}
+{"id":795,"event":"agent","data":{"type":"text_delta","delta":" 8    "},"timestamp":1783287597045}
+{"id":796,"event":"agent","data":{"type":"text_delta","delta":"5    7"},"timestamp":1783287597067}
+{"id":797,"event":"agent","data":{"type":"text_delta","delta":"    2  "},"timestamp":1783287597087}
+{"id":798,"event":"agent","data":{"type":"text_delta","delta":" 10   "},"timestamp":1783287597105}
+{"id":799,"event":"agent","data":{"type":"text_delta","delta":" 44 "},"timestamp":1783287597124}
+{"id":800,"event":"agent","data":{"type":"text_delta","delta":"♣    "},"timestamp":1783287597144}
+{"id":801,"event":"agent","data":{"type":"text_delta","delta":"⚡×1         "},"timestamp":1783287597166}
+{"id":802,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783287597189}
+{"id":803,"event":"agent","data":{"type":"text_delta","delta":" ┄┄┄"},"timestamp":1783287597206}
+{"id":804,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597223}
+{"id":805,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597243}
+{"id":806,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597263}
+{"id":807,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597282}
+{"id":808,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597302}
+{"id":809,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597322}
+{"id":810,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597353}
+{"id":811,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597366}
+{"id":812,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597386}
+{"id":813,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597407}
+{"id":814,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597428}
+{"id":815,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597448}
+{"id":816,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597470}
+{"id":817,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597489}
+{"id":818,"event":"agent","data":{"type":"text_delta","delta":"  │\n│"},"timestamp":1783287597511}
+{"id":819,"event":"agent","data":{"type":"text_delta","delta":"  ▸ Lew"},"timestamp":1783287597536}
+{"id":820,"event":"agent","data":{"type":"text_delta","delta":"an-goal-ski"},"timestamp":1783287597552}
+{"id":821,"event":"agent","data":{"type":"text_delta","delta":"    9   "},"timestamp":1783287597573}
+{"id":822,"event":"agent","data":{"type":"text_delta","delta":" 5    "},"timestamp":1783287597594}
+{"id":823,"event":"agent","data":{"type":"text_delta","delta":"2    1"},"timestamp":1783287597611}
+{"id":824,"event":"agent","data":{"type":"text_delta","delta":"    5   "},"timestamp":1783287597634}
+{"id":825,"event":"agent","data":{"type":"text_delta","delta":" 42 "},"timestamp":1783287597652}
+{"id":826,"event":"agent","data":{"type":"text_delta","delta":"♣    "},"timestamp":1783287597671}
+{"id":827,"event":"agent","data":{"type":"text_delta","delta":"⚡×1         "},"timestamp":1783287597692}
+{"id":828,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783287597711}
+{"id":829,"event":"agent","data":{"type":"text_delta","delta":" ┄┄┄"},"timestamp":1783287597730}
+{"id":830,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597753}
+{"id":831,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597769}
+{"id":832,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597793}
+{"id":833,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597808}
+{"id":834,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597833}
+{"id":835,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597848}
+{"id":836,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597867}
+{"id":837,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597888}
+{"id":838,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597907}
+{"id":839,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597927}
+{"id":840,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597946}
+{"id":841,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597966}
+{"id":842,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287597986}
+{"id":843,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287598006}
+{"id":844,"event":"agent","data":{"type":"text_delta","delta":"  │\n│"},"timestamp":1783287599152}
+{"id":845,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783287599156}
+{"id":846,"event":"agent","data":{"type":"text_delta","delta":" ▸ Speed"},"timestamp":1783287599158}
+{"id":847,"event":"agent","data":{"type":"text_delta","delta":" Demon"},"timestamp":1783287599160}
+{"id":848,"event":"agent","data":{"type":"text_delta","delta":"      "},"timestamp":1783287599163}
+{"id":849,"event":"agent","data":{"type":"text_delta","delta":" 7    "},"timestamp":1783287599164}
+{"id":850,"event":"agent","data":{"type":"text_delta","delta":"8"},"timestamp":1783287599168}
+{"id":851,"event":"agent","data":{"type":"text_delta","delta":"   "},"timestamp":1783287599170}
+{"id":852,"event":"agent","data":{"type":"text_delta","delta":" 6"},"timestamp":1783287599171}
+{"id":853,"event":"agent","data":{"type":"text_delta","delta":"    1"},"timestamp":1783287599175}
+{"id":854,"event":"agent","data":{"type":"text_delta","delta":"    4   "},"timestamp":1783287599381}
+{"id":855,"event":"agent","data":{"type":"text_delta","delta":" 39"},"timestamp":1783287599382}
+{"id":856,"event":"agent","data":{"type":"text_delta","delta":" ♣    "},"timestamp":1783287599384}
+{"id":857,"event":"agent","data":{"type":"text_delta","delta":"⚡×0"},"timestamp":1783287599385}
+{"id":858,"event":"agent","data":{"type":"text_delta","delta":"          │\n│"},"timestamp":1783287599386}
+{"id":859,"event":"agent","data":{"type":"text_delta","delta":"  ┄┄"},"timestamp":1783287599387}
+{"id":860,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287599388}
+{"id":861,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287599389}
+{"id":862,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287599390}
+{"id":863,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287599392}
+{"id":864,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287599394}
+{"id":865,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287599394}
+{"id":866,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287599395}
+{"id":867,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287599396}
+{"id":868,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287599397}
+{"id":869,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287599398}
+{"id":870,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287599398}
+{"id":871,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287599399}
+{"id":872,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287599399}
+{"id":873,"event":"agent","data":{"type":"text_delta","delta":"┄┄┄┄"},"timestamp":1783287599400}
+{"id":874,"event":"agent","data":{"type":"text_delta","delta":"┄  │\n"},"timestamp":1783287599401}
+{"id":875,"event":"agent","data":{"type":"text_delta","delta":"└"},"timestamp":1783287599401}
+{"id":876,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783287599402}
+{"id":877,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783287599403}
+{"id":878,"event":"agent","data":{"type":"text_delta","delta":"─────┘\n"},"timestamp":1783287599405}
+{"id":879,"event":"agent","data":{"type":"text_delta","delta":"```\n\n**What"},"timestamp":1783287599406}
+{"id":880,"event":"agent","data":{"type":"text_delta","delta":" changed:** Default view"},"timestamp":1783287599407}
+{"id":881,"event":"agent","data":{"type":"text_delta","delta":" is a"},"timestamp":1783287599407}
+{"id":882,"event":"agent","data":{"type":"text_delta","delta":" thin"},"timestamp":1783287599408}
+{"id":883,"event":"agent","data":{"type":"text_delta","delta":" sortable"},"timestamp":1783287599409}
+{"id":884,"event":"agent","data":{"type":"text_delta","delta":" table — name,"},"timestamp":1783287599410}
+{"id":885,"event":"agent","data":{"type":"text_delta","delta":" 5 stat"},"timestamp":1783287599410}
+{"id":886,"event":"agent","data":{"type":"text_delta","delta":" numbers, chips,"},"timestamp":1783287599411}
+{"id":887,"event":"agent","data":{"type":"text_delta","delta":" synergy count. Click"},"timestamp":1783287599412}
+{"id":888,"event":"agent","data":{"type":"text_delta","delta":" a row to expand"},"timestamp":1783287599412}
+{"id":889,"event":"agent","data":{"type":"text_delta","delta":" it and see"},"timestamp":1783287599413}
+{"id":890,"event":"agent","data":{"type":"text_delta","delta":" the full breakdown:"},"timestamp":1783287599414}
+{"id":891,"event":"agent","data":{"type":"text_delta","delta":" stat"},"timestamp":1783287599415}
+{"id":892,"event":"agent","data":{"type":"text_delta","delta":" bars with"},"timestamp":1783287599416}
+{"id":893,"event":"agent","data":{"type":"text_delta","delta":" multi"},"timestamp":1783287599417}
+{"id":894,"event":"agent","data":{"type":"text_delta","delta":"pliers, formula"},"timestamp":1783287599418}
+{"id":895,"event":"agent","data":{"type":"text_delta","delta":" math"},"timestamp":1783287599420}
+{"id":896,"event":"agent","data":{"type":"text_delta","delta":", synergy details"},"timestamp":1783287599422}
+{"id":897,"event":"agent","data":{"type":"text_delta","delta":" with ✓"},"timestamp":1783287599423}
+{"id":898,"event":"agent","data":{"type":"text_delta","delta":" TR"},"timestamp":1783287599425}
+{"id":899,"event":"agent","data":{"type":"text_delta","delta":"IGGERED /"},"timestamp":1783287599426}
+{"id":900,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783287599427}
+{"id":901,"event":"agent","data":{"type":"text_delta","delta":"✗ IN"},"timestamp":1783287599429}
+{"id":902,"event":"agent","data":{"type":"text_delta","delta":"ACTIVE"},"timestamp":1783287599430}
+{"id":903,"event":"agent","data":{"type":"text_delta","delta":" status. Only"},"timestamp":1783287599432}
+{"id":904,"event":"agent","data":{"type":"text_delta","delta":" one row"},"timestamp":1783287599433}
+{"id":905,"event":"agent","data":{"type":"text_delta","delta":" expanded at a time"},"timestamp":1783287599434}
+{"id":906,"event":"agent","data":{"type":"text_delta","delta":". Compact"},"timestamp":1783287599435}
+{"id":907,"event":"agent","data":{"type":"text_delta","delta":" by"},"timestamp":1783287599436}
+{"id":908,"event":"agent","data":{"type":"text_delta","delta":" default, detailed on"},"timestamp":1783287599438}
+{"id":909,"event":"agent","data":{"type":"text_delta","delta":" demand.\n\n---\n\n**"},"timestamp":1783287599985}
+{"id":910,"event":"agent","data":{"type":"text_delta","delta":"My take"},"timestamp":1783287599986}
+{"id":911,"event":"agent","data":{"type":"text_delta","delta":":**"},"timestamp":1783287599987}
+{"id":912,"event":"agent","data":{"type":"text_delta","delta":" Variant"},"timestamp":1783287599990}
+{"id":913,"event":"agent","data":{"type":"text_delta","delta":" C is the strongest"},"timestamp":1783287599992}
+{"id":914,"event":"agent","data":{"type":"text_delta","delta":" for"},"timestamp":1783287599992}
+{"id":915,"event":"agent","data":{"type":"text_delta","delta":" gameplay"},"timestamp":1783287599994}
+{"id":916,"event":"agent","data":{"type":"text_delta","delta":"."},"timestamp":1783287599995}
+{"id":917,"event":"agent","data":{"type":"text_delta","delta":" Here"},"timestamp":1783287599996}
+{"id":918,"event":"agent","data":{"type":"text_delta","delta":"'s why:\n\n"},"timestamp":1783287599996}
+{"id":919,"event":"agent","data":{"type":"text_delta","delta":"- **Scanning"},"timestamp":1783287599998}
+{"id":920,"event":"agent","data":{"type":"text_delta","delta":" is"},"timestamp":1783287599998}
+{"id":921,"event":"agent","data":{"type":"text_delta","delta":" fast** — thin"},"timestamp":1783287600001}
+{"id":922,"event":"agent","data":{"type":"text_delta","delta":" rows let"},"timestamp":1783287600003}
+{"id":923,"event":"agent","data":{"type":"text_delta","delta":" you compare"},"timestamp":1783287600004}
+{"id":924,"event":"agent","data":{"type":"text_delta","delta":" 8"},"timestamp":1783287600242}
+{"id":925,"event":"agent","data":{"type":"text_delta","delta":"+ players at a"},"timestamp":1783287600263}
+{"id":926,"event":"agent","data":{"type":"text_delta","delta":" glance\n- **"},"timestamp":1783287600267}
+{"id":927,"event":"agent","data":{"type":"text_delta","delta":"Depth"},"timestamp":1783287600291}
+{"id":928,"event":"agent","data":{"type":"text_delta","delta":" on"},"timestamp":1783287600299}
+{"id":929,"event":"agent","data":{"type":"text_delta","delta":" demand** — expand"},"timestamp":1783287600301}
+{"id":930,"event":"agent","data":{"type":"text_delta","delta":" only the"},"timestamp":1783287600302}
+{"id":931,"event":"agent","data":{"type":"text_delta","delta":" player you're considering"},"timestamp":1783287600302}
+{"id":932,"event":"agent","data":{"type":"text_delta","delta":", reducing"},"timestamp":1783287600306}
+{"id":933,"event":"agent","data":{"type":"text_delta","delta":" overwhelm"},"timestamp":1783287600308}
+{"id":934,"event":"agent","data":{"type":"text_delta","delta":"\n- **Sy"},"timestamp":1783287600310}
+{"id":935,"event":"agent","data":{"type":"text_delta","delta":"nergy preview"},"timestamp":1783287600311}
+{"id":936,"event":"agent","data":{"type":"text_delta","delta":" is actionable"},"timestamp":1783287600312}
+{"id":937,"event":"agent","data":{"type":"text_delta","delta":"** — ✓"},"timestamp":1783287600314}
+{"id":938,"event":"agent","data":{"type":"text_delta","delta":" TR"},"timestamp":1783287600322}
+{"id":939,"event":"agent","data":{"type":"text_delta","delta":"IGGERED / "},"timestamp":1783287600326}
+{"id":940,"event":"agent","data":{"type":"text_delta","delta":"✗ INACTIVE tells"},"timestamp":1783287600338}
+{"id":941,"event":"agent","data":{"type":"text_delta","delta":" you exactly what"},"timestamp":1783287600342}
+{"id":942,"event":"agent","data":{"type":"text_delta","delta":" you"},"timestamp":1783287600345}
+{"id":943,"event":"agent","data":{"type":"text_delta","delta":"'d"},"timestamp":1783287600346}
+{"id":944,"event":"agent","data":{"type":"text_delta","delta":" gain"},"timestamp":1783287600347}
+{"id":945,"event":"agent","data":{"type":"text_delta","delta":"\n- **Color"},"timestamp":1783287600347}
+{"id":946,"event":"agent","data":{"type":"text_delta","delta":"-coded stat"},"timestamp":1783287600348}
+{"id":947,"event":"agent","data":{"type":"text_delta","delta":" bars in"},"timestamp":1783287600350}
+{"id":948,"event":"agent","data":{"type":"text_delta","delta":" expanded"},"timestamp":1783287600351}
+{"id":949,"event":"agent","data":{"type":"text_delta","delta":" view** — the"},"timestamp":1783287600352}
+{"id":950,"event":"agent","data":{"type":"text_delta","delta":" visual"},"timestamp":1783287600352}
+{"id":951,"event":"agent","data":{"type":"text_delta","delta":" bars"},"timestamp":1783287600353}
+{"id":952,"event":"agent","data":{"type":"text_delta","delta":" +"},"timestamp":1783287600354}
+{"id":953,"event":"agent","data":{"type":"text_delta","delta":" multiplier"},"timestamp":1783287600355}
+{"id":954,"event":"agent","data":{"type":"text_delta","delta":" math"},"timestamp":1783287600356}
+{"id":955,"event":"agent","data":{"type":"text_delta","delta":" ("},"timestamp":1783287600359}
+{"id":956,"event":"agent","data":{"type":"text_delta","delta":"e.g."},"timestamp":1783287600363}
+{"id":957,"event":"agent","data":{"type":"text_delta","delta":" `9 ×"},"timestamp":1783287600364}
+{"id":958,"event":"agent","data":{"type":"text_delta","delta":"3"},"timestamp":1783287600367}
+{"id":959,"event":"agent","data":{"type":"text_delta","delta":" = 27"},"timestamp":1783287600369}
+{"id":960,"event":"agent","data":{"type":"text_delta","delta":"`) teach"},"timestamp":1783287600371}
+{"id":961,"event":"agent","data":{"type":"text_delta","delta":" the player"},"timestamp":1783287600372}
+{"id":962,"event":"agent","data":{"type":"text_delta","delta":" how scoring"},"timestamp":1783287600373}
+{"id":963,"event":"agent","data":{"type":"text_delta","delta":" works without a"},"timestamp":1783287600375}
+{"id":964,"event":"agent","data":{"type":"text_delta","delta":" tutorial"},"timestamp":1783287600376}
+{"id":965,"event":"agent","data":{"type":"text_delta","delta":"\n"},"timestamp":1783287600380}
+{"id":966,"event":"agent","data":{"type":"text_delta","delta":"- **Most"},"timestamp":1783287600407}
+{"id":967,"event":"agent","data":{"type":"text_delta","delta":" CM-authentic**"},"timestamp":1783287600425}
+{"id":968,"event":"agent","data":{"type":"text_delta","delta":" — Championship"},"timestamp":1783287600445}
+{"id":969,"event":"agent","data":{"type":"text_delta","delta":" Manager screens"},"timestamp":1783287600470}
+{"id":970,"event":"agent","data":{"type":"text_delta","delta":" were"},"timestamp":1783287600488}
+{"id":971,"event":"agent","data":{"type":"text_delta","delta":" always sortable"},"timestamp":1783287600506}
+{"id":972,"event":"agent","data":{"type":"text_delta","delta":" tables that expanded"},"timestamp":1783287600528}
+{"id":973,"event":"agent","data":{"type":"text_delta","delta":" on"},"timestamp":1783287600551}
+{"id":974,"event":"agent","data":{"type":"text_delta","delta":" detail"},"timestamp":1783287600576}
+{"id":975,"event":"agent","data":{"type":"text_delta","delta":"\n\nWhich variant do"},"timestamp":1783287600592}
+{"id":976,"event":"agent","data":{"type":"text_delta","delta":" you want me"},"timestamp":1783287600610}
+{"id":977,"event":"agent","data":{"type":"text_delta","delta":" to build? I"},"timestamp":1783287600635}
+{"id":978,"event":"agent","data":{"type":"text_delta","delta":" can also combine"},"timestamp":1783287600651}
+{"id":979,"event":"agent","data":{"type":"text_delta","delta":" elements ("},"timestamp":1783287600676}
+{"id":980,"event":"agent","data":{"type":"text_delta","delta":"e.g. Variant"},"timestamp":1783287600692}
+{"id":981,"event":"agent","data":{"type":"text_delta","delta":" C's compact rows"},"timestamp":1783287600714}
+{"id":982,"event":"agent","data":{"type":"text_delta","delta":" with"},"timestamp":1783287600733}
+{"id":983,"event":"agent","data":{"type":"text_delta","delta":" Variant A's big"},"timestamp":1783287600750}
+{"id":984,"event":"agent","data":{"type":"text_delta","delta":" chips hero"},"timestamp":1783287600774}
+{"id":985,"event":"agent","data":{"type":"text_delta","delta":" in"},"timestamp":1783287600798}
+{"id":986,"event":"agent","data":{"type":"text_delta","delta":" the expanded view)."},"timestamp":1783287600809}
+{"id":987,"event":"stderr","data":{"chunk":"2026-07-05 23:40:00 [INFO] run_agent: OpenAI client closed (stream_request_complete, shared=False, tcp_force_closed=0) thread=Thread-1 (_call):125991505614528 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=mimo-v2.5\n"},"timestamp":1783287600832}
+{"id":988,"event":"stderr","data":{"chunk":"2026-07-05 23:40:00 [INFO] agent.conversation_loop: API call #1: model=mimo-v2.5 provider=opencode-go in=50077 out=2850 total=52927 latency=22.9s\n"},"timestamp":1783287600834}
+{"id":989,"event":"stderr","data":{"chunk":"2026-07-05 23:40:00 [INFO] agent.conversation_loop: Turn ended: reason=text_response(finish_reason=stop) model=mimo-v2.5 api_calls=1/90 budget=1/90 tool_turns=0 last_msg_role=assistant response_len=9385 session=0952eaf2-7a49-4346-8702-b6b6dbcc7125\n"},"timestamp":1783287600908}
+{"id":990,"event":"agent","data":{"type":"status","label":"usage_update","elapsedMs":28584},"timestamp":1783287600969}
+{"id":991,"event":"agent","data":{"type":"usage","usage":{"input_tokens":50077,"output_tokens":2850,"cached_read_tokens":0,"thought_tokens":0,"total_tokens":52927},"durationMs":28585},"timestamp":1783287600970}
+{"id":992,"event":"diagnostic","data":{"type":"runtime_close","rpc_close_reason":"signal","status":"succeeded","signal":"SIGTERM"},"timestamp":1783287601502}
+{"id":993,"event":"end","data":{"code":null,"signal":"SIGTERM","status":"succeeded","resumable":false},"timestamp":1783287601502}

@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SQUAD — Football Card Roguelike</title>
+  <link rel="stylesheet" href="game.css">
+  <style>
+    /* ─── SPA Screen Management ───────────────────────────────────── */
+    .game-screen { display: none; min-height: 100vh; padding: var(--space-6) var(--space-4); max-width: 1200px; margin: 0 auto; }
+    .game-screen.active { display: block; }
+
+    /* ─── Title Screen ──────────────────────────────────────────── */
+    #screen-title { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 100vh; }
+    .title-logo { font-family: var(--font-display); font-size: 48px; color: var(--accent); text-shadow: 0 0 30px var(--accent-glow), 0 0 60px var(--accent-glow); margin-bottom: var(--space-4); animation: logo-pulse 2s ease-in-out infinite; letter-spacing: 0.15em; }
+    @keyframes logo-pulse { 0%,100% { text-shadow: 0 0 30px var(--accent-glow), 0 0 60px var(--accent-glow); } 50% { text-shadow: 0 0 50px var(--accent-glow), 0 0 100px var(--accent-glow), 0 0 150px var(--accent-glow); } }
+    .title-tagline { font-family: var(--font-display); font-size: 10px; color: var(--gold); text-shadow: 0 0 12px var(--gold-glow); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: var(--space-12); }
+    .title-info { font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); margin-bottom: var(--space-8); line-height: 1.6; }
+    .title-info span { color: var(--accent); }
+    .title-crt { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 999;
+      background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, transparent 1px, transparent 2px);
+      background-size: 100% 3px; }
+    .title-scan { position: fixed; top: 0; left: 0; right: 0; height: 120px; pointer-events: none; z-index: 998;
+      background: linear-gradient(180deg, rgba(57,255,20,0.03) 0%, transparent 100%);
+      animation: scanline 8s linear infinite; }
+    @keyframes scanline { 0% { transform: translateY(-120px); } 100% { transform: translateY(100vh); } }
+
+    /* ─── Squad Builder ─────────────────────────────────────────── */
+    .squad-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-6); flex-wrap: wrap; gap: var(--space-3); }
+    .budget-bar { width: 100%; height: 12px; background: var(--bg-deep); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: var(--space-2); }
+    .budget-fill { height: 100%; background: var(--accent); box-shadow: 0 0 8px var(--accent-glow); transition: width 0.3s ease; }
+    .budget-fill.over { background: var(--danger); box-shadow: 0 0 8px var(--danger-glow); }
+    .budget-text { font-family: var(--font-display); font-size: 8px; color: var(--fg-dim); text-align: center; }
+    .position-tabs { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-4); }
+    .pos-tab { font-family: var(--font-display); font-size: 7px; padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; color: var(--fg-dim); transition: all var(--motion-fast) ease; }
+    .pos-tab:hover { border-color: var(--border-bright); }
+    .pos-tab.active { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); background: var(--surface-raised); }
+    .player-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-3); margin-bottom: var(--space-6); }
+    .player-card { background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3); cursor: pointer; transition: all var(--motion-fast) ease; position: relative; }
+    .player-card:hover { border-color: var(--border-bright); transform: translateY(-1px); }
+    .player-card.selected { border-color: var(--accent); box-shadow: 0 0 12px var(--accent-glow); }
+    .player-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2); }
+    .player-name { font-family: var(--font-body); font-size: var(--text-lg); color: var(--fg); }
+    .player-position { font-family: var(--font-display); font-size: 7px; padding: 2px 6px; border-radius: var(--radius-sm); }
+    .pos-ST,.pos-LW,.pos-RW { background: rgba(255,51,68,0.15); color: var(--danger); border: 1px solid var(--danger); }
+    .pos-CM,.pos-CAM,.pos-CDM { background: rgba(0,204,255,0.12); color: var(--info); border: 1px solid var(--info); }
+    .pos-CB,.pos-FB { background: rgba(57,255,20,0.1); color: var(--accent); border: 1px solid var(--accent); }
+    .pos-GK { background: rgba(255,215,0,0.12); color: var(--gold); border: 1px solid var(--gold); }
+    .player-desc { font-family: var(--font-body); font-size: var(--text-sm); color: var(--muted); margin-bottom: var(--space-2); font-style: italic; }
+    .stat-bars { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+    .stat-bar { flex: 1; min-width: 45px; }
+    .stat-label { font-family: var(--font-display); font-size: 6px; color: var(--fg-dim); margin-bottom: 2px; }
+    .stat-track { height: 6px; background: var(--bg-deep); border-radius: 1px; overflow: hidden; }
+    .stat-fill { height: 100%; border-radius: 1px; }
+    .stat-ATK .stat-fill { background: var(--danger); box-shadow: 0 0 4px var(--danger-glow); }
+    .stat-PAC .stat-fill { background: var(--gold); box-shadow: 0 0 4px var(--gold-glow); }
+    .stat-PAS .stat-fill { background: var(--info); box-shadow: 0 0 4px var(--info-glow); }
+    .stat-DEF .stat-fill { background: var(--accent); box-shadow: 0 0 4px var(--accent-glow); }
+    .stat-SPC .stat-fill { background: #c084fc; box-shadow: 0 0 4px rgba(192,132,252,0.4); }
+    .player-cost { font-family: var(--font-display); font-size: 8px; color: var(--gold); margin-top: var(--space-2); }
+    .player-traits { display: flex; gap: 4px; flex-wrap: wrap; margin-top: var(--space-1); }
+    .trait-tag { font-family: var(--font-body); font-size: 11px; padding: 1px 5px; background: var(--surface-raised); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--fg-dim); }
+
+    /* Squad summary */
+    .squad-summary { background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-4); }
+    .squad-summary h3 { font-family: var(--font-display); font-size: 8px; color: var(--fg-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--space-3); }
+    .squad-selected { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+    .squad-chip { font-family: var(--font-body); font-size: var(--text-sm); padding: 4px 8px; background: var(--surface-raised); border: 1px solid var(--accent); border-radius: var(--radius-sm); color: var(--accent); display: flex; align-items: center; gap: 4px; }
+    .squad-chip .remove-x { cursor: pointer; color: var(--danger); font-weight: bold; margin-left: 4px; }
+    .requirements { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+    .req-badge { font-family: var(--font-display); font-size: 7px; padding: 4px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--fg-dim); }
+    .req-badge.met { border-color: var(--accent); color: var(--accent); }
+    .req-badge.unmet { border-color: var(--danger); color: var(--danger); }
+
+    .squad-actions { display: flex; justify-content: center; gap: var(--space-4); padding: var(--space-4) 0; }
+    .squad-error { background: rgba(255,51,68,0.15); border: 1px solid var(--danger); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); color: var(--danger); font-family: var(--font-body); font-size: var(--text-lg); margin-bottom: var(--space-4); display: none; }
+    .squad-error.visible { display: block; }
+
+    /* ─── Formation Select ──────────────────────────────────────── */
+    .form-header { text-align: center; margin-bottom: var(--space-8); }
+    .form-title { font-family: var(--font-display); font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); margin-bottom: var(--space-2); }
+    .form-subtitle { font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); }
+    .formations-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--space-6); margin-bottom: var(--space-8); }
+    .formation-card { background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-md); padding: var(--space-5); cursor: pointer; transition: all var(--motion-fast) ease; position: relative; }
+    .formation-card:hover { border-color: var(--accent); box-shadow: 0 0 16px var(--accent-glow); transform: translateY(-2px); }
+    .formation-card.selected { border-color: var(--accent); box-shadow: 0 0 24px var(--accent-glow); background: var(--surface-raised); }
+    .formation-name { font-family: var(--font-display); font-size: 16px; text-align: center; margin-bottom: var(--space-2); color: var(--fg); }
+    .formation-desc { font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); text-align: center; margin-bottom: var(--space-4); }
+    .form-pitch { background: var(--pitch-green); border: 2px solid var(--pitch-dark); border-radius: var(--radius-sm); aspect-ratio: 68/105; max-height: 180px; margin: 0 auto var(--space-4); position: relative; overflow: hidden; box-shadow: inset 0 0 30px rgba(0,0,0,0.4); }
+    .form-pitch::before { content:''; position:absolute; top:50%; left:0; right:0; height:1px; background:var(--pitch-line); }
+    .form-pitch::after { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:40px; height:40px; border:1px solid var(--pitch-line); border-radius:50%; }
+    .form-slot { position: absolute; width: 22px; height: 22px; background: var(--accent); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 6px; color: var(--accent-on); transform: translate(-50%, -50%); box-shadow: 0 0 6px var(--accent-glow); }
+    .bonuses { display: flex; flex-wrap: wrap; gap: var(--space-2); justify-content: center; margin-bottom: var(--space-3); }
+    .bonus-tag { font-family: var(--font-display); font-size: 7px; padding: 2px 6px; border-radius: var(--radius-sm); }
+    .bonus-pos { background: rgba(57,255,20,0.1); color: var(--accent); border: 1px solid var(--accent); }
+    .bonus-neg { background: rgba(255,51,68,0.1); color: var(--danger); border: 1px solid var(--danger); }
+    .form-meta { display: flex; justify-content: center; gap: var(--space-6); font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); }
+
+    /* ─── Match Screen ──────────────────────────────────────────── */
+    .match-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-4); flex-wrap: wrap; gap: var(--space-3); }
+    .match-vs { display: flex; align-items: center; gap: var(--space-4); }
+    .match-team-name { font-family: var(--font-display); font-size: 8px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-dim); }
+    .match-team.you .match-team-name { color: var(--accent); text-shadow: 0 0 8px var(--accent-glow); }
+    .match-score { font-family: var(--font-display); font-size: 20px; min-width: 80px; text-align: center; color: var(--fg); }
+    .score-dash { color: var(--muted); margin: 0 var(--space-2); }
+    .match-progress { display: flex; gap: var(--space-6); margin-bottom: var(--space-4); flex-wrap: wrap; }
+    .progress-group { flex: 1; min-width: 160px; }
+    .progress-label { font-family: var(--font-display); font-size: 7px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: var(--space-2); }
+    .progress-dots { display: flex; gap: var(--space-2); }
+    .progress-dot { width: 28px; height: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); transition: all 0.3s ease; }
+    .progress-dot.active { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
+    .progress-dot.done { background: var(--accent-dim); border-color: var(--accent-dim); }
+    .progress-dot.lose { background: var(--danger); border-color: var(--danger); }
+
+    /* Phase info bar */
+    .phase-bar { display: flex; align-items: center; gap: var(--space-4); background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3) var(--space-5); margin-bottom: var(--space-5); }
+    .phase-bar-icon { font-size: 28px; filter: drop-shadow(0 0 8px var(--accent-glow)); }
+    .phase-bar-info { flex: 1; }
+    .phase-bar-name { font-family: var(--font-display); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg); }
+    .phase-bar-weight { display: inline-flex; align-items: center; gap: var(--space-1); padding: 2px 8px; background: var(--accent); color: var(--accent-on); border-radius: var(--radius-sm); font-family: var(--font-display); font-size: 7px; text-transform: uppercase; margin-left: var(--space-2); box-shadow: 0 0 8px var(--accent-glow); }
+    .phase-bar-desc { font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); margin-top: var(--space-1); }
+    .phase-bar-zone { font-family: var(--font-display); font-size: 7px; color: var(--info); text-transform: uppercase; letter-spacing: 0.08em; margin-top: var(--space-1); }
+    .phase-bar-zone::before { content: '▸ '; color: var(--info); }
+
+    /* Game area layout */
+    .game-area { display: grid; grid-template-columns: 1fr 340px; gap: var(--space-5); margin-bottom: var(--space-5); }
+
+    /* Pitch */
+    .match-pitch { background: var(--pitch-green); border: 2px solid var(--pitch-dark); border-radius: var(--radius-md); aspect-ratio: 68/105; max-height: 480px; position: relative; overflow: hidden; box-shadow: inset 0 0 60px rgba(0,0,0,0.5); }
+    .match-pitch::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--pitch-line); }
+    .match-pitch::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 70px; height: 70px; border: 1px solid var(--pitch-line); border-radius: 50%; }
+
+    /* Phase zone overlay */
+    .pitch-zone { position: absolute; left: 4%; right: 4%; background: rgba(57,255,20,0.06); border: 2px solid rgba(57,255,20,0.25); border-radius: var(--radius-md); transition: all 0.4s ease; pointer-events: none; z-index: 1; animation: zone-pulse 2s ease-in-out infinite; }
+    .pitch-zone::before { content: attr(data-zone-label); position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-family: var(--font-display); font-size: 7px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); text-shadow: 0 0 8px var(--accent-glow); white-space: nowrap; }
+    @keyframes zone-pulse { 0%,100% { border-color: rgba(57,255,20,0.2); background: rgba(57,255,20,0.04); } 50% { border-color: rgba(57,255,20,0.45); background: rgba(57,255,20,0.08); } }
+
+    /* Player tokens on pitch */
+    .pitch-token { position: absolute; width: 48px; height: 48px; background: var(--surface); border: 2px solid var(--accent); border-radius: var(--radius-sm); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; transform: translate(-50%, -50%); box-shadow: 0 0 12px var(--accent-glow), inset 0 0 8px rgba(57,255,20,0.1); animation: token-place 0.3s ease-out; }
+    @keyframes token-place { 0% { transform: translate(-50%,-50%) scale(0.5); opacity: 0; } 100% { transform: translate(-50%,-50%) scale(1); opacity: 1; } }
+    .token-pos { font-family: var(--font-display); font-size: 7px; color: var(--accent); text-shadow: 0 0 4px var(--accent-glow); }
+    .token-name { font-family: var(--font-body); font-size: 12px; color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 44px; text-align: center; }
+    .token-chips { font-family: var(--font-display); font-size: 7px; color: var(--gold); text-shadow: 0 0 4px var(--gold-glow); }
+
+    .pitch-hint { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); text-align: center; z-index: 3; pointer-events: none; }
+    .hint-arrow { font-size: 24px; display: block; margin-bottom: var(--space-2); animation: hint-bob 1.5s ease-in-out infinite; }
+    @keyframes hint-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+
+    /* Sidebar panels */
+    .match-sidebar { display: flex; flex-direction: column; gap: var(--space-3); }
+    .sidebar-panel { background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3); }
+    .panel-title { font-family: var(--font-display); font-size: 7px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-dim); margin-bottom: var(--space-2); padding-bottom: var(--space-1); border-bottom: 1px solid var(--border); }
+
+    /* Target display */
+    .target-display { text-align: center; }
+    .target-num { font-family: var(--font-display); font-size: 18px; color: var(--gold); text-shadow: 0 0 10px var(--gold-glow); margin: var(--space-1) 0; }
+    .round-score-live { font-family: var(--font-body); font-size: var(--text-lg); color: var(--accent); }
+
+    /* Slot cards */
+    .slot-cards { display: flex; flex-direction: column; gap: var(--space-2); }
+    .slot-card { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-3); background: var(--bg-deep); border: 2px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all var(--motion-fast) ease; }
+    .slot-card:hover { border-color: var(--border-bright); background: var(--surface-raised); }
+    .slot-card.active { border-color: var(--accent); box-shadow: 0 0 12px var(--accent-glow); background: var(--surface-raised); }
+    .slot-card.filled { border-color: var(--accent-dim); background: rgba(57,255,20,0.05); }
+    .slot-card-num { font-family: var(--font-display); font-size: 8px; color: var(--muted); min-width: 16px; text-align: center; }
+    .slot-card-req { font-family: var(--font-body); font-size: var(--text-lg); color: var(--fg); flex: 1; }
+    .slot-card-req .req-pos { color: var(--accent); font-weight: bold; }
+    .slot-card-req .req-stats { color: var(--fg-dim); font-size: var(--text-sm); }
+    .slot-card-status { font-family: var(--font-display); font-size: 8px; color: var(--muted); }
+    .slot-card-chips { font-family: var(--font-display); font-size: 8px; color: var(--gold); text-shadow: 0 0 4px var(--gold-glow); min-width: 40px; text-align: right; }
+
+    /* Player list */
+    .player-list { display: flex; flex-direction: column; gap: var(--space-1); max-height: 260px; overflow-y: auto; }
+    .player-list::-webkit-scrollbar { width: 4px; }
+    .player-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .player-row { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2); border: 1px solid transparent; border-radius: var(--radius-sm); cursor: pointer; transition: all var(--motion-fast) ease; }
+    .player-row:hover { background: var(--surface-hover); border-color: var(--border); }
+    .player-row.eligible { border-color: var(--accent); background: rgba(57,255,20,0.04); }
+    .player-row.eligible:hover { background: rgba(57,255,20,0.1); box-shadow: 0 0 8px var(--accent-glow); }
+    .player-row.used { opacity: 0.3; cursor: not-allowed; }
+    .player-row.ineligible { opacity: 0.45; }
+    .pr-pos { font-family: var(--font-display); font-size: 7px; color: var(--accent); min-width: 28px; }
+    .pr-name { font-family: var(--font-body); font-size: var(--text-lg); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pr-chips { font-family: var(--font-display); font-size: 8px; color: var(--gold); min-width: 36px; text-align: right; }
+    .pr-fatigue { font-size: 12px; margin-left: var(--space-1); }
+
+    /* Synergy preview */
+    .synergy-list { display: flex; flex-direction: column; gap: var(--space-1); }
+    .synergy-row { display: flex; align-items: center; gap: var(--space-2); font-family: var(--font-body); font-size: var(--text-lg); color: var(--gold); }
+    .synergy-dot { width: 6px; height: 6px; border-radius: var(--radius-sm); background: var(--gold); box-shadow: 0 0 4px var(--gold-glow); flex-shrink: 0; }
+
+    /* Submit section */
+    .submit-section { text-align: center; padding: var(--space-4) 0; }
+
+    /* ─── Phase Result ──────────────────────────────────────────── */
+    .result-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
+    .result-verdict { font-family: var(--font-display); font-size: 24px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: var(--space-6); }
+    .result-verdict.win { color: var(--accent); text-shadow: 0 0 30px var(--accent-glow); animation: verdict-glow 1.5s ease-in-out infinite; }
+    .result-verdict.lose { color: var(--danger); text-shadow: 0 0 30px var(--danger-glow); }
+    @keyframes verdict-glow { 0%,100% { text-shadow: 0 0 20px var(--accent-glow); } 50% { text-shadow: 0 0 50px var(--accent-glow), 0 0 80px var(--accent-glow); } }
+    .result-score { font-family: var(--font-display); font-size: 48px; color: var(--gold); text-shadow: 0 0 20px var(--gold-glow); margin-bottom: var(--space-2); }
+    .result-target { font-family: var(--font-body); font-size: var(--text-xl); color: var(--muted); margin-bottom: var(--space-6); }
+    .result-breakdown { width: 100%; max-width: 600px; background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-6); text-align: left; }
+    .breakdown-title { font-family: var(--font-display); font-size: 8px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-dim); margin-bottom: var(--space-3); }
+    .breakdown-row { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) 0; border-bottom: 1px solid var(--border); }
+    .breakdown-row:last-child { border-bottom: none; }
+    .bd-player { font-family: var(--font-body); font-size: var(--text-lg); color: var(--fg); flex: 1; }
+    .bd-pos { font-family: var(--font-display); font-size: 7px; color: var(--accent); min-width: 28px; }
+    .bd-base { font-family: var(--font-body); font-size: var(--text-lg); color: var(--fg-dim); min-width: 40px; text-align: right; }
+    .bd-mult { font-family: var(--font-body); font-size: var(--text-lg); color: var(--info); min-width: 40px; text-align: right; }
+    .bd-fatigue { font-family: var(--font-body); font-size: var(--text-lg); color: var(--warn); min-width: 40px; text-align: right; }
+    .bd-subtotal { font-family: var(--font-display); font-size: 8px; color: var(--gold); min-width: 48px; text-align: right; }
+    .result-synergies { width: 100%; max-width: 600px; margin-bottom: var(--space-6); }
+    .result-synergies h3 { font-family: var(--font-display); font-size: 8px; text-transform: uppercase; color: var(--gold); margin-bottom: var(--space-3); }
+    .synergy-fired { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); background: rgba(255,215,0,0.05); border: 1px solid var(--gold-dim); border-radius: var(--radius-sm); margin-bottom: var(--space-2); }
+    .synergy-fired .sf-name { font-family: var(--font-body); font-size: var(--text-lg); color: var(--gold); flex: 1; }
+    .synergy-fired .sf-contrib { font-family: var(--font-body); font-size: var(--text-sm); color: var(--fg-dim); }
+    .synergy-fired .sf-desc { font-family: var(--font-body); font-size: var(--text-sm); color: var(--muted); font-style: italic; }
+
+    /* ─── Round Result ──────────────────────────────────────────── */
+    .round-verdict { font-family: var(--font-display); font-size: 20px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: var(--space-6); }
+    .round-verdict.win { color: var(--accent); text-shadow: 0 0 20px var(--accent-glow); }
+    .round-verdict.lose { color: var(--danger); text-shadow: 0 0 20px var(--danger-glow); }
+    .round-scores { display: flex; gap: var(--space-8); justify-content: center; margin-bottom: var(--space-6); }
+    .round-score-card { text-align: center; }
+    .round-score-label { font-family: var(--font-display); font-size: 7px; color: var(--muted); text-transform: uppercase; margin-bottom: var(--space-2); }
+    .round-score-value { font-family: var(--font-display); font-size: 24px; }
+    .round-score-value.yours { color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
+    .round-score-value.target { color: var(--gold); text-shadow: 0 0 10px var(--gold-glow); }
+    .match-progress-rounds { display: flex; gap: var(--space-3); justify-content: center; margin-bottom: var(--space-6); }
+    .round-indicator { font-family: var(--font-display); font-size: 7px; padding: 4px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--fg-dim); }
+    .round-indicator.won { border-color: var(--accent); color: var(--accent); background: rgba(57,255,20,0.1); }
+    .round-indicator.lost { border-color: var(--danger); color: var(--danger); background: rgba(255,51,68,0.1); }
+    .round-indicator.current { border-color: var(--gold); color: var(--gold); background: rgba(255,215,0,0.1); }
+
+    /* ─── Campaign Complete ─────────────────────────────────────── */
+    .campaign-title { font-family: var(--font-display); font-size: 24px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: var(--space-6); }
+    .campaign-title.victory { color: var(--gold); text-shadow: 0 0 30px var(--gold-glow); }
+    .campaign-title.defeat { color: var(--danger); text-shadow: 0 0 30px var(--danger-glow); }
+    .match-results { display: flex; flex-direction: column; gap: var(--space-4); width: 100%; max-width: 500px; margin-bottom: var(--space-8); }
+    .match-result-card { display: flex; align-items: center; gap: var(--space-4); background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-md); padding: var(--space-4); }
+    .match-result-card.won { border-color: var(--accent-dim); }
+    .match-result-card.lost { border-color: var(--danger); }
+    .mrc-name { font-family: var(--font-body); font-size: var(--text-xl); color: var(--fg); flex: 1; }
+    .mrc-opponent { font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); }
+    .mrc-result { font-family: var(--font-display); font-size: 10px; padding: 4px 12px; border-radius: var(--radius-sm); }
+    .mrc-result.won { background: rgba(57,255,20,0.15); color: var(--accent); border: 1px solid var(--accent); }
+    .mrc-result.lost { background: rgba(255,51,68,0.15); color: var(--danger); border: 1px solid var(--danger); }
+
+    /* ─── Shared Button Styles ──────────────────────────────────── */
+    .btn { font-family: var(--font-display); font-size: 8px; text-transform: uppercase; letter-spacing: 0.06em; padding: 12px 24px; border: 2px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--fg); cursor: pointer; transition: all var(--motion-fast) ease; }
+    .btn:hover { border-color: var(--border-bright); background: var(--surface-raised); }
+    .btn-primary { border-color: var(--accent); color: var(--accent-on); background: var(--accent); box-shadow: 0 0 12px var(--accent-glow); }
+    .btn-primary:hover { background: var(--accent-dim); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-lg { padding: 16px 32px; font-size: 10px; }
+    .btn-danger { border-color: var(--danger); color: #fff; background: var(--danger); }
+
+    /* ─── Empty State ───────────────────────────────────────────── */
+    .empty-state { text-align: center; padding: var(--space-6) var(--space-4); color: var(--muted); font-family: var(--font-body); font-size: var(--text-lg); }
+    .big-icon { font-size: 36px; margin-bottom: var(--space-3); display: block; }
+
+    /* ─── Toast ─────────────────────────────────────────────────── */
+    .toast { position: fixed; top: var(--space-4); left: 50%; transform: translateX(-50%); background: var(--danger); color: #fff; font-family: var(--font-body); font-size: var(--text-lg); padding: var(--space-2) var(--space-5); border-radius: var(--radius-sm); box-shadow: 0 0 20px var(--danger-glow); z-index: 100; animation: toast-in 0.3s ease-out; }
+    @keyframes toast-in { 0% { transform: translateX(-50%) translateY(-20px); opacity: 0; } 100% { transform: translateX(-50%) translateY(0); opacity: 1; } }
+
+    /* ─── Responsive ────────────────────────────────────────────── */
+    @media (max-width: 920px) {
+      .game-area { grid-template-columns: 1fr; }
+      .match-pitch { max-height: 350px; }
+      .match-sidebar { order: -1; }
+      .player-grid { grid-template-columns: 1fr; }
+      .formations-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .title-logo { font-size: 28px; }
+      .result-score { font-size: 36px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- CRT overlay (always visible) -->
+  <div class="title-crt"></div>
+  <div class="title-scan"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN: TITLE                                                 -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="game-screen active" id="screen-title" data-od-id="title-screen">
+    <div class="title-logo" data-od-id="title-logo">SQUAD</div>
+    <div class="title-tagline" data-od-id="title-tagline">Football Card Roguelike</div>
+    <div class="title-info" data-od-id="title-info">
+      Build your squad · Pick your formation · Dominate the pitch<br>
+      <span>5 matches</span> · <span>3 rounds each</span> · <span>6 phases per round</span>
+    </div>
+    <button class="btn btn-primary btn-lg" id="start-btn" data-od-id="start-campaign">Start Campaign ▸</button>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN: SQUAD BUILDER                                         -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="game-screen" id="screen-squad" data-od-id="squad-builder-screen">
+    <div class="squad-header">
+      <h2 style="font-family:var(--font-display);font-size:12px;color:var(--accent);text-shadow:0 0 10px var(--accent-glow)">Build Your Squad</h2>
+      <div style="text-align:right">
+        <div class="budget-text">Budget: <span id="budget-used">0</span> / 360</div>
+        <div class="budget-bar" style="width:200px"><div class="budget-fill" id="budget-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- Position filter tabs -->
+    <div class="position-tabs" id="position-tabs" data-od-id="position-tabs"></div>
+
+    <!-- Player grid -->
+    <div class="player-grid" id="player-grid" data-od-id="player-grid"></div>
+
+    <!-- Squad summary -->
+    <div class="squad-summary" id="squad-summary" data-od-id="squad-summary">
+      <h3>Your Squad (<span id="squad-count">0</span> players)</h3>
+      <div class="squad-selected" id="squad-selected"></div>
+      <div class="requirements" id="squad-requirements"></div>
+    </div>
+
+    <!-- Error box -->
+    <div class="squad-error" id="squad-error"></div>
+
+    <!-- Actions -->
+    <div class="squad-actions">
+      <button class="btn" onclick="showScreen('title')">◂ Back</button>
+      <button class="btn btn-primary btn-lg" id="confirm-squad-btn">Confirm Squad ▸</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN: FORMATION SELECT                                      -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="game-screen" id="screen-formation" data-od-id="formation-select-screen">
+    <div class="form-header">
+      <h1 class="form-title" data-od-id="formation-title">Choose Formation</h1>
+      <p class="form-subtitle" data-od-id="formation-subtitle">Your shape determines position bonuses and trade-offs.</p>
+    </div>
+    <div class="formations-grid" id="formations-grid" data-od-id="formations-grid"></div>
+    <div class="squad-actions">
+      <button class="btn" onclick="showScreen('squad')">◂ Back</button>
+      <button class="btn btn-primary btn-lg" id="confirm-formation-btn" disabled>Start Match ▸</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN: MATCH                                                 -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="game-screen" id="screen-match" data-od-id="match-screen">
+    <!-- Match header -->
+    <div class="match-header" data-od-id="match-header">
+      <div class="match-vs">
+        <div class="match-team you"><div class="match-team-name">Your XI</div></div>
+        <div class="match-score"><span id="rounds-won">0</span><span class="score-dash">-</span><span id="rounds-lost">0</span></div>
+        <div class="match-team"><div class="match-team-name" id="opponent-name">—</div></div>
+      </div>
+      <div><span style="font-family:var(--font-display);font-size:7px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em" id="match-label"></span></div>
+    </div>
+
+    <!-- Progress -->
+    <div class="match-progress" data-od-id="match-progress">
+      <div class="progress-group">
+        <div class="progress-label">Round <span id="round-num">1</span> / 3</div>
+        <div class="progress-dots" id="round-dots"></div>
+      </div>
+      <div class="progress-group">
+        <div class="progress-label">Phase <span id="phase-num">1</span> / 6</div>
+        <div class="progress-dots" id="phase-dots"></div>
+      </div>
+    </div>
+
+    <!-- Phase info bar -->
+    <div class="phase-bar" data-od-id="phase-bar">
+      <div class="phase-bar-icon" id="phase-icon">⚽</div>
+      <div class="phase-bar-info">
+        <div><span class="phase-bar-name" id="phase-name">Goal Kick</span><span class="phase-bar-weight" id="phase-weight">DEF</span></div>
+        <div class="phase-bar-desc" id="phase-desc"></div>
+        <div class="phase-bar-zone" id="phase-zone-label">Defensive Third</div>
+      </div>
+    </div>
+
+    <!-- Game area -->
+    <div class="game-area">
+      <div class="match-pitch" id="pitch" data-od-id="match-pitch">
+        <div class="pitch-zone" id="pitch-zone" data-zone-label="DEFENSIVE THIRD"></div>
+        <div class="pitch-hint" id="pitch-hint"><span class="hint-arrow">↓</span>Select a slot, then pick a player</div>
+      </div>
+      <div class="match-sidebar">
+        <div class="sidebar-panel target-display" data-od-id="target-panel">
+          <div class="panel-title">Round Target</div>
+          <div class="target-num" id="target-num">500</div>
+          <div class="round-score-live">Your score: <span id="live-score">0</span></div>
+        </div>
+        <div class="sidebar-panel" data-od-id="slot-cards-panel">
+          <div class="panel-title">Phase Slots — tap to assign</div>
+          <div class="slot-cards" id="slot-cards"></div>
+        </div>
+        <div class="sidebar-panel" data-od-id="player-panel">
+          <div class="panel-title" id="player-panel-title">All Players</div>
+          <div class="player-list" id="player-list"></div>
+        </div>
+        <div class="sidebar-panel" data-od-id="synergy-panel">
+          <div class="panel-title">Synergies</div>
+          <div class="synergy-list" id="synergy-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="submit-section">
+      <button class="btn btn-primary btn-lg" id="submit-phase-btn" disabled>Submit Phase ▸</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN: PHASE RESULT                                          -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="game-screen" id="screen-phase-result" data-od-id="phase-result-screen">
+    <div class="result-screen">
+      <div class="result-verdict" id="pr-verdict">Phase Complete</div>
+      <div class="result-score" id="pr-score">0</div>
+      <div class="result-target" id="pr-target">Target: 500</div>
+
+      <div class="result-breakdown" id="pr-breakdown" data-od-id="phase-breakdown">
+        <div class="breakdown-title">Player Contributions</div>
+        <div id="pr-breakdown-rows"></div>
+      </div>
+
+      <div class="result-synergies" id="pr-synergies" data-od-id="phase-synergies">
+        <h3>Synergies Fired</h3>
+        <div id="pr-synergy-list"></div>
+      </div>
+
+      <button class="btn btn-primary btn-lg" id="pr-continue-btn">Continue ▸</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN: ROUND RESULT                                          -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="game-screen" id="screen-round-result" data-od-id="round-result-screen">
+    <div class="result-screen">
+      <div class="round-verdict" id="rr-verdict">Round Won</div>
+      <div class="round-scores">
+        <div class="round-score-card"><div class="round-score-label">Your Score</div><div class="round-score-value yours" id="rr-your-score">0</div></div>
+        <div class="round-score-card"><div class="round-score-label">Target</div><div class="round-score-value target" id="rr-target">0</div></div>
+      </div>
+      <div class="match-progress-rounds" id="rr-rounds"></div>
+      <div id="rr-message" style="font-family:var(--font-body);font-size:var(--text-xl);color:var(--fg-dim);margin-bottom:var(--space-6)"></div>
+      <button class="btn btn-primary btn-lg" id="rr-continue-btn">Continue ▸</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SCREEN: CAMPAIGN COMPLETE                                     -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="game-screen" id="screen-campaign" data-od-id="campaign-complete-screen">
+    <div class="result-screen">
+      <div class="campaign-title" id="cc-title">Campaign Complete</div>
+      <div class="match-results" id="cc-results" data-od-id="campaign-results"></div>
+      <div style="display:flex;gap:var(--space-4)">
+        <button class="btn btn-primary btn-lg" onclick="resetGame()">Play Again ▸</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- GAME ENGINE (inline for SPA reliability)                      -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <script src="game-engine.js"></script>
+  <script>
+  // ═══════════════════════════════════════════════════════════════════
+  // GAME STATE — all in memory, no localStorage needed
+  // ═══════════════════════════════════════════════════════════════════
+
+  const G = {
+    // Squad
+    selectedIds: new Set(),
+    squad: [],          // built from selectedIds when confirmed
+
+    // Formation
+    formation: null,
+
+    // Campaign
+    matchIdx: 0,
+    matchResults: [],   // [{won, opponent}]
+    roundWins: [false, false, false],
+    roundsWon: 0,
+    roundsLost: 0,
+
+    // Current round
+    round: 0,
+    roundScore: 0,
+    roundPhases: [],
+    phaseIdx: 0,
+
+    // Current phase
+    phasePlacement: {}, // slotIdx -> playerId
+    activeSlot: null,
+
+    // Fatigue
+    fatigue: {},
+    carryover: null,
+    journeymanUsed: false,
+
+    // Persistent synergies
+    persistentBuffs: null,
+  };
+
+  // ═══════════════════════════════════════════════════════════════════
+  // SCREEN MANAGEMENT
+  // ═══════════════════════════════════════════════════════════════════
+
+  function showScreen(id) {
+    document.querySelectorAll('.game-screen').forEach(s => s.classList.remove('active'));
+    const screen = document.getElementById('screen-' + id);
+    if (screen) screen.classList.add('active');
+    window.scrollTo(0, 0);
+
+    // Render the screen
+    switch(id) {
+      case 'title': break;
+      case 'squad': renderSquadBuilder(); break;
+      case 'formation': renderFormationSelect(); break;
+      case 'match': renderMatch(); break;
+      case 'phase-result': renderPhaseResult(); break;
+      case 'round-result': renderRoundResult(); break;
+      case 'campaign': renderCampaignComplete(); break;
+    }
+  }
+
+  function showToast(msg) {
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2500);
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // TITLE SCREEN
+  // ═══════════════════════════════════════════════════════════════════
+
+  document.getElementById('start-btn').addEventListener('click', () => showScreen('squad'));
+
+  // ═══════════════════════════════════════════════════════════════════
+  // SQUAD BUILDER
+  // ═══════════════════════════════════════════════════════════════════
+
+  let squadFilter = 'ALL';
+
+  function renderSquadBuilder() {
+    // Position tabs
+    const positions = ['ALL', 'ST', 'LW', 'RW', 'CM', 'CAM', 'CDM', 'CB', 'FB', 'GK'];
+    const tabsEl = document.getElementById('position-tabs');
+    tabsEl.innerHTML = positions.map(p =>
+      `<div class="pos-tab ${p === squadFilter ? 'active' : ''}" onclick="filterSquad('${p}')">${p}</div>`
+    ).join('');
+
+    // Player grid
+    const filtered = squadFilter === 'ALL' ? PLAYERS : PLAYERS.filter(p => p.position === squadFilter);
+    const grid = document.getElementById('player-grid');
+    grid.innerHTML = filtered.map(p => {
+      const selected = G.selectedIds.has(p.id);
+      const cost = calcCost(p);
+      return `<div class="player-card ${selected ? 'selected' : ''}" onclick="toggleSquadPlayer('${p.id}')" data-od-id="card-${p.id}">
+        <div class="player-card-top">
+          <span class="player-name">${p.name}</span>
+          <span class="player-position pos-${p.position}">${p.position}</span>
+        </div>
+        <div class="player-desc">${p.description}</div>
+        <div class="stat-bars">
+          <div class="stat-bar stat-ATK"><div class="stat-label">ATK</div><div class="stat-track"><div class="stat-fill" style="width:${p.atk*10}%"></div></div></div>
+          <div class="stat-bar stat-PAC"><div class="stat-label">PAC</div><div class="stat-track"><div class="stat-fill" style="width:${p.pac*10}%"></div></div></div>
+          <div class="stat-bar stat-PAS"><div class="stat-label">PAS</div><div class="stat-track"><div class="stat-fill" style="width:${p.pas*10}%"></div></div></div>
+          <div class="stat-bar stat-DEF"><div class="stat-label">DEF</div><div class="stat-track"><div class="stat-fill" style="width:${p.def_*10}%"></div></div></div>
+          <div class="stat-bar stat-SPC"><div class="stat-label">SPC</div><div class="stat-track"><div class="stat-fill" style="width:${p.spc*10}%"></div></div></div>
+        </div>
+        <div class="player-cost">Cost: ${cost}</div>
+        <div class="player-traits">${p.traits.map(t => `<span class="trait-tag">${t}</span>`).join('')}</div>
+      </div>`;
+    }).join('');
+
+    updateSquadSummary();
+  }
+
+  function filterSquad(pos) {
+    squadFilter = pos;
+    renderSquadBuilder();
+  }
+
+  function toggleSquadPlayer(id) {
+    if (G.selectedIds.has(id)) {
+      G.selectedIds.delete(id);
+    } else {
+      G.selectedIds.add(id);
+    }
+    renderSquadBuilder();
+  }
+
+  function updateSquadSummary() {
+    const selected = PLAYERS.filter(p => G.selectedIds.has(p.id));
+    const totalCost = selected.reduce((s, p) => s + calcCost(p), 0);
+    const budgetPct = Math.min(100, (totalCost / BUDGET) * 100);
+    const overBudget = totalCost > BUDGET;
+
+    document.getElementById('budget-used').textContent = totalCost;
+    const fill = document.getElementById('budget-fill');
+    fill.style.width = budgetPct + '%';
+    fill.className = 'budget-fill' + (overBudget ? ' over' : '');
+
+    document.getElementById('squad-count').textContent = selected.length;
+    const selEl = document.getElementById('squad-selected');
+    selEl.innerHTML = selected.map(p =>
+      `<div class="squad-chip"><span class="pos-${p.position}" style="font-family:var(--font-display);font-size:6px;padding:1px 4px;border-radius:2px">${p.position}</span> ${p.name} <span class="remove-x" onclick="event.stopPropagation();toggleSquadPlayer('${p.id}')">×</span></div>`
+    ).join('');
+
+    // Requirements
+    const missing = checkMinimums(selected);
+    const posCounts = {};
+    for (const p of selected) posCounts[p.position] = (posCounts[p.position] || 0) + 1;
+
+    const reqs = [];
+    const gkCount = posCounts['GK'] || 0;
+    const defCount = (posCounts['CB'] || 0) + (posCounts['FB'] || 0);
+    const midCount = (posCounts['CM'] || 0) + (posCounts['CDM'] || 0) + (posCounts['CAM'] || 0);
+    const attCount = (posCounts['ST'] || 0) + (posCounts['LW'] || 0) + (posCounts['RW'] || 0);
+    reqs.push({ label: `GK ≥ 1`, met: gkCount >= 1 });
+    reqs.push({ label: `DEF ≥ 3`, met: defCount >= 3 });
+    reqs.push({ label: `MID ≥ 3`, met: midCount >= 3 });
+    reqs.push({ label: `ATT ≥ 2`, met: attCount >= 2 });
+    reqs.push({ label: `Total ≥ 10`, met: selected.length >= 10 });
+    reqs.push({ label: `Budget ≤ 360`, met: !overBudget });
+
+    document.getElementById('squad-requirements').innerHTML = reqs.map(r =>
+      `<div class="req-badge ${r.met ? 'met' : 'unmet'}">${r.met ? '✓' : '✗'} ${r.label}</div>`
+    ).join('');
+  }
+
+  // Confirm squad button
+  document.getElementById('confirm-squad-btn').addEventListener('click', () => {
+    const selected = PLAYERS.filter(p => G.selectedIds.has(p.id));
+    const missing = checkMinimums(selected);
+    const totalCost = selected.reduce((s, p) => s + calcCost(p), 0);
+    const errors = [...missing];
+    if (totalCost > BUDGET) errors.push(`Over budget: ${totalCost}/${BUDGET}`);
+
+    if (errors.length > 0) {
+      const errEl = document.getElementById('squad-error');
+      errEl.textContent = '⚠ ' + errors.join(' · ');
+      errEl.classList.add('visible');
+      errEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    document.getElementById('squad-error').classList.remove('visible');
+    G.squad = selected;
+    G.fatigue = {};
+    G.carryover = null;
+    G.journeymanUsed = false;
+    G.matchIdx = 0;
+    G.matchResults = [];
+    G.roundWins = [false, false, false];
+    G.roundsWon = 0;
+    G.roundsLost = 0;
+    G.round = 0;
+
+    // Compute persistent synergies
+    G.persistentBuffs = detectSquadSynergies(G.squad, SYNERGIES);
+
+    showScreen('formation');
+  });
+
+  // ═══════════════════════════════════════════════════════════════════
+  // FORMATION SELECT
+  // ═══════════════════════════════════════════════════════════════════
+
+  let selectedFormationId = null;
+
+  function renderFormationSelect() {
+    selectedFormationId = null;
+    const grid = document.getElementById('formations-grid');
+    grid.innerHTML = FORMATIONS.map(f => {
+      const bonusHtml = Object.entries(f.positionBonus).map(([pos, val]) => {
+        const cls = val > 0 ? 'bonus-pos' : 'bonus-neg';
+        const sign = val > 0 ? '+' : '';
+        return `<span class="bonus-tag ${cls}">${pos} ${sign}${val}</span>`;
+      }).join('');
+
+      const pitchSlots = f.pitchPositions.map(p =>
+        `<div class="form-slot" style="left:${p.x}%;top:${p.y}%">${p.pos}</div>`
+      ).join('');
+
+      return `<div class="formation-card" data-od-id="formation-${f.id}" onclick="selectFormation('${f.id}')">
+        <div class="formation-name">${f.name}</div>
+        <div class="formation-desc">${f.description}</div>
+        <div class="form-pitch">${pitchSlots}</div>
+        ${bonusHtml ? `<div class="bonuses">${bonusHtml}</div>` : '<div class="bonuses"><span class="bonus-tag bonus-pos">No bonuses</span></div>'}
+        <div class="form-meta">
+          <span>Hand: ${f.handSize}</span>
+          <span>Slots: ${f.slots.length}</span>
+          <span>Mult: ×${f.globalMult}</span>
+        </div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('confirm-formation-btn').disabled = true;
+  }
+
+  function selectFormation(id) {
+    selectedFormationId = id;
+    document.querySelectorAll('.formation-card').forEach(c => c.classList.remove('selected'));
+    document.querySelector(`[data-od-id="formation-${id}"]`).classList.add('selected');
+    document.getElementById('confirm-formation-btn').disabled = false;
+  }
+
+  document.getElementById('confirm-formation-btn').addEventListener('click', () => {
+    if (!selectedFormationId) return;
+    G.formation = FORMATIONS.find(f => f.id === selectedFormationId);
+    G.round = 0;
+    G.roundsWon = 0;
+    G.roundsLost = 0;
+    G.roundWins = [false, false, false];
+    G.fatigue = {};
+    G.carryover = null;
+    G.journeymanUsed = false;
+    G.roundScore = 0;
+    G.phaseIdx = 0;
+    G.roundPhases = pickRandomPhases(6);
+    G.phasePlacement = {};
+    G.activeSlot = null;
+    showScreen('match');
+  });
+
+  // ═══════════════════════════════════════════════════════════════════
+  // MATCH SCREEN
+  // ═══════════════════════════════════════════════════════════════════
+
+  const PHASE_ZONES = {
+    goal_kick:       { top:'65%', height:'32%', label:'Defensive Third' },
+    build_up:        { top:'45%', height:'45%', label:'Back to Midfield' },
+    wing_attack:     { top:'25%', height:'50%', label:'Wide Channels' },
+    long_ball:       { top:'5%',  height:'90%', label:'Full Pitch' },
+    defensive_block: { top:'58%', height:'38%', label:'Defensive Zone' },
+    tiki_taka:       { top:'30%', height:'35%', label:'Midfield Control' },
+    counter_attack:  { top:'5%',  height:'50%', label:'Attacking Third' },
+    set_piece:       { top:'5%',  height:'30%', label:'Box Area' },
+    high_press:      { top:'5%',  height:'45%', label:'High Press Zone' },
+    through_ball:    { top:'20%', height:'45%', label:'Midfield to Front' },
+    wingback_push:   { top:'25%', height:'50%', label:'Wide Channel' },
+  };
+
+  const TOKEN_POSITIONS = [
+    { x:50, y:82 }, { x:30, y:68 }, { x:70, y:68 },
+    { x:50, y:50 }, { x:25, y:38 }, { x:75, y:38 },
+  ];
+
+  function renderMatch() {
+    const matchData = CAMPAIGN_MATCHES[G.matchIdx] || CAMPAIGN_MATCHES[0];
+    document.getElementById('opponent-name').textContent = matchData.opponent;
+    document.getElementById('match-label').textContent = matchData.tier;
+    document.getElementById('rounds-won').textContent = G.roundsWon;
+    document.getElementById('rounds-lost').textContent = G.roundsLost;
+    document.getElementById('round-num').textContent = G.round + 1;
+    document.getElementById('phase-num').textContent = G.phaseIdx + 1;
+
+    const target = matchData.targets[G.round] || 999;
+    document.getElementById('target-num').textContent = target;
+    document.getElementById('live-score').textContent = G.roundScore;
+
+    // Round dots
+    const roundDots = document.getElementById('round-dots');
+    roundDots.innerHTML = '';
+    for (let i = 0; i < 3; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'progress-dot';
+      if (i < G.round) dot.classList.add(G.roundWins[i] ? 'done' : 'lose');
+      else if (i === G.round) dot.classList.add('active');
+      roundDots.appendChild(dot);
+    }
+
+    // Phase dots
+    const phaseDots = document.getElementById('phase-dots');
+    phaseDots.innerHTML = '';
+    for (let i = 0; i < 6; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'progress-dot';
+      if (i < G.phaseIdx) dot.classList.add('done');
+      else if (i === G.phaseIdx) dot.classList.add('active');
+      phaseDots.appendChild(dot);
+    }
+
+    renderPhase();
+  }
+
+  function renderPhase() {
+    const phase = G.roundPhases[G.phaseIdx];
+    if (!phase) { console.error('No phase at index', G.phaseIdx); return; }
+
+    document.getElementById('phase-icon').textContent = phase.icon;
+    document.getElementById('phase-name').textContent = phase.name;
+    document.getElementById('phase-desc').textContent = phase.desc;
+    document.getElementById('phase-weight').textContent = phase.weight;
+
+    // Zone visualization
+    const zone = PHASE_ZONES[phase.id] || { top:'20%', height:'60%', label:'Pitch' };
+    const zoneEl = document.getElementById('pitch-zone');
+    zoneEl.style.top = zone.top;
+    zoneEl.style.height = zone.height;
+    zoneEl.setAttribute('data-zone-label', zone.label);
+    document.getElementById('phase-zone-label').textContent = zone.label;
+
+    G.phasePlacement = {};
+    G.activeSlot = null;
+    renderSlotCards(phase);
+    renderPitch(phase);
+    renderMatchPlayers(phase);
+    renderSynergyPreview();
+    document.getElementById('submit-phase-btn').disabled = true;
+  }
+
+  function renderPitch(phase) {
+    const pitch = document.getElementById('pitch');
+    pitch.querySelectorAll('.pitch-token').forEach(t => t.remove());
+
+    const hint = document.getElementById('pitch-hint');
+    const filledCount = Object.keys(G.phasePlacement).length;
+    if (filledCount > 0 && hint) hint.style.display = 'none';
+    else if (hint) hint.style.display = '';
+
+    for (const [idx, pid] of Object.entries(G.phasePlacement)) {
+      const i = parseInt(idx);
+      const player = G.squad.find(p => p.id === pid);
+      if (!player) continue;
+      const slot = phase.slots[i];
+      const fp = slotFieldPosition(slot);
+      const baseChips = calculateChips(player, fp);
+      const tokenPos = TOKEN_POSITIONS[i] || { x: 50, y: 50 };
+
+      const token = document.createElement('div');
+      token.className = 'pitch-token';
+      token.style.left = tokenPos.x + '%';
+      token.style.top = tokenPos.y + '%';
+      token.innerHTML = `<span class="token-pos">${fp}</span><span class="token-name">${player.name.split(' ').pop()}</span><span class="token-chips">${baseChips}</span>`;
+      pitch.appendChild(token);
+    }
+  }
+
+  function renderSlotCards(phase) {
+    const container = document.getElementById('slot-cards');
+    container.innerHTML = phase.slots.map((slot, i) => {
+      const placed = G.phasePlacement[i] !== undefined;
+      const player = placed ? G.squad.find(p => p.id === G.phasePlacement[i]) : null;
+      const isActive = G.activeSlot === i;
+      const fp = slotFieldPosition(slot);
+      const lbl = formatSlotLabel(slot);
+
+      let cls = 'slot-card';
+      if (isActive) cls += ' active';
+      if (placed) cls += ' filled';
+
+      return `<div class="${cls}" onclick="selectSlot(${i})" data-od-id="slot-card-${i}">
+        <span class="slot-card-num">${i + 1}</span>
+        <div class="slot-card-req">
+          <span class="req-pos">${fp}</span>
+          <span class="req-stats">${lbl}</span>
+        </div>
+        ${placed
+          ? `<span class="slot-card-chips">${player.name.split(' ').pop()}</span><span class="slot-card-status">✓</span>`
+          : `<span class="slot-card-status">○</span>`}
+      </div>`;
+    }).join('');
+  }
+
+  function formatSlotLabel(slot) {
+    if (typeof slot === 'string') return '';
+    if (typeof slot === 'object' && slot.as) {
+      const parts = [];
+      if (slot.min_atk) parts.push('ATK≥' + slot.min_atk);
+      if (slot.min_pac) parts.push('PAC≥' + slot.min_pac);
+      if (slot.min_pas) parts.push('PAS≥' + slot.min_pas);
+      if (slot.min_def) parts.push('DEF≥' + slot.min_def);
+      if (slot.min_spc) parts.push('SPC≥' + slot.min_spc);
+      if (slot.trait) parts.push(slot.trait);
+      return parts.length ? parts.join(' · ') : '';
+    }
+    return '';
+  }
+
+  function renderMatchPlayers(phase) {
+    const container = document.getElementById('player-list');
+    const titleEl = document.getElementById('player-panel-title');
+    const usedIds = new Set(Object.values(G.phasePlacement));
+
+    if (G.squad.length === 0) {
+      container.innerHTML = '<div class="empty-state"><span class="big-icon">⚽</span>No squad loaded</div>';
+      titleEl.textContent = 'Players';
+      return;
+    }
+
+    const hasActiveSlot = G.activeSlot !== null;
+    const activeSlotSpec = hasActiveSlot ? phase.slots[G.activeSlot] : null;
+
+    if (hasActiveSlot) {
+      titleEl.textContent = `Players — ${slotFieldPosition(activeSlotSpec)} slot`;
+    } else {
+      titleEl.textContent = 'Tap a slot card first →';
+    }
+
+    const entries = G.squad.map(p => {
+      const used = usedIds.has(p.id);
+      const fatigueMult = G.fatigue[p.id] !== undefined ? G.fatigue[p.id] : 1.0;
+      const tired = fatigueMult < 1.0;
+
+      let eligible = false;
+      let chips = '';
+      if (hasActiveSlot && !used) {
+        eligible = isPlayerEligible(p, activeSlotSpec);
+        if (eligible) {
+          const fp = slotFieldPosition(activeSlotSpec);
+          const baseChips = calculateChips(p, fp);
+          chips = Math.round(baseChips * fatigueMult);
+        }
+      }
+
+      return { player: p, used, eligible, chips, tired, fatigueMult };
+    });
+
+    entries.sort((a, b) => {
+      if (a.used !== b.used) return a.used ? 1 : -1;
+      if (hasActiveSlot && a.eligible !== b.eligible) return a.eligible ? -1 : 1;
+      return (b.chips || 0) - (a.chips || 0);
+    });
+
+    container.innerHTML = entries.map(e => {
+      let cls = 'player-row';
+      if (e.used) cls += ' used';
+      else if (hasActiveSlot && !e.eligible) cls += ' ineligible';
+      else if (hasActiveSlot && e.eligible) cls += ' eligible';
+
+      const fatigueIcon = e.tired ? (e.fatigueMult > 0.7 ? ' 🟡' : ' 🔴') : '';
+      const chipDisplay = e.chips !== '' ? `<span class="pr-chips">${e.chips} ♣</span>` : '';
+
+      return `<div class="${cls}" onclick="placeMatchPlayer('${e.player.id}')" data-od-id="mpl-${e.player.id}">
+        <span class="pr-pos">${e.player.position}</span>
+        <span class="pr-name">${e.player.name}${fatigueIcon}</span>
+        ${chipDisplay}
+      </div>`;
+    }).join('');
+  }
+
+  function renderSynergyPreview() {
+    const container = document.getElementById('synergy-list');
+    const placed = [];
+    for (const [idx, pid] of Object.entries(G.phasePlacement)) {
+      const player = G.squad.find(p => p.id === pid);
+      const slot = G.roundPhases[G.phaseIdx].slots[parseInt(idx)];
+      if (player && slot) placed.push([player, slotFieldPosition(slot)]);
+    }
+
+    const lines = [];
+    for (const name of (G.persistentBuffs.fired_synergies || [])) {
+      lines.push(`<div class="synergy-row"><div class="synergy-dot"></div>${name} <span style="color:var(--muted)">(persistent)</span></div>`);
+    }
+
+    if (placed.length >= 2) {
+      const result = detectSynergies(placed, SYNERGIES);
+      const fired = new Set();
+      for (const pid of Object.keys(result)) {
+        if (pid === '__global__' || pid === '__carryover__') continue;
+        for (const name of (result[pid].fired_synergies || [])) fired.add(name.split(' (')[0]);
+      }
+      for (const s of fired) {
+        if (!lines.some(l => l.includes(s))) lines.push(`<div class="synergy-row"><div class="synergy-dot"></div>${s}</div>`);
+      }
+    }
+
+    if (lines.length === 0) {
+      container.innerHTML = '<div style="font-family:var(--font-body);font-size:var(--text-lg);color:var(--muted)">Place players to activate synergies</div>';
+    } else {
+      container.innerHTML = lines.join('');
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // MATCH ACTIONS
+  // ═══════════════════════════════════════════════════════════════════
+
+  function selectSlot(index) {
+    const phase = G.roundPhases[G.phaseIdx];
+    if (G.activeSlot === index) {
+      G.activeSlot = null;
+    } else {
+      G.activeSlot = index;
+    }
+    renderSlotCards(phase);
+    renderMatchPlayers(phase);
+  }
+
+  function placeMatchPlayer(playerId) {
+    if (G.activeSlot === null) {
+      showToast('Tap a slot card first, then pick a player');
+      return;
+    }
+
+    const usedIds = new Set(Object.values(G.phasePlacement));
+    if (usedIds.has(playerId)) return;
+
+    const player = G.squad.find(p => p.id === playerId);
+    const slot = G.roundPhases[G.phaseIdx].slots[G.activeSlot];
+    if (!isPlayerEligible(player, slot)) {
+      showToast(`${player.name} doesn't meet requirements for this slot`);
+      return;
+    }
+
+    G.phasePlacement[G.activeSlot] = playerId;
+    G.activeSlot = null;
+
+    const phase = G.roundPhases[G.phaseIdx];
+    renderPitch(phase);
+    renderSlotCards(phase);
+    renderMatchPlayers(phase);
+    renderSynergyPreview();
+
+    const allFilled = phase.slots.every((_, i) => G.phasePlacement[i] !== undefined);
+    document.getElementById('submit-phase-btn').disabled = !allFilled;
+  }
+
+  document.getElementById('submit-phase-btn').addEventListener('click', () => {
+    const phase = G.roundPhases[G.phaseIdx];
+
+    // Build field: [(player, fieldPosition)]
+    const field = [];
+    for (const [idx, pid] of Object.entries(G.phasePlacement)) {
+      const player = G.squad.find(p => p.id === pid);
+      const slot = phase.slots[parseInt(idx)];
+      if (player) {
+        field.push([player, slotFieldPosition(slot)]);
+        // Apply fatigue
+        const penalty = (G.persistentBuffs && G.persistentBuffs.fatigue_penalty) || 0.7;
+        G.fatigue[player.id] = (G.fatigue[player.id] !== undefined ? G.fatigue[player.id] : 1.0) * penalty;
+      }
+    }
+
+    // Calculate real score
+    const result = calculateRoundScore(field, SYNERGIES, G.formation, G.fatigue, G.carryover, G.persistentBuffs);
+    G.carryover = result.next_carryover || null;
+    G.roundScore += result.total;
+
+    // Store result for phase-result screen
+    G._lastPhaseResult = {
+      phase: { name: phase.name, weight: phase.weight, icon: phase.icon, id: phase.id },
+      result: result,
+      round: G.round,
+      phaseIdx: G.phaseIdx,
+      roundScore: G.roundScore,
+      target: CAMPAIGN_MATCHES[G.matchIdx].targets[G.round],
+    };
+
+    showScreen('phase-result');
+  });
+
+  // ═══════════════════════════════════════════════════════════════════
+  // PHASE RESULT
+  // ═══════════════════════════════════════════════════════════════════
+
+  function renderPhaseResult() {
+    const pr = G._lastPhaseResult;
+    if (!pr) { showScreen('match'); return; }
+
+    const result = pr.result;
+    document.getElementById('pr-score').textContent = result.total;
+    document.getElementById('pr-target').textContent = `Target: ${pr.target} · Running total: ${pr.roundScore}`;
+
+    // Breakdown
+    const rows = result.breakdown.map(b => {
+      const multDisplay = b.multiply !== 1.0 ? `×${b.multiply}` : '—';
+      const fatigueDisplay = b.fatigue !== 1.0 ? `×${b.fatigue}` : '—';
+      return `<div class="breakdown-row">
+        <span class="bd-pos">${b.position}</span>
+        <span class="bd-player">${b.player}</span>
+        <span class="bd-base">${b.base_chips}${b.add_chips ? '+' + b.add_chips : ''}</span>
+        <span class="bd-mult">${multDisplay}</span>
+        <span class="bd-fatigue">${fatigueDisplay}</span>
+        <span class="bd-subtotal">${b.subtotal} ♣</span>
+      </div>`;
+    }).join('');
+    document.getElementById('pr-breakdown-rows').innerHTML = rows;
+
+    // Synergies — use top-level fired_synergies from result
+    const synList = document.getElementById('pr-synergy-list');
+    const firedNames = new Set(result.fired_synergies || []);
+
+    if (firedNames.size > 0) {
+      const contributors = result.synergy_contributors || {};
+      synList.innerHTML = [...firedNames].map(name => {
+        const desc = (result.synergy_descriptions || {})[name] || '';
+        const contribs = contributors[name] || [];
+        return `<div class="synergy-fired">
+          <div class="synergy-dot"></div>
+          <span class="sf-name">${name}</span>
+          ${contribs.length ? `<span class="sf-contrib">${contribs.join(', ')}</span>` : ''}
+          <span class="sf-desc">${desc}</span>
+        </div>`;
+      }).join('');
+    } else {
+      synList.innerHTML = '<div style="font-family:var(--font-body);font-size:var(--text-lg);color:var(--muted)">No synergies fired this phase</div>';
+    }
+  }
+
+  document.getElementById('pr-continue-btn').addEventListener('click', () => {
+    G.phaseIdx++;
+
+    if (G.phaseIdx >= 6) {
+      // Round complete — check if won
+      const target = CAMPAIGN_MATCHES[G.matchIdx].targets[G.round];
+      const won = G.roundScore >= target;
+      G.roundWins[G.round] = won;
+      if (won) G.roundsWon++; else G.roundsLost++;
+
+      // Check match end (best of 3)
+      if (G.roundsWon >= 2 || G.roundsLost >= 2 || G.round >= 2) {
+        // Match complete
+        const matchWon = G.roundsWon > G.roundsLost;
+        G.matchResults.push({
+          won: matchWon,
+          opponent: CAMPAIGN_MATCHES[G.matchIdx].opponent,
+          name: CAMPAIGN_MATCHES[G.matchIdx].name,
+          roundsWon: G.roundsWon,
+          roundsLost: G.roundsLost,
+        });
+
+        showScreen('round-result');
+        return;
+      }
+
+      // Next round
+      showScreen('round-result');
+      return;
+    }
+
+    // Next phase
+    G.phasePlacement = {};
+    G.activeSlot = null;
+    showScreen('match');
+  });
+
+  // ═══════════════════════════════════════════════════════════════════
+  // ROUND RESULT
+  // ═══════════════════════════════════════════════════════════════════
+
+  function renderRoundResult() {
+    const target = CAMPAIGN_MATCHES[G.matchIdx].targets[G.round];
+    const won = G.roundScore >= target;
+    const matchComplete = G.roundsWon >= 2 || G.roundsLost >= 2 || G.round >= 2;
+
+    if (matchComplete) {
+      const matchWon = G.roundsWon > G.roundsLost;
+      document.getElementById('rr-verdict').textContent = matchWon ? 'Match Won!' : 'Match Lost';
+      document.getElementById('rr-verdict').className = 'round-verdict ' + (matchWon ? 'win' : 'lose');
+      document.getElementById('rr-message').textContent = matchWon
+        ? `You beat ${CAMPAIGN_MATCHES[G.matchIdx].opponent} ${G.roundsWon}-${G.roundsLost}`
+        : `${CAMPAIGN_MATCHES[G.matchIdx].opponent} wins ${G.roundsLost}-${G.roundsWon}`;
+    } else {
+      document.getElementById('rr-verdict').textContent = won ? 'Round Won' : 'Round Lost';
+      document.getElementById('rr-verdict').className = 'round-verdict ' + (won ? 'win' : 'lose');
+      document.getElementById('rr-message').textContent = won
+        ? 'You cleared the target! Keep going.'
+        : 'You fell short. Must win the remaining rounds.';
+    }
+
+    document.getElementById('rr-your-score').textContent = G.roundScore;
+    document.getElementById('rr-target').textContent = target;
+
+    // Round indicators
+    const roundsEl = document.getElementById('rr-rounds');
+    roundsEl.innerHTML = '';
+    for (let i = 0; i <= G.round; i++) {
+      const ind = document.createElement('div');
+      ind.className = 'round-indicator';
+      if (i < G.round) ind.classList.add(G.roundWins[i] ? 'won' : 'lost');
+      else ind.classList.add('current');
+      ind.textContent = `R${i+1}`;
+      roundsEl.appendChild(ind);
+    }
+  }
+
+  document.getElementById('rr-continue-btn').addEventListener('click', () => {
+    const matchComplete = G.roundsWon >= 2 || G.roundsLost >= 2 || G.round >= 2;
+
+    if (matchComplete) {
+      // Next match or campaign end
+      G.matchIdx++;
+      if (G.matchIdx >= CAMPAIGN_MATCHES.length) {
+        showScreen('campaign');
+      } else {
+        // Start next match
+        G.round = 0;
+        G.roundsWon = 0;
+        G.roundsLost = 0;
+        G.roundWins = [false, false, false];
+        G.roundScore = 0;
+        G.phaseIdx = 0;
+        G.roundPhases = pickRandomPhases(6);
+        G.phasePlacement = {};
+        G.activeSlot = null;
+        G.fatigue = {};
+        G.carryover = null;
+        G.journeymanUsed = false;
+        showScreen('match');
+      }
+    } else {
+      // Next round
+      G.round++;
+      G.roundScore = 0;
+      G.phaseIdx = 0;
+      G.roundPhases = pickRandomPhases(6);
+      G.phasePlacement = {};
+      G.activeSlot = null;
+      G.fatigue = {};
+      G.carryover = null;
+      showScreen('match');
+    }
+  });
+
+  // ═══════════════════════════════════════════════════════════════════
+  // CAMPAIGN COMPLETE
+  // ═══════════════════════════════════════════════════════════════════
+
+  function renderCampaignComplete() {
+    const wins = G.matchResults.filter(r => r.won).length;
+    const title = document.getElementById('cc-title');
+    title.textContent = wins >= 3 ? '🏆 Campaign Won!' : 'Campaign Complete';
+    title.className = 'campaign-title ' + (wins >= 3 ? 'victory' : 'defeat');
+
+    const container = document.getElementById('cc-results');
+    container.innerHTML = G.matchResults.map((r, i) =>
+      `<div class="match-result-card ${r.won ? 'won' : 'lost'}" data-od-id="match-result-${i}">
+        <div style="font-family:var(--font-display);font-size:8px;color:var(--muted);min-width:24px">M${i+1}</div>
+        <div style="flex:1">
+          <div class="mrc-name">${r.name}</div>
+          <div class="mrc-opponent">vs ${r.opponent}</div>
+        </div>
+        <div class="mrc-result ${r.won ? 'won' : 'lost'}">${r.won ? 'WIN' : 'LOSS'} ${r.roundsWon}-${r.roundsLost}</div>
+      </div>`
+    ).join('');
+  }
+
+  function resetGame() {
+    G.selectedIds = new Set();
+    G.squad = [];
+    G.formation = null;
+    G.matchIdx = 0;
+    G.matchResults = [];
+    G.roundWins = [false, false, false];
+    G.roundsWon = 0;
+    G.roundsLost = 0;
+    G.round = 0;
+    G.roundScore = 0;
+    G.roundPhases = [];
+    G.phaseIdx = 0;
+    G.phasePlacement = {};
+    G.activeSlot = null;
+    G.fatigue = {};
+    G.carryover = null;
+    G.journeymanUsed = false;
+    G.persistentBuffs = null;
+    showScreen('title');
+  }
+
+  </script>
+</body>
+</html>
