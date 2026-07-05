@@ -1,0 +1,325 @@
+# Squad — Phase-Specific Synergy Cards (Stats-Based, 2+ Players)
+# Each synergy fires when the trigger conditions are met on the current field.
+# Effects apply to the players involved (add_chips, multiply) or globally.
+#
+# trigger_type maps to a checker function in src/scoring.py
+# trigger dict holds the specific parameters for that checker
+
+# ── Goal Kick (GK + CB + CB) ──────────────────────────────────────────────
+
+[[synergies]]
+id = "clean_sheet"
+name = "Clean Sheet"
+rarity = "common"
+trigger_type = "clean_sheet"
+trigger = { pos_a = "GK", pos_b = "CB", stat = "def_", threshold = 18 }
+effect_type = "add_chips"
+effect = { add_chips = 20 }
+description = "GK DEF + CB DEF ≥ 18: +20 chips to both"
+
+[[synergies]]
+id = "organised_defence"
+name = "Organised Defence"
+rarity = "common"
+trigger_type = "organised_defence"
+trigger = { positions = ["CB", "CB"], stat = "def_", threshold = 18 }
+effect_type = "add_chips"
+effect = { add_chips = 20 }
+description = "CB DEF + CB DEF ≥ 18: +20 chips to both CBs"
+
+# ── Build-Up (FB + FB + CM) ──────────────────────────────────────────────
+
+[[synergies]]
+id = "wingback_overlap"
+name = "Wingback Overlap"
+rarity = "common"
+trigger_type = "wingback_overlap"
+trigger = { pos_a = "FB", stat_a = "pac", pos_b = "CM", stat_b = "pas", threshold = 15 }
+effect_type = "add_chips"
+effect = { add_chips = 25 }
+description = "FB PAC + CM PAS ≥ 15: +25 chips to both"
+
+[[synergies]]
+id = "overload"
+name = "Overload"
+rarity = "common"
+trigger_type = "overload"
+trigger = { min_duplicates = 2 }
+effect_type = "add_chips"
+effect = { add_chips = 15 }
+description = "2+ players at same position: +15 chips to each"
+
+# ── Wing Attack (FB + LW) ────────────────────────────────────────────────
+
+[[synergies]]
+id = "stretch_backline"
+name = "Stretch the Backline"
+rarity = "common"
+trigger_type = "stretch_backline"
+trigger = { pos_a = "FB", stat_a = "pac", pos_b = "LW", stat_b = "pac", threshold = 17 }
+effect_type = "multiply"
+effect = { multiply = 1.5 }
+description = "FB PAC + LW PAC ≥ 17: ×1.5 mult to both"
+
+# ── Long Ball (CB + ST) ──────────────────────────────────────────────────
+
+[[synergies]]
+id = "route_one"
+name = "Route One"
+rarity = "uncommon"
+trigger_type = "route_one"
+trigger = { pos_a = "CB", stat_a = "pas", pos_b = "ST", stat_b = "pac", threshold = 14 }
+effect_type = "add_chips"
+effect = { add_chips = 30, target = "ST" }
+description = "CB PAS + ST PAC ≥ 14: +30 chips to ST"
+
+[[synergies]]
+id = "battering_ram"
+name = "Battering Ram"
+rarity = "common"
+trigger_type = "battering_ram"
+trigger = { pos_a = "CB", stat_a = "def_", pos_b = "ST", stat_b = "atk", threshold = 17 }
+effect_type = "add_chips"
+effect = { add_chips = 20 }
+description = "CB DEF + ST ATK ≥ 17: +20 chips to both"
+
+# ── Defensive Block (CB + CB + CDM) ──────────────────────────────────────
+
+[[synergies]]
+id = "defensive_duo"
+name = "Defensive Duo"
+rarity = "uncommon"
+trigger_type = "defensive_duo"
+trigger = { stat = "def_", threshold = 18 }
+effect_type = "add_chips"
+effect = { add_chips = 25 }
+description = "2 highest DEF sum ≥ 18: +25 chips to all 3"
+
+[[synergies]]
+id = "back_three"
+name = "Back Three"
+rarity = "rare"
+trigger_type = "back_three"
+trigger = { stat = "def_", threshold = 7 }
+effect_type = "multiply"
+effect = { multiply = 1.3 }
+description = "All 3 DEF ≥ 7: ×1.3 mult to all 3"
+
+# ── Tiki-Taka (CM + CM + CM) ─────────────────────────────────────────────
+
+[[synergies]]
+id = "midfield_engine"
+name = "Midfield Engine"
+rarity = "common"
+trigger_type = "midfield_engine"
+trigger = { positions = ["CM", "CM"], stat_a = "pas", stat_b = "def_", threshold = 15 }
+effect_type = "add_chips"
+effect = { add_chips = 25 }
+description = "CM PAS + CM DEF ≥ 15: +25 chips to both"
+
+[[synergies]]
+id = "double_pivot"
+name = "Double Pivot"
+rarity = "uncommon"
+trigger_type = "double_pivot"
+trigger = { positions = ["CM", "CM"], stat = "pas", threshold = 17 }
+effect_type = "carryover"
+effect = { add_chips = 40, target_role = "attacker" }
+description = "2 CMs PAS ≥ 17: Next phase +40 chips to first attacker"
+
+[[synergies]]
+id = "trio"
+name = "Trio"
+rarity = "rare"
+trigger_type = "trio"
+trigger = { position = "CM", stat = "pas", threshold = 7 }
+effect_type = "chain_multiply"
+effect = { multipliers = [1.3, 1.5, 1.3] }
+description = "All 3 CMs PAS ≥ 7: ×1.3/×1.5/×1.3 chain"
+
+# ── Defensive Block (CB + CB + CDM) ───────────────────────────────────────
+
+[[synergies]]
+id = "covering_defender"
+name = "Covering Defender"
+rarity = "uncommon"
+trigger_type = "covering_defender"
+trigger = { position = "CB", stat_a = "pac", threshold_a = 7, stat_b = "def_", threshold_b = 9, different_players = true }
+effect_type = "add_chips"
+effect = { add_chips = 25 }
+description = "CB PAC≥7 + another CB DEF≥9: +25 chips to both — stopper + sweeper"
+
+# ── Counter-Attack (LW + ST + RW) ─────────────────────────────────────────
+
+[[synergies]]
+id = "target_man_release"
+name = "Target Man Release"
+rarity = "uncommon"
+trigger_type = "target_man_release"
+trigger = { pos_a = "ST", stat_a = "atk", winger_positions = ["LW", "RW"], stat_b = "pac", threshold = 17 }
+effect_type = "multiply"
+effect = { multiply = 1.5 }
+description = "ST ATK + winger PAC ≥ 17: ×1.5 mult to the pacy winger on the break"
+
+# ── Set Piece (CAM + ST) ──────────────────────────────────────────────────
+
+[[synergies]]
+id = "near_post_flick"
+name = "Near Post Flick"
+rarity = "common"
+trigger_type = "near_post_flick"
+trigger = { pos_a = "CAM", stat_a = "spc", pos_b = "ST", stat_b = "atk", threshold = 16 }
+effect_type = "multiply"
+effect = { multiply = 1.5 }
+description = "CAM SPC + ST ATK ≥ 16: ×1.5 mult to the big target at the near post"
+
+# ── Through Ball (CM + ST) ────────────────────────────────────────────────
+
+[[synergies]]
+id = "one_two"
+name = "One-Two"
+rarity = "common"
+trigger_type = "one_two"
+trigger = { pos_a = "CM", stat_a = "pas", pos_b = "ST", stat_b = "pac", threshold = 15 }
+effect_type = "multiply"
+effect = { multiply = 1.5 }
+description = "CM PAS + ST PAC ≥ 15: ×1.5 mult to both — the give-and-go"
+
+# ── Wingback Push (FB + LW) ───────────────────────────────────────────────
+
+[[synergies]]
+id = "overlap"
+name = "Overlap"
+rarity = "common"
+trigger_type = "overlap"
+trigger = { pos_a = "FB", stat_a = "pac", pos_b = "LW", stat_b = "pas", threshold = 15 }
+effect_type = "multiply"
+effect = { multiply = 1.5 }
+description = "FB PAC + LW PAS ≥ 15: ×1.5 mult to the overlapping FB"
+
+# ── Cross-Phase (any phase) ──────────────────────────────────────────────
+
+[[synergies]]
+id = "set_piece_threat"
+name = "Set Piece Threat"
+rarity = "uncommon"
+trigger_type = "set_piece_threat"
+trigger = { stat_a = "def_", threshold_a = 9, stat_b = "spc", threshold_b = 8, different_players = true }
+effect_type = "add_chips"
+effect = { add_chips = 50, global = true }
+description = "DEF≥9 + SPC≥8 (diff players): +50 global chips"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Squad-Persistent Synergies (Trait-Based)
+# These check your entire squad at match start and apply for the whole match.
+# ═══════════════════════════════════════════════════════════════════════════
+
+[[synergies]]
+id = "pace_in_behind"
+name = "Pace in Behind"
+persistent = true
+rarity = "uncommon"
+trigger_type = "squad_trait_count"
+trigger = { trait = "pacey", min_count = 4 }
+effect_type = "persistent_multiply"
+effect = { multiply = 1.1, target_trait = "pacey" }
+description = "4+ pacey players in squad: all pacey get ×1.1 mult each phase"
+
+[[synergies]]
+id = "iron_wall"
+name = "Iron Wall"
+persistent = true
+rarity = "uncommon"
+trigger_type = "squad_trait_count"
+trigger = { trait = "physical", min_count = 3 }
+effect_type = "persistent_fatigue"
+effect = { fatigue_penalty = 0.8 }
+description = "3+ physical players: fatigue penalty reduced (×0.8 instead of ×0.7)"
+
+[[synergies]]
+id = "leadership_council"
+name = "Leadership Council"
+persistent = true
+rarity = "common"
+trigger_type = "squad_trait_count"
+trigger = { trait = "leader", min_count = 3 }
+effect_type = "persistent_add"
+effect = { add_chips = 3, target = "all" }
+description = "3+ leaders in squad: all players get +3 chips per phase"
+
+[[synergies]]
+id = "tiki_taka_persistent"
+name = "Tiki-Taka"
+persistent = true
+rarity = "uncommon"
+trigger_type = "squad_trait_count"
+trigger = { trait = "technical", min_count = 3 }
+effect_type = "persistent_add"
+effect = { add_chips = 5, target_position = ["CM", "CDM", "CAM"] }
+description = "3+ technical players: midfielders get +5 chips per phase"
+
+[[synergies]]
+id = "clinical_edge"
+name = "Clinical Edge"
+persistent = true
+rarity = "common"
+trigger_type = "squad_trait_count"
+trigger = { trait = "clinical", min_count = 2 }
+effect_type = "persistent_add"
+effect = { add_chips = 5, target_position = ["LW", "RW", "ST"] }
+description = "2+ clinical players: attackers get +5 chips per phase"
+
+[[synergies]]
+id = "double_destroyer"
+name = "Double Destroyer"
+persistent = true
+rarity = "common"
+trigger_type = "squad_trait_count"
+trigger = { trait = "destroyer", min_count = 2 }
+effect_type = "persistent_add"
+effect = { add_chips = 5, target_position = ["CB", "FB", "CDM"] }
+description = "2+ destroyers: defenders get +5 chips per phase"
+
+[[synergies]]
+id = "two_up_top"
+name = "Two Up Top"
+persistent = true
+rarity = "rare"
+trigger_type = "squad_trait_count"
+trigger = { trait = "poacher", min_count = 2 }
+effect_type = "persistent_multiply"
+effect = { multiply = 1.3, target_position = ["ST"] }
+description = "2+ poachers in squad: STs get ×1.3 mult each phase"
+
+[[synergies]]
+id = "journeyman"
+name = "Journeyman"
+persistent = true
+rarity = "rare"
+trigger_type = "squad_trait_present"
+trigger = { trait = "journeyman" }
+effect_type = "persistent_special"
+effect = { special = "fatigue_reset" }
+description = "Journeyman in squad: once per match, restore one player's fatigue"
+
+[[synergies]]
+id = "pace_and_power"
+name = "Pace & Power"
+persistent = true
+rarity = "rare"
+trigger_type = "squad_trait_combo"
+trigger = { traits = ["pacey", "physical"], min_count = 2 }
+effect_type = "persistent_multiply"
+effect = { multiply = 1.3, target_trait_combo = ["pacey", "physical"] }
+description = "2+ players with pacey+physical: those players get ×1.3 mult"
+
+[[synergies]]
+id = "silent_killers"
+name = "Silent Killers"
+persistent = true
+rarity = "uncommon"
+trigger_type = "squad_trait_combo"
+trigger = { traits = ["clinical", "pacey"], min_count = 2 }
+effect_type = "persistent_add"
+effect = { add_chips = 5, target_trait_combo = ["clinical", "pacey"] }
+description = "2+ players with clinical+pacey: those players get +5 chips per phase"

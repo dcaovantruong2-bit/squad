@@ -1,0 +1,2058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0d1a2e">
+    <title>SQUAD</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        /* ═══════════════════════════════════════════════════════════════
+           SQUAD — CM01 × Balatro Aesthetic
+           Dark tactical boards, monospace stats, neon accents
+           ═══════════════════════════════════════════════════════════════ */
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        :root {
+            --bg-dark: #0a0f18;
+            --bg-panel: #0d1a2e;
+            --bg-card: #111d30;
+            --bg-hover: #162640;
+            --border: #1a3050;
+            --border-bright: #2a5080;
+            --text: #c8d8e8;
+            --text-dim: #5a7090;
+            --text-bright: #e8f0ff;
+            --green: #00e676;
+            --green-dim: #00a854;
+            --cyan: #00e5ff;
+            --yellow: #ffd600;
+            --red: #ff1744;
+            --magenta: #e040fb;
+            --orange: #ff9100;
+            --blue: #448aff;
+            --font: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+        }
+        
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            background: var(--bg-dark);
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 13px;
+            line-height: 1.4;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Tactical grid background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(rgba(0,230,118,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,230,118,0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        #app {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            max-width: 430px;
+            margin: 0 auto;
+        }
+        
+        .screen { display: none; flex-direction: column; height: 100%; }
+        .screen.active { display: flex; }
+        
+        /* ─── HEADER BAR ─── */
+        .header {
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 16px;
+            flex-shrink: 0;
+        }
+        .header h1 {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .header .subtitle {
+            font-size: 10px;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+        
+        /* ─── SCROLLABLE CONTENT ─── */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            padding: 12px;
+        }
+        .content::-webkit-scrollbar { width: 4px; }
+        .content::-webkit-scrollbar-track { background: transparent; }
+        .content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        
+        /* ─── FOOTER BAR ─── */
+        .footer {
+            background: var(--bg-panel);
+            border-top: 1px solid var(--border);
+            padding: 12px 16px;
+            flex-shrink: 0;
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+        }
+        
+        /* ─── BUTTONS ─── */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            font-family: var(--font);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all 0.15s;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary {
+            background: var(--green);
+            color: #000;
+        }
+        .btn-primary:disabled {
+            background: var(--border);
+            color: var(--text-dim);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--cyan);
+            border: 1px solid var(--border);
+        }
+        .btn-danger {
+            background: var(--red);
+            color: #fff;
+        }
+        .btn-small {
+            padding: 8px 12px;
+            font-size: 11px;
+            display: inline-block;
+            width: auto;
+        }
+        
+        /* ─── CARDS / PANELS ─── */
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            padding: 12px;
+            margin-bottom: 8px;
+        }
+        .panel-bright {
+            border-color: var(--border-bright);
+        }
+        .panel-glow {
+            box-shadow: 0 0 20px rgba(0,230,118,0.1);
+        }
+        
+        /* ─── STAT BADGES ─── */
+        .stats-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        .stat-badge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 32px;
+        }
+        .stat-badge .label {
+            font-size: 8px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .stat-badge .value {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-bright);
+        }
+        .stat-atk .label { color: var(--red); }
+        .stat-pac .label { color: var(--cyan); }
+        .stat-pas .label { color: var(--green); }
+        .stat-def .label { color: var(--blue); }
+        .stat-spc .label { color: var(--magenta); }
+        
+        /* ─── TRAITS ─── */
+        .trait {
+            display: inline-block;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 2px;
+            background: rgba(255,145,0,0.15);
+            color: var(--orange);
+            margin-right: 4px;
+            margin-top: 4px;
+        }
+        
+        /* ─── POSITION BADGE ─── */
+        .pos-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 2px;
+            background: rgba(0,229,255,0.15);
+            color: var(--cyan);
+        }
+        
+        /* ─── TITLE SCREEN ─── */
+        .title-logo {
+            text-align: center;
+            padding: 60px 0 40px;
+        }
+        .title-logo .icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+        .title-logo h1 {
+            font-size: 48px;
+            font-weight: 900;
+            letter-spacing: 8px;
+            color: var(--green);
+            text-shadow: 0 0 30px rgba(0,230,118,0.5), 0 0 60px rgba(0,230,118,0.2);
+        }
+        .title-logo .tagline {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 8px;
+            letter-spacing: 2px;
+        }
+        
+        /* ─── SQUAD BUILDER ─── */
+        .budget-bar {
+            height: 6px;
+            background: var(--border);
+            border-radius: 1px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        .budget-bar .fill {
+            height: 100%;
+            background: var(--green);
+            transition: width 0.3s;
+        }
+        .budget-bar .fill.over {
+            background: var(--red);
+        }
+        
+        .player-row {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .player-row:active {
+            background: var(--bg-hover);
+            border-color: var(--green);
+        }
+        .player-row.disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        .player-row .name {
+            flex: 1;
+            font-weight: 700;
+            font-size: 12px;
+        }
+        .player-row .cost {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--yellow);
+            margin-left: 8px;
+        }
+        .player-row .cost.too-expensive {
+            color: var(--red);
+        }
+        
+        .pos-group-header {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--cyan);
+            letter-spacing: 1px;
+            padding: 8px 0 4px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 6px;
+            margin-top: 12px;
+        }
+        .pos-group-header:first-child { margin-top: 0; }
+        
+        /* ─── ROLE REQUIREMENTS ─── */
+        .req-item {
+            display: flex;
+            align-items: center;
+            font-size: 11px;
+            padding: 4px 0;
+        }
+        .req-item .icon {
+            width: 16px;
+            margin-right: 6px;
+        }
+        .req-item.met { color: var(--green); }
+        .req-item.unmet { color: var(--red); }
+        
+        /* ─── FORMATION CARD ─── */
+        .formation-card {
+            padding: 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .formation-card.selected {
+            border-color: var(--green);
+            background: rgba(0,230,118,0.05);
+            box-shadow: 0 0 15px rgba(0,230,118,0.1);
+        }
+        .formation-card .fname {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-bright);
+        }
+        .formation-card.selected .fname {
+            color: var(--green);
+        }
+        .formation-card .fdesc {
+            font-size: 10px;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+        .formation-bonuses {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .formation-bonus {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 2px;
+        }
+        .formation-bonus.positive {
+            background: rgba(0,230,118,0.15);
+            color: var(--green);
+        }
+        .formation-bonus.negative {
+            background: rgba(255,23,68,0.15);
+            color: var(--red);
+        }
+        
+        /* ─── MATCH VIEW ─── */
+        .match-score-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+        }
+        .match-score-bar .score {
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--green);
+        }
+        .match-score-bar .target {
+            font-size: 12px;
+            color: var(--yellow);
+        }
+        .match-score-bar .round-info {
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+        
+        /* Campaign bracket */
+        .bracket {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 8px;
+            background: rgba(0,0,0,0.2);
+        }
+        .bracket-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        .bracket-node .label {
+            font-size: 8px;
+            font-weight: 700;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+        }
+        .bracket-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border);
+        }
+        .bracket-dot.won { background: var(--green); }
+        .bracket-dot.current { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
+        .bracket-line {
+            width: 16px;
+            height: 1px;
+            background: var(--border);
+        }
+        
+        /* Phase header */
+        .phase-header {
+            text-align: center;
+            padding: 16px;
+            background: rgba(0,0,0,0.2);
+            border-bottom: 1px solid var(--border);
+        }
+        .phase-header .phase-name {
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--yellow);
+            letter-spacing: 2px;
+        }
+        .phase-header .phase-desc {
+            font-size: 10px;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+        .phase-header .phase-meta {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .phase-header .phase-meta span {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 2px;
+            background: rgba(68,138,255,0.2);
+            color: var(--blue);
+            font-weight: 700;
+        }
+        
+        /* Field slots */
+        .field-slot {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            margin-bottom: 6px;
+        }
+        .field-slot.filled {
+            border-color: var(--green-dim);
+            background: rgba(0,230,118,0.05);
+        }
+        .field-slot .slot-pos {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--cyan);
+            width: 60px;
+            flex-shrink: 0;
+        }
+        .field-slot .slot-player {
+            flex: 1;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .field-slot .slot-chips {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--green);
+        }
+        .field-slot .slot-empty {
+            flex: 1;
+            font-size: 11px;
+            color: var(--text-dim);
+            font-style: italic;
+        }
+        .field-slot .fatigue-indicator {
+            font-size: 9px;
+            padding: 1px 4px;
+            border-radius: 2px;
+            margin-left: 6px;
+        }
+        .fatigue-fresh { color: var(--green); }
+        .fatigue-tired { color: var(--yellow); background: rgba(255,214,0,0.15); }
+        .fatigue-exhausted { color: var(--red); background: rgba(255,23,68,0.15); }
+        
+        /* Slot requirements */
+        .slot-req {
+            font-size: 10px;
+            color: var(--text-dim);
+            padding: 4px 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .slot-req .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--border);
+        }
+        .slot-req .dot.done { background: var(--green); }
+        .slot-req .dot.active { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+        
+        /* ─── PHASE RESULT ─── */
+        .result-total {
+            text-align: center;
+            padding: 24px;
+        }
+        .result-total .label {
+            font-size: 11px;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+        }
+        .result-total .value {
+            font-size: 56px;
+            font-weight: 900;
+            color: var(--green);
+            text-shadow: 0 0 30px rgba(0,230,118,0.5);
+            line-height: 1;
+            margin-top: 4px;
+        }
+        
+        .breakdown-row {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 11px;
+        }
+        .breakdown-row .player-name {
+            flex: 1;
+            font-weight: 700;
+        }
+        .breakdown-row .formula {
+            font-size: 9px;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+        .breakdown-row .subtotal {
+            font-weight: 700;
+            color: var(--green);
+            margin-left: 8px;
+            min-width: 40px;
+            text-align: right;
+        }
+        
+        .synergy-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            padding: 4px 8px;
+            background: rgba(255,214,0,0.1);
+            border: 1px solid rgba(255,214,0,0.3);
+            border-radius: 2px;
+            color: var(--yellow);
+            margin: 2px;
+        }
+        
+        /* ─── ROUND RESULT ─── */
+        .round-result {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .round-result .icon { font-size: 64px; }
+        .round-result .title {
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 3px;
+            margin-top: 12px;
+        }
+        .round-result .title.won {
+            color: var(--green);
+            text-shadow: 0 0 20px rgba(0,230,118,0.5);
+        }
+        .round-result .title.lost {
+            color: var(--red);
+            text-shadow: 0 0 20px rgba(255,23,68,0.5);
+        }
+        .round-result .score-line {
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+        
+        /* ─── PLAYER PICKER MODAL ─── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 100;
+            justify-content: center;
+            align-items: flex-end;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal {
+            background: var(--bg-dark);
+            border-top: 2px solid var(--green);
+            border-radius: 8px 8px 0 0;
+            width: 100%;
+            max-width: 430px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.2s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .modal-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+        .modal-header h2 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--green);
+            letter-spacing: 2px;
+        }
+        .modal-header .slot-info {
+            font-size: 11px;
+            color: var(--yellow);
+            margin-top: 4px;
+        }
+        .modal-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+        }
+        .modal-footer {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+        }
+        
+        /* Synergy preview in picker */
+        .syn-preview {
+            display: flex;
+            gap: 4px;
+            margin-top: 4px;
+            flex-wrap: wrap;
+        }
+        .syn-preview .syn-tag {
+            font-size: 9px;
+            padding: 1px 4px;
+            background: rgba(255,214,0,0.15);
+            color: var(--yellow);
+            border-radius: 2px;
+        }
+        
+        /* ─── PERSISTENT SYNERGIES DISPLAY ─── */
+        .persistent-syn {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 8px;
+            background: rgba(224,64,251,0.05);
+            border: 1px solid rgba(224,64,251,0.2);
+            border-radius: 2px;
+            margin-bottom: 6px;
+        }
+        .persistent-syn .syn-icon {
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        .persistent-syn .syn-name {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--magenta);
+        }
+        .persistent-syn .syn-desc {
+            font-size: 9px;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+        
+        /* ─── ANIMATIONS ─── */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .pulse { animation: pulse 2s infinite; }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(0,230,118,0.3); }
+            50% { box-shadow: 0 0 25px rgba(0,230,118,0.6); }
+        }
+        .glow { animation: glow 2s infinite; }
+        
+        /* ─── SCROLLBAR ─── */
+        .modal-content::-webkit-scrollbar { width: 4px; }
+        .modal-content::-webkit-scrollbar-track { background: transparent; }
+        .modal-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        
+        /* ─── MISC ─── */
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 12px 0;
+        }
+        .text-center { text-align: center; }
+        .text-dim { color: var(--text-dim); }
+        .text-green { color: var(--green); }
+        .text-yellow { color: var(--yellow); }
+        .text-red { color: var(--red); }
+        .text-cyan { color: var(--cyan); }
+        .text-magenta { color: var(--magenta); }
+        .mt-8 { margin-top: 8px; }
+        .mt-12 { margin-top: 12px; }
+        .mb-8 { margin-bottom: 8px; }
+        .fw-700 { font-weight: 700; }
+        .fs-10 { font-size: 10px; }
+        .fs-11 { font-size: 11px; }
+        .fs-12 { font-size: 12px; }
+        .gap-8 { gap: 8px; }
+        .flex { display: flex; }
+        .flex-1 { flex: 1; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- ═══ TITLE SCREEN ═══ -->
+        <div id="screen-title" class="screen active">
+            <div class="content" style="display:flex;flex-direction:column;justify-content:center;">
+                <div class="title-logo">
+                    <div class="icon">⚽</div>
+                    <h1>SQUAD</h1>
+                    <div class="tagline">Football Card Roguelike</div>
+                </div>
+                <div style="padding:0 20px;">
+                    <div class="panel" style="text-align:center;">
+                        <div class="fs-11 text-dim">5 matches • 3 rounds each • 6 phases per round</div>
+                        <div class="fs-11 text-dim mt-8">Win 2 of 3 rounds to advance. Lose once = tournament over.</div>
+                    </div>
+                    <button class="btn btn-primary mt-12 glow" onclick="startCampaign()">
+                        START CAMPAIGN
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ═══ SQUAD BUILDER ═══ -->
+        <div id="screen-squad" class="screen">
+            <div class="header">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <h1 style="color:var(--green);">BUILD SQUAD</h1>
+                        <div class="subtitle" id="squad-budget-text">Budget: 0/360</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div class="fs-11 fw-700" id="squad-count-text">0 players</div>
+                        <div class="fs-10 text-dim">min 10</div>
+                    </div>
+                </div>
+                <div class="budget-bar">
+                    <div class="fill" id="budget-fill" style="width:0%"></div>
+                </div>
+            </div>
+            <div class="content" id="squad-players-list"></div>
+            <div class="footer">
+                <div id="squad-requirements"></div>
+                <button class="btn btn-primary mt-8" id="btn-confirm-squad" onclick="confirmSquad()" disabled>
+                    CONFIRM SQUAD
+                </button>
+            </div>
+        </div>
+        
+        <!-- ═══ FORMATION SELECT ═══ -->
+        <div id="screen-formation" class="screen">
+            <div class="header">
+                <h1 style="color:var(--green);">CHOOSE FORMATION</h1>
+                <div class="subtitle">Select your tactical shape</div>
+            </div>
+            <div class="content" id="formation-list"></div>
+            <div class="footer">
+                <button class="btn btn-primary" onclick="confirmFormation()">
+                    SELECT & START MATCH
+                </button>
+            </div>
+        </div>
+        
+        <!-- ═══ MATCH SCREEN ═══ -->
+        <div id="screen-match" class="screen">
+            <div class="match-score-bar">
+                <div>
+                    <div class="fs-11 fw-700" id="match-opponent" style="color:var(--text-bright);">Opponent</div>
+                    <div class="round-info" id="match-round-info">Round 1/3</div>
+                </div>
+                <div style="text-align:center;">
+                    <div class="score" id="match-score">0</div>
+                    <div class="target" id="match-target">/ 500</div>
+                </div>
+                <div style="text-align:right;">
+                    <div class="fs-11 fw-700" id="match-record" style="color:var(--yellow);">0-0</div>
+                    <div class="fs-10 text-dim" id="match-phase-info">Phase 1/6</div>
+                </div>
+            </div>
+            <div class="bracket" id="campaign-bracket"></div>
+            <div id="match-content" style="flex:1;overflow-y:auto;"></div>
+            <div class="footer" id="match-footer"></div>
+        </div>
+        
+        <!-- ═══ CAMPAIGN COMPLETE ═══ -->
+        <div id="screen-complete" class="screen">
+            <div class="content" style="display:flex;flex-direction:column;justify-content:center;">
+                <div class="round-result">
+                    <div class="icon">🏆</div>
+                    <div class="title won">CHAMPIONS!</div>
+                    <div class="score-line" style="color:var(--text);">Your squad conquered all 5 matches!</div>
+                </div>
+                <div style="padding:0 20px;">
+                    <div id="campaign-results-list"></div>
+                    <button class="btn btn-primary mt-12" onclick="resetGame()">PLAY AGAIN</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ═══ GAME OVER ═══ -->
+        <div id="screen-gameover" class="screen">
+            <div class="content" style="display:flex;flex-direction:column;justify-content:center;">
+                <div class="round-result">
+                    <div class="icon">💀</div>
+                    <div class="title lost">ELIMINATED</div>
+                    <div class="score-line" id="gameover-text" style="color:var(--text-dim);"></div>
+                </div>
+                <div style="padding:0 20px;">
+                    <button class="btn btn-primary mt-12" onclick="resetGame()">TRY AGAIN</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ═══ PLAYER PICKER MODAL ═══ -->
+    <div class="modal-overlay" id="player-picker-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>SELECT PLAYER</h2>
+                <div class="slot-info" id="picker-slot-info"></div>
+            </div>
+            <div class="modal-content" id="picker-player-list"></div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="skipSlot()">SKIP SLOT</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// SQUAD — Game Engine (JavaScript port)
+// ═══════════════════════════════════════════════════════════════
+
+// ─── DATA ───
+const PLAYERS = [
+  { id:"terry_henri", name:"Terry Henri", position:"ST", atk:9, pac:9, pas:6, def:1, spc:8, traits:["pacey","clinical"], desc:"The clinical speedster. One touch, one goal.", cost:33 },
+  { id:"big_zlat", name:"Big Zlat", position:"ST", atk:8, pac:5, pas:7, def:2, spc:10, traits:["physical","technical"], desc:"Acrobatic target man. Impossible is nothing.", cost:32 },
+  { id:"kun_kun", name:"Kun Kun", position:"ST", atk:8, pac:8, pas:5, def:1, spc:7, traits:["pacey","poacher"], desc:"Low center of gravity. Always in the right place.", cost:29 },
+  { id:"the_waz", name:"The Waz", position:"ST", atk:8, pac:6, pas:7, def:5, spc:6, traits:["physical","leader"], desc:"Bulldog forward. Fights for every ball.", cost:32 },
+  { id:"rob_cutter", name:"Arjen Cutback", position:"RW", atk:8, pac:9, pas:6, def:1, spc:8, traits:["pacey","clinical"], desc:"Cut inside on his left. Everyone knows. Nobody stops it.", cost:32 },
+  { id:"bale_out", name:"Bale Out", position:"LW", atk:8, pac:10, pas:6, def:3, spc:7, traits:["pacey","physical"], desc:"Pace AND power. The knock-and-run king.", cost:34 },
+  { id:"maestro_xav", name:"Maestro Xav", position:"CM", atk:3, pac:4, pas:10, def:6, spc:7, traits:["playmaker","technical"], desc:"Metronomic passer. The ball obeys.", cost:30 },
+  { id:"don_andres", name:"Don Andres", position:"CM", atk:6, pac:7, pas:9, def:3, spc:10, traits:["technical","playmaker"], desc:"Dribbling illusionist. The ball is glued to his feet.", cost:35 },
+  { id:"captain_stevie", name:"Captain Stevie", position:"CM", atk:8, pac:6, pas:8, def:6, spc:8, traits:["leader","physical"], desc:"Box-to-box thunder. Long shots from another planet.", cost:36 },
+  { id:"wall_claude", name:"N'Golo Kanteen", position:"CDM", atk:2, pac:4, pas:6, def:10, spc:3, traits:["destroyer","technical"], desc:"The destroyer. Attack ends here.", cost:25 },
+  { id:"il_capitano", name:"Van Aura", position:"CB", atk:3, pac:6, pas:7, def:10, spc:5, traits:["leader","technical"], desc:"Elegant reader of the game. Tackles without touching.", cost:31 },
+  { id:"jt_rock", name:"JT The Rock", position:"CB", atk:4, pac:3, pas:4, def:10, spc:4, traits:["physical","aerial"], desc:"Physical wall. Heads everything. Blocks everything.", cost:25 },
+  { id:"el_tren", name:"Jordi Overlap", position:"FB", atk:5, pac:9, pas:7, def:7, spc:5, traits:["pacey","physical"], desc:"The Brazilian train. Up and down, all day.", cost:33 },
+  { id:"mr_reliable", name:"Lahm-burger", position:"FB", atk:3, pac:7, pas:8, def:9, spc:4, traits:["technical","leader"], desc:"Two-footed, intelligent. Never puts a foot wrong.", cost:31 },
+  { id:"gigi_wall", name:"Gigi The Wall", position:"GK", atk:1, pac:3, pas:5, def:10, spc:8, traits:["leader","aerial"], desc:"Commanded the box for 20 years. Sweeper-keeper before it was cool.", cost:27 },
+  { id:"rolls_royce", name:"The Rolls Royce", position:"CB", atk:2, pac:8, pas:6, def:9, spc:6, traits:["technical","leader"], desc:"Elegant, composed. Strolls through games in a tuxedo.", cost:31 },
+  { id:"frenkie_de_con", name:"Toni Cruise", position:"CDM", atk:4, pac:7, pas:10, def:7, spc:7, traits:["technical","playmaker"], desc:"Deep-lying conductor. The pass before the assist.", cost:35 },
+  { id:"cafu_express", name:"Cafu Express", position:"FB", atk:6, pac:10, pas:7, def:6, spc:5, traits:["pacey","physical"], desc:"Relentless engine. Up and down all match.", cost:34 },
+  { id:"el_mago", name:"Juan Maestro", position:"CAM", atk:6, pac:5, pas:10, def:2, spc:9, traits:["technical","playmaker"], desc:"Wizard of the final third. Sees passes nobody else does.", cost:32 },
+  { id:"sergio_muro", name:"Thibaut Courteeth", position:"GK", atk:1, pac:2, pas:3, def:10, spc:5, traits:["destroyer","leader"], desc:"The wall. Commands his box with an iron fist.", cost:21 },
+  { id:"kylian_express", name:"Dictator Kylian", position:"LW", atk:7, pac:10, pas:5, def:2, spc:7, traits:["pacey","clinical"], desc:"Lightning in boots. Runs behind before you blink.", cost:31 },
+  { id:"jimmy_journey", name:"Park Ji-zoom", position:"CM", atk:2, pac:3, pas:5, def:4, spc:2, traits:["physical","leader","journeyman"], desc:"Does a job. Nothing flashy, nothing terrible. Every squad needs one.", cost:16 },
+  { id:"flash_forward", name:"Theo Walk-not", position:"ST", atk:4, pac:7, pas:1, def:1, spc:2, traits:["pacey","poacher"], desc:"All pace, no finish. Gets on the end of things by accident.", cost:15 },
+  { id:"old_man_dan", name:"Per Merterslower", position:"CB", atk:1, pac:1, pas:4, def:7, spc:2, traits:["leader","aerial"], desc:"Reads the game because he can't run anymore. Still wins every header.", cost:15 },
+  { id:"rabona_ron", name:"El Shaa-ra-wrong", position:"RW", atk:4, pac:5, pas:4, def:1, spc:5, traits:["pacey","clinical"], desc:"Fancy flicks. One in ten comes off. You'll remember the one.", cost:19 },
+  { id:"sweaty_keeper", name:"Claudio Bra-voops", position:"GK", atk:1, pac:4, pas:3, def:6, spc:3, traits:["aerial"], desc:"Rushes out. Way out. Sometimes it works. Chaos merchant.", cost:17 },
+  { id:"the_crab", name:"Kola-sin-wreck", position:"FB", atk:1, pac:5, pas:3, def:6, spc:1, traits:["destroyer","leader"], desc:"Tackles first, asks questions never. Sideways passing merchant.", cost:16 },
+  { id:"bog_bob", name:"Nigel de Wrong", position:"CDM", atk:1, pac:3, pas:4, def:6, spc:2, traits:["destroyer","physical"], desc:"Does the dirty work. Anonymous in the best way.", cost:16 },
+  { id:"mesut_assist", name:"Mesut Assist", position:"CAM", atk:6, pac:6, pas:9, def:4, spc:7, traits:["playmaker","technical"], desc:"Orchestrates from the hole. Passes through tightest windows.", cost:32 },
+  { id:"lewan_goalski", name:"Lewan-goal-ski", position:"ST", atk:9, pac:5, pas:2, def:1, spc:5, traits:["poacher","clinical"], desc:"Lives in the six-yard box. One touch. One goal. Budget finisher.", cost:22 },
+  { id:"riyad_mahrizzle", name:"Riyad Mah-rizzle", position:"RW", atk:7, pac:7, pas:8, def:2, spc:9, traits:["technical","playmaker"], desc:"Silky dribbler on the wing. Curls it top corner from nowhere.", cost:33 },
+  { id:"yaya_too_strong", name:"Yaya Too Strong", position:"CM", atk:4, pac:6, pas:5, def:9, spc:4, traits:["destroyer","physical","leader"], desc:"Towering presence. Strides forward. Controls the middle.", cost:28 },
+  { id:"david_albino", name:"David Alaba-daba", position:"FB", atk:3, pac:8, pas:7, def:8, spc:5, traits:["technical","leader"], desc:"Versatile. Plays any defensive role. Calm on the ball.", cost:31 },
+  { id:"rocket_raya", name:"Rocket Raya", position:"GK", atk:1, pac:5, pas:8, def:6, spc:8, traits:["technical","leader"], desc:"Sweeper-keeper. First pass unlocks defences. Pinpoint distribution.", cost:28 },
+  { id:"bruno_penandes", name:"Bruno Penandes", position:"CAM", atk:8, pac:5, pas:8, def:3, spc:7, traits:["playmaker","clinical"], desc:"Penalty box merchant. Arrives late. Scores. Assists. Stats monster.", cost:31 },
+  { id:"cult_carl", name:"Wilfried Za-ha-ha", position:"LW", atk:3, pac:6, pas:4, def:2, spc:3, traits:["pacey","clinical"], desc:"Fans love him. Stats don't tell the full story. Average but adored.", cost:18 }
+];
+
+const FORMATIONS = [
+    { id:"4-4-2", name:"4-4-2", slots:["CB","CB","FB","FB","CM","CM","ST","ST"], handSize:11, globalMult:1.0, positionBonus:{}, desc:"Balanced. No frills. Classic." },
+    { id:"4-3-3", name:"4-3-3", slots:["CB","CB","FB","FB","CDM","CM","CM","LW","RW","ST"], handSize:12, globalMult:1.0, positionBonus:{LW:20,RW:20,ST:-15,CDM:-10}, desc:"Wingers thrive (+20), ST and CDM stretched." },
+    { id:"5-3-2", name:"5-3-2", slots:["CB","CB","CB","FB","FB","CM","CM","CDM","ST","ST"], handSize:11, globalMult:1.0, positionBonus:{CB:25,FB:12,LW:-20,RW:-20}, desc:"Defence wins. CBs+25, FBs+12." },
+    { id:"3-4-3", name:"3-4-3", slots:["CB","CB","FB","FB","CM","CM","LW","RW","ST","ST"], handSize:12, globalMult:1.0, positionBonus:{ST:20,LW:15,RW:15,CB:-25}, desc:"All-out attack. Attackers boosted, CBs exposed." },
+    { id:"4-2-3-1", name:"4-2-3-1", slots:["CB","CB","FB","FB","CM","CM","CAM","LW","RW","ST"], handSize:12, globalMult:1.0, positionBonus:{CM:10,CAM:25,ST:-15}, desc:"Possession. CAM+25, CM+10." },
+    { id:"4-5-1", name:"4-5-1", slots:["CB","CB","FB","FB","CDM","CM","CM","LW","RW","ST"], handSize:12, globalMult:1.0, positionBonus:{CDM:15,LW:20,RW:20,ST:-20,CB:-5}, desc:"Counter. CDM+15, wingers+20." },
+];
+
+const PHASES = [
+    { id:"goal_kick", name:"Goal Kick", slots:[{type:"pos",pos:"GK"},{type:"stat",as:"CB",minDef:7},{type:"stat",as:"CB",minDef:6}], weight:"DEF", maxCards:3, desc:"Keeper launches long — best defenders win the header" },
+    { id:"build_up", name:"Build-Up", slots:[{type:"stat",as:"FB",minPas:6},{type:"stat",as:"FB",minPas:6},{type:"stat",as:"CM",minPas:7}], weight:"PAS", maxCards:3, desc:"Play out from the back — any good passer can step up" },
+    { id:"wing_attack", name:"Wing Attack", slots:[{type:"stat",as:"FB",minPac:7},{type:"stat",as:"LW",minPac:7}], weight:"PAC", maxCards:2, desc:"Overlap and cross — pace wins" },
+    { id:"long_ball", name:"Long Ball", slots:[{type:"stat",as:"CB",minDef:6,minPac:5},{type:"stat",as:"ST",minAtk:6}], weight:"ATK", maxCards:2, desc:"Bypass midfield — best attackers chase it down" },
+    { id:"defensive_block", name:"Defensive Block", slots:[{type:"stat",as:"CB",minDef:8},{type:"stat",as:"CB",minDef:7},{type:"stat",as:"CDM",minDef:6}], weight:"DEF", maxCards:3, desc:"Park the bus — your toughest players" },
+    { id:"tiki_taka", name:"Tiki-Taka", slots:[{type:"stat",as:"CM",minPas:8},{type:"stat",as:"CM",minPas:7},{type:"stat",as:"CM",minPas:6}], weight:"PAS", maxCards:3, desc:"Pass, pass, pass — best passers control the game" },
+    { id:"counter_attack", name:"Counter-Attack", slots:[{type:"stat",as:"LW",minPac:7},{type:"stat",as:"ST",minAtk:7},{type:"stat",as:"RW",minPac:7}], weight:"PAC", maxCards:3, desc:"Explosive break — pacey wingers stretch the defence" },
+    { id:"set_piece", name:"Set Piece", slots:[{type:"stat",as:"CAM",minSpc:7},{type:"stat",as:"ST",minAtk:7,trait:"physical"}], weight:"SPC", maxCards:2, desc:"Corner or free kick — specialist delivery meets a physical target" },
+    { id:"high_press", name:"High Press", slots:[{type:"stat",as:"ST",minPac:7},{type:"stat",as:"RW",minPac:7},{type:"stat",as:"CM",minPac:6}], weight:"PAC", maxCards:3, desc:"Suffocate the opponent — all three need pace" },
+    { id:"through_ball", name:"Through Ball", slots:[{type:"stat",as:"CM",minPas:7},{type:"stat",as:"ST",minPac:7}], weight:"ATK", maxCards:2, desc:"One pass unlocks the defence — passer meets pace" },
+    { id:"wingback_push", name:"Wingback Push", slots:[{type:"stat",as:"FB",minPac:7},{type:"stat",as:"LW",minPas:6}], weight:"PAC", maxCards:2, desc:"Fullback bombs forward to combine with the winger" },
+];
+
+const SYNERGIES = [
+    // Phase-specific
+    { id:"clean_sheet", name:"Clean Sheet", rarity:"common", triggerType:"clean_sheet", trigger:{pos_a:"GK",pos_b:"CB",stat:"def_",threshold:18}, effectType:"add_chips", effect:{add_chips:20}, desc:"GK DEF + CB DEF ≥ 18: +20 chips to both", persistent:false },
+    { id:"organised_defence", name:"Organised Defence", rarity:"common", triggerType:"organised_defence", trigger:{positions:["CB","CB"],stat:"def_",threshold:18}, effectType:"add_chips", effect:{add_chips:20}, desc:"CB DEF + CB DEF ≥ 18: +20 chips to both CBs", persistent:false },
+    { id:"wingback_overlap", name:"Wingback Overlap", rarity:"common", triggerType:"wingback_overlap", trigger:{pos_a:"FB",stat_a:"pac",pos_b:"CM",stat_b:"pas",threshold:15}, effectType:"add_chips", effect:{add_chips:25}, desc:"FB PAC + CM PAS ≥ 15: +25 chips to both", persistent:false },
+    { id:"overload", name:"Overload", rarity:"common", triggerType:"overload", trigger:{min_duplicates:2}, effectType:"add_chips", effect:{add_chips:15}, desc:"2+ players at same position: +15 chips to each", persistent:false },
+    { id:"stretch_backline", name:"Stretch the Backline", rarity:"common", triggerType:"stretch_backline", trigger:{pos_a:"FB",stat_a:"pac",pos_b:"LW",stat_b:"pac",threshold:17}, effectType:"multiply", effect:{multiply:1.5}, desc:"FB PAC + LW PAC ≥ 17: ×1.5 mult to both", persistent:false },
+    { id:"route_one", name:"Route One", rarity:"uncommon", triggerType:"route_one", trigger:{pos_a:"CB",stat_a:"pas",pos_b:"ST",stat_b:"pac",threshold:14}, effectType:"add_chips", effect:{add_chips:30,target:"ST"}, desc:"CB PAS + ST PAC ≥ 14: +30 chips to ST", persistent:false },
+    { id:"battering_ram", name:"Battering Ram", rarity:"common", triggerType:"battering_ram", trigger:{pos_a:"CB",stat_a:"def_",pos_b:"ST",stat_b:"atk",threshold:17}, effectType:"add_chips", effect:{add_chips:20}, desc:"CB DEF + ST ATK ≥ 17: +20 chips to both", persistent:false },
+    { id:"defensive_duo", name:"Defensive Duo", rarity:"uncommon", triggerType:"defensive_duo", trigger:{stat:"def_",threshold:18}, effectType:"add_chips", effect:{add_chips:25}, desc:"2 highest DEF sum ≥ 18: +25 chips to all 3", persistent:false },
+    { id:"back_three", name:"Back Three", rarity:"rare", triggerType:"back_three", trigger:{stat:"def_",threshold:7}, effectType:"multiply", effect:{multiply:1.3}, desc:"All 3 DEF ≥ 7: ×1.3 mult to all 3", persistent:false },
+    { id:"midfield_engine", name:"Midfield Engine", rarity:"common", triggerType:"midfield_engine", trigger:{positions:["CM","CM"],stat_a:"pas",stat_b:"def_",threshold:15}, effectType:"add_chips", effect:{add_chips:25}, desc:"CM PAS + CM DEF ≥ 15: +25 chips to both", persistent:false },
+    { id:"double_pivot", name:"Double Pivot", rarity:"uncommon", triggerType:"double_pivot", trigger:{positions:["CM","CM"],stat:"pas",threshold:17}, effectType:"carryover", effect:{add_chips:40,target_role:"attacker"}, desc:"2 CMs PAS ≥ 17: Next phase +40 chips to first attacker", persistent:false },
+    { id:"trio", name:"Trio", rarity:"rare", triggerType:"trio", trigger:{position:"CM",stat:"pas",threshold:7}, effectType:"chain_multiply", effect:{multipliers:[1.3,1.5,1.3]}, desc:"All 3 CMs PAS ≥ 7: ×1.3/×1.5/×1.3 chain", persistent:false },
+    { id:"covering_defender", name:"Covering Defender", rarity:"uncommon", triggerType:"covering_defender", trigger:{position:"CB",stat_a:"pac",threshold_a:7,stat_b:"def_",threshold_b:9,different_players:true}, effectType:"add_chips", effect:{add_chips:25}, desc:"CB PAC≥7 + another CB DEF≥9: +25 chips to both", persistent:false },
+    { id:"target_man_release", name:"Target Man Release", rarity:"uncommon", triggerType:"target_man_release", trigger:{pos_a:"ST",stat_a:"atk",winger_positions:["LW","RW"],stat_b:"pac",threshold:17}, effectType:"multiply", effect:{multiply:1.5}, desc:"ST ATK + winger PAC ≥ 17: ×1.5 mult to the pacy winger", persistent:false },
+    { id:"near_post_flick", name:"Near Post Flick", rarity:"common", triggerType:"near_post_flick", trigger:{pos_a:"CAM",stat_a:"spc",pos_b:"ST",stat_b:"atk",threshold:16}, effectType:"multiply", effect:{multiply:1.5}, desc:"CAM SPC + ST ATK ≥ 16: ×1.5 mult to the big target", persistent:false },
+    { id:"one_two", name:"One-Two", rarity:"common", triggerType:"one_two", trigger:{pos_a:"CM",stat_a:"pas",pos_b:"ST",stat_b:"pac",threshold:15}, effectType:"multiply", effect:{multiply:1.5}, desc:"CM PAS + ST PAC ≥ 15: ×1.5 mult to both", persistent:false },
+    { id:"overlap", name:"Overlap", rarity:"common", triggerType:"overlap", trigger:{pos_a:"FB",stat_a:"pac",pos_b:"LW",stat_b:"pas",threshold:15}, effectType:"multiply", effect:{multiply:1.5}, desc:"FB PAC + LW PAS ≥ 15: ×1.5 mult to the overlapping FB", persistent:false },
+    { id:"set_piece_threat", name:"Set Piece Threat", rarity:"uncommon", triggerType:"set_piece_threat", trigger:{stat_a:"def_",threshold_a:9,stat_b:"spc",threshold_b:8,different_players:true}, effectType:"add_chips", effect:{add_chips:50,global:true}, desc:"DEF≥9 + SPC≥8 (diff players): +50 global chips", persistent:false },
+    // Persistent (squad) synergies
+    { id:"pace_in_behind", name:"Pace in Behind", rarity:"uncommon", triggerType:"squad_trait_count", trigger:{trait:"pacey",min_count:4}, effectType:"persistent_multiply", effect:{multiply:1.1,target_trait:"pacey"}, desc:"4+ pacey players: all pacey get ×1.1 mult each phase", persistent:true },
+    { id:"iron_wall", name:"Iron Wall", rarity:"uncommon", triggerType:"squad_trait_count", trigger:{trait:"physical",min_count:3}, effectType:"persistent_fatigue", effect:{fatigue_penalty:0.8}, desc:"3+ physical players: fatigue penalty reduced (×0.8 instead of ×0.7)", persistent:true },
+    { id:"leadership_council", name:"Leadership Council", rarity:"common", triggerType:"squad_trait_count", trigger:{trait:"leader",min_count:3}, effectType:"persistent_add", effect:{add_chips:3,target:"all"}, desc:"3+ leaders in squad: all players get +3 chips per phase", persistent:true },
+    { id:"tiki_taka_persistent", name:"Tiki-Taka", rarity:"uncommon", triggerType:"squad_trait_count", trigger:{trait:"technical",min_count:3}, effectType:"persistent_add", effect:{add_chips:5,target_position:["CM","CDM","CAM"]}, desc:"3+ technical players: midfielders get +5 chips per phase", persistent:true },
+    { id:"clinical_edge", name:"Clinical Edge", rarity:"common", triggerType:"squad_trait_count", trigger:{trait:"clinical",min_count:2}, effectType:"persistent_add", effect:{add_chips:5,target_position:["LW","RW","ST"]}, desc:"2+ clinical players: attackers get +5 chips per phase", persistent:true },
+    { id:"double_destroyer", name:"Double Destroyer", rarity:"common", triggerType:"squad_trait_count", trigger:{trait:"destroyer",min_count:2}, effectType:"persistent_add", effect:{add_chips:5,target_position:["CB","FB","CDM"]}, desc:"2+ destroyers: defenders get +5 chips per phase", persistent:true },
+    { id:"two_up_top", name:"Two Up Top", rarity:"rare", triggerType:"squad_trait_count", trigger:{trait:"poacher",min_count:2}, effectType:"persistent_multiply", effect:{multiply:1.3,target_position:["ST"]}, desc:"2+ poachers in squad: STs get ×1.3 mult each phase", persistent:true },
+    { id:"journeyman", name:"Journeyman", rarity:"rare", triggerType:"squad_trait_present", trigger:{trait:"journeyman"}, effectType:"persistent_special", effect:{special:"fatigue_reset"}, desc:"Journeyman in squad: once per match, restore one player's fatigue", persistent:true },
+    { id:"pace_and_power", name:"Pace & Power", rarity:"rare", triggerType:"squad_trait_combo", trigger:{traits:["pacey","physical"],min_count:2}, effectType:"persistent_multiply", effect:{multiply:1.3,target_trait_combo:["pacey","physical"]}, desc:"2+ players with pacey+physical: those players get ×1.3 mult", persistent:true },
+    { id:"silent_killers", name:"Silent Killers", rarity:"uncommon", triggerType:"squad_trait_combo", trigger:{traits:["clinical","pacey"],min_count:2}, effectType:"persistent_add", effect:{add_chips:5,target_trait_combo:["clinical","pacey"]}, desc:"2+ players with clinical+pacey: those players get +5 chips per phase", persistent:true },
+];
+
+const CAMPAIGN_MATCHES = [
+    { name:"Group Stage", opponent:"Wolves FC", targets:[350,450,600], tier:"Match 1/5 — Easy" },
+    { name:"Round of 16", opponent:"Inter Your-Nan", targets:[450,580,750], tier:"Match 2/5 — Moderate" },
+    { name:"Quarter Final", opponent:"Borussia Mönchen-flapjack", targets:[550,700,880], tier:"Match 3/5 — Challenging" },
+    { name:"Semi Final", opponent:"Man City Oilers", targets:[650,800,1050], tier:"Match 4/5 — Elite" },
+    { name:"THE FINAL", opponent:"Galácticos FC", targets:[800,950,1200], tier:"Match 5/5 — Final Boss" },
+];
+
+const BUDGET = 360;
+const MIN_PLAYERS = 10;
+const FATIGUE_PENALTY = 0.7;
+
+// ─── GAME STATE ───
+let state = {
+    screen: 'title',
+    selectedSquad: [],
+    selectedFormation: null,
+    persistentBuffs: {},
+    campaignIndex: 0,
+    campaignProgress: [false,false,false,false,false],
+    match: null,
+};
+
+// ─── SCORING ENGINE ───
+const CHIPS_FORMULA = {
+    ST: p => p.atk*3 + p.pac*2 + p.spc*1,
+    LW: p => p.atk*2 + p.pac*3 + p.pas*1,
+    RW: p => p.atk*2 + p.pac*3 + p.pas*1,
+    CM: p => p.pas*3 + p.atk*1 + p.def*2,
+    CAM: p => p.pas*3 + p.atk*2 + p.spc*1,
+    CDM: p => p.def*3 + p.pas*2 + p.atk*1,
+    CB: p => p.def*4 + p.spc*1 + p.pac*1,
+    FB: p => p.def*2 + p.pac*3 + p.pas*1,
+    GK: p => p.def*3 + p.spc*2,
+};
+
+function calcChips(player, pos) {
+    return (CHIPS_FORMULA[pos] || (()=>0))(player);
+}
+
+function statVal(player, stat) {
+    switch(stat) {
+        case 'atk': return player.atk;
+        case 'pac': return player.pac;
+        case 'pas': return player.pas;
+        case 'def': case 'def_': return player.def;
+        case 'spc': return player.spc;
+        default: return 0;
+    }
+}
+
+function playersAt(field, pos) { return field.filter(f => f[1]===pos).map(f => f[0]); }
+function bestAt(field, pos, stat) {
+    const cands = playersAt(field, pos);
+    if (!cands.length) return null;
+    return cands.reduce((a,b) => statVal(a,stat) > statVal(b,stat) ? a : b);
+}
+
+function detectSynergies(field, synergyCards) {
+    const results = {};
+    for (const [p] of field) results[p.id] = { multiply:1.0, addChips:0, firedSynergies:[] };
+    
+    let globalMult = 1.0, globalAdd = 0, nextCarryover = null;
+    
+    for (const syn of synergyCards) {
+        if (syn.persistent) continue;
+        const t = syn.triggerType, tr = syn.trigger, eff = syn.effect;
+        
+        if (t === 'clean_sheet') {
+            const gk = bestAt(field, tr.pos_a, tr.stat);
+            const cb = bestAt(field, tr.pos_b, tr.stat);
+            if (gk && cb && statVal(gk,tr.stat)+statVal(cb,tr.stat) >= tr.threshold) {
+                for (const p of [gk,cb]) { results[p.id].addChips += eff.add_chips||0; results[p.id].firedSynergies.push(syn.name); }
+            }
+        } else if (t === 'organised_defence') {
+            const cbs = playersAt(field, tr.positions[0]);
+            if (cbs.length >= 2) {
+                const sorted = cbs.sort((a,b) => statVal(b,tr.stat)-statVal(a,tr.stat));
+                if (statVal(sorted[0],tr.stat)+statVal(sorted[1],tr.stat) >= tr.threshold) {
+                    for (const p of [sorted[0],sorted[1]]) { results[p.id].addChips += eff.add_chips||0; results[p.id].firedSynergies.push(syn.name); }
+                }
+            }
+        } else if (t === 'wingback_overlap') {
+            const fb = bestAt(field, tr.pos_a, tr.stat_a);
+            const cm = bestAt(field, tr.pos_b, tr.stat_b);
+            if (fb && cm && statVal(fb,tr.stat_a)+statVal(cm,tr.stat_b) >= tr.threshold) {
+                for (const p of [fb,cm]) { results[p.id].addChips += eff.add_chips||0; results[p.id].firedSynergies.push(syn.name); }
+            }
+        } else if (t === 'stretch_backline') {
+            const fb = bestAt(field, tr.pos_a, tr.stat_a);
+            const lw = bestAt(field, tr.pos_b, tr.stat_b);
+            if (fb && lw && statVal(fb,tr.stat_a)+statVal(lw,tr.stat_b) >= tr.threshold) {
+                for (const p of [fb,lw]) { results[p.id].multiply *= eff.multiply||1; results[p.id].firedSynergies.push(syn.name); }
+            }
+        } else if (t === 'route_one') {
+            const cb = bestAt(field, tr.pos_a, tr.stat_a);
+            const st = bestAt(field, tr.pos_b, tr.stat_b);
+            if (cb && st && statVal(cb,tr.stat_a)+statVal(st,tr.stat_b) >= tr.threshold) {
+                if (eff.target === 'ST') results[st.id].addChips += eff.add_chips||0;
+                results[st.id].firedSynergies.push(syn.name);
+                results[cb.id].firedSynergies.push(syn.name);
+            }
+        } else if (t === 'battering_ram') {
+            const cb = bestAt(field, tr.pos_a, tr.stat_a);
+            const st = bestAt(field, tr.pos_b, tr.stat_b);
+            if (cb && st && statVal(cb,tr.stat_a)+statVal(st,tr.stat_b) >= tr.threshold) {
+                for (const p of [cb,st]) { results[p.id].addChips += eff.add_chips||0; results[p.id].firedSynergies.push(syn.name); }
+            }
+        } else if (t === 'midfield_engine') {
+            const cms = playersAt(field, tr.positions[0]);
+            if (cms.length >= 2) {
+                const bestPas = cms.reduce((a,b) => statVal(a,tr.stat_a)>statVal(b,tr.stat_a)?a:b);
+                const remaining = cms.filter(p => p.id !== bestPas.id);
+                const bestDef = remaining.reduce((a,b) => statVal(a,tr.stat_b)>statVal(b,tr.stat_b)?a:b);
+                if (statVal(bestPas,tr.stat_a)+statVal(bestDef,tr.stat_b) >= tr.threshold) {
+                    for (const p of [bestPas,bestDef]) { results[p.id].addChips += eff.add_chips||0; results[p.id].firedSynergies.push(syn.name); }
+                }
+            }
+        } else if (t === 'double_pivot') {
+            const cms = playersAt(field, tr.positions[0]);
+            if (cms.length >= 2) {
+                const sorted = cms.sort((a,b) => statVal(b,tr.stat)-statVal(a,tr.stat));
+                if (statVal(sorted[0],tr.stat)+statVal(sorted[1],tr.stat) >= tr.threshold) {
+                    nextCarryover = { type:'double_pivot', source_synergy:syn.name, add_chips:eff.add_chips||40, target_role:eff.target_role||'attacker' };
+                    for (const p of [sorted[0],sorted[1]]) results[p.id].firedSynergies.push(syn.name);
+                }
+            }
+        } else if (t === 'one_two') {
+            const cm = bestAt(field, tr.pos_a, tr.stat_a);
+            const st = bestAt(field, tr.pos_b, tr.stat_b);
+            if (cm && st && statVal(cm,tr.stat_a)+statVal(st,tr.stat_b) >= tr.threshold) {
+                for (const p of [cm,st]) { results[p.id].multiply *= eff.multiply||1; results[p.id].firedSynergies.push(syn.name); }
+            }
+        } else if (t === 'near_post_flick') {
+            const cam = bestAt(field, tr.pos_a, tr.stat_a);
+            const st = bestAt(field, tr.pos_b, tr.stat_b);
+            if (cam && st && statVal(cam,tr.stat_a)+statVal(st,tr.stat_b) >= tr.threshold) {
+                results[st.id].multiply *= eff.multiply||1;
+                results[st.id].firedSynergies.push(syn.name);
+                results[cam.id].firedSynergies.push(syn.name);
+            }
+        } else if (t === 'target_man_release') {
+            const st = bestAt(field, tr.pos_a, tr.stat_a);
+            const wingers = field.filter(f => (tr.winger_positions||['LW','RW']).includes(f[1])).map(f=>f[0]);
+            if (st && wingers.length) {
+                const bestW = wingers.reduce((a,b) => statVal(a,tr.stat_b)>statVal(b,tr.stat_b)?a:b);
+                if (statVal(st,tr.stat_a)+statVal(bestW,tr.stat_b) >= tr.threshold) {
+                    results[bestW.id].multiply *= eff.multiply||1;
+                    results[bestW.id].firedSynergies.push(syn.name);
+                    results[st.id].firedSynergies.push(syn.name);
+                }
+            }
+        } else if (t === 'covering_defender') {
+            const cbs = playersAt(field, tr.position);
+            if (cbs.length >= 2) {
+                const pacCBs = cbs.filter(p => statVal(p,tr.stat_a) >= tr.threshold_a);
+                const defCBs = cbs.filter(p => statVal(p,tr.stat_b) >= tr.threshold_b);
+                if (pacCBs.length && defCBs.length) {
+                    for (const fp of pacCBs) {
+                        for (const sp of defCBs) {
+                            if (fp.id !== sp.id) {
+                                for (const p of [fp,sp]) { results[p.id].addChips += eff.add_chips||0; results[p.id].firedSynergies.push(syn.name); }
+                                break;
+                            }
+                        }
+                        if (Object.values(results).some(r => r.firedSynergies.includes(syn.name))) break;
+                    }
+                }
+            }
+        } else if (t === 'back_three') {
+            const players = field.map(f => f[0]);
+            if (players.length >= 3 && players.every(p => statVal(p,tr.stat) >= tr.threshold)) {
+                for (const p of players) { results[p.id].multiply *= eff.multiply||1; results[p.id].firedSynergies.push(syn.name); }
+            }
+        } else if (t === 'set_piece_threat') {
+            const players = field.map(f => f[0]);
+            const defPs = players.filter(p => statVal(p,tr.stat_a) >= tr.threshold_a);
+            const spcPs = players.filter(p => statVal(p,tr.stat_b) >= tr.threshold_b);
+            if (defPs.length && spcPs.length) {
+                for (const dp of defPs) {
+                    for (const sp of spcPs) {
+                        if (dp.id !== sp.id) {
+                            globalAdd += eff.add_chips||0;
+                            for (const p of players) results[p.id].firedSynergies.push(syn.name);
+                            break;
+                        }
+                    }
+                    if (globalAdd > 0) break;
+                }
+            }
+        } else if (t === 'overlap') {
+            const fb = bestAt(field, tr.pos_a, tr.stat_a);
+            const lw = bestAt(field, tr.pos_b, tr.stat_b);
+            if (fb && lw && statVal(fb,tr.stat_a)+statVal(lw,tr.stat_b) >= tr.threshold) {
+                results[fb.id].multiply *= eff.multiply||1;
+                results[fb.id].firedSynergies.push(syn.name);
+                results[lw.id].firedSynergies.push(syn.name);
+            }
+        } else if (t === 'defensive_duo') {
+            const players = field.map(f => f[0]);
+            if (players.length >= 2) {
+                const sorted = players.sort((a,b) => statVal(b,tr.stat)-statVal(a,tr.stat));
+                if (statVal(sorted[0],tr.stat)+statVal(sorted[1],tr.stat) >= tr.threshold) {
+                    for (const p of players) { results[p.id].addChips += eff.add_chips||0; results[p.id].firedSynergies.push(syn.name); }
+                }
+            }
+        } else if (t === 'trio') {
+            const cms = playersAt(field, tr.position);
+            if (cms.length >= 3 && cms.every(p => statVal(p,tr.stat) >= tr.threshold)) {
+                const sorted = cms.sort((a,b) => statVal(b,tr.stat)-statVal(a,tr.stat));
+                const mults = eff.multipliers || [1.3,1.5,1.3];
+                sorted.forEach((p,i) => {
+                    const m = mults[Math.min(i, mults.length-1)];
+                    results[p.id].multiply *= m;
+                    results[p.id].firedSynergies.push(`${syn.name} (×${m})`);
+                });
+            }
+        }
+    }
+    
+    return { playerEffects: results, globalMult, globalAdd, nextCarryover };
+}
+
+function detectSquadSynergies(squad, synergyCards) {
+    const buffs = { fatigue_penalty:0.7, player_mult:{}, player_add:{}, position_mult:{}, position_add:{}, global_mult:1.0, global_add:0, journeyman_available:false, fired_synergies:[] };
+    
+    const traitMap = {};
+    for (const p of squad) for (const t of p.traits) { (traitMap[t] = traitMap[t]||[]).push(p); }
+    
+    for (const syn of synergyCards) {
+        if (!syn.persistent) continue;
+        let triggered = false, matching = [];
+        
+        if (syn.triggerType === 'squad_trait_count') {
+            matching = traitMap[syn.trigger.trait] || [];
+            triggered = matching.length >= (syn.trigger.min_count||1);
+        } else if (syn.triggerType === 'squad_trait_present') {
+            matching = traitMap[syn.trigger.trait] || [];
+            triggered = matching.length > 0;
+        }
+        
+        if (triggered) {
+            buffs.fired_synergies.push(syn.name);
+            const eff = syn.effect;
+            if (syn.effectType === 'persistent_fatigue') {
+                if (eff.fatigue_penalty != null) buffs.fatigue_penalty = eff.fatigue_penalty;
+            } else if (syn.effectType === 'persistent_multiply') {
+                const mult = eff.multiply || 1;
+                if (eff.target_trait) {
+                    for (const p of squad) {
+                        if (p.traits.includes(eff.target_trait)) {
+                            buffs.player_mult[p.id] = (buffs.player_mult[p.id]||1) * mult;
+                        }
+                    }
+                }
+                if (eff.target_position) {
+                    for (const pos of eff.target_position) {
+                        buffs.position_mult[pos] = (buffs.position_mult[pos]||1) * mult;
+                    }
+                }
+            } else if (syn.effectType === 'persistent_add') {
+                const chips = eff.add_chips || 0;
+                if (eff.target === 'all') buffs.global_add += chips;
+                if (eff.target_position) {
+                    for (const pos of eff.target_position) {
+                        buffs.position_add[pos] = (buffs.position_add[pos]||0) + chips;
+                    }
+                }
+            }
+        }
+    }
+    return buffs;
+}
+
+function calculateRoundScore(field, synergyCards, formation, fatigue, carryover, persistentBuffs) {
+    const pb = persistentBuffs || {};
+    const synResult = detectSynergies(field, synergyCards);
+    const pe = synResult.playerEffects;
+    let gMult = synResult.globalMult, gAdd = synResult.globalAdd;
+    
+    // Carryover
+    if (carryover) {
+        const bonus = carryover.add_chips || 0;
+        const src = carryover.source_synergy || 'Carryover';
+        if (carryover.target_role === 'attacker') {
+            for (const [p,pos] of field) {
+                if (['LW','RW','ST'].includes(pos)) {
+                    if (!pe[p.id]) pe[p.id] = {multiply:1,addChips:0,firedSynergies:[]};
+                    pe[p.id].addChips += bonus;
+                    pe[p.id].firedSynergies.push(`${src} (carryover)`);
+                    break;
+                }
+            }
+        }
+    }
+    
+    // Persistent buffs
+    const combinedGMult = gMult * (pb.global_mult||1);
+    const combinedGAdd = gAdd + (pb.global_add||0);
+    const pNames = pb.fired_synergies || [];
+    
+    for (const [p,pos] of field) {
+        if (pb.player_mult && pb.player_mult[p.id]) pe[p.id].multiply *= pb.player_mult[p.id];
+        if (pb.player_add && pb.player_add[p.id]) pe[p.id].addChips += pb.player_add[p.id];
+        const pm = (pb.position_mult||{})[pos] || 1;
+        const pa = (pb.position_add||{})[pos] || 0;
+        if (pm !== 1 || pa !== 0) { pe[p.id].multiply *= pm; pe[p.id].addChips += pa; }
+    }
+    for (const name of pNames) {
+        for (const pid of Object.keys(pe)) pe[pid].firedSynergies.push(`${name} (persistent)`);
+    }
+    
+    // Contributors
+    const contributors = {};
+    for (const [p,pos] of field) {
+        if (pe[p.id]) {
+            for (const raw of pe[p.id].firedSynergies) {
+                const clean = raw.split(' (')[0];
+                const entry = `${p.name} [${pos}]`;
+                if (!contributors[clean]) contributors[clean] = [];
+                if (!contributors[clean].includes(entry)) contributors[clean].push(entry);
+            }
+        }
+    }
+    
+    const synDescs = {};
+    const allFired = new Set(Object.values(pe).flatMap(e => e.firedSynergies));
+    for (const syn of synergyCards) {
+        if (allFired.has(syn.name) || pNames.includes(syn.name)) synDescs[syn.name] = syn.desc;
+    }
+    
+    const fMult = formation ? formation.globalMult : 1;
+    const breakdown = [];
+    let total = 0;
+    
+    for (const [p,pos] of field) {
+        let base = calcChips(p, pos) + ((formation && formation.positionBonus[pos]) || 0);
+        const ps = pe[p.id] || {multiply:1,addChips:0};
+        const fat = (fatigue||{})[p.id] || 1;
+        const after = (base + ps.addChips) * ps.multiply * fat;
+        breakdown.push({ player:p.name, position:pos, baseChips:base, addChips:ps.addChips, multiply:Math.round(ps.multiply*100)/100, fatigue:Math.round(fat*100)/100, subtotal:Math.round(after) });
+        total += after;
+    }
+    
+    const subBefore = Math.floor(total);
+    total = total * combinedGMult + combinedGAdd;
+    const finalTotal = Math.round(total * fMult);
+    
+    return {
+        total: finalTotal, breakdown, subtotalBeforeGlobals: subBefore,
+        formationMult: fMult, formationName: formation ? formation.name : '',
+        globalMult: Math.round(combinedGMult*1000)/1000, globalAdd: combinedGAdd,
+        firedSynergies: [...new Set(Object.values(pe).flatMap(e => e.firedSynergies))].sort(),
+        nextCarryover: synResult.nextCarryover,
+        synergyContributors: contributors, synergyDescriptions: synDescs,
+    };
+}
+
+function computeSynergyPreview(player, fieldPos, currentField, synergies) {
+    const curResult = detectSynergies(currentField, synergies);
+    const curFired = getFiredNames(curResult.playerEffects);
+    const newField = [...currentField, [player, fieldPos]];
+    const newResult = detectSynergies(newField, synergies);
+    const newFired = getFiredNames(newResult.playerEffects);
+    return newFired.difference(curFired);
+}
+
+function getFiredNames(playerEffects) {
+    const fired = new Set();
+    for (const stats of Object.values(playerEffects)) {
+        for (const raw of stats.firedSynergies) fired.add(raw.split(' (')[0]);
+    }
+    return fired;
+}
+
+// ─── SLOT HELPERS ───
+function isEligible(player, slot) {
+    if (slot.type === 'pos') return player.position === slot.pos;
+    if (slot.type === 'stat') {
+        if (slot.minAtk && player.atk < slot.minAtk) return false;
+        if (slot.minPac && player.pac < slot.minPac) return false;
+        if (slot.minPas && player.pas < slot.minPas) return false;
+        if (slot.minDef && player.def < slot.minDef) return false;
+        if (slot.minSpc && player.spc < slot.minSpc) return false;
+        if (slot.trait && !player.traits.includes(slot.trait)) return false;
+        return true;
+    }
+    return false;
+}
+
+function slotFieldPos(player, slot) {
+    if (slot.type === 'pos') return slot.pos;
+    if (slot.type === 'stat') return slot.as;
+    return player.position;
+}
+
+function slotLabel(slot) {
+    if (slot.type === 'pos') return slot.pos;
+    const parts = [`→${slot.as}`];
+    if (slot.minAtk) parts.push(`ATK≥${slot.minAtk}`);
+    if (slot.minPac) parts.push(`PAC≥${slot.minPac}`);
+    if (slot.minPas) parts.push(`PAS≥${slot.minPas}`);
+    if (slot.minDef) parts.push(`DEF≥${slot.minDef}`);
+    if (slot.minSpc) parts.push(`SPC≥${slot.minSpc}`);
+    if (slot.trait) parts.push(slot.trait);
+    return parts.join(' ');
+}
+
+// ─── SCREEN MANAGEMENT ───
+function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(`screen-${id}`).classList.add('active');
+    state.screen = id;
+}
+
+// ─── CAMPAIGN START ───
+function startCampaign() {
+    state.selectedSquad = [];
+    state.selectedFormation = null;
+    state.campaignIndex = 0;
+    state.campaignProgress = [false,false,false,false,false];
+    showScreen('squad');
+    renderSquadBuilder();
+}
+
+// ─── SQUAD BUILDER ───
+function renderSquadBuilder() {
+    const spent = state.selectedSquad.reduce((s,p) => s + p.cost, 0);
+    const remaining = BUDGET - spent;
+    const selectedIds = new Set(state.selectedSquad.map(p => p.id));
+    
+    document.getElementById('squad-budget-text').textContent = `Budget: ${spent}/${BUDGET} — ${remaining} remaining`;
+    document.getElementById('squad-count-text').textContent = `${state.selectedSquad.length} players`;
+    
+    const fill = document.getElementById('budget-fill');
+    fill.style.width = `${Math.min(100, (spent/BUDGET)*100)}%`;
+    fill.classList.toggle('over', spent > BUDGET);
+    
+    const posOrder = ['GK','CB','FB','CDM','CM','CAM','LW','RW','ST'];
+    const posIcons = {GK:'🧤',CB:'🛡️',FB:'↔️',CDM:'🔧',CM:'🔄',CAM:'🎯',LW:'⬅️',RW:'➡️',ST:'⚽'};
+    
+    let html = '';
+    for (const pos of posOrder) {
+        const players = PLAYERS.filter(p => p.position === pos && !selectedIds.has(p.id));
+        if (!players.length) continue;
+        html += `<div class="pos-group-header">${posIcons[pos]||''} ${pos}</div>`;
+        for (const p of players) {
+            const canAfford = remaining >= p.cost;
+            html += `<div class="player-row ${canAfford?'':'disabled'}" onclick="addPlayer('${p.id}')">
+                <span class="pos-badge" style="margin-right:8px;">${p.position}</span>
+                <span class="name">${p.name}</span>
+                <div class="stats-row" style="margin:0;margin-left:8px;">
+                    <div class="stat-badge stat-atk"><span class="value" style="font-size:11px;">${p.atk}</span></div>
+                    <div class="stat-badge stat-pac"><span class="value" style="font-size:11px;">${p.pac}</span></div>
+                    <div class="stat-badge stat-pas"><span class="value" style="font-size:11px;">${p.pas}</span></div>
+                    <div class="stat-badge stat-def"><span class="value" style="font-size:11px;">${p.def}</span></div>
+                    <div class="stat-badge stat-spc"><span class="value" style="font-size:11px;">${p.spc}</span></div>
+                </div>
+                <span class="cost ${canAfford?'':'too-expensive'}">${p.cost}</span>
+            </div>`;
+        }
+    }
+    
+    // Selected squad section
+    if (state.selectedSquad.length) {
+        html += `<div class="divider"></div>`;
+        html += `<div class="pos-group-header" style="color:var(--green);">YOUR SQUAD (${state.selectedSquad.length})</div>`;
+        for (let i = 0; i < state.selectedSquad.length; i++) {
+            const p = state.selectedSquad[i];
+            html += `<div class="player-row" onclick="removePlayer(${i})" style="border-color:var(--green-dim);">
+                <span class="pos-badge" style="margin-right:8px;">${p.position}</span>
+                <span class="name">${p.name}</span>
+                <span class="cost">${p.cost}</span>
+                <span style="color:var(--red);margin-left:8px;font-size:11px;">✕</span>
+            </div>`;
+        }
+    }
+    
+    document.getElementById('squad-players-list').innerHTML = html;
+    
+    // Requirements
+    const missing = checkMinimums();
+    let reqHtml = '';
+    const posCounts = {};
+    for (const p of state.selectedSquad) posCounts[p.position] = (posCounts[p.position]||0) + 1;
+    
+    const reqs = [
+        { label: '1 GK', have: posCounts['GK']||0, need: 1 },
+        { label: '3+ Defenders (CB/FB)', have: (posCounts['CB']||0)+(posCounts['FB']||0), need: 3 },
+        { label: '3+ Midfielders (CM/CDM/CAM)', have: (posCounts['CM']||0)+(posCounts['CDM']||0)+(posCounts['CAM']||0), need: 3 },
+        { label: '2+ Attackers (ST/LW/RW)', have: (posCounts['ST']||0)+(posCounts['LW']||0)+(posCounts['RW']||0), need: 2 },
+        { label: `${MIN_PLAYERS} players total`, have: state.selectedSquad.length, need: MIN_PLAYERS },
+    ];
+    
+    for (const r of reqs) {
+        const met = r.have >= r.need;
+        reqHtml += `<div class="req-item ${met?'met':'unmet'}">
+            <span class="icon">${met?'✓':'✗'}</span>
+            <span>${r.label} (${r.have}/${r.need})</span>
+        </div>`;
+    }
+    document.getElementById('squad-requirements').innerHTML = reqHtml;
+    document.getElementById('btn-confirm-squad').disabled = missing.length > 0;
+}
+
+function addPlayer(id) {
+    const p = PLAYERS.find(pl => pl.id === id);
+    if (!p) return;
+    const spent = state.selectedSquad.reduce((s,pl) => s + pl.cost, 0);
+    if (BUDGET - spent < p.cost) return;
+    state.selectedSquad.push(p);
+    renderSquadBuilder();
+}
+
+function removePlayer(idx) {
+    state.selectedSquad.splice(idx, 1);
+    renderSquadBuilder();
+}
+
+function checkMinimums() {
+    const missing = [];
+    const pc = {};
+    for (const p of state.selectedSquad) pc[p.position] = (pc[p.position]||0) + 1;
+    if ((pc['GK']||0) < 1) missing.push('1 GK');
+    if ((pc['CB']||0)+(pc['FB']||0) < 3) missing.push('3+ Defenders');
+    if ((pc['CM']||0)+(pc['CDM']||0)+(pc['CAM']||0) < 3) missing.push('3+ Midfielders');
+    if ((pc['ST']||0)+(pc['LW']||0)+(pc['RW']||0) < 2) missing.push('2+ Attackers');
+    if (state.selectedSquad.length < MIN_PLAYERS) missing.push(`${MIN_PLAYERS} players`);
+    return missing;
+}
+
+function confirmSquad() {
+    if (checkMinimums().length) return;
+    showScreen('formation');
+    renderFormationSelect();
+}
+
+// ─── FORMATION SELECT ───
+let selectedFormationIdx = 0;
+
+function renderFormationSelect() {
+    selectedFormationIdx = 0;
+    let html = '';
+    FORMATIONS.forEach((f, i) => {
+        const bonusHtml = Object.entries(f.positionBonus).map(([pos,b]) =>
+            `<span class="formation-bonus ${b>0?'positive':'negative'}">${pos} ${b>0?'+':''}${b}</span>`
+        ).join('');
+        
+        html += `<div class="formation-card ${i===0?'selected':''}" id="fcard-${i}" onclick="selectFormation(${i})">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="fname">${f.name}</span>
+                <span style="color:var(--green);font-size:14px;display:${i===0?'block':'none'};" id="fcheck-${i}">✓</span>
+            </div>
+            <div class="fdesc">${f.desc}</div>
+            ${bonusHtml ? `<div class="formation-bonuses">${bonusHtml}</div>` : ''}
+        </div>`;
+    });
+    document.getElementById('formation-list').innerHTML = html;
+}
+
+function selectFormation(idx) {
+    selectedFormationIdx = idx;
+    FORMATIONS.forEach((_, i) => {
+        document.getElementById(`fcard-${i}`).classList.toggle('selected', i === idx);
+        document.getElementById(`fcheck-${i}`).style.display = i === idx ? 'block' : 'none';
+    });
+}
+
+function confirmFormation() {
+    state.selectedFormation = FORMATIONS[selectedFormationIdx];
+    // Detect persistent synergies
+    const allPersistent = SYNERGIES.filter(s => s.persistent);
+    state.persistentBuffs = detectSquadSynergies(state.selectedSquad, allPersistent);
+    showScreen('match');
+    startCampaignMatch();
+}
+
+// ─── MATCH LOGIC ───
+function startCampaignMatch() {
+    if (state.campaignIndex >= CAMPAIGN_MATCHES.length) {
+        showScreen('complete');
+        renderCampaignComplete();
+        return;
+    }
+    
+    const mdef = CAMPAIGN_MATCHES[state.campaignIndex];
+    state.match = {
+        squad: state.selectedSquad,
+        synergies: [],
+        synergyPool: SYNERGIES.filter(s => !s.persistent),
+        formation: state.selectedFormation,
+        opponentName: mdef.opponent,
+        roundTargets: [...mdef.targets],
+        currentRound: 0,
+        roundsWon: 0,
+        roundsLost: 0,
+        phases: [],
+        currentPhaseIdx: 0,
+        phaseResults: [],
+        roundScore: 0,
+        fatigue: {},
+        field: [],
+        carryover: null,
+        persistentBuffs: state.persistentBuffs,
+        matchPhase: 'pre-round', // pre-round, placement, result, round-result
+    };
+    
+    startNewRound();
+}
+
+function startNewRound() {
+    const m = state.match;
+    // Shuffle and pick 6 phases
+    const shuffled = [...PHASES].sort(() => Math.random() - 0.5);
+    m.phases = shuffled.slice(0, 6);
+    m.currentPhaseIdx = 0;
+    m.fatigue = {};
+    m.phaseResults = [];
+    m.roundScore = 0;
+    m.field = [];
+    m.carryover = null;
+    
+    // Sample 5 synergies
+    const pool = [...m.synergyPool].sort(() => Math.random() - 0.5);
+    m.synergies = pool.slice(0, 5);
+    
+    m.matchPhase = 'placement';
+    renderMatch();
+}
+
+function renderMatch() {
+    const m = state.match;
+    if (!m) return;
+    const mdef = CAMPAIGN_MATCHES[state.campaignIndex];
+    
+    // Header
+    document.getElementById('match-opponent').textContent = `vs ${m.opponentName}`;
+    document.getElementById('match-round-info').textContent = `Round ${m.currentRound+1}/3`;
+    document.getElementById('match-score').textContent = m.roundScore;
+    document.getElementById('match-target').textContent = `/ ${m.roundTargets[m.currentRound]}`;
+    document.getElementById('match-record').textContent = `${m.roundsWon}-${m.roundsLost}`;
+    document.getElementById('match-phase-info').textContent = `Phase ${m.currentPhaseIdx+1}/6`;
+    
+    // Bracket
+    const labels = ['GS','R16','QF','SF','FN'];
+    let bracketHtml = '';
+    for (let i = 0; i < 5; i++) {
+        const cls = i < state.campaignIndex ? 'won' : i === state.campaignIndex ? 'current' : '';
+        bracketHtml += `<div class="bracket-node"><span class="label">${labels[i]}</span><div class="bracket-dot ${cls}"></div></div>`;
+        if (i < 4) bracketHtml += `<div class="bracket-line"></div>`;
+    }
+    document.getElementById('campaign-bracket').innerHTML = bracketHtml;
+    
+    // Content based on match phase
+    if (m.matchPhase === 'placement') {
+        renderPhasePlacement();
+    } else if (m.matchPhase === 'phase-result') {
+        renderPhaseResult();
+    } else if (m.matchPhase === 'round-result') {
+        renderRoundResult();
+    }
+}
+
+function renderPhasePlacement() {
+    const m = state.match;
+    const phase = m.phases[m.currentPhaseIdx];
+    if (!phase) return;
+    
+    const weightIcons = {DEF:'🛡️',PAS:'🔄',PAC:'⚡',ATK:'🎯',SPC:'✨'};
+    
+    let contentHtml = `
+        <div class="phase-header">
+            <div class="phase-meta">
+                <span>${weightIcons[phase.weight]||'⚽'} ${phase.weight}</span>
+                <span>Phase ${m.currentPhaseIdx+1}/6</span>
+            </div>
+            <div class="phase-name">${phase.name}</div>
+            <div class="phase-desc">${phase.desc}</div>
+        </div>
+        <div style="padding:12px;">
+    `;
+    
+    // Show synergies for this round
+    if (m.synergies.length && m.currentPhaseIdx === 0) {
+        contentHtml += `<div style="margin-bottom:12px;">
+            <div class="fs-10 fw-700 text-yellow mb-8">ROUND SYNERGIES</div>`;
+        for (const syn of m.synergies) {
+            const rColor = syn.rarity === 'rare' ? 'var(--magenta)' : syn.rarity === 'uncommon' ? 'var(--green)' : 'var(--text-dim)';
+            contentHtml += `<div class="persistent-syn" style="border-color:${rColor}30;background:${rColor}08;">
+                <span class="syn-icon">⚡</span>
+                <div>
+                    <div class="syn-name" style="color:${rColor};">${syn.name}</div>
+                    <div class="syn-desc">${syn.desc}</div>
+                </div>
+            </div>`;
+        }
+        contentHtml += `</div>`;
+    }
+    
+    // Persistent synergies
+    const pBuffs = m.persistentBuffs || {};
+    if (pBuffs.fired_synergies && pBuffs.fired_synergies.length) {
+        contentHtml += `<div style="margin-bottom:12px;">
+            <div class="fs-10 fw-700 text-magenta mb-8">PERSISTENT</div>`;
+        for (const name of pBuffs.fired_synergies) {
+            const syn = SYNERGIES.find(s => s.name === name);
+            contentHtml += `<div class="persistent-syn">
+                <span class="syn-icon">✦</span>
+                <div>
+                    <div class="syn-name">${name}</div>
+                    <div class="syn-desc">${syn ? syn.desc : ''}</div>
+                </div>
+            </div>`;
+        }
+        contentHtml += `</div>`;
+    }
+    
+    // Slot requirements
+    contentHtml += `<div class="fs-10 fw-700 text-dim mb-8">SLOTS</div>`;
+    for (let i = 0; i < phase.slots.length; i++) {
+        const slot = phase.slots[i];
+        const filled = i < m.field.length;
+        const active = i === m.field.length;
+        const [player, pos] = filled ? m.field[i] : [null, null];
+        
+        contentHtml += `<div class="slot-req">
+            <span class="dot ${filled?'done':active?'active':''}"></span>
+            <span style="color:${filled?'var(--green)':active?'var(--yellow)':'var(--text-dim)'};">${slotLabel(slot)}</span>
+        </div>`;
+    }
+    
+    // Field
+    contentHtml += `<div class="divider"></div>`;
+    contentHtml += `<div class="fs-10 fw-700 text-dim mb-8">ON THE PITCH</div>`;
+    
+    if (m.field.length === 0) {
+        contentHtml += `<div class="text-dim fs-11 text-center" style="padding:16px;">No players placed yet</div>`;
+    } else {
+        for (const [p, pos] of m.field) {
+            const chips = calcChips(p, pos);
+            const fat = m.fatigue[p.id] || 1;
+            const fatCls = fat >= 1 ? 'fatigue-fresh' : fat >= 0.7 ? 'fatigue-tired' : 'fatigue-exhausted';
+            const fatStr = fat >= 1 ? 'FRESH' : `${Math.round(fat*100)}%`;
+            contentHtml += `<div class="field-slot filled">
+                <span class="slot-pos">${pos}</span>
+                <span class="slot-player">${p.name}</span>
+                <span class="slot-chips">${chips}</span>
+                <span class="fatigue-indicator ${fatCls}">${fatStr}</span>
+            </div>`;
+        }
+    }
+    
+    contentHtml += `</div>`;
+    document.getElementById('match-content').innerHTML = contentHtml;
+    
+    // Footer
+    const allFilled = m.field.length >= phase.slots.length;
+    let footerHtml = '';
+    if (!allFilled) {
+        footerHtml += `<button class="btn btn-primary" onclick="openPlayerPicker()">SELECT PLAYER</button>`;
+    } else {
+        footerHtml += `<button class="btn btn-primary glow" onclick="resolvePhase()">RESOLVE PHASE</button>`;
+    }
+    document.getElementById('match-footer').innerHTML = footerHtml;
+}
+
+// ─── PLAYER PICKER ───
+let currentPickerSlot = null;
+
+function openPlayerPicker() {
+    const m = state.match;
+    const phase = m.phases[m.currentPhaseIdx];
+    const slotIdx = m.field.length;
+    if (slotIdx >= phase.slots.length) return;
+    
+    currentPickerSlot = phase.slots[slotIdx];
+    const usedIds = new Set(m.field.map(f => f[0].id));
+    
+    const eligible = m.squad.filter(p => !usedIds.has(p.id) && isEligible(p, currentPickerSlot));
+    
+    document.getElementById('picker-slot-info').textContent = `For: ${slotLabel(currentPickerSlot)}`;
+    
+    let html = '';
+    if (!eligible.length) {
+        html = `<div class="text-dim text-center" style="padding:20px;">No eligible players for this slot</div>`;
+    } else {
+        for (const p of eligible) {
+            const pos = slotFieldPos(p, currentPickerSlot);
+            const chips = calcChips(p, pos);
+            const fat = m.fatigue[p.id] || 1;
+            const effective = Math.round(chips * fat);
+            const fatCls = fat >= 1 ? 'fatigue-fresh' : fat >= 0.7 ? 'fatigue-tired' : 'fatigue-exhausted';
+            const fatStr = fat >= 1 ? 'FRESH' : `${Math.round(fat*100)}%`;
+            
+            // Synergy preview
+            const newSyns = computeSynergyPreview(p, pos, m.field, m.synergies);
+            let synHtml = '';
+            if (newSyns.size > 0) {
+                synHtml = `<div class="syn-preview">${[...newSyns].slice(0,3).map(s => `<span class="syn-tag">⚡${s}</span>`).join('')}${newSyns.size > 3 ? `<span class="syn-tag">+${newSyns.size-3}</span>` : ''}</div>`;
+            }
+            
+            html += `<div class="player-row" onclick="pickPlayer('${p.id}')" style="flex-wrap:wrap;">
+                <span class="pos-badge" style="margin-right:8px;">${p.position}→${pos}</span>
+                <span class="name">${p.name}</span>
+                <span class="${fatCls}" style="font-size:9px;margin:0 6px;">${fatStr}</span>
+                <span style="color:var(--green);font-weight:700;font-size:12px;margin-right:8px;">${effective}chips</span>
+                ${synHtml}
+                <div class="stats-row" style="width:100%;margin-top:4px;">
+                    <div class="stat-badge stat-atk"><span class="value" style="font-size:11px;">${p.atk}</span></div>
+                    <div class="stat-badge stat-pac"><span class="value" style="font-size:11px;">${p.pac}</span></div>
+                    <div class="stat-badge stat-pas"><span class="value" style="font-size:11px;">${p.pas}</span></div>
+                    <div class="stat-badge stat-def"><span class="value" style="font-size:11px;">${p.def}</span></div>
+                    <div class="stat-badge stat-spc"><span class="value" style="font-size:11px;">${p.spc}</span></div>
+                </div>
+            </div>`;
+        }
+    }
+    
+    document.getElementById('picker-player-list').innerHTML = html;
+    document.getElementById('player-picker-modal').classList.add('active');
+}
+
+function pickPlayer(id) {
+    const m = state.match;
+    const p = m.squad.find(pl => pl.id === id);
+    if (!p) return;
+    const pos = slotFieldPos(p, currentPickerSlot);
+    m.field.push([p, pos]);
+    document.getElementById('player-picker-modal').classList.remove('active');
+    renderPhasePlacement();
+}
+
+function skipSlot() {
+    document.getElementById('player-picker-modal').classList.remove('active');
+}
+
+// ─── RESOLVE PHASE ───
+let lastPhaseResult = null;
+
+function resolvePhase() {
+    const m = state.match;
+    const phase = m.phases[m.currentPhaseIdx];
+    
+    lastPhaseResult = calculateRoundScore(
+        m.field, m.synergies, m.formation, m.fatigue, m.carryover, m.persistentBuffs
+    );
+    
+    // Apply fatigue
+    const penalty = (m.persistentBuffs || {}).fatigue_penalty || FATIGUE_PENALTY;
+    for (const [p] of m.field) {
+        const cur = m.fatigue[p.id] || 1;
+        m.fatigue[p.id] = cur * penalty;
+    }
+    
+    m.carryover = lastPhaseResult.nextCarryover;
+    m.roundScore += lastPhaseResult.total;
+    m.phaseResults.push({ phaseName: phase.name, total: lastPhaseResult.total });
+    m.matchPhase = 'phase-result';
+    
+    renderMatch();
+}
+
+function renderPhaseResult() {
+    const r = lastPhaseResult;
+    const m = state.match;
+    
+    let html = `<div class="result-total">
+        <div class="label">PHASE TOTAL</div>
+        <div class="value">${r.total}</div>
+    </div>
+    <div style="padding:0 12px 12px;">
+        <div class="fs-10 fw-700 text-cyan mb-8">BREAKDOWN</div>`;
+    
+    for (const e of r.breakdown) {
+        let formulaParts = [`${e.baseChips} base`];
+        if (e.addChips) formulaParts.push(`+${e.addChips} syn`);
+        if (e.multiply !== 1) formulaParts.push(`×${e.multiply} mult`);
+        if (e.fatigue !== 1) formulaParts.push(`×${e.fatigue} fat`);
+        
+        html += `<div class="breakdown-row">
+            <div style="flex:1;">
+                <div class="player-name">${e.player} <span class="pos-badge" style="font-size:9px;">${e.position}</span></div>
+                <div class="formula">${formulaParts.join('  ')}</div>
+            </div>
+            <span class="subtotal">${e.subtotal}</span>
+        </div>`;
+    }
+    
+    // Globals
+    if (r.globalMult !== 1 || r.globalAdd !== 0) {
+        html += `<div class="panel mt-8" style="border-color:var(--magenta)30;">`;
+        if (r.globalMult !== 1) html += `<div class="fs-11 text-magenta">×${r.globalMult} global mult</div>`;
+        if (r.globalAdd) html += `<div class="fs-11 text-magenta">+${r.globalAdd} global bonus</div>`;
+        html += `</div>`;
+    }
+    
+    if (r.formationMult !== 1) {
+        html += `<div class="panel mt-8" style="border-color:var(--cyan)30;">
+            <div class="fs-11 text-cyan">Formation: ${r.formationName} ×${r.formationMult}</div>
+        </div>`;
+    }
+    
+    // Synergies
+    const phaseSyns = r.firedSynergies.filter(s => !s.includes('(persistent)'));
+    if (phaseSyns.length) {
+        html += `<div class="mt-12"><div class="fs-10 fw-700 text-yellow mb-8">SYNERGIES</div><div style="display:flex;flex-wrap:wrap;gap:4px;">`;
+        for (const syn of phaseSyns) {
+            const clean = syn.split(' (')[0];
+            const desc = r.synergyDescriptions[clean] || '';
+            const contribs = (r.synergyContributors[clean] || []).join(', ');
+            html += `<div class="synergy-tag" style="flex-direction:column;align-items:flex-start;padding:6px 8px;">
+                <span style="font-weight:700;">⚡ ${clean}</span>
+                ${desc ? `<span style="font-size:8px;opacity:0.7;">${desc}</span>` : ''}
+                ${contribs ? `<span style="font-size:8px;color:var(--orange);">${contribs}</span>` : ''}
+            </div>`;
+        }
+        html += `</div></div>`;
+    }
+    
+    // Running total
+    html += `<div class="panel mt-12 text-center">
+        <div class="fs-10 text-dim">Running Total</div>
+        <div class="fs-12 fw-700" style="color:var(--green);font-size:16px;">${m.roundScore} / ${m.roundTargets[m.currentRound]}</div>
+    </div>`;
+    
+    html += `</div>`;
+    document.getElementById('match-content').innerHTML = html;
+    
+    // Footer
+    const isLastPhase = m.currentPhaseIdx >= m.phases.length - 1;
+    const autoWin = m.roundScore >= m.roundTargets[m.currentRound];
+    
+    let footerHtml = '';
+    if (autoWin && !isLastPhase) {
+        footerHtml = `<div class="text-center mb-8"><span class="text-green fs-11 fw-700">🎯 TARGET REACHED — AUTO-WIN ROUND!</span></div>`;
+        footerHtml += `<button class="btn btn-primary" onclick="finishRound()">CONTINUE</button>`;
+    } else if (isLastPhase || autoWin) {
+        footerHtml += `<button class="btn btn-primary" onclick="finishRound()">ROUND RESULT</button>`;
+    } else {
+        footerHtml += `<button class="btn btn-primary" onclick="nextPhase()">NEXT PHASE</button>`;
+    }
+    document.getElementById('match-footer').innerHTML = footerHtml;
+}
+
+function nextPhase() {
+    const m = state.match;
+    m.currentPhaseIdx++;
+    m.field = [];
+    m.matchPhase = 'placement';
+    renderMatch();
+}
+
+function finishRound() {
+    const m = state.match;
+    const won = m.roundScore >= m.roundTargets[m.currentRound];
+    if (won) m.roundsWon++;
+    else m.roundsLost++;
+    m.matchPhase = 'round-result';
+    renderMatch();
+}
+
+function renderRoundResult() {
+    const m = state.match;
+    const won = m.roundScore >= m.roundTargets[m.currentRound];
+    
+    let html = `<div class="round-result">
+        <div class="icon">${won ? '🎉' : '💔'}</div>
+        <div class="title ${won?'won':'lost'}">${won ? 'ROUND WON!' : 'ROUND LOST'}</div>
+        <div class="score-line">${m.roundScore} / ${m.roundTargets[m.currentRound]}</div>
+    </div>
+    <div style="padding:0 16px;">
+        <div class="panel">
+            <div class="fs-10 fw-700 text-dim mb-8">PHASE RESULTS</div>`;
+    
+    for (let i = 0; i < m.phaseResults.length; i++) {
+        const pr = m.phaseResults[i];
+        html += `<div class="breakdown-row">
+            <span class="fs-11 text-dim">Phase ${i+1}:</span>
+            <span class="fs-11" style="margin:0 8px;">${pr.phaseName}</span>
+            <span style="flex:1;"></span>
+            <span class="fs-11 fw-700 text-green">${pr.total}</span>
+        </div>`;
+    }
+    
+    html += `<div class="divider"></div>
+        <div class="breakdown-row">
+            <span class="fw-700">Total</span>
+            <span style="flex:1;"></span>
+            <span class="fw-700 text-green">${m.roundScore}</span>
+        </div>
+    </div>
+    <div class="text-center mt-8">
+        <span class="fs-12 fw-700 text-yellow">Match: ${m.roundsWon}-${m.roundsLost}</span>
+    </div>`;
+    
+    if (m.isMatchOver === undefined) {
+        // Check
+    }
+    const matchOver = m.roundsWon >= 2 || m.roundsLost >= 2;
+    
+    html += `</div>`;
+    document.getElementById('match-content').innerHTML = html;
+    
+    let footerHtml = '';
+    if (matchOver) {
+        footerHtml = `<button class="btn ${m.roundsWon >= 2 ? 'btn-primary' : 'btn-danger'}" onclick="finishMatch()">${m.roundsWon >= 2 ? 'MATCH WON — CONTINUE' : 'MATCH LOST'}</button>`;
+    } else {
+        footerHtml = `<button class="btn btn-primary" onclick="nextRound()">NEXT ROUND</button>`;
+    }
+    document.getElementById('match-footer').innerHTML = footerHtml;
+}
+
+function nextRound() {
+    state.match.currentRound++;
+    startNewRound();
+}
+
+function finishMatch() {
+    const m = state.match;
+    if (m.roundsWon >= 2) {
+        state.campaignProgress[state.campaignIndex] = true;
+        state.campaignIndex++;
+        if (state.campaignIndex >= CAMPAIGN_MATCHES.length) {
+            showScreen('complete');
+            renderCampaignComplete();
+        } else {
+            startCampaignMatch();
+        }
+    } else {
+        // Game over
+        const mdef = CAMPAIGN_MATCHES[state.campaignIndex];
+        document.getElementById('gameover-text').textContent = `Lost at ${mdef.name} vs ${mdef.opponent} (${m.roundsWon}-${m.roundsLost})`;
+        showScreen('gameover');
+    }
+}
+
+function renderCampaignComplete() {
+    let html = '';
+    for (let i = 0; i < CAMPAIGN_MATCHES.length; i++) {
+        const m = CAMPAIGN_MATCHES[i];
+        html += `<div class="breakdown-row">
+            <span class="fs-11 text-dim">Match ${i+1}:</span>
+            <span class="fs-11 fw-700" style="margin:0 8px;">${m.name}</span>
+            <span style="flex:1;"></span>
+            <span class="fs-11 fw-700 text-green">✓ WIN</span>
+        </div>`;
+    }
+    document.getElementById('campaign-results-list').innerHTML = `<div class="panel">${html}</div>`;
+}
+
+function resetGame() {
+    state = {
+        screen: 'title',
+        selectedSquad: [],
+        selectedFormation: null,
+        persistentBuffs: {},
+        campaignIndex: 0,
+        campaignProgress: [false,false,false,false,false],
+        match: null,
+    };
+    showScreen('title');
+}
+
+// ─── INIT ───
+// Polyfill Set.difference if needed
+if (!Set.prototype.difference) {
+    Set.prototype.difference = function(other) {
+        const result = new Set(this);
+        for (const item of other) result.delete(item);
+        return result;
+    };
+}
+
+// Register service worker for PWA
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+[project]
+name = "squad"
+version = "0.1.0"
+description = "Football card game — Slay the Spire × Balatro with tactical synergies"
+requires-python = ">=3.12"
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "rich>=13"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
