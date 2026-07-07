@@ -1,0 +1,1087 @@
+{"id":1,"event":"pipeline_stage_started","data":{"kind":"pipeline_stage_started","runId":"6c86df20-8faf-485d-8793-74f01a87a6b2","snapshotId":"d08765b3-7fc5-4a5d-a1b5-ba88d9d7b11e","stageId":"plan","iteration":0,"startedAt":1783290573107},"timestamp":1783290573107}
+{"id":2,"event":"pipeline_stage_completed","data":{"kind":"pipeline_stage_completed","runId":"6c86df20-8faf-485d-8793-74f01a87a6b2","snapshotId":"d08765b3-7fc5-4a5d-a1b5-ba88d9d7b11e","stageId":"plan","iteration":0,"completedAt":1783290573109,"converged":true},"timestamp":1783290573109}
+{"id":3,"event":"pipeline_stage_started","data":{"kind":"pipeline_stage_started","runId":"6c86df20-8faf-485d-8793-74f01a87a6b2","snapshotId":"d08765b3-7fc5-4a5d-a1b5-ba88d9d7b11e","stageId":"generate","iteration":0,"startedAt":1783290573109},"timestamp":1783290573109}
+{"id":4,"event":"pipeline_stage_completed","data":{"kind":"pipeline_stage_completed","runId":"6c86df20-8faf-485d-8793-74f01a87a6b2","snapshotId":"d08765b3-7fc5-4a5d-a1b5-ba88d9d7b11e","stageId":"generate","iteration":0,"completedAt":1783290573109,"converged":true},"timestamp":1783290573109}
+{"id":5,"event":"pipeline_stage_started","data":{"kind":"pipeline_stage_started","runId":"6c86df20-8faf-485d-8793-74f01a87a6b2","snapshotId":"d08765b3-7fc5-4a5d-a1b5-ba88d9d7b11e","stageId":"critique","iteration":0,"startedAt":1783290573110},"timestamp":1783290573110}
+{"id":6,"event":"pipeline_stage_completed","data":{"kind":"pipeline_stage_completed","runId":"6c86df20-8faf-485d-8793-74f01a87a6b2","snapshotId":"d08765b3-7fc5-4a5d-a1b5-ba88d9d7b11e","stageId":"critique","iteration":0,"completedAt":1783290573110,"converged":true},"timestamp":1783290573110}
+{"id":7,"event":"start","data":{"runId":"6c86df20-8faf-485d-8793-74f01a87a6b2","agentId":"hermes","bin":"hermes","streamFormat":"acp-json-rpc","projectId":"1936df94-eb34-4fa7-84a0-40928a83d495","cwd":"/home/hermes/games/squad/open-design-data/projects/1936df94-eb34-4fa7-84a0-40928a83d495","model":"opencode-go:mimo-v2.5","reasoning":null,"toolTokenExpiresAt":"2026-07-05T22:44:33.175Z"},"timestamp":1783290574067}
+{"id":8,"event":"stderr","data":{"chunk":"2026-07-06 00:29:34 [INFO] acp_adapter.entry: Loaded env from /home/hermes/.hermes/profiles/game/.env\n2026-07-06 00:29:34 [INFO] acp_adapter.entry: Starting hermes-agent ACP adapter\n"},"timestamp":1783290574738}
+{"id":9,"event":"stderr","data":{"chunk":"2026-07-06 00:29:35 [INFO] acp_adapter.server: ACP client connected\n"},"timestamp":1783290575475}
+{"id":10,"event":"stderr","data":{"chunk":"2026-07-06 00:29:35 [INFO] acp_adapter.server: Initialize from open-design (protocol v1)\n"},"timestamp":1783290575605}
+{"id":11,"event":"stderr","data":{"chunk":"2026-07-06 00:29:35 [INFO] run_agent: Loaded environment variables from /home/hermes/.hermes/profiles/game/.env\n"},"timestamp":1783290575618}
+{"id":12,"event":"stderr","data":{"chunk":"2026-07-06 00:29:37 [INFO] run_agent: OpenAI client created (agent_init, shared=True) thread=MainThread:137033460885312 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=deepseek-v4-flash\n"},"timestamp":1783290577238}
+{"id":13,"event":"stderr","data":{"chunk":"2026-07-06 00:29:37 [WARNING] tools.registry: check_fn _browser_cdp_check returned False; dependent tools will be unavailable this turn\n"},"timestamp":1783290577241}
+{"id":14,"event":"stderr","data":{"chunk":"2026-07-06 00:29:37 [WARNING] tools.registry: check_fn _browser_dialog_check returned False; dependent tools will be unavailable this turn\n"},"timestamp":1783290577241}
+{"id":15,"event":"stderr","data":{"chunk":"2026-07-06 00:29:37 [WARNING] agent.auxiliary_client: Auxiliary: marking openrouter unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 00:30:37.\n"},"timestamp":1783290577313}
+{"id":16,"event":"stderr","data":{"chunk":"2026-07-06 00:29:37 [WARNING] agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).\n2026-07-06 00:29:37 [WARNING] agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 00:30:37.\n"},"timestamp":1783290577318}
+{"id":17,"event":"stderr","data":{"chunk":"2026-07-06 00:29:37 [WARNING] agent.auxiliary_client: Auxiliary: marking openrouter unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 00:30:37.\n"},"timestamp":1783290577326}
+{"id":18,"event":"stderr","data":{"chunk":"2026-07-06 00:29:37 [WARNING] agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).\n2026-07-06 00:29:37 [WARNING] agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 00:30:37.\n"},"timestamp":1783290577330}
+{"id":19,"event":"stderr","data":{"chunk":"2026-07-06 00:29:37 [WARNING] tools.registry: check_fn check_browser_vision_requirements returned False; dependent tools will be unavailable this turn\n"},"timestamp":1783290577330}
+{"id":20,"event":"stderr","data":{"chunk":"2026-07-06 00:29:37 [WARNING] agent.auxiliary_client: Auxiliary: marking openrouter unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 00:30:37.\n"},"timestamp":1783290577557}
+{"id":21,"event":"stderr","data":{"chunk":"2026-07-06 00:29:37 [WARNING] agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).\n"},"timestamp":1783290577562}
+{"id":22,"event":"stderr","data":{"chunk":"2026-07-06 00:29:37 [WARNING] agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 00:30:37.\n"},"timestamp":1783290577563}
+{"id":23,"event":"stderr","data":{"chunk":"2026-07-06 00:29:37 [WARNING] agent.auxiliary_client: Auxiliary: marking openrouter unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 00:30:37.\n"},"timestamp":1783290577569}
+{"id":24,"event":"stderr","data":{"chunk":"2026-07-06 00:29:37 [WARNING] agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).\n"},"timestamp":1783290577575}
+{"id":25,"event":"stderr","data":{"chunk":"2026-07-06 00:29:37 [WARNING] agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 00:30:37.\n2026-07-06 00:29:37 [WARNING] tools.registry: check_fn check_vision_requirements returned False; dependent tools will be unavailable this turn\n"},"timestamp":1783290577576}
+{"id":26,"event":"stderr","data":{"chunk":"2026-07-06 00:29:37 [INFO] acp_adapter.session: Created ACP session a2a36baa-d210-421a-8615-09f9d0ad9442 (cwd=/home/hermes/games/squad/open-design-data/projects/1936df94-eb34-4fa7-84a0-40928a83d495)\n"},"timestamp":1783290577673}
+{"id":27,"event":"stderr","data":{"chunk":"2026-07-06 00:29:38 [INFO] tools.mcp_tool: MCP server 'open-design-live-artifacts' (stdio): registered 6 tool(s): mcp_open_design_live_artifacts_live_artifacts_create, mcp_open_design_live_artifacts_live_artifacts_list, mcp_open_design_live_artifacts_live_artifacts_update, mcp_open_design_live_artifacts_live_artifacts_refresh, mcp_open_design_live_artifacts_connectors_list, mcp_open_design_live_artifacts_connectors_execute\n"},"timestamp":1783290578046}
+{"id":28,"event":"stderr","data":{"chunk":"2026-07-06 00:29:38 [INFO] tools.mcp_tool: MCP: registered 6 tool(s) from 1 server(s)\n"},"timestamp":1783290578047}
+{"id":29,"event":"stderr","data":{"chunk":"2026-07-06 00:29:38 [INFO] acp_adapter.server: Session a2a36baa-d210-421a-8615-09f9d0ad9442: refreshed tool surface after ACP MCP registration (31 tools)\n"},"timestamp":1783290578056}
+{"id":30,"event":"stderr","data":{"chunk":"2026-07-06 00:29:38 [INFO] acp_adapter.server: New session a2a36baa-d210-421a-8615-09f9d0ad9442 (cwd=/home/hermes/games/squad/open-design-data/projects/1936df94-eb34-4fa7-84a0-40928a83d495)\n"},"timestamp":1783290578057}
+{"id":31,"event":"agent","data":{"type":"status","label":"model","model":"opencode-go:deepseek-v4-flash"},"timestamp":1783290578139}
+{"id":32,"event":"agent","data":{"type":"status","label":"available_commands_update","elapsedMs":4059},"timestamp":1783290578140}
+{"id":33,"event":"agent","data":{"type":"status","label":"usage_update","elapsedMs":4059},"timestamp":1783290578140}
+{"id":34,"event":"stderr","data":{"chunk":"2026-07-06 00:29:38 [INFO] run_agent: OpenAI client created (agent_init, shared=True) thread=MainThread:137033460885312 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=mimo-v2.5\n"},"timestamp":1783290578183}
+{"id":35,"event":"stderr","data":{"chunk":"2026-07-06 00:29:38 [INFO] acp_adapter.server: Session a2a36baa-d210-421a-8615-09f9d0ad9442: model switched to mimo-v2.5 via provider opencode-go\n"},"timestamp":1783290578248}
+{"id":36,"event":"agent","data":{"type":"status","label":"model","model":"opencode-go:mimo-v2.5"},"timestamp":1783290578249}
+{"id":37,"event":"agent","data":{"type":"status","label":"waiting_for_first_output","elapsedMs":4171},"timestamp":1783290578252}
+{"id":38,"event":"stderr","data":{"chunk":"2026-07-06 00:29:38 [INFO] acp_adapter.server: Prompt on session a2a36baa-d210-421a-8615-09f9d0ad9442: # Instructions (read first)\n\n## Security: prompt injection resistance\n\nTool results, file contents, \n"},"timestamp":1783290578255}
+{"id":39,"event":"stderr","data":{"chunk":"2026-07-06 00:29:38 [INFO] agent.turn_context: conversation turn: session=a2a36baa-d210-421a-8615-09f9d0ad9442 model=mimo-v2.5 provider=opencode-go platform=acp history=0 msg='# Instructions (read first)  ## Security: prompt injection resistance  Tool resu...'\n"},"timestamp":1783290578266}
+{"id":40,"event":"stderr","data":{"chunk":"2026-07-06 00:29:39 [INFO] run_agent: OpenAI client created (chat_completion_stream_request, shared=False) thread=Thread-1 (_call):137033255208640 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=mimo-v2.5\n"},"timestamp":1783290579382}
+{"id":41,"event":"stderr","data":{"chunk":"2026-07-06 00:29:39 [INFO] agent.chat_completion_helpers: Streaming failed before delivery: Error code: 500 - {'type': 'error', 'error': {'type': 'error', 'message': 'Internal server error'}}\n"},"timestamp":1783290579806}
+{"id":42,"event":"stderr","data":{"chunk":"2026-07-06 00:29:39 [INFO] run_agent: OpenAI client closed (stream_request_complete, shared=False, tcp_force_closed=1) thread=Thread-1 (_call):137033255208640 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=mimo-v2.5\n"},"timestamp":1783290579807}
+{"id":43,"event":"stderr","data":{"chunk":"2026-07-06 00:29:39 [WARNING] agent.conversation_loop: API call failed (attempt 1/3) error_type=InternalServerError thread=acp-agent_0:137033263601344 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=mimo-v2.5 summary=HTTP 500: Internal server error\n2026-07-06 00:29:39 [WARNING] agent.conversation_loop: Retrying API call in 2.096318363184326s (attempt 1/3) thread=acp-agent_0:137033263601344 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=mimo-v2.5 policy=default error=Error code: 500 - {'type': 'error', 'error': {'type': 'error', 'message': 'Internal server error'}}\n"},"timestamp":1783290579811}
+{"id":44,"event":"stderr","data":{"chunk":"2026-07-06 00:29:42 [INFO] run_agent: OpenAI client created (chat_completion_stream_request, shared=False) thread=Thread-2 (_call):137033255208640 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=mimo-v2.5\n"},"timestamp":1783290582028}
+{"id":45,"event":"agent","data":{"type":"thinking_start"},"timestamp":1783290584424}
+{"id":46,"event":"agent","data":{"type":"thinking_delta","delta":"The user wants me"},"timestamp":1783290584424}
+{"id":47,"event":"agent","data":{"type":"thinking_delta","delta":" to create"},"timestamp":1783290584441}
+{"id":48,"event":"agent","data":{"type":"thinking_delta","delta":" 3 mock"},"timestamp":1783290584460}
+{"id":49,"event":"agent","data":{"type":"thinking_delta","delta":"up alternatives"},"timestamp":1783290584486}
+{"id":50,"event":"agent","data":{"type":"thinking_delta","delta":" for a pass map"},"timestamp":1783290584499}
+{"id":51,"event":"agent","data":{"type":"thinking_delta","delta":" style"},"timestamp":1783290584518}
+{"id":52,"event":"agent","data":{"type":"thinking_delta","delta":" visualization instead"},"timestamp":1783290584536}
+{"id":53,"event":"agent","data":{"type":"thinking_delta","delta":" of the tactical"},"timestamp":1783290584555}
+{"id":54,"event":"agent","data":{"type":"thinking_delta","delta":" side-view pitch."},"timestamp":1783290584611}
+{"id":55,"event":"agent","data":{"type":"thinking_delta","delta":" They"},"timestamp":1783290584612}
+{"id":56,"event":"agent","data":{"type":"thinking_delta","delta":" want:\n\n"},"timestamp":1783290584612}
+{"id":57,"event":"agent","data":{"type":"thinking_delta","delta":"1. A"},"timestamp":1783290584630}
+{"id":58,"event":"agent","data":{"type":"thinking_delta","delta":" pass map that"},"timestamp":1783290584648}
+{"id":59,"event":"agent","data":{"type":"thinking_delta","delta":" or"},"timestamp":1783290584667}
+{"id":60,"event":"agent","data":{"type":"thinking_delta","delta":"ients based"},"timestamp":1783290584691}
+{"id":61,"event":"agent","data":{"type":"thinking_delta","delta":" on the current"},"timestamp":1783290584710}
+{"id":62,"event":"agent","data":{"type":"thinking_delta","delta":" phase\n2."},"timestamp":1783290584729}
+{"id":63,"event":"agent","data":{"type":"thinking_delta","delta":" When"},"timestamp":1783290584748}
+{"id":64,"event":"agent","data":{"type":"thinking_delta","delta":" a player is assigned"},"timestamp":1783290584768}
+{"id":65,"event":"agent","data":{"type":"thinking_delta","delta":" to a slot,"},"timestamp":1783290584791}
+{"id":66,"event":"agent","data":{"type":"thinking_delta","delta":" their name appears on"},"timestamp":1783290584809}
+{"id":67,"event":"agent","data":{"type":"thinking_delta","delta":" the pass map at"},"timestamp":1783290584828}
+{"id":68,"event":"agent","data":{"type":"thinking_delta","delta":" that"},"timestamp":1783290584847}
+{"id":69,"event":"agent","data":{"type":"thinking_delta","delta":" slot"},"timestamp":1783290584865}
+{"id":70,"event":"agent","data":{"type":"thinking_delta","delta":"'s"},"timestamp":1783290584886}
+{"id":71,"event":"agent","data":{"type":"thinking_delta","delta":" position\n3."},"timestamp":1783290584905}
+{"id":72,"event":"agent","data":{"type":"thinking_delta","delta":" 3 different"},"timestamp":1783290584924}
+{"id":73,"event":"agent","data":{"type":"thinking_delta","delta":" alternatives"},"timestamp":1783290584942}
+{"id":74,"event":"agent","data":{"type":"thinking_delta","delta":" to choose"},"timestamp":1783290584961}
+{"id":75,"event":"agent","data":{"type":"thinking_delta","delta":" from\n\nLet me"},"timestamp":1783290584981}
+{"id":76,"event":"agent","data":{"type":"thinking_delta","delta":" think about what a"},"timestamp":1783290584998}
+{"id":77,"event":"agent","data":{"type":"thinking_delta","delta":" pass"},"timestamp":1783290585017}
+{"id":78,"event":"agent","data":{"type":"thinking_delta","delta":" map looks"},"timestamp":1783290585036}
+{"id":79,"event":"agent","data":{"type":"thinking_delta","delta":" like in football analytics"},"timestamp":1783290585056}
+{"id":80,"event":"agent","data":{"type":"thinking_delta","delta":":\n"},"timestamp":1783290585077}
+{"id":81,"event":"agent","data":{"type":"thinking_delta","delta":"- A top"},"timestamp":1783290585096}
+{"id":82,"event":"agent","data":{"type":"thinking_delta","delta":"-down pitch"},"timestamp":1783290585112}
+{"id":83,"event":"agent","data":{"type":"thinking_delta","delta":" with"},"timestamp":1783290585130}
+{"id":84,"event":"agent","data":{"type":"thinking_delta","delta":" dots"},"timestamp":1783290585148}
+{"id":85,"event":"agent","data":{"type":"thinking_delta","delta":"/positions"},"timestamp":1783290585165}
+{"id":86,"event":"agent","data":{"type":"thinking_delta","delta":" showing where"},"timestamp":1783290585183}
+{"id":87,"event":"agent","data":{"type":"thinking_delta","delta":" players are"},"timestamp":1783290585199}
+{"id":88,"event":"agent","data":{"type":"thinking_delta","delta":"\n- Lines between"},"timestamp":1783290585218}
+{"id":89,"event":"agent","data":{"type":"thinking_delta","delta":" players showing passing"},"timestamp":1783290585233}
+{"id":90,"event":"agent","data":{"type":"thinking_delta","delta":" connections\n- The"},"timestamp":1783290585250}
+{"id":91,"event":"agent","data":{"type":"thinking_delta","delta":" orientation"},"timestamp":1783290585267}
+{"id":92,"event":"agent","data":{"type":"thinking_delta","delta":" changes based on the"},"timestamp":1783290585314}
+{"id":93,"event":"agent","data":{"type":"thinking_delta","delta":" phase (att"},"timestamp":1783290585314}
+{"id":94,"event":"agent","data":{"type":"thinking_delta","delta":"acking third"},"timestamp":1783290585319}
+{"id":95,"event":"agent","data":{"type":"thinking_delta","delta":" ="},"timestamp":1783290585337}
+{"id":96,"event":"agent","data":{"type":"thinking_delta","delta":" closer"},"timestamp":1783290585354}
+{"id":97,"event":"agent","data":{"type":"thinking_delta","delta":" to opponent"},"timestamp":1783290585371}
+{"id":98,"event":"agent","data":{"type":"thinking_delta","delta":" goal, defensive"},"timestamp":1783290585389}
+{"id":99,"event":"agent","data":{"type":"thinking_delta","delta":" third = closer to"},"timestamp":1783290585405}
+{"id":100,"event":"agent","data":{"type":"thinking_delta","delta":" your goal)\n\nFor"},"timestamp":1783290585423}
+{"id":101,"event":"agent","data":{"type":"thinking_delta","delta":" a"},"timestamp":1783290585439}
+{"id":102,"event":"agent","data":{"type":"thinking_delta","delta":" retro"},"timestamp":1783290585457}
+{"id":103,"event":"agent","data":{"type":"thinking_delta","delta":" pixel"},"timestamp":1783290585473}
+{"id":104,"event":"agent","data":{"type":"thinking_delta","delta":" aesthetic"},"timestamp":1783290585491}
+{"id":105,"event":"agent","data":{"type":"thinking_delta","delta":", I should"},"timestamp":1783290585522}
+{"id":106,"event":"agent","data":{"type":"thinking_delta","delta":" mock"},"timestamp":1783290585543}
+{"id":107,"event":"agent","data":{"type":"thinking_delta","delta":" these up"},"timestamp":1783290585558}
+{"id":108,"event":"agent","data":{"type":"thinking_delta","delta":" as ASCII"},"timestamp":1783290585580}
+{"id":109,"event":"agent","data":{"type":"thinking_delta","delta":"/text"},"timestamp":1783290585592}
+{"id":110,"event":"agent","data":{"type":"thinking_delta","delta":" diagrams"},"timestamp":1783290585610}
+{"id":111,"event":"agent","data":{"type":"thinking_delta","delta":" since"},"timestamp":1783290585625}
+{"id":112,"event":"agent","data":{"type":"thinking_delta","delta":" I can't generate"},"timestamp":1783290585648}
+{"id":113,"event":"agent","data":{"type":"thinking_delta","delta":" images.\n\n"},"timestamp":1783290585660}
+{"id":114,"event":"agent","data":{"type":"thinking_delta","delta":"Let me think about"},"timestamp":1783290585677}
+{"id":115,"event":"agent","data":{"type":"thinking_delta","delta":" 3 distinct"},"timestamp":1783290585694}
+{"id":116,"event":"agent","data":{"type":"thinking_delta","delta":" approaches:\n\n**Option"},"timestamp":1783290585712}
+{"id":117,"event":"agent","data":{"type":"thinking_delta","delta":" A: Classic Passing"},"timestamp":1783290585728}
+{"id":118,"event":"agent","data":{"type":"thinking_delta","delta":" Network**\n"},"timestamp":1783290585745}
+{"id":119,"event":"agent","data":{"type":"thinking_delta","delta":"- Top"},"timestamp":1783290585763}
+{"id":120,"event":"agent","data":{"type":"thinking_delta","delta":"-down pitch with"},"timestamp":1783290585780}
+{"id":121,"event":"agent","data":{"type":"thinking_delta","delta":" player dots"},"timestamp":1783290585797}
+{"id":122,"event":"agent","data":{"type":"thinking_delta","delta":" positioned"},"timestamp":1783290585813}
+{"id":123,"event":"agent","data":{"type":"thinking_delta","delta":" naturally"},"timestamp":1783290585831}
+{"id":124,"event":"agent","data":{"type":"thinking_delta","delta":"\n- Lines connecting"},"timestamp":1783290585856}
+{"id":125,"event":"agent","data":{"type":"thinking_delta","delta":" nearby"},"timestamp":1783290585865}
+{"id":126,"event":"agent","data":{"type":"thinking_delta","delta":" players (pass"},"timestamp":1783290585881}
+{"id":127,"event":"agent","data":{"type":"thinking_delta","delta":"ing lanes"},"timestamp":1783290585898}
+{"id":128,"event":"agent","data":{"type":"thinking_delta","delta":")\n- Phase"},"timestamp":1783290585915}
+{"id":129,"event":"agent","data":{"type":"thinking_delta","delta":" zone highlighted"},"timestamp":1783290585932}
+{"id":130,"event":"agent","data":{"type":"thinking_delta","delta":" as"},"timestamp":1783290585949}
+{"id":131,"event":"agent","data":{"type":"thinking_delta","delta":" a background"},"timestamp":1783290585967}
+{"id":132,"event":"agent","data":{"type":"thinking_delta","delta":" region"},"timestamp":1783290585986}
+{"id":133,"event":"agent","data":{"type":"thinking_delta","delta":"\n- Player dots"},"timestamp":1783290586001}
+{"id":134,"event":"agent","data":{"type":"thinking_delta","delta":" glow"},"timestamp":1783290586018}
+{"id":135,"event":"agent","data":{"type":"thinking_delta","delta":" when"},"timestamp":1783290586036}
+{"id":136,"event":"agent","data":{"type":"thinking_delta","delta":" assigned"},"timestamp":1783290586052}
+{"id":137,"event":"agent","data":{"type":"thinking_delta","delta":"**Option B:"},"timestamp":1783290586087}
+{"id":138,"event":"agent","data":{"type":"thinking_delta","delta":" Heat Map"},"timestamp":1783290586106}
+{"id":139,"event":"agent","data":{"type":"thinking_delta","delta":" Pass"},"timestamp":1783290586125}
+{"id":140,"event":"agent","data":{"type":"thinking_delta","delta":" Map**\n- Pitch"},"timestamp":1783290586143}
+{"id":141,"event":"agent","data":{"type":"thinking_delta","delta":" zones"},"timestamp":1783290586159}
+{"id":142,"event":"agent","data":{"type":"thinking_delta","delta":" colored"},"timestamp":1783290586177}
+{"id":143,"event":"agent","data":{"type":"thinking_delta","delta":" by"},"timestamp":1783290586197}
+{"id":144,"event":"agent","data":{"type":"thinking_delta","delta":" activity"},"timestamp":1783290586210}
+{"id":145,"event":"agent","data":{"type":"thinking_delta","delta":" intensity"},"timestamp":1783290586227}
+{"id":146,"event":"agent","data":{"type":"thinking_delta","delta":"\n- Player positions"},"timestamp":1783290586246}
+{"id":147,"event":"agent","data":{"type":"thinking_delta","delta":" shown"},"timestamp":1783290586261}
+{"id":148,"event":"agent","data":{"type":"thinking_delta","delta":" as labeled"},"timestamp":1783290586279}
+{"id":149,"event":"agent","data":{"type":"thinking_delta","delta":" tokens\n- Phase"},"timestamp":1783290586295}
+{"id":150,"event":"agent","data":{"type":"thinking_delta","delta":" zone"},"timestamp":1783290586312}
+{"id":151,"event":"agent","data":{"type":"thinking_delta","delta":" is the"},"timestamp":1783290586329}
+{"id":152,"event":"agent","data":{"type":"thinking_delta","delta":" hottest"},"timestamp":1783290586347}
+{"id":153,"event":"agent","data":{"type":"thinking_delta","delta":" area\n- Lines"},"timestamp":1783290586363}
+{"id":154,"event":"agent","data":{"type":"thinking_delta","delta":" show"},"timestamp":1783290586380}
+{"id":155,"event":"agent","data":{"type":"thinking_delta","delta":" passing"},"timestamp":1783290586397}
+{"id":156,"event":"agent","data":{"type":"thinking_delta","delta":" connections with"},"timestamp":1783290586414}
+{"id":157,"event":"agent","data":{"type":"thinking_delta","delta":" thickness ="},"timestamp":1783290586431}
+{"id":158,"event":"agent","data":{"type":"thinking_delta","delta":" strength"},"timestamp":1783290586449}
+{"id":159,"event":"agent","data":{"type":"thinking_delta","delta":"\n\n**Option C"},"timestamp":1783290586465}
+{"id":160,"event":"agent","data":{"type":"thinking_delta","delta":": Const"},"timestamp":1783290586483}
+{"id":161,"event":"agent","data":{"type":"thinking_delta","delta":"ellation Pass"},"timestamp":1783290586499}
+{"id":162,"event":"agent","data":{"type":"thinking_delta","delta":" Map**\n- Dark"},"timestamp":1783290586517}
+{"id":163,"event":"agent","data":{"type":"thinking_delta","delta":" background like"},"timestamp":1783290586535}
+{"id":164,"event":"agent","data":{"type":"thinking_delta","delta":" a star"},"timestamp":1783290586560}
+{"id":165,"event":"agent","data":{"type":"thinking_delta","delta":" map"},"timestamp":1783290586567}
+{"id":166,"event":"agent","data":{"type":"thinking_delta","delta":"\n- Player positions"},"timestamp":1783290586584}
+{"id":167,"event":"agent","data":{"type":"thinking_delta","delta":" are glowing"},"timestamp":1783290586609}
+{"id":168,"event":"agent","data":{"type":"thinking_delta","delta":" nodes\n- Lines"},"timestamp":1783290586619}
+{"id":169,"event":"agent","data":{"type":"thinking_delta","delta":" between"},"timestamp":1783290586638}
+{"id":170,"event":"agent","data":{"type":"thinking_delta","delta":" them form"},"timestamp":1783290586654}
+{"id":171,"event":"agent","data":{"type":"thinking_delta","delta":" a constellation"},"timestamp":1783290586671}
+{"id":172,"event":"agent","data":{"type":"thinking_delta","delta":"/network\n- Phase"},"timestamp":1783290586688}
+{"id":173,"event":"agent","data":{"type":"thinking_delta","delta":" zone is a"},"timestamp":1783290586707}
+{"id":174,"event":"agent","data":{"type":"thinking_delta","delta":" neb"},"timestamp":1783290586722}
+{"id":175,"event":"agent","data":{"type":"thinking_delta","delta":"ula cloud"},"timestamp":1783290586740}
+{"id":176,"event":"agent","data":{"type":"thinking_delta","delta":"- Most"},"timestamp":1783290586774}
+{"id":177,"event":"agent","data":{"type":"thinking_delta","delta":" \"Bal"},"timestamp":1783290586790}
+{"id":178,"event":"agent","data":{"type":"thinking_delta","delta":"atro-like\" aesthetic"},"timestamp":1783290586808}
+{"id":179,"event":"agent","data":{"type":"thinking_delta","delta":"\n\nLet me create"},"timestamp":1783290586825}
+{"id":180,"event":"agent","data":{"type":"thinking_delta","delta":" ASCII"},"timestamp":1783290586849}
+{"id":181,"event":"agent","data":{"type":"thinking_delta","delta":" mockups for each"},"timestamp":1783290586860}
+{"id":182,"event":"agent","data":{"type":"thinking_delta","delta":"."},"timestamp":1783290586879}
+{"id":183,"event":"agent","data":{"type":"status","label":"streaming","ttftMs":12799},"timestamp":1783290586880}
+{"id":184,"event":"agent","data":{"type":"text_delta","delta":"Here are"},"timestamp":1783290586880}
+{"id":185,"event":"agent","data":{"type":"text_delta","delta":" three pass"},"timestamp":1783290586895}
+{"id":186,"event":"agent","data":{"type":"text_delta","delta":" map visualization"},"timestamp":1783290586912}
+{"id":187,"event":"agent","data":{"type":"text_delta","delta":" concepts,"},"timestamp":1783290586928}
+{"id":188,"event":"agent","data":{"type":"text_delta","delta":" each with a different"},"timestamp":1783290586945}
+{"id":189,"event":"agent","data":{"type":"text_delta","delta":" visual"},"timestamp":1783290586964}
+{"id":190,"event":"agent","data":{"type":"text_delta","delta":" language for"},"timestamp":1783290586981}
+{"id":191,"event":"agent","data":{"type":"text_delta","delta":" showing"},"timestamp":1783290586998}
+{"id":192,"event":"agent","data":{"type":"text_delta","delta":" player positions and passing"},"timestamp":1783290587015}
+{"id":193,"event":"agent","data":{"type":"text_delta","delta":" connections:\n\n---\n\n**"},"timestamp":1783290587032}
+{"id":194,"event":"agent","data":{"type":"text_delta","delta":"Option A — Classic"},"timestamp":1783290587050}
+{"id":195,"event":"agent","data":{"type":"text_delta","delta":" Passing Network**\n\nTraditional"},"timestamp":1783290587069}
+{"id":196,"event":"agent","data":{"type":"text_delta","delta":" football"},"timestamp":1783290587083}
+{"id":197,"event":"agent","data":{"type":"text_delta","delta":" analytics pass"},"timestamp":1783290587100}
+{"id":198,"event":"agent","data":{"type":"text_delta","delta":" map. Top"},"timestamp":1783290587120}
+{"id":199,"event":"agent","data":{"type":"text_delta","delta":"-down pitch,"},"timestamp":1783290587135}
+{"id":200,"event":"agent","data":{"type":"text_delta","delta":" player dots positioned"},"timestamp":1783290587151}
+{"id":201,"event":"agent","data":{"type":"text_delta","delta":" at"},"timestamp":1783290587168}
+{"id":202,"event":"agent","data":{"type":"text_delta","delta":" their natural zones"},"timestamp":1783290587187}
+{"id":203,"event":"agent","data":{"type":"text_delta","delta":", lines"},"timestamp":1783290587204}
+{"id":204,"event":"agent","data":{"type":"text_delta","delta":" connecting"},"timestamp":1783290587222}
+{"id":205,"event":"agent","data":{"type":"text_delta","delta":" them"},"timestamp":1783290587243}
+{"id":206,"event":"agent","data":{"type":"text_delta","delta":" ("},"timestamp":1783290587258}
+{"id":207,"event":"agent","data":{"type":"text_delta","delta":"thickness"},"timestamp":1783290587275}
+{"id":208,"event":"agent","data":{"type":"text_delta","delta":" = pass"},"timestamp":1783290587340}
+{"id":209,"event":"agent","data":{"type":"text_delta","delta":" frequency). Phase zone"},"timestamp":1783290587356}
+{"id":210,"event":"agent","data":{"type":"text_delta","delta":" is a background"},"timestamp":1783290587372}
+{"id":211,"event":"agent","data":{"type":"text_delta","delta":" glow"},"timestamp":1783290587390}
+{"id":212,"event":"agent","data":{"type":"text_delta","delta":". Most"},"timestamp":1783290587408}
+{"id":213,"event":"agent","data":{"type":"text_delta","delta":" recognizable"},"timestamp":1783290587427}
+{"id":214,"event":"agent","data":{"type":"text_delta","delta":" to football fans"},"timestamp":1783290587444}
+{"id":215,"event":"agent","data":{"type":"text_delta","delta":".\n\n```\n┌"},"timestamp":1783290587462}
+{"id":216,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783290587482}
+{"id":217,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783290587499}
+{"id":218,"event":"agent","data":{"type":"text_delta","delta":"──────┐\n"},"timestamp":1783290587520}
+{"id":219,"event":"agent","data":{"type":"text_delta","delta":"│ "},"timestamp":1783290587535}
+{"id":220,"event":"agent","data":{"type":"text_delta","delta":" MATCH 1 ·"},"timestamp":1783290587553}
+{"id":221,"event":"agent","data":{"type":"text_delta","delta":" R1 · Phase"},"timestamp":1783290587571}
+{"id":222,"event":"agent","data":{"type":"text_delta","delta":" 2/6"},"timestamp":1783290587586}
+{"id":223,"event":"agent","data":{"type":"text_delta","delta":" TIKI-T"},"timestamp":1783290587613}
+{"id":224,"event":"agent","data":{"type":"text_delta","delta":"AKA             "},"timestamp":1783290587631}
+{"id":225,"event":"agent","data":{"type":"text_delta","delta":" Score: 4"},"timestamp":1783290587649}
+{"id":226,"event":"agent","data":{"type":"text_delta","delta":"87       "},"timestamp":1783290587669}
+{"id":227,"event":"agent","data":{"type":"text_delta","delta":" │\n├"},"timestamp":1783290587688}
+{"id":228,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783290587708}
+{"id":229,"event":"agent","data":{"type":"text_delta","delta":"────"},"timestamp":1783290587725}
+{"id":230,"event":"agent","data":{"type":"text_delta","delta":"──"},"timestamp":1783290587745}
+{"id":231,"event":"agent","data":{"type":"text_delta","delta":"┬────────────────────────"},"timestamp":1783290587763}
+{"id":232,"event":"agent","data":{"type":"text_delta","delta":"───────┤"},"timestamp":1783290587780}
+{"id":233,"event":"agent","data":{"type":"text_delta","delta":"\n│                                      │"},"timestamp":1783290587798}
+{"id":234,"event":"agent","data":{"type":"text_delta","delta":"                               │\n│"},"timestamp":1783290587816}
+{"id":235,"event":"agent","data":{"type":"text_delta","delta":"        "},"timestamp":1783290587835}
+{"id":236,"event":"agent","data":{"type":"text_delta","delta":" YOUR GO"},"timestamp":1783290587852}
+{"id":237,"event":"agent","data":{"type":"text_delta","delta":"AL                   "},"timestamp":1783290587870}
+{"id":238,"event":"agent","data":{"type":"text_delta","delta":" │  PHASE"},"timestamp":1783290587888}
+{"id":239,"event":"agent","data":{"type":"text_delta","delta":": TIKI"},"timestamp":1783290587906}
+{"id":240,"event":"agent","data":{"type":"text_delta","delta":"-TAKA           "},"timestamp":1783290587925}
+{"id":241,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783290587944}
+{"id":242,"event":"agent","data":{"type":"text_delta","delta":" ┌────────────────"},"timestamp":1783290587960}
+{"id":243,"event":"agent","data":{"type":"text_delta","delta":"────"},"timestamp":1783290587977}
+{"id":244,"event":"agent","data":{"type":"text_delta","delta":"──"},"timestamp":1783290587997}
+{"id":245,"event":"agent","data":{"type":"text_delta","delta":"┐         "},"timestamp":1783290588015}
+{"id":246,"event":"agent","data":{"type":"text_delta","delta":" │  Weight:"},"timestamp":1783290588044}
+{"id":247,"event":"agent","data":{"type":"text_delta","delta":" PAS  · "},"timestamp":1783290588050}
+{"id":248,"event":"agent","data":{"type":"text_delta","delta":" Slots: 3"},"timestamp":1783290588066}
+{"id":249,"event":"agent","data":{"type":"text_delta","delta":"    │\n│"},"timestamp":1783290588082}
+{"id":250,"event":"agent","data":{"type":"text_delta","delta":"    │                     "},"timestamp":1783290588100}
+{"id":251,"event":"agent","data":{"type":"text_delta","delta":" │          │                              "},"timestamp":1783290588119}
+{"id":252,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783290588134}
+{"id":253,"event":"agent","data":{"type":"text_delta","delta":" │        "},"timestamp":1783290588151}
+{"id":254,"event":"agent","data":{"type":"text_delta","delta":" ┌─"},"timestamp":1783290588167}
+{"id":255,"event":"agent","data":{"type":"text_delta","delta":"┐          │         "},"timestamp":1783290588191}
+{"id":256,"event":"agent","data":{"type":"text_delta","delta":" │  SLOTS"},"timestamp":1783290588208}
+{"id":257,"event":"agent","data":{"type":"text_delta","delta":"                        │\n│"},"timestamp":1783290588224}
+{"id":258,"event":"agent","data":{"type":"text_delta","delta":"    │         │"},"timestamp":1783290588241}
+{"id":259,"event":"agent","data":{"type":"text_delta","delta":"GK│ ←"},"timestamp":1783290588258}
+{"id":260,"event":"agent","data":{"type":"text_delta","delta":" assigned"},"timestamp":1783290588276}
+{"id":261,"event":"agent","data":{"type":"text_delta","delta":"         "},"timestamp":1783290588292}
+{"id":262,"event":"agent","data":{"type":"text_delta","delta":" │  ┌"},"timestamp":1783290588310}
+{"id":263,"event":"agent","data":{"type":"text_delta","delta":"────────"},"timestamp":1783290588325}
+{"id":264,"event":"agent","data":{"type":"text_delta","delta":"┐ ┌────────"},"timestamp":1783290588345}
+{"id":265,"event":"agent","data":{"type":"text_delta","delta":"┐     "},"timestamp":1783290588359}
+{"id":266,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783290588375}
+{"id":267,"event":"agent","data":{"type":"text_delta","delta":" │         "},"timestamp":1783290588394}
+{"id":268,"event":"agent","data":{"type":"text_delta","delta":"└─┘         "},"timestamp":1783290588411}
+{"id":269,"event":"agent","data":{"type":"text_delta","delta":" │         "},"timestamp":1783290588447}
+{"id":270,"event":"agent","data":{"type":"text_delta","delta":" │  │ CB"},"timestamp":1783290588448}
+{"id":271,"event":"agent","data":{"type":"text_delta","delta":" ✓ "},"timestamp":1783290588461}
+{"id":272,"event":"agent","data":{"type":"text_delta","delta":"12│"},"timestamp":1783290588481}
+{"id":273,"event":"agent","data":{"type":"text_delta","delta":" │ CM"},"timestamp":1783290588497}
+{"id":274,"event":"agent","data":{"type":"text_delta","delta":" ✓ 8 │"},"timestamp":1783290588516}
+{"id":275,"event":"agent","data":{"type":"text_delta","delta":"      │\n│"},"timestamp":1783290588533}
+{"id":276,"event":"agent","data":{"type":"text_delta","delta":"    │    "},"timestamp":1783290588548}
+{"id":277,"event":"agent","data":{"type":"text_delta","delta":"╱                "},"timestamp":1783290588565}
+{"id":278,"event":"agent","data":{"type":"text_delta","delta":" │          │ "},"timestamp":1783290588581}
+{"id":279,"event":"agent","data":{"type":"text_delta","delta":" └────────┘"},"timestamp":1783290588619}
+{"id":280,"event":"agent","data":{"type":"text_delta","delta":" └────────┘"},"timestamp":1783290588635}
+{"id":281,"event":"agent","data":{"type":"text_delta","delta":"      │\n│"},"timestamp":1783290588655}
+{"id":282,"event":"agent","data":{"type":"text_delta","delta":"    │   "},"timestamp":1783290588671}
+{"id":283,"event":"agent","data":{"type":"text_delta","delta":"╱                 "},"timestamp":1783290588690}
+{"id":284,"event":"agent","data":{"type":"text_delta","delta":" │          │ "},"timestamp":1783290588711}
+{"id":285,"event":"agent","data":{"type":"text_delta","delta":" ┌────────┐"},"timestamp":1783290588725}
+{"id":286,"event":"agent","data":{"type":"text_delta","delta":"                 "},"timestamp":1783290588745}
+{"id":287,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783290588763}
+{"id":288,"event":"agent","data":{"type":"text_delta","delta":" │  "},"timestamp":1783290588779}
+{"id":289,"event":"agent","data":{"type":"text_delta","delta":"┌─┐  "},"timestamp":1783290588799}
+{"id":290,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783290588817}
+{"id":291,"event":"agent","data":{"type":"text_delta","delta":"╱╲"},"timestamp":1783290588833}
+{"id":292,"event":"agent","data":{"type":"text_delta","delta":"           "},"timestamp":1783290588850}
+{"id":293,"event":"agent","data":{"type":"text_delta","delta":" │          │ "},"timestamp":1783290588869}
+{"id":294,"event":"agent","data":{"type":"text_delta","delta":" │CAM"},"timestamp":1783290588887}
+{"id":295,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783290588905}
+{"id":296,"event":"agent","data":{"type":"text_delta","delta":" -  │ ←"},"timestamp":1783290588923}
+{"id":297,"event":"agent","data":{"type":"text_delta","delta":" tap"},"timestamp":1783290588941}
+{"id":298,"event":"agent","data":{"type":"text_delta","delta":" to fill   │"},"timestamp":1783290588959}
+{"id":299,"event":"agent","data":{"type":"text_delta","delta":"\n│    │"},"timestamp":1783290588978}
+{"id":300,"event":"agent","data":{"type":"text_delta","delta":"  │CB│"},"timestamp":1783290588996}
+{"id":301,"event":"agent","data":{"type":"text_delta","delta":"──╱ "},"timestamp":1783290589015}
+{"id":302,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783290589033}
+{"id":303,"event":"agent","data":{"type":"text_delta","delta":"╲          "},"timestamp":1783290589050}
+{"id":304,"event":"agent","data":{"type":"text_delta","delta":" │          │ "},"timestamp":1783290589070}
+{"id":305,"event":"agent","data":{"type":"text_delta","delta":" └────────┘"},"timestamp":1783290589088}
+{"id":306,"event":"agent","data":{"type":"text_delta","delta":"                  │\n│"},"timestamp":1783290589107}
+{"id":307,"event":"agent","data":{"type":"text_delta","delta":"    │  "},"timestamp":1783290589137}
+{"id":308,"event":"agent","data":{"type":"text_delta","delta":"└─┘ "},"timestamp":1783290589146}
+{"id":309,"event":"agent","data":{"type":"text_delta","delta":"╱   "},"timestamp":1783290589161}
+{"id":310,"event":"agent","data":{"type":"text_delta","delta":" ╲          │"},"timestamp":1783290589180}
+{"id":311,"event":"agent","data":{"type":"text_delta","delta":"          │                               │"},"timestamp":1783290589200}
+{"id":312,"event":"agent","data":{"type":"text_delta","delta":"\n│    │"},"timestamp":1783290589216}
+{"id":313,"event":"agent","data":{"type":"text_delta","delta":"     "},"timestamp":1783290589234}
+{"id":314,"event":"agent","data":{"type":"text_delta","delta":" ╱  "},"timestamp":1783290589251}
+{"id":315,"event":"agent","data":{"type":"text_delta","delta":"┌─┐ "},"timestamp":1783290589271}
+{"id":316,"event":"agent","data":{"type":"text_delta","delta":"╲        │         "},"timestamp":1783290589287}
+{"id":317,"event":"agent","data":{"type":"text_delta","delta":" │  ▼"},"timestamp":1783290589311}
+{"id":318,"event":"agent","data":{"type":"text_delta","delta":" 5 SYNER"},"timestamp":1783290589323}
+{"id":319,"event":"agent","data":{"type":"text_delta","delta":"GIES             "},"timestamp":1783290589342}
+{"id":320,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783290589360}
+{"id":321,"event":"agent","data":{"type":"text_delta","delta":" │     ╱"},"timestamp":1783290589379}
+{"id":322,"event":"agent","data":{"type":"text_delta","delta":"   │CM"},"timestamp":1783290589395}
+{"id":323,"event":"agent","data":{"type":"text_delta","delta":"│──"},"timestamp":1783290589414}
+{"id":324,"event":"agent","data":{"type":"text_delta","delta":"╲──"},"timestamp":1783290589432}
+{"id":325,"event":"agent","data":{"type":"text_delta","delta":"┐"},"timestamp":1783290589450}
+{"id":326,"event":"agent","data":{"type":"text_delta","delta":"   │          │"},"timestamp":1783290589467}
+{"id":327,"event":"agent","data":{"type":"text_delta","delta":"  ─────────"},"timestamp":1783290589486}
+{"id":328,"event":"agent","data":{"type":"text_delta","delta":"────"},"timestamp":1783290589504}
+{"id":329,"event":"agent","data":{"type":"text_delta","delta":"              "},"timestamp":1783290589522}
+{"id":330,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783290589540}
+{"id":331,"event":"agent","data":{"type":"text_delta","delta":" │       "},"timestamp":1783290589559}
+{"id":332,"event":"agent","data":{"type":"text_delta","delta":" ╲"},"timestamp":1783290589577}
+{"id":333,"event":"agent","data":{"type":"text_delta","delta":"└"},"timestamp":1783290589594}
+{"id":334,"event":"agent","data":{"type":"text_delta","delta":"─┘   "},"timestamp":1783290589612}
+{"id":335,"event":"agent","data":{"type":"text_delta","delta":" │"},"timestamp":1783290589630}
+{"id":336,"event":"agent","data":{"type":"text_delta","delta":"  │ "},"timestamp":1783290589649}
+{"id":337,"event":"agent","data":{"type":"text_delta","delta":" │          │ "},"timestamp":1783290589668}
+{"id":338,"event":"agent","data":{"type":"text_delta","delta":" Target: 5"},"timestamp":1783290589687}
+{"id":339,"event":"agent","data":{"type":"text_delta","delta":"50 "},"timestamp":1783290589704}
+{"id":340,"event":"agent","data":{"type":"text_delta","delta":" Need"},"timestamp":1783290589723}
+{"id":341,"event":"agent","data":{"type":"text_delta","delta":": +"},"timestamp":1783290589740}
+{"id":342,"event":"agent","data":{"type":"text_delta","delta":"63     "},"timestamp":1783290589762}
+{"id":343,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783290589776}
+{"id":344,"event":"agent","data":{"type":"text_delta","delta":" │         ╲"},"timestamp":1783290589796}
+{"id":345,"event":"agent","data":{"type":"text_delta","delta":"  ┌─"},"timestamp":1783290589813}
+{"id":346,"event":"agent","data":{"type":"text_delta","delta":"┐ │"},"timestamp":1783290589831}
+{"id":347,"event":"agent","data":{"type":"text_delta","delta":"  │  │"},"timestamp":1783290589849}
+{"id":348,"event":"agent","data":{"type":"text_delta","delta":"          │                               │"},"timestamp":1783290589866}
+{"id":349,"event":"agent","data":{"type":"text_delta","delta":"\n│    │"},"timestamp":1783290589884}
+{"id":350,"event":"agent","data":{"type":"text_delta","delta":"          "},"timestamp":1783290589902}
+{"id":351,"event":"agent","data":{"type":"text_delta","delta":"╲─"},"timestamp":1783290589926}
+{"id":352,"event":"agent","data":{"type":"text_delta","delta":"│"},"timestamp":1783290589941}
+{"id":353,"event":"agent","data":{"type":"text_delta","delta":"CAM│──┘"},"timestamp":1783290589957}
+{"id":354,"event":"agent","data":{"type":"text_delta","delta":"  │         "},"timestamp":1783290589978}
+{"id":355,"event":"agent","data":{"type":"text_delta","delta":" │  [ SUB"},"timestamp":1783290589993}
+{"id":356,"event":"agent","data":{"type":"text_delta","delta":"MIT PHASE ]"},"timestamp":1783290590012}
+{"id":357,"event":"agent","data":{"type":"text_delta","delta":"            "},"timestamp":1783290590028}
+{"id":358,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783290590047}
+{"id":359,"event":"agent","data":{"type":"text_delta","delta":" │            "},"timestamp":1783290590068}
+{"id":360,"event":"agent","data":{"type":"text_delta","delta":"└─┘     "},"timestamp":1783290590086}
+{"id":361,"event":"agent","data":{"type":"text_delta","delta":" │         "},"timestamp":1783290590101}
+{"id":362,"event":"agent","data":{"type":"text_delta","delta":" │                               │\n"},"timestamp":1783290590119}
+{"id":363,"event":"agent","data":{"type":"text_delta","delta":"│    │  "},"timestamp":1783290590184}
+{"id":364,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783290590198}
+{"id":365,"event":"agent","data":{"type":"text_delta","delta":"▓"},"timestamp":1783290590216}
+{"id":366,"event":"agent","data":{"type":"text_delta","delta":"▓▓▓▓"},"timestamp":1783290590235}
+{"id":367,"event":"agent","data":{"type":"text_delta","delta":"▓▓▓▓"},"timestamp":1783290590252}
+{"id":368,"event":"agent","data":{"type":"text_delta","delta":"▓▓▓▓"},"timestamp":1783290590269}
+{"id":369,"event":"agent","data":{"type":"text_delta","delta":"▓▓▓ │"},"timestamp":1783290590287}
+{"id":370,"event":"agent","data":{"type":"text_delta","delta":"          │                              "},"timestamp":1783290590305}
+{"id":371,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783290590324}
+{"id":372,"event":"agent","data":{"type":"text_delta","delta":" │   ▓"},"timestamp":1783290590343}
+{"id":373,"event":"agent","data":{"type":"text_delta","delta":" PH"},"timestamp":1783290590359}
+{"id":374,"event":"agent","data":{"type":"text_delta","delta":"ASE ZONE:"},"timestamp":1783290590377}
+{"id":375,"event":"agent","data":{"type":"text_delta","delta":" MID"},"timestamp":1783290590395}
+{"id":376,"event":"agent","data":{"type":"text_delta","delta":"▓"},"timestamp":1783290590414}
+{"id":377,"event":"agent","data":{"type":"text_delta","delta":"         "},"timestamp":1783290590432}
+{"id":378,"event":"agent","data":{"type":"text_delta","delta":" │                               │\n"},"timestamp":1783290590450}
+{"id":379,"event":"agent","data":{"type":"text_delta","delta":"│    │  "},"timestamp":1783290590469}
+{"id":380,"event":"agent","data":{"type":"text_delta","delta":" ▓▓▓"},"timestamp":1783290590486}
+{"id":381,"event":"agent","data":{"type":"text_delta","delta":"▓▓▓▓"},"timestamp":1783290590504}
+{"id":382,"event":"agent","data":{"type":"text_delta","delta":"▓▓▓▓"},"timestamp":1783290590523}
+{"id":383,"event":"agent","data":{"type":"text_delta","delta":"▓▓▓▓"},"timestamp":1783290590539}
+{"id":384,"event":"agent","data":{"type":"text_delta","delta":"▓ │"},"timestamp":1783290590557}
+{"id":385,"event":"agent","data":{"type":"text_delta","delta":"          │                               │"},"timestamp":1783290590575}
+{"id":386,"event":"agent","data":{"type":"text_delta","delta":"\n│    "},"timestamp":1783290590594}
+{"id":387,"event":"agent","data":{"type":"text_delta","delta":"└────────────────────"},"timestamp":1783290590614}
+{"id":388,"event":"agent","data":{"type":"text_delta","delta":"──┘          │"},"timestamp":1783290590636}
+{"id":389,"event":"agent","data":{"type":"text_delta","delta":"                               │\n│"},"timestamp":1783290590651}
+{"id":390,"event":"agent","data":{"type":"text_delta","delta":"         OPPONENT GO"},"timestamp":1783290590669}
+{"id":391,"event":"agent","data":{"type":"text_delta","delta":"AL                │                              "},"timestamp":1783290590688}
+{"id":392,"event":"agent","data":{"type":"text_delta","delta":" │\n│                                     "},"timestamp":1783290590705}
+{"id":393,"event":"agent","data":{"type":"text_delta","delta":" │                               │\n"},"timestamp":1783290590725}
+{"id":394,"event":"agent","data":{"type":"text_delta","delta":"├────────────────────────"},"timestamp":1783290590743}
+{"id":395,"event":"agent","data":{"type":"text_delta","delta":"──────────────┴"},"timestamp":1783290590761}
+{"id":396,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────"},"timestamp":1783290590777}
+{"id":397,"event":"agent","data":{"type":"text_delta","delta":"───┤\n"},"timestamp":1783290590797}
+{"id":398,"event":"agent","data":{"type":"text_delta","delta":"│ "},"timestamp":1783290590815}
+{"id":399,"event":"agent","data":{"type":"text_delta","delta":" Persistent: Clinical Edge"},"timestamp":1783290590833}
+{"id":400,"event":"agent","data":{"type":"text_delta","delta":" +5 · Over"},"timestamp":1783290590850}
+{"id":401,"event":"agent","data":{"type":"text_delta","delta":"load +10"},"timestamp":1783290590868}
+{"id":402,"event":"agent","data":{"type":"text_delta","delta":"                       "},"timestamp":1783290590887}
+{"id":403,"event":"agent","data":{"type":"text_delta","delta":" │\n└"},"timestamp":1783290590904}
+{"id":404,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783290590922}
+{"id":405,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783290590940}
+{"id":406,"event":"agent","data":{"type":"text_delta","delta":"──────┘\n\n"},"timestamp":1783290590958}
+{"id":407,"event":"agent","data":{"type":"text_delta","delta":"Lines"},"timestamp":1783290590976}
+{"id":408,"event":"agent","data":{"type":"text_delta","delta":" ="},"timestamp":1783290590994}
+{"id":409,"event":"agent","data":{"type":"text_delta","delta":" passing connections"},"timestamp":1783290591013}
+{"id":410,"event":"agent","data":{"type":"text_delta","delta":" ("},"timestamp":1783290591032}
+{"id":411,"event":"agent","data":{"type":"text_delta","delta":"──"},"timestamp":1783290591047}
+{"id":412,"event":"agent","data":{"type":"text_delta","delta":" thick"},"timestamp":1783290591064}
+{"id":413,"event":"agent","data":{"type":"text_delta","delta":" = strong link"},"timestamp":1783290591083}
+{"id":414,"event":"agent","data":{"type":"text_delta","delta":", "},"timestamp":1783290591101}
+{"id":415,"event":"agent","data":{"type":"text_delta","delta":"╱ thin = weak"},"timestamp":1783290591119}
+{"id":416,"event":"agent","data":{"type":"text_delta","delta":")\n"},"timestamp":1783290591136}
+{"id":417,"event":"agent","data":{"type":"text_delta","delta":"Dots = player"},"timestamp":1783290591155}
+{"id":418,"event":"agent","data":{"type":"text_delta","delta":" positions (filled"},"timestamp":1783290591288}
+{"id":419,"event":"agent","data":{"type":"text_delta","delta":" = assigned, hollow"},"timestamp":1783290591290}
+{"id":420,"event":"agent","data":{"type":"text_delta","delta":" = slot"},"timestamp":1783290591294}
+{"id":421,"event":"agent","data":{"type":"text_delta","delta":" to"},"timestamp":1783290591297}
+{"id":422,"event":"agent","data":{"type":"text_delta","delta":" fill)\n"},"timestamp":1783290591300}
+{"id":423,"event":"agent","data":{"type":"text_delta","delta":"Phase"},"timestamp":1783290591303}
+{"id":424,"event":"agent","data":{"type":"text_delta","delta":" zone = background"},"timestamp":1783290591304}
+{"id":425,"event":"agent","data":{"type":"text_delta","delta":" highlight showing"},"timestamp":1783290591304}
+{"id":426,"event":"agent","data":{"type":"text_delta","delta":" where the action happens"},"timestamp":1783290591322}
+{"id":427,"event":"agent","data":{"type":"text_delta","delta":"\n```\n\n**"},"timestamp":1783290591338}
+{"id":428,"event":"agent","data":{"type":"text_delta","delta":"Pros:** Instant"},"timestamp":1783290591352}
+{"id":429,"event":"agent","data":{"type":"text_delta","delta":"ly recognizable to anyone"},"timestamp":1783290591373}
+{"id":430,"event":"agent","data":{"type":"text_delta","delta":" who's"},"timestamp":1783290591388}
+{"id":431,"event":"agent","data":{"type":"text_delta","delta":" seen"},"timestamp":1783290591407}
+{"id":432,"event":"agent","data":{"type":"text_delta","delta":" a"},"timestamp":1783290591426}
+{"id":433,"event":"agent","data":{"type":"text_delta","delta":" football pass"},"timestamp":1783290591442}
+{"id":434,"event":"agent","data":{"type":"text_delta","delta":" map. Lines"},"timestamp":1783290591459}
+{"id":435,"event":"agent","data":{"type":"text_delta","delta":" show tactical"},"timestamp":1783290591477}
+{"id":436,"event":"agent","data":{"type":"text_delta","delta":" shape"},"timestamp":1783290591496}
+{"id":437,"event":"agent","data":{"type":"text_delta","delta":"."},"timestamp":1783290591512}
+{"id":438,"event":"agent","data":{"type":"text_delta","delta":" Fam"},"timestamp":1783290591531}
+{"id":439,"event":"agent","data":{"type":"text_delta","delta":"iliar visual"},"timestamp":1783290591548}
+{"id":440,"event":"agent","data":{"type":"text_delta","delta":" language.\n**Cons"},"timestamp":1783290591566}
+{"id":441,"event":"agent","data":{"type":"text_delta","delta":":** Lines can get"},"timestamp":1783290591583}
+{"id":442,"event":"agent","data":{"type":"text_delta","delta":" messy"},"timestamp":1783290591602}
+{"id":443,"event":"agent","data":{"type":"text_delta","delta":" with"},"timestamp":1783290591620}
+{"id":444,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783290591639}
+{"id":445,"event":"agent","data":{"type":"text_delta","delta":"10"},"timestamp":1783290591655}
+{"id":446,"event":"agent","data":{"type":"text_delta","delta":"+ players. Static"},"timestamp":1783290591673}
+{"id":447,"event":"agent","data":{"type":"text_delta","delta":" —"},"timestamp":1783290591691}
+{"id":448,"event":"agent","data":{"type":"text_delta","delta":" doesn't show phase"},"timestamp":1783290591709}
+{"id":449,"event":"agent","data":{"type":"text_delta","delta":" progression"},"timestamp":1783290591727}
+{"id":450,"event":"agent","data":{"type":"text_delta","delta":". Needs careful"},"timestamp":1783290591747}
+{"id":451,"event":"agent","data":{"type":"text_delta","delta":" positioning to avoid"},"timestamp":1783290591765}
+{"id":452,"event":"agent","data":{"type":"text_delta","delta":" overlap.\n\n---\n\n**"},"timestamp":1783290591784}
+{"id":453,"event":"agent","data":{"type":"text_delta","delta":"Option B — Zone"},"timestamp":1783290591801}
+{"id":454,"event":"agent","data":{"type":"text_delta","delta":" Pass"},"timestamp":1783290591819}
+{"id":455,"event":"agent","data":{"type":"text_delta","delta":" Map with Flow"},"timestamp":1783290591838}
+{"id":456,"event":"agent","data":{"type":"text_delta","delta":" Lines**\n\nPitch"},"timestamp":1783290591862}
+{"id":457,"event":"agent","data":{"type":"text_delta","delta":" divided"},"timestamp":1783290591874}
+{"id":458,"event":"agent","data":{"type":"text_delta","delta":" into a"},"timestamp":1783290591890}
+{"id":459,"event":"agent","data":{"type":"text_delta","delta":" grid ("},"timestamp":1783290591908}
+{"id":460,"event":"agent","data":{"type":"text_delta","delta":"3"},"timestamp":1783290591926}
+{"id":461,"event":"agent","data":{"type":"text_delta","delta":"×4 or"},"timestamp":1783290591944}
+{"id":462,"event":"agent","data":{"type":"text_delta","delta":" 4×"},"timestamp":1783290591962}
+{"id":463,"event":"agent","data":{"type":"text_delta","delta":"5). Each cell"},"timestamp":1783290591982}
+{"id":464,"event":"agent","data":{"type":"text_delta","delta":" shows"},"timestamp":1783290591998}
+{"id":465,"event":"agent","data":{"type":"text_delta","delta":" the dominant"},"timestamp":1783290592016}
+{"id":466,"event":"agent","data":{"type":"text_delta","delta":" position"},"timestamp":1783290592034}
+{"id":467,"event":"agent","data":{"type":"text_delta","delta":" for"},"timestamp":1783290592051}
+{"id":468,"event":"agent","data":{"type":"text_delta","delta":" that zone. Phase"},"timestamp":1783290592069}
+{"id":469,"event":"agent","data":{"type":"text_delta","delta":" zone is the"},"timestamp":1783290592087}
+{"id":470,"event":"agent","data":{"type":"text_delta","delta":" highlighted"},"timestamp":1783290592105}
+{"id":471,"event":"agent","data":{"type":"text_delta","delta":" row"},"timestamp":1783290592124}
+{"id":472,"event":"agent","data":{"type":"text_delta","delta":"/column. Flow"},"timestamp":1783290592141}
+{"id":473,"event":"agent","data":{"type":"text_delta","delta":" arrows"},"timestamp":1783290592159}
+{"id":474,"event":"agent","data":{"type":"text_delta","delta":" show passing"},"timestamp":1783290592177}
+{"id":475,"event":"agent","data":{"type":"text_delta","delta":" direction. Player names"},"timestamp":1783290592194}
+{"id":476,"event":"agent","data":{"type":"text_delta","delta":" appear in"},"timestamp":1783290592212}
+{"id":477,"event":"agent","data":{"type":"text_delta","delta":" their zone"},"timestamp":1783290592230}
+{"id":478,"event":"agent","data":{"type":"text_delta","delta":" when"},"timestamp":1783290592248}
+{"id":479,"event":"agent","data":{"type":"text_delta","delta":" assigned. More structured"},"timestamp":1783290592276}
+{"id":480,"event":"agent","data":{"type":"text_delta","delta":" than Option"},"timestamp":1783290592285}
+{"id":481,"event":"agent","data":{"type":"text_delta","delta":" A.\n\n```\n"},"timestamp":1783290592302}
+{"id":482,"event":"agent","data":{"type":"text_delta","delta":"┌────────────────────────"},"timestamp":1783290592321}
+{"id":483,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783290592338}
+{"id":484,"event":"agent","data":{"type":"text_delta","delta":"──────────────┐"},"timestamp":1783290592358}
+{"id":485,"event":"agent","data":{"type":"text_delta","delta":"\n│  MATCH"},"timestamp":1783290592375}
+{"id":486,"event":"agent","data":{"type":"text_delta","delta":" 1 · R"},"timestamp":1783290592392}
+{"id":487,"event":"agent","data":{"type":"text_delta","delta":"1 · Phase "},"timestamp":1783290592448}
+{"id":488,"event":"agent","data":{"type":"text_delta","delta":"2/6 T"},"timestamp":1783290592469}
+{"id":489,"event":"agent","data":{"type":"text_delta","delta":"IKI-TAK"},"timestamp":1783290592487}
+{"id":490,"event":"agent","data":{"type":"text_delta","delta":"A              Score:"},"timestamp":1783290592506}
+{"id":491,"event":"agent","data":{"type":"text_delta","delta":" 487"},"timestamp":1783290592525}
+{"id":492,"event":"agent","data":{"type":"text_delta","delta":"        │\n├"},"timestamp":1783290592545}
+{"id":493,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783290592568}
+{"id":494,"event":"agent","data":{"type":"text_delta","delta":"──────┬────────"},"timestamp":1783290592583}
+{"id":495,"event":"agent","data":{"type":"text_delta","delta":"──────────────────────"},"timestamp":1783290592602}
+{"id":496,"event":"agent","data":{"type":"text_delta","delta":"─┤\n│"},"timestamp":1783290592621}
+{"id":497,"event":"agent","data":{"type":"text_delta","delta":"                                      │                               │"},"timestamp":1783290592644}
+{"id":498,"event":"agent","data":{"type":"text_delta","delta":"\n│         YOUR"},"timestamp":1783290592665}
+{"id":499,"event":"agent","data":{"type":"text_delta","delta":" GOAL                    │"},"timestamp":1783290592684}
+{"id":500,"event":"agent","data":{"type":"text_delta","delta":"  PHASE:"},"timestamp":1783290592704}
+{"id":501,"event":"agent","data":{"type":"text_delta","delta":" TIKI-T"},"timestamp":1783290592722}
+{"id":502,"event":"agent","data":{"type":"text_delta","delta":"AKA            │"},"timestamp":1783290592741}
+{"id":503,"event":"agent","data":{"type":"text_delta","delta":"\n│                                     "},"timestamp":1783290592760}
+{"id":504,"event":"agent","data":{"type":"text_delta","delta":" │  Weight"},"timestamp":1783290592779}
+{"id":505,"event":"agent","data":{"type":"text_delta","delta":": PAS  ·"},"timestamp":1783290592798}
+{"id":506,"event":"agent","data":{"type":"text_delta","delta":"  Slots: "},"timestamp":1783290592818}
+{"id":507,"event":"agent","data":{"type":"text_delta","delta":"3    │\n"},"timestamp":1783290592836}
+{"id":508,"event":"agent","data":{"type":"text_delta","delta":"│   "},"timestamp":1783290592855}
+{"id":509,"event":"agent","data":{"type":"text_delta","delta":" ┌──────"},"timestamp":1783290592875}
+{"id":510,"event":"agent","data":{"type":"text_delta","delta":"─"},"timestamp":1783290592894}
+{"id":511,"event":"agent","data":{"type":"text_delta","delta":"┬───────"},"timestamp":1783290592913}
+{"id":512,"event":"agent","data":{"type":"text_delta","delta":"┬───────"},"timestamp":1783290592933}
+{"id":513,"event":"agent","data":{"type":"text_delta","delta":"┬───────"},"timestamp":1783290592952}
+{"id":514,"event":"agent","data":{"type":"text_delta","delta":"┐ │"},"timestamp":1783290592971}
+{"id":515,"event":"agent","data":{"type":"text_delta","delta":"                               │\n│"},"timestamp":1783290592990}
+{"id":516,"event":"agent","data":{"type":"text_delta","delta":"    │      "},"timestamp":1783290593011}
+{"id":517,"event":"agent","data":{"type":"text_delta","delta":" │       │ "},"timestamp":1783290593028}
+{"id":518,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783290593047}
+{"id":519,"event":"agent","data":{"type":"text_delta","delta":"┌──┐"},"timestamp":1783290593067}
+{"id":520,"event":"agent","data":{"type":"text_delta","delta":" │       │ │"},"timestamp":1783290593086}
+{"id":521,"event":"agent","data":{"type":"text_delta","delta":"  SLOTS                       "},"timestamp":1783290593105}
+{"id":522,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783290593124}
+{"id":523,"event":"agent","data":{"type":"text_delta","delta":" │  LW"},"timestamp":1783290593144}
+{"id":524,"event":"agent","data":{"type":"text_delta","delta":"   │  CAM"},"timestamp":1783290593163}
+{"id":525,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783290593181}
+{"id":526,"event":"agent","data":{"type":"text_delta","delta":" │  │"},"timestamp":1783290593200}
+{"id":527,"event":"agent","data":{"type":"text_delta","delta":"CM"},"timestamp":1783290593218}
+{"id":528,"event":"agent","data":{"type":"text_delta","delta":"│ │  RW"},"timestamp":1783290593238}
+{"id":529,"event":"agent","data":{"type":"text_delta","delta":"   │ │ "},"timestamp":1783290593259}
+{"id":530,"event":"agent","data":{"type":"text_delta","delta":" ┌────────"},"timestamp":1783290593277}
+{"id":531,"event":"agent","data":{"type":"text_delta","delta":"┐ ┌────────"},"timestamp":1783290593297}
+{"id":532,"event":"agent","data":{"type":"text_delta","delta":"┐      │\n"},"timestamp":1783290593317}
+{"id":533,"event":"agent","data":{"type":"text_delta","delta":"│    │      "},"timestamp":1783290593334}
+{"id":534,"event":"agent","data":{"type":"text_delta","delta":" │       │ "},"timestamp":1783290593356}
+{"id":535,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783290593374}
+{"id":536,"event":"agent","data":{"type":"text_delta","delta":"└──┘ │"},"timestamp":1783290593394}
+{"id":537,"event":"agent","data":{"type":"text_delta","delta":"       │ │ "},"timestamp":1783290593412}
+{"id":538,"event":"agent","data":{"type":"text_delta","delta":" │ CB ✓ "},"timestamp":1783290593431}
+{"id":539,"event":"agent","data":{"type":"text_delta","delta":"12│ │"},"timestamp":1783290593449}
+{"id":540,"event":"agent","data":{"type":"text_delta","delta":" CM ✓ 8"},"timestamp":1783290593467}
+{"id":541,"event":"agent","data":{"type":"text_delta","delta":" │      │\n"},"timestamp":1783290593484}
+{"id":542,"event":"agent","data":{"type":"text_delta","delta":"│    ├────"},"timestamp":1783290593503}
+{"id":543,"event":"agent","data":{"type":"text_delta","delta":"───┼────"},"timestamp":1783290593521}
+{"id":544,"event":"agent","data":{"type":"text_delta","delta":"───┼────"},"timestamp":1783290593539}
+{"id":545,"event":"agent","data":{"type":"text_delta","delta":"───┼────"},"timestamp":1783290593558}
+{"id":546,"event":"agent","data":{"type":"text_delta","delta":"───┤ │"},"timestamp":1783290593575}
+{"id":547,"event":"agent","data":{"type":"text_delta","delta":"  └────────"},"timestamp":1783290593596}
+{"id":548,"event":"agent","data":{"type":"text_delta","delta":"┘ └────────"},"timestamp":1783290593611}
+{"id":549,"event":"agent","data":{"type":"text_delta","delta":"┘      │\n"},"timestamp":1783290593630}
+{"id":550,"event":"agent","data":{"type":"text_delta","delta":"│    │      "},"timestamp":1783290593646}
+{"id":551,"event":"agent","data":{"type":"text_delta","delta":" │ "},"timestamp":1783290593663}
+{"id":552,"event":"agent","data":{"type":"text_delta","delta":"═"},"timestamp":1783290593682}
+{"id":553,"event":"agent","data":{"type":"text_delta","delta":"════"},"timestamp":1783290593699}
+{"id":554,"event":"agent","data":{"type":"text_delta","delta":"═╪"},"timestamp":1783290593716}
+{"id":555,"event":"agent","data":{"type":"text_delta","delta":"══════"},"timestamp":1783290593736}
+{"id":556,"event":"agent","data":{"type":"text_delta","delta":"═╪════"},"timestamp":1783290593756}
+{"id":557,"event":"agent","data":{"type":"text_delta","delta":"══"},"timestamp":1783290593770}
+{"id":558,"event":"agent","data":{"type":"text_delta","delta":" │ │  "},"timestamp":1783290593788}
+{"id":559,"event":"agent","data":{"type":"text_delta","delta":"┌────────┐                 "},"timestamp":1783290593817}
+{"id":560,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783290593824}
+{"id":561,"event":"agent","data":{"type":"text_delta","delta":" │  LB  "},"timestamp":1783290593843}
+{"id":562,"event":"agent","data":{"type":"text_delta","delta":" │ "},"timestamp":1783290593860}
+{"id":563,"event":"agent","data":{"type":"text_delta","delta":"▒"},"timestamp":1783290593879}
+{"id":564,"event":"agent","data":{"type":"text_delta","delta":"CM▒"},"timestamp":1783290593896}
+{"id":565,"event":"agent","data":{"type":"text_delta","delta":"▒▒"},"timestamp":1783290593913}
+{"id":566,"event":"agent","data":{"type":"text_delta","delta":"│▒▒▒"},"timestamp":1783290593932}
+{"id":567,"event":"agent","data":{"type":"text_delta","delta":"CAM"},"timestamp":1783290593948}
+{"id":568,"event":"agent","data":{"type":"text_delta","delta":"▒│"},"timestamp":1783290593967}
+{"id":569,"event":"agent","data":{"type":"text_delta","delta":"▒▒ CM"},"timestamp":1783290593984}
+{"id":570,"event":"agent","data":{"type":"text_delta","delta":"▒"},"timestamp":1783290594006}
+{"id":571,"event":"agent","data":{"type":"text_delta","delta":" │ │  │"},"timestamp":1783290594023}
+{"id":572,"event":"agent","data":{"type":"text_delta","delta":"CAM  - "},"timestamp":1783290594038}
+{"id":573,"event":"agent","data":{"type":"text_delta","delta":" │ ← tap to"},"timestamp":1783290594055}
+{"id":574,"event":"agent","data":{"type":"text_delta","delta":" fill   │\n"},"timestamp":1783290594074}
+{"id":575,"event":"agent","data":{"type":"text_delta","delta":"│    │      "},"timestamp":1783290594093}
+{"id":576,"event":"agent","data":{"type":"text_delta","delta":" │ ═══"},"timestamp":1783290594118}
+{"id":577,"event":"agent","data":{"type":"text_delta","delta":"═══╪══"},"timestamp":1783290594133}
+{"id":578,"event":"agent","data":{"type":"text_delta","delta":"═════╪"},"timestamp":1783290594151}
+{"id":579,"event":"agent","data":{"type":"text_delta","delta":"══════ │"},"timestamp":1783290594167}
+{"id":580,"event":"agent","data":{"type":"text_delta","delta":" │  └"},"timestamp":1783290594182}
+{"id":581,"event":"agent","data":{"type":"text_delta","delta":"────────┘                  │"},"timestamp":1783290594201}
+{"id":582,"event":"agent","data":{"type":"text_delta","delta":"\n│    ├"},"timestamp":1783290594218}
+{"id":583,"event":"agent","data":{"type":"text_delta","delta":"───────┼"},"timestamp":1783290594235}
+{"id":584,"event":"agent","data":{"type":"text_delta","delta":"───────┼"},"timestamp":1783290594252}
+{"id":585,"event":"agent","data":{"type":"text_delta","delta":"───────┼"},"timestamp":1783290594271}
+{"id":586,"event":"agent","data":{"type":"text_delta","delta":"───────┤"},"timestamp":1783290594288}
+{"id":587,"event":"agent","data":{"type":"text_delta","delta":" │                               │\n"},"timestamp":1783290594308}
+{"id":588,"event":"agent","data":{"type":"text_delta","delta":"│    │      "},"timestamp":1783290594326}
+{"id":589,"event":"agent","data":{"type":"text_delta","delta":" │      "},"timestamp":1783290594342}
+{"id":590,"event":"agent","data":{"type":"text_delta","delta":" │       │      "},"timestamp":1783290594361}
+{"id":591,"event":"agent","data":{"type":"text_delta","delta":" │ │"},"timestamp":1783290594377}
+{"id":592,"event":"agent","data":{"type":"text_delta","delta":"  ▼ "},"timestamp":1783290594395}
+{"id":593,"event":"agent","data":{"type":"text_delta","delta":"5 SYNERG"},"timestamp":1783290594410}
+{"id":594,"event":"agent","data":{"type":"text_delta","delta":"IES              │\n"},"timestamp":1783290594430}
+{"id":595,"event":"agent","data":{"type":"text_delta","delta":"│    │ "},"timestamp":1783290594447}
+{"id":596,"event":"agent","data":{"type":"text_delta","delta":" L"},"timestamp":1783290594465}
+{"id":597,"event":"agent","data":{"type":"text_delta","delta":"CB  │ "},"timestamp":1783290594482}
+{"id":598,"event":"agent","data":{"type":"text_delta","delta":" CB"},"timestamp":1783290594501}
+{"id":599,"event":"agent","data":{"type":"text_delta","delta":"   │  C"},"timestamp":1783290594520}
+{"id":600,"event":"agent","data":{"type":"text_delta","delta":"DM  │ "},"timestamp":1783290594535}
+{"id":601,"event":"agent","data":{"type":"text_delta","delta":" RCB  │"},"timestamp":1783290594552}
+{"id":602,"event":"agent","data":{"type":"text_delta","delta":" │  ─"},"timestamp":1783290594571}
+{"id":603,"event":"agent","data":{"type":"text_delta","delta":"────────────               │"},"timestamp":1783290594591}
+{"id":604,"event":"agent","data":{"type":"text_delta","delta":"\n│    │"},"timestamp":1783290594607}
+{"id":605,"event":"agent","data":{"type":"text_delta","delta":"       │      "},"timestamp":1783290594628}
+{"id":606,"event":"agent","data":{"type":"text_delta","delta":" │       │      "},"timestamp":1783290594643}
+{"id":607,"event":"agent","data":{"type":"text_delta","delta":" │ │  Target"},"timestamp":1783290594660}
+{"id":608,"event":"agent","data":{"type":"text_delta","delta":": 55"},"timestamp":1783290594678}
+{"id":609,"event":"agent","data":{"type":"text_delta","delta":"0  Need:"},"timestamp":1783290594697}
+{"id":610,"event":"agent","data":{"type":"text_delta","delta":" +63     "},"timestamp":1783290594714}
+{"id":611,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783290594733}
+{"id":612,"event":"agent","data":{"type":"text_delta","delta":" ├───────"},"timestamp":1783290594751}
+{"id":613,"event":"agent","data":{"type":"text_delta","delta":"┼───────"},"timestamp":1783290594767}
+{"id":614,"event":"agent","data":{"type":"text_delta","delta":"┼───────"},"timestamp":1783290594786}
+{"id":615,"event":"agent","data":{"type":"text_delta","delta":"┼───────"},"timestamp":1783290594801}
+{"id":616,"event":"agent","data":{"type":"text_delta","delta":"┤ │                               │"},"timestamp":1783290594819}
+{"id":617,"event":"agent","data":{"type":"text_delta","delta":"\n│    │"},"timestamp":1783290594840}
+{"id":618,"event":"agent","data":{"type":"text_delta","delta":"       │       │"},"timestamp":1783290594853}
+{"id":619,"event":"agent","data":{"type":"text_delta","delta":"       │       │"},"timestamp":1783290594868}
+{"id":620,"event":"agent","data":{"type":"text_delta","delta":" │  [ SUB"},"timestamp":1783290594886}
+{"id":621,"event":"agent","data":{"type":"text_delta","delta":"MIT PHASE ]"},"timestamp":1783290594903}
+{"id":622,"event":"agent","data":{"type":"text_delta","delta":"             │\n│"},"timestamp":1783290594919}
+{"id":623,"event":"agent","data":{"type":"text_delta","delta":"    │      "},"timestamp":1783290594941}
+{"id":624,"event":"agent","data":{"type":"text_delta","delta":" │ "},"timestamp":1783290594954}
+{"id":625,"event":"agent","data":{"type":"text_delta","delta":" ┌──┐"},"timestamp":1783290594980}
+{"id":626,"event":"agent","data":{"type":"text_delta","delta":" │       │      "},"timestamp":1783290594989}
+{"id":627,"event":"agent","data":{"type":"text_delta","delta":" │ │                               │"},"timestamp":1783290595008}
+{"id":628,"event":"agent","data":{"type":"text_delta","delta":"\n│    │"},"timestamp":1783290595022}
+{"id":629,"event":"agent","data":{"type":"text_delta","delta":"       │  │"},"timestamp":1783290595039}
+{"id":630,"event":"agent","data":{"type":"text_delta","delta":"GK│ │"},"timestamp":1783290595056}
+{"id":631,"event":"agent","data":{"type":"text_delta","delta":"       │      "},"timestamp":1783290595072}
+{"id":632,"event":"agent","data":{"type":"text_delta","delta":" │ │                               │"},"timestamp":1783290595089}
+{"id":633,"event":"agent","data":{"type":"text_delta","delta":"\n│    │"},"timestamp":1783290595108}
+{"id":634,"event":"agent","data":{"type":"text_delta","delta":"       │  "},"timestamp":1783290595125}
+{"id":635,"event":"agent","data":{"type":"text_delta","delta":"└──┘ │"},"timestamp":1783290595141}
+{"id":636,"event":"agent","data":{"type":"text_delta","delta":"       │      "},"timestamp":1783290595158}
+{"id":637,"event":"agent","data":{"type":"text_delta","delta":" │ │                               │"},"timestamp":1783290595175}
+{"id":638,"event":"agent","data":{"type":"text_delta","delta":"\n│    "},"timestamp":1783290595192}
+{"id":639,"event":"agent","data":{"type":"text_delta","delta":"└───────"},"timestamp":1783290595208}
+{"id":640,"event":"agent","data":{"type":"text_delta","delta":"┴───────"},"timestamp":1783290595238}
+{"id":641,"event":"agent","data":{"type":"text_delta","delta":"┴───────"},"timestamp":1783290595254}
+{"id":642,"event":"agent","data":{"type":"text_delta","delta":"┴───────"},"timestamp":1783290595271}
+{"id":643,"event":"agent","data":{"type":"text_delta","delta":"┘ │                               │"},"timestamp":1783290595288}
+{"id":644,"event":"agent","data":{"type":"text_delta","delta":"\n│                                     "},"timestamp":1783290595305}
+{"id":645,"event":"agent","data":{"type":"text_delta","delta":" │                               │\n"},"timestamp":1783290595322}
+{"id":646,"event":"agent","data":{"type":"text_delta","delta":"│   "},"timestamp":1783290595342}
+{"id":647,"event":"agent","data":{"type":"text_delta","delta":" ←"},"timestamp":1783290595356}
+{"id":648,"event":"agent","data":{"type":"text_delta","delta":" YOUR"},"timestamp":1783290595374}
+{"id":649,"event":"agent","data":{"type":"text_delta","delta":" GOAL         "},"timestamp":1783290595390}
+{"id":650,"event":"agent","data":{"type":"text_delta","delta":" OPP GO"},"timestamp":1783290595407}
+{"id":651,"event":"agent","data":{"type":"text_delta","delta":"AL →  "},"timestamp":1783290595424}
+{"id":652,"event":"agent","data":{"type":"text_delta","delta":" │                               │\n"},"timestamp":1783290595441}
+{"id":653,"event":"agent","data":{"type":"text_delta","delta":"│    "},"timestamp":1783290595459}
+{"id":654,"event":"agent","data":{"type":"text_delta","delta":"▒"},"timestamp":1783290595475}
+{"id":655,"event":"agent","data":{"type":"text_delta","delta":"▒▒ ="},"timestamp":1783290595492}
+{"id":656,"event":"agent","data":{"type":"text_delta","delta":" phase"},"timestamp":1783290595509}
+{"id":657,"event":"agent","data":{"type":"text_delta","delta":" zone (mid"},"timestamp":1783290595528}
+{"id":658,"event":"agent","data":{"type":"text_delta","delta":"field row"},"timestamp":1783290595544}
+{"id":659,"event":"agent","data":{"type":"text_delta","delta":")  "},"timestamp":1783290595560}
+{"id":660,"event":"agent","data":{"type":"text_delta","delta":" │                               │\n"},"timestamp":1783290595577}
+{"id":661,"event":"agent","data":{"type":"text_delta","delta":"├"},"timestamp":1783290595593}
+{"id":662,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783290595611}
+{"id":663,"event":"agent","data":{"type":"text_delta","delta":"──────┴────────"},"timestamp":1783290595628}
+{"id":664,"event":"agent","data":{"type":"text_delta","delta":"──────────────────────"},"timestamp":1783290595644}
+{"id":665,"event":"agent","data":{"type":"text_delta","delta":"─┤\n│"},"timestamp":1783290595661}
+{"id":666,"event":"agent","data":{"type":"text_delta","delta":"  Persistent: Clinical"},"timestamp":1783290595681}
+{"id":667,"event":"agent","data":{"type":"text_delta","delta":" Edge +5 ·"},"timestamp":1783290595696}
+{"id":668,"event":"agent","data":{"type":"text_delta","delta":" Overload +1"},"timestamp":1783290595712}
+{"id":669,"event":"agent","data":{"type":"text_delta","delta":"0                        │\n"},"timestamp":1783290595729}
+{"id":670,"event":"agent","data":{"type":"text_delta","delta":"└────────────────────────"},"timestamp":1783290595746}
+{"id":671,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783290595765}
+{"id":672,"event":"agent","data":{"type":"text_delta","delta":"──────────────┘"},"timestamp":1783290595779}
+{"id":673,"event":"agent","data":{"type":"text_delta","delta":"\n\nGrid = tactical"},"timestamp":1783290595796}
+{"id":674,"event":"agent","data":{"type":"text_delta","delta":" zones (columns"},"timestamp":1783290595813}
+{"id":675,"event":"agent","data":{"type":"text_delta","delta":" = width"},"timestamp":1783290595831}
+{"id":676,"event":"agent","data":{"type":"text_delta","delta":", rows = depth"},"timestamp":1783290595848}
+{"id":677,"event":"agent","data":{"type":"text_delta","delta":")\n▒"},"timestamp":1783290595869}
+{"id":678,"event":"agent","data":{"type":"text_delta","delta":"▒▒"},"timestamp":1783290595882}
+{"id":679,"event":"agent","data":{"type":"text_delta","delta":" = phase zone highlighted"},"timestamp":1783290595899}
+{"id":680,"event":"agent","data":{"type":"text_delta","delta":" row/column"},"timestamp":1783290595915}
+{"id":681,"event":"agent","data":{"type":"text_delta","delta":"\n──"},"timestamp":1783290595933}
+{"id":682,"event":"agent","data":{"type":"text_delta","delta":" →"},"timestamp":1783290595957}
+{"id":683,"event":"agent","data":{"type":"text_delta","delta":" = flow direction"},"timestamp":1783290595968}
+{"id":684,"event":"agent","data":{"type":"text_delta","delta":" (passing lanes"},"timestamp":1783290595983}
+{"id":685,"event":"agent","data":{"type":"text_delta","delta":" between"},"timestamp":1783290596001}
+{"id":686,"event":"agent","data":{"type":"text_delta","delta":" zones)\nNames"},"timestamp":1783290596019}
+{"id":687,"event":"agent","data":{"type":"text_delta","delta":" in cells"},"timestamp":1783290596034}
+{"id":688,"event":"agent","data":{"type":"text_delta","delta":" = assigned"},"timestamp":1783290596052}
+{"id":689,"event":"agent","data":{"type":"text_delta","delta":" players ("},"timestamp":1783290596069}
+{"id":690,"event":"agent","data":{"type":"text_delta","delta":"h"},"timestamp":1783290596087}
+{"id":691,"event":"agent","data":{"type":"text_delta","delta":"ollow = empty"},"timestamp":1783290596105}
+{"id":692,"event":"agent","data":{"type":"text_delta","delta":" slot"},"timestamp":1783290596124}
+{"id":693,"event":"agent","data":{"type":"text_delta","delta":")\n``"},"timestamp":1783290596145}
+{"id":694,"event":"agent","data":{"type":"text_delta","delta":"`\n\n**Pros:**"},"timestamp":1783290596167}
+{"id":695,"event":"agent","data":{"type":"text_delta","delta":" Struct"},"timestamp":1783290596180}
+{"id":696,"event":"agent","data":{"type":"text_delta","delta":"ured grid makes"},"timestamp":1783290596198}
+{"id":697,"event":"agent","data":{"type":"text_delta","delta":" position"},"timestamp":1783290596216}
+{"id":698,"event":"agent","data":{"type":"text_delta","delta":" zones"},"timestamp":1783290596234}
+{"id":699,"event":"agent","data":{"type":"text_delta","delta":" obvious"},"timestamp":1783290596253}
+{"id":700,"event":"agent","data":{"type":"text_delta","delta":". Phase zone is"},"timestamp":1783290596277}
+{"id":701,"event":"agent","data":{"type":"text_delta","delta":" a clear row/column"},"timestamp":1783290596287}
+{"id":702,"event":"agent","data":{"type":"text_delta","delta":" highlight. Flow arrows"},"timestamp":1783290596304}
+{"id":703,"event":"agent","data":{"type":"text_delta","delta":" teach"},"timestamp":1783290596322}
+{"id":704,"event":"agent","data":{"type":"text_delta","delta":" passing"},"timestamp":1783290596343}
+{"id":705,"event":"agent","data":{"type":"text_delta","delta":" direction"},"timestamp":1783290596358}
+{"id":706,"event":"agent","data":{"type":"text_delta","delta":". Easy to implement"},"timestamp":1783290596375}
+{"id":707,"event":"agent","data":{"type":"text_delta","delta":" — just"},"timestamp":1783290596394}
+{"id":708,"event":"agent","data":{"type":"text_delta","delta":" a CSS"},"timestamp":1783290596413}
+{"id":709,"event":"agent","data":{"type":"text_delta","delta":" grid with"},"timestamp":1783290596433}
+{"id":710,"event":"agent","data":{"type":"text_delta","delta":" conditional"},"timestamp":1783290596449}
+{"id":711,"event":"agent","data":{"type":"text_delta","delta":" highlighting"},"timestamp":1783290596468}
+{"id":712,"event":"agent","data":{"type":"text_delta","delta":".\n**Cons:**"},"timestamp":1783290596487}
+{"id":713,"event":"agent","data":{"type":"text_delta","delta":" Less \"organic"},"timestamp":1783290596522}
+{"id":714,"event":"agent","data":{"type":"text_delta","delta":"\" than a real"},"timestamp":1783290596538}
+{"id":715,"event":"agent","data":{"type":"text_delta","delta":" pass map. Grid"},"timestamp":1783290596559}
+{"id":716,"event":"agent","data":{"type":"text_delta","delta":" lines"},"timestamp":1783290596578}
+{"id":717,"event":"agent","data":{"type":"text_delta","delta":" add"},"timestamp":1783290596600}
+{"id":718,"event":"agent","data":{"type":"text_delta","delta":" visual noise"},"timestamp":1783290596615}
+{"id":719,"event":"agent","data":{"type":"text_delta","delta":". Player"},"timestamp":1783290596634}
+{"id":720,"event":"agent","data":{"type":"text_delta","delta":" overlap"},"timestamp":1783290596653}
+{"id":721,"event":"agent","data":{"type":"text_delta","delta":" in"},"timestamp":1783290596676}
+{"id":722,"event":"agent","data":{"type":"text_delta","delta":" same"},"timestamp":1783290596695}
+{"id":723,"event":"agent","data":{"type":"text_delta","delta":"-zone cells.\n\n---\n\n"},"timestamp":1783290596714}
+{"id":724,"event":"agent","data":{"type":"text_delta","delta":"**Option C —"},"timestamp":1783290596739}
+{"id":725,"event":"agent","data":{"type":"text_delta","delta":" Constellation Pass"},"timestamp":1783290596749}
+{"id":726,"event":"agent","data":{"type":"text_delta","delta":" Map**\n\n"},"timestamp":1783290596767}
+{"id":727,"event":"agent","data":{"type":"text_delta","delta":"Not"},"timestamp":1783290596785}
+{"id":728,"event":"agent","data":{"type":"text_delta","delta":" a pitch"},"timestamp":1783290596804}
+{"id":729,"event":"agent","data":{"type":"text_delta","delta":" —"},"timestamp":1783290596821}
+{"id":730,"event":"agent","data":{"type":"text_delta","delta":" a dark"},"timestamp":1783290596840}
+{"id":731,"event":"agent","data":{"type":"text_delta","delta":" space"},"timestamp":1783290596856}
+{"id":732,"event":"agent","data":{"type":"text_delta","delta":" with glowing nodes."},"timestamp":1783290596875}
+{"id":733,"event":"agent","data":{"type":"text_delta","delta":" Player positions are stars"},"timestamp":1783290596893}
+{"id":734,"event":"agent","data":{"type":"text_delta","delta":" in"},"timestamp":1783290596910}
+{"id":735,"event":"agent","data":{"type":"text_delta","delta":" a constellation"},"timestamp":1783290596929}
+{"id":736,"event":"agent","data":{"type":"text_delta","delta":". Lines"},"timestamp":1783290596948}
+{"id":737,"event":"agent","data":{"type":"text_delta","delta":" between them are"},"timestamp":1783290596968}
+{"id":738,"event":"agent","data":{"type":"text_delta","delta":" passing lanes"},"timestamp":1783290596984}
+{"id":739,"event":"agent","data":{"type":"text_delta","delta":" with"},"timestamp":1783290597000}
+{"id":740,"event":"agent","data":{"type":"text_delta","delta":" pulse"},"timestamp":1783290597020}
+{"id":741,"event":"agent","data":{"type":"text_delta","delta":" animations"},"timestamp":1783290597036}
+{"id":742,"event":"agent","data":{"type":"text_delta","delta":". Phase zone is"},"timestamp":1783290597055}
+{"id":743,"event":"agent","data":{"type":"text_delta","delta":" a nebula cloud"},"timestamp":1783290597075}
+{"id":744,"event":"agent","data":{"type":"text_delta","delta":". Most"},"timestamp":1783290597091}
+{"id":745,"event":"agent","data":{"type":"text_delta","delta":" Bal"},"timestamp":1783290597109}
+{"id":746,"event":"agent","data":{"type":"text_delta","delta":"atro-like."},"timestamp":1783290597128}
+{"id":747,"event":"agent","data":{"type":"text_delta","delta":" Player"},"timestamp":1783290597145}
+{"id":748,"event":"agent","data":{"type":"text_delta","delta":" names appear next"},"timestamp":1783290597163}
+{"id":749,"event":"agent","data":{"type":"text_delta","delta":" to their node"},"timestamp":1783290597182}
+{"id":750,"event":"agent","data":{"type":"text_delta","delta":" when assigned.\n\n``"},"timestamp":1783290597211}
+{"id":751,"event":"agent","data":{"type":"text_delta","delta":"`\n┌────────────────"},"timestamp":1783290597217}
+{"id":752,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783290597238}
+{"id":753,"event":"agent","data":{"type":"text_delta","delta":"──────────────────────"},"timestamp":1783290597255}
+{"id":754,"event":"agent","data":{"type":"text_delta","delta":"┐\n│ "},"timestamp":1783290597271}
+{"id":755,"event":"agent","data":{"type":"text_delta","delta":" MATCH 1 ·"},"timestamp":1783290597289}
+{"id":756,"event":"agent","data":{"type":"text_delta","delta":" R1 · Phase"},"timestamp":1783290597307}
+{"id":757,"event":"agent","data":{"type":"text_delta","delta":" 2/6"},"timestamp":1783290597325}
+{"id":758,"event":"agent","data":{"type":"text_delta","delta":" TIKI-T"},"timestamp":1783290597343}
+{"id":759,"event":"agent","data":{"type":"text_delta","delta":"AKA              Score"},"timestamp":1783290597360}
+{"id":760,"event":"agent","data":{"type":"text_delta","delta":": 48"},"timestamp":1783290597379}
+{"id":761,"event":"agent","data":{"type":"text_delta","delta":"7        │\n"},"timestamp":1783290597396}
+{"id":762,"event":"agent","data":{"type":"text_delta","delta":"├────────────────────────"},"timestamp":1783290597414}
+{"id":763,"event":"agent","data":{"type":"text_delta","delta":"──────────────┬"},"timestamp":1783290597432}
+{"id":764,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────"},"timestamp":1783290597450}
+{"id":765,"event":"agent","data":{"type":"text_delta","delta":"───┤\n"},"timestamp":1783290597468}
+{"id":766,"event":"agent","data":{"type":"text_delta","delta":"│ "},"timestamp":1783290597485}
+{"id":767,"event":"agent","data":{"type":"text_delta","delta":" ·  ·"},"timestamp":1783290597508}
+{"id":768,"event":"agent","data":{"type":"text_delta","delta":"   "},"timestamp":1783290597521}
+{"id":769,"event":"agent","data":{"type":"text_delta","delta":" ·        "},"timestamp":1783290597540}
+{"id":770,"event":"agent","data":{"type":"text_delta","delta":" ·   "},"timestamp":1783290597563}
+{"id":771,"event":"agent","data":{"type":"text_delta","delta":" ·          "},"timestamp":1783290597575}
+{"id":772,"event":"agent","data":{"type":"text_delta","delta":" │                              "},"timestamp":1783290597592}
+{"id":773,"event":"agent","data":{"type":"text_delta","delta":" │\n│      "},"timestamp":1783290597610}
+{"id":774,"event":"agent","data":{"type":"text_delta","delta":" ·       "},"timestamp":1783290597627}
+{"id":775,"event":"agent","data":{"type":"text_delta","delta":" ·      "},"timestamp":1783290597644}
+{"id":776,"event":"agent","data":{"type":"text_delta","delta":" ·    ·      "},"timestamp":1783290597663}
+{"id":777,"event":"agent","data":{"type":"text_delta","delta":" │  PHASE"},"timestamp":1783290597783}
+{"id":778,"event":"agent","data":{"type":"text_delta","delta":": TIKI"},"timestamp":1783290597788}
+{"id":779,"event":"agent","data":{"type":"text_delta","delta":"-TAKA           "},"timestamp":1783290597789}
+{"id":780,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783290597794}
+{"id":781,"event":"agent","data":{"type":"text_delta","delta":" ·      "},"timestamp":1783290597795}
+{"id":782,"event":"agent","data":{"type":"text_delta","delta":" ·    "},"timestamp":1783290597798}
+{"id":783,"event":"agent","data":{"type":"text_delta","delta":"╔══════"},"timestamp":1783290597803}
+{"id":784,"event":"agent","data":{"type":"text_delta","delta":"═══"},"timestamp":1783290597807}
+{"id":785,"event":"agent","data":{"type":"text_delta","delta":"╗   "},"timestamp":1783290597826}
+{"id":786,"event":"agent","data":{"type":"text_delta","delta":" ·    │ "},"timestamp":1783290597845}
+{"id":787,"event":"agent","data":{"type":"text_delta","delta":" Weight: PAS "},"timestamp":1783290597861}
+{"id":788,"event":"agent","data":{"type":"text_delta","delta":" ·  Slots"},"timestamp":1783290597879}
+{"id":789,"event":"agent","data":{"type":"text_delta","delta":": 3   "},"timestamp":1783290597896}
+{"id":790,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783290597931}
+{"id":791,"event":"agent","data":{"type":"text_delta","delta":" ·   "},"timestamp":1783290597933}
+{"id":792,"event":"agent","data":{"type":"text_delta","delta":" · "},"timestamp":1783290597949}
+{"id":793,"event":"agent","data":{"type":"text_delta","delta":" ○"},"timestamp":1783290597985}
+{"id":794,"event":"agent","data":{"type":"text_delta","delta":"G"},"timestamp":1783290598004}
+{"id":795,"event":"agent","data":{"type":"text_delta","delta":"K   "},"timestamp":1783290598023}
+{"id":796,"event":"agent","data":{"type":"text_delta","delta":" ║ NE"},"timestamp":1783290598042}
+{"id":797,"event":"agent","data":{"type":"text_delta","delta":"B"},"timestamp":1783290598060}
+{"id":798,"event":"agent","data":{"type":"text_delta","delta":"ULA "},"timestamp":1783290598079}
+{"id":799,"event":"agent","data":{"type":"text_delta","delta":" ║ "},"timestamp":1783290598098}
+{"id":800,"event":"agent","data":{"type":"text_delta","delta":" ·    "},"timestamp":1783290598158}
+{"id":801,"event":"agent","data":{"type":"text_delta","delta":" │                              "},"timestamp":1783290598176}
+{"id":802,"event":"agent","data":{"type":"text_delta","delta":" │\n│        "},"timestamp":1783290598194}
+{"id":803,"event":"agent","data":{"type":"text_delta","delta":" · "},"timestamp":1783290598213}
+{"id":804,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783290598232}
+{"id":805,"event":"agent","data":{"type":"text_delta","delta":"╲"},"timestamp":1783290598252}
+{"id":806,"event":"agent","data":{"type":"text_delta","delta":"    ║ "},"timestamp":1783290598271}
+{"id":807,"event":"agent","data":{"type":"text_delta","delta":"▓▓▓▓"},"timestamp":1783290598290}
+{"id":808,"event":"agent","data":{"type":"text_delta","delta":"▓▓▓ "},"timestamp":1783290598309}
+{"id":809,"event":"agent","data":{"type":"text_delta","delta":"║       "},"timestamp":1783290598329}
+{"id":810,"event":"agent","data":{"type":"text_delta","delta":" │  S"},"timestamp":1783290598348}
+{"id":811,"event":"agent","data":{"type":"text_delta","delta":"LOTS                        │\n"},"timestamp":1783290598367}
+{"id":812,"event":"agent","data":{"type":"text_delta","delta":"│    ·      "},"timestamp":1783290598387}
+{"id":813,"event":"agent","data":{"type":"text_delta","delta":" ╲"},"timestamp":1783290598406}
+{"id":814,"event":"agent","data":{"type":"text_delta","delta":"  "},"timestamp":1783290598425}
+{"id":815,"event":"agent","data":{"type":"text_delta","delta":" ║ "},"timestamp":1783290598445}
+{"id":816,"event":"agent","data":{"type":"text_delta","delta":"▓M"},"timestamp":1783290598464}
+{"id":817,"event":"agent","data":{"type":"text_delta","delta":"ID Z"},"timestamp":1783290598483}
+{"id":818,"event":"agent","data":{"type":"text_delta","delta":"ONE▓"},"timestamp":1783290598503}
+{"id":819,"event":"agent","data":{"type":"text_delta","delta":"║      "},"timestamp":1783290598524}
+{"id":820,"event":"agent","data":{"type":"text_delta","delta":" │  "},"timestamp":1783290598541}
+{"id":821,"event":"agent","data":{"type":"text_delta","delta":"┌────────┐ "},"timestamp":1783290598561}
+{"id":822,"event":"agent","data":{"type":"text_delta","delta":"┌────────┐     "},"timestamp":1783290598580}
+{"id":823,"event":"agent","data":{"type":"text_delta","delta":" │\n│      "},"timestamp":1783290598600}
+{"id":824,"event":"agent","data":{"type":"text_delta","delta":" · "},"timestamp":1783290598619}
+{"id":825,"event":"agent","data":{"type":"text_delta","delta":" ●"},"timestamp":1783290598641}
+{"id":826,"event":"agent","data":{"type":"text_delta","delta":"CB "},"timestamp":1783290598657}
+{"id":827,"event":"agent","data":{"type":"text_delta","delta":"──╫"},"timestamp":1783290598676}
+{"id":828,"event":"agent","data":{"type":"text_delta","delta":"─"},"timestamp":1783290598695}
+{"id":829,"event":"agent","data":{"type":"text_delta","delta":"▓▓▓▓"},"timestamp":1783290598734}
+{"id":830,"event":"agent","data":{"type":"text_delta","delta":"▓▓▓▓"},"timestamp":1783290598753}
+{"id":831,"event":"agent","data":{"type":"text_delta","delta":"▓"},"timestamp":1783290598773}
+{"id":832,"event":"agent","data":{"type":"text_delta","delta":"╫"},"timestamp":1783290598796}
+{"id":833,"event":"agent","data":{"type":"text_delta","delta":"─ ●"},"timestamp":1783290598814}
+{"id":834,"event":"agent","data":{"type":"text_delta","delta":"CM"},"timestamp":1783290598833}
+{"id":835,"event":"agent","data":{"type":"text_delta","delta":"  │  │"},"timestamp":1783290598911}
+{"id":836,"event":"agent","data":{"type":"text_delta","delta":" CB ✓ 1"},"timestamp":1783290598940}
+{"id":837,"event":"agent","data":{"type":"text_delta","delta":"2│ │ CM"},"timestamp":1783290598954}
+{"id":838,"event":"agent","data":{"type":"text_delta","delta":" ✓ 8 │"},"timestamp":1783290598972}
+{"id":839,"event":"agent","data":{"type":"text_delta","delta":"      │\n│"},"timestamp":1783290598992}
+{"id":840,"event":"agent","data":{"type":"text_delta","delta":"    ·     "},"timestamp":1783290599022}
+{"id":841,"event":"agent","data":{"type":"text_delta","delta":" │"},"timestamp":1783290599043}
+{"id":842,"event":"agent","data":{"type":"text_delta","delta":"    ╚"},"timestamp":1783290599107}
+{"id":843,"event":"agent","data":{"type":"text_delta","delta":"════════"},"timestamp":1783290599129}
+{"id":844,"event":"agent","data":{"type":"text_delta","delta":"═"},"timestamp":1783290599158}
+{"id":845,"event":"agent","data":{"type":"text_delta","delta":"╝  "},"timestamp":1783290599179}
+{"id":846,"event":"agent","data":{"type":"text_delta","delta":" │ "},"timestamp":1783290599200}
+{"id":847,"event":"agent","data":{"type":"text_delta","delta":" ·"},"timestamp":1783290599220}
+{"id":848,"event":"agent","data":{"type":"text_delta","delta":"  │  "},"timestamp":1783290599238}
+{"id":849,"event":"agent","data":{"type":"text_delta","delta":"└────────┘ "},"timestamp":1783290599264}
+{"id":850,"event":"agent","data":{"type":"text_delta","delta":"└────────┘     "},"timestamp":1783290599283}
+{"id":851,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783290599330}
+{"id":852,"event":"agent","data":{"type":"text_delta","delta":" ·       "},"timestamp":1783290599360}
+{"id":853,"event":"agent","data":{"type":"text_delta","delta":" │"},"timestamp":1783290599409}
+{"id":854,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783290599497}
+{"id":855,"event":"agent","data":{"type":"text_delta","delta":" ·         "},"timestamp":1783290599522}
+{"id":856,"event":"agent","data":{"type":"text_delta","delta":" ·"},"timestamp":1783290599550}
+{"id":857,"event":"agent","data":{"type":"text_delta","delta":"    │    "},"timestamp":1783290599572}
+{"id":858,"event":"agent","data":{"type":"text_delta","delta":" │  "},"timestamp":1783290599596}
+{"id":859,"event":"agent","data":{"type":"text_delta","delta":"┌────────┐                 "},"timestamp":1783290599619}
+{"id":860,"event":"agent","data":{"type":"text_delta","delta":" │\n│    "},"timestamp":1783290599643}
+{"id":861,"event":"agent","data":{"type":"text_delta","delta":" · "},"timestamp":1783290599667}
+{"id":862,"event":"agent","data":{"type":"text_delta","delta":" ●CAM"},"timestamp":1783290599692}
+{"id":863,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783290599718}
+{"id":864,"event":"agent","data":{"type":"text_delta","delta":"─────────────"},"timestamp":1783290599739}
+{"id":865,"event":"agent","data":{"type":"text_delta","delta":"──"},"timestamp":1783290599758}
+{"id":866,"event":"agent","data":{"type":"text_delta","delta":" ●"},"timestamp":1783290599782}
+{"id":867,"event":"agent","data":{"type":"text_delta","delta":"ST"},"timestamp":1783290599803}
+{"id":868,"event":"agent","data":{"type":"text_delta","delta":"   "},"timestamp":1783290599827}
+{"id":869,"event":"agent","data":{"type":"text_delta","delta":" │  │CAM"},"timestamp":1783290599851}
+{"id":870,"event":"agent","data":{"type":"text_delta","delta":"  -  │"},"timestamp":1783290599875}
+{"id":871,"event":"agent","data":{"type":"text_delta","delta":" ← tap to fill"},"timestamp":1783290599897}
+{"id":872,"event":"agent","data":{"type":"text_delta","delta":"   │\n│"},"timestamp":1783290599920}
+{"id":873,"event":"agent","data":{"type":"text_delta","delta":"      "},"timestamp":1783290599943}
+{"id":874,"event":"agent","data":{"type":"text_delta","delta":" ·       "},"timestamp":1783290599970}
+{"id":875,"event":"agent","data":{"type":"text_delta","delta":" ·"},"timestamp":1783290599992}
+{"id":876,"event":"agent","data":{"type":"text_delta","delta":"      "},"timestamp":1783290600012}
+{"id":877,"event":"agent","data":{"type":"text_delta","delta":" ·         "},"timestamp":1783290600039}
+{"id":878,"event":"agent","data":{"type":"text_delta","delta":" │  "},"timestamp":1783290600058}
+{"id":879,"event":"agent","data":{"type":"text_delta","delta":"└────────┘                 "},"timestamp":1783290600103}
+{"id":880,"event":"agent","data":{"type":"text_delta","delta":" │\n│   "},"timestamp":1783290600157}
+{"id":881,"event":"agent","data":{"type":"text_delta","delta":" ·      "},"timestamp":1783290600200}
+{"id":882,"event":"agent","data":{"type":"text_delta","delta":" ·     "},"timestamp":1783290600224}
+{"id":883,"event":"agent","data":{"type":"text_delta","delta":" ·    ·    "},"timestamp":1783290600247}
+{"id":884,"event":"agent","data":{"type":"text_delta","delta":" ·    │                              "},"timestamp":1783290600273}
+{"id":885,"event":"agent","data":{"type":"text_delta","delta":" │\n│        "},"timestamp":1783290600293}
+{"id":886,"event":"agent","data":{"type":"text_delta","delta":" ·    ·       "},"timestamp":1783290600323}
+{"id":887,"event":"agent","data":{"type":"text_delta","delta":" ·  "},"timestamp":1783290600340}
+{"id":888,"event":"agent","data":{"type":"text_delta","delta":" ·      "},"timestamp":1783290600365}
+{"id":889,"event":"agent","data":{"type":"text_delta","delta":" │  "},"timestamp":1783290600388}
+{"id":890,"event":"agent","data":{"type":"text_delta","delta":"▼ 5 SY"},"timestamp":1783290600414}
+{"id":891,"event":"agent","data":{"type":"text_delta","delta":"NERGIES             "},"timestamp":1783290600435}
+{"id":892,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783290600457}
+{"id":893,"event":"agent","data":{"type":"text_delta","delta":" · "},"timestamp":1783290600478}
+{"id":894,"event":"agent","data":{"type":"text_delta","delta":" ·     "},"timestamp":1783290600502}
+{"id":895,"event":"agent","data":{"type":"text_delta","delta":" ·    · "},"timestamp":1783290600523}
+{"id":896,"event":"agent","data":{"type":"text_delta","delta":" ·     "},"timestamp":1783290600558}
+{"id":897,"event":"agent","data":{"type":"text_delta","delta":" ·     "},"timestamp":1783290600570}
+{"id":898,"event":"agent","data":{"type":"text_delta","delta":" │  ─"},"timestamp":1783290600594}
+{"id":899,"event":"agent","data":{"type":"text_delta","delta":"────────────               │"},"timestamp":1783290600618}
+{"id":900,"event":"agent","data":{"type":"text_delta","delta":"\n│                                   "},"timestamp":1783290600641}
+{"id":901,"event":"agent","data":{"type":"text_delta","delta":" │  Target"},"timestamp":1783290600661}
+{"id":902,"event":"agent","data":{"type":"text_delta","delta":": 55"},"timestamp":1783290600688}
+{"id":903,"event":"agent","data":{"type":"text_delta","delta":"0  Need:"},"timestamp":1783290600705}
+{"id":904,"event":"agent","data":{"type":"text_delta","delta":" +63     "},"timestamp":1783290600733}
+{"id":905,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783290600779}
+{"id":906,"event":"agent","data":{"type":"text_delta","delta":" ○ = un"},"timestamp":1783290600795}
+{"id":907,"event":"agent","data":{"type":"text_delta","delta":"assigned slot              "},"timestamp":1783290600816}
+{"id":908,"event":"agent","data":{"type":"text_delta","delta":" │                               │\n"},"timestamp":1783290600842}
+{"id":909,"event":"agent","data":{"type":"text_delta","delta":"│  ● ="},"timestamp":1783290600864}
+{"id":910,"event":"agent","data":{"type":"text_delta","delta":" assigned player              "},"timestamp":1783290600884}
+{"id":911,"event":"agent","data":{"type":"text_delta","delta":" │  ["},"timestamp":1783290600909}
+{"id":912,"event":"agent","data":{"type":"text_delta","delta":" SUBMIT"},"timestamp":1783290600937}
+{"id":913,"event":"agent","data":{"type":"text_delta","delta":" PHASE ]            "},"timestamp":1783290600953}
+{"id":914,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783290600976}
+{"id":915,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783290601002}
+{"id":916,"event":"agent","data":{"type":"text_delta","delta":"═"},"timestamp":1783290601026}
+{"id":917,"event":"agent","data":{"type":"text_delta","delta":" ="},"timestamp":1783290601047}
+{"id":918,"event":"agent","data":{"type":"text_delta","delta":" passing lane (p"},"timestamp":1783290601069}
+{"id":919,"event":"agent","data":{"type":"text_delta","delta":"ulses"},"timestamp":1783290601093}
+{"id":920,"event":"agent","data":{"type":"text_delta","delta":")        "},"timestamp":1783290601116}
+{"id":921,"event":"agent","data":{"type":"text_delta","delta":" │                               │\n"},"timestamp":1783290601162}
+{"id":922,"event":"agent","data":{"type":"text_delta","delta":"│  "},"timestamp":1783290601196}
+{"id":923,"event":"agent","data":{"type":"text_delta","delta":"▓ ="},"timestamp":1783290601207}
+{"id":924,"event":"agent","data":{"type":"text_delta","delta":" phase neb"},"timestamp":1783290601234}
+{"id":925,"event":"agent","data":{"type":"text_delta","delta":"ula                  │                              "},"timestamp":1783290601259}
+{"id":926,"event":"agent","data":{"type":"text_delta","delta":" │\n├────────"},"timestamp":1783290601296}
+{"id":927,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────"},"timestamp":1783290601310}
+{"id":928,"event":"agent","data":{"type":"text_delta","delta":"──┴────────────────"},"timestamp":1783290601332}
+{"id":929,"event":"agent","data":{"type":"text_delta","delta":"───────────────"},"timestamp":1783290601358}
+{"id":930,"event":"agent","data":{"type":"text_delta","delta":"┤\n│ "},"timestamp":1783290601380}
+{"id":931,"event":"agent","data":{"type":"text_delta","delta":" Persistent: Clinical Edge"},"timestamp":1783290601404}
+{"id":932,"event":"agent","data":{"type":"text_delta","delta":" +5 · Over"},"timestamp":1783290601429}
+{"id":933,"event":"agent","data":{"type":"text_delta","delta":"load +10"},"timestamp":1783290601449}
+{"id":934,"event":"agent","data":{"type":"text_delta","delta":"                        │\n└"},"timestamp":1783290601475}
+{"id":935,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783290601499}
+{"id":936,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783290601523}
+{"id":937,"event":"agent","data":{"type":"text_delta","delta":"──────┘\n\n"},"timestamp":1783290601546}
+{"id":938,"event":"agent","data":{"type":"text_delta","delta":"Nodes"},"timestamp":1783290601570}
+{"id":939,"event":"agent","data":{"type":"text_delta","delta":" = player"},"timestamp":1783290601598}
+{"id":940,"event":"agent","data":{"type":"text_delta","delta":" positions (●"},"timestamp":1783290601619}
+{"id":941,"event":"agent","data":{"type":"text_delta","delta":" assigned"},"timestamp":1783290601674}
+{"id":942,"event":"agent","data":{"type":"text_delta","delta":", ○ empty"},"timestamp":1783290601688}
+{"id":943,"event":"agent","data":{"type":"text_delta","delta":" slot)\nLines ="},"timestamp":1783290601704}
+{"id":944,"event":"agent","data":{"type":"text_delta","delta":" passing connections"},"timestamp":1783290601718}
+{"id":945,"event":"agent","data":{"type":"text_delta","delta":" (pulse animation)\n"},"timestamp":1783290601733}
+{"id":946,"event":"agent","data":{"type":"text_delta","delta":"N"},"timestamp":1783290601773}
+{"id":947,"event":"agent","data":{"type":"text_delta","delta":"ebula = phase"},"timestamp":1783290601817}
+{"id":948,"event":"agent","data":{"type":"text_delta","delta":" zone (glowing"},"timestamp":1783290601833}
+{"id":949,"event":"agent","data":{"type":"text_delta","delta":" cloud,"},"timestamp":1783290601845}
+{"id":950,"event":"agent","data":{"type":"text_delta","delta":" moves"},"timestamp":1783290601864}
+{"id":951,"event":"agent","data":{"type":"text_delta","delta":" per"},"timestamp":1783290601876}
+{"id":952,"event":"agent","data":{"type":"text_delta","delta":" phase)\nStars"},"timestamp":1783290601955}
+{"id":953,"event":"agent","data":{"type":"text_delta","delta":" = background"},"timestamp":1783290601960}
+{"id":954,"event":"agent","data":{"type":"text_delta","delta":" particle"},"timestamp":1783290601963}
+{"id":955,"event":"agent","data":{"type":"text_delta","delta":" field ("},"timestamp":1783290601975}
+{"id":956,"event":"agent","data":{"type":"text_delta","delta":"sub"},"timestamp":1783290601992}
+{"id":957,"event":"agent","data":{"type":"text_delta","delta":"tle par"},"timestamp":1783290602019}
+{"id":958,"event":"agent","data":{"type":"text_delta","delta":"allax)\n```\n\n"},"timestamp":1783290602053}
+{"id":959,"event":"agent","data":{"type":"text_delta","delta":"**Pros:** Most"},"timestamp":1783290602064}
+{"id":960,"event":"agent","data":{"type":"text_delta","delta":" visually striking."},"timestamp":1783290602086}
+{"id":961,"event":"agent","data":{"type":"text_delta","delta":" Balatro DNA"},"timestamp":1783290602117}
+{"id":962,"event":"agent","data":{"type":"text_delta","delta":" is clear"},"timestamp":1783290602130}
+{"id":963,"event":"agent","data":{"type":"text_delta","delta":"."},"timestamp":1783290602164}
+{"id":964,"event":"agent","data":{"type":"text_delta","delta":" Pulse"},"timestamp":1783290602187}
+{"id":965,"event":"agent","data":{"type":"text_delta","delta":" animations"},"timestamp":1783290602208}
+{"id":966,"event":"agent","data":{"type":"text_delta","delta":" make"},"timestamp":1783290602235}
+{"id":967,"event":"agent","data":{"type":"text_delta","delta":" passing"},"timestamp":1783290602250}
+{"id":968,"event":"agent","data":{"type":"text_delta","delta":" lanes feel alive."},"timestamp":1783290602279}
+{"id":969,"event":"agent","data":{"type":"text_delta","delta":" Phase"},"timestamp":1783290602295}
+{"id":970,"event":"agent","data":{"type":"text_delta","delta":" neb"},"timestamp":1783290602319}
+{"id":971,"event":"agent","data":{"type":"text_delta","delta":"ula is a unique"},"timestamp":1783290602346}
+{"id":972,"event":"agent","data":{"type":"text_delta","delta":" visual concept"},"timestamp":1783290602371}
+{"id":973,"event":"agent","data":{"type":"text_delta","delta":". Compact"},"timestamp":1783290602394}
+{"id":974,"event":"agent","data":{"type":"text_delta","delta":" — no"},"timestamp":1783290602406}
+{"id":975,"event":"agent","data":{"type":"text_delta","delta":" pitch"},"timestamp":1783290602431}
+{"id":976,"event":"agent","data":{"type":"text_delta","delta":" outline"},"timestamp":1783290602452}
+{"id":977,"event":"agent","data":{"type":"text_delta","delta":" needed,"},"timestamp":1783290602522}
+{"id":978,"event":"agent","data":{"type":"text_delta","delta":" just nodes"},"timestamp":1783290602536}
+{"id":979,"event":"agent","data":{"type":"text_delta","delta":" in"},"timestamp":1783290602574}
+{"id":980,"event":"agent","data":{"type":"text_delta","delta":" space.\n**Cons"},"timestamp":1783290602599}
+{"id":981,"event":"agent","data":{"type":"text_delta","delta":":** Less"},"timestamp":1783290602602}
+{"id":982,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783290602629}
+{"id":983,"event":"agent","data":{"type":"text_delta","delta":"football\" —"},"timestamp":1783290602647}
+{"id":984,"event":"agent","data":{"type":"text_delta","delta":" new"},"timestamp":1783290602670}
+{"id":985,"event":"agent","data":{"type":"text_delta","delta":" players may"},"timestamp":1783290602695}
+{"id":986,"event":"agent","data":{"type":"text_delta","delta":" not understand the spatial"},"timestamp":1783290602729}
+{"id":987,"event":"agent","data":{"type":"text_delta","delta":" mapping"},"timestamp":1783290602735}
+{"id":988,"event":"agent","data":{"type":"text_delta","delta":". Const"},"timestamp":1783290602766}
+{"id":989,"event":"agent","data":{"type":"text_delta","delta":"ellation positioning"},"timestamp":1783290602780}
+{"id":990,"event":"agent","data":{"type":"text_delta","delta":" needs"},"timestamp":1783290602802}
+{"id":991,"event":"agent","data":{"type":"text_delta","delta":" manual"},"timestamp":1783290602826}
+{"id":992,"event":"agent","data":{"type":"text_delta","delta":" tuning"},"timestamp":1783290602845}
+{"id":993,"event":"agent","data":{"type":"text_delta","delta":" per formation"},"timestamp":1783290602867}
+{"id":994,"event":"agent","data":{"type":"text_delta","delta":". Background"},"timestamp":1783290602901}
+{"id":995,"event":"agent","data":{"type":"text_delta","delta":" particles could"},"timestamp":1783290602925}
+{"id":996,"event":"agent","data":{"type":"text_delta","delta":" distract"},"timestamp":1783290602951}
+{"id":997,"event":"agent","data":{"type":"text_delta","delta":" on low-end devices"},"timestamp":1783290602962}
+{"id":998,"event":"agent","data":{"type":"text_delta","delta":".\n\n---\n\n**My"},"timestamp":1783290602984}
+{"id":999,"event":"agent","data":{"type":"text_delta","delta":" take:"},"timestamp":1783290603073}
+{"id":1000,"event":"agent","data":{"type":"text_delta","delta":" Option C ("},"timestamp":1783290603094}
+{"id":1001,"event":"agent","data":{"type":"text_delta","delta":"Constellation)** —"},"timestamp":1783290603098}
+{"id":1002,"event":"agent","data":{"type":"text_delta","delta":" here"},"timestamp":1783290603099}
+{"id":1003,"event":"agent","data":{"type":"text_delta","delta":"'s why:\n\n-"},"timestamp":1783290603107}
+{"id":1004,"event":"agent","data":{"type":"text_delta","delta":" **It's the"},"timestamp":1783290603129}
+{"id":1005,"event":"agent","data":{"type":"text_delta","delta":" most Bal"},"timestamp":1783290603150}
+{"id":1006,"event":"agent","data":{"type":"text_delta","delta":"atro-like"},"timestamp":1783290603177}
+{"id":1007,"event":"agent","data":{"type":"text_delta","delta":"** — dark"},"timestamp":1783290603202}
+{"id":1008,"event":"agent","data":{"type":"text_delta","delta":" space"},"timestamp":1783290603217}
+{"id":1009,"event":"agent","data":{"type":"text_delta","delta":", glowing nodes,"},"timestamp":1783290603239}
+{"id":1010,"event":"agent","data":{"type":"text_delta","delta":" pulse"},"timestamp":1783290603258}
+{"id":1011,"event":"agent","data":{"type":"text_delta","delta":" animations. This is"},"timestamp":1783290603288}
+{"id":1012,"event":"agent","data":{"type":"text_delta","delta":" exactly"},"timestamp":1783290603300}
+{"id":1013,"event":"agent","data":{"type":"text_delta","delta":" the"},"timestamp":1783290603319}
+{"id":1014,"event":"agent","data":{"type":"text_delta","delta":" \"ch"},"timestamp":1783290603344}
+{"id":1015,"event":"agent","data":{"type":"text_delta","delta":"ampionship manager"},"timestamp":1783290603363}
+{"id":1016,"event":"agent","data":{"type":"text_delta","delta":" meets balatro\""},"timestamp":1783290603391}
+{"id":1017,"event":"agent","data":{"type":"text_delta","delta":" vibe"},"timestamp":1783290603406}
+{"id":1018,"event":"agent","data":{"type":"text_delta","delta":" you asked for.\n"},"timestamp":1783290603435}
+{"id":1019,"event":"agent","data":{"type":"text_delta","delta":"- **Compact"},"timestamp":1783290603450}
+{"id":1020,"event":"agent","data":{"type":"text_delta","delta":" by design** —"},"timestamp":1783290603475}
+{"id":1021,"event":"agent","data":{"type":"text_delta","delta":" no pitch outline eating"},"timestamp":1783290603494}
+{"id":1022,"event":"agent","data":{"type":"text_delta","delta":" space"},"timestamp":1783290603511}
+{"id":1023,"event":"agent","data":{"type":"text_delta","delta":","},"timestamp":1783290603535}
+{"id":1024,"event":"agent","data":{"type":"text_delta","delta":" just nodes positioned"},"timestamp":1783290603550}
+{"id":1025,"event":"agent","data":{"type":"text_delta","delta":" relative"},"timestamp":1783290603577}
+{"id":1026,"event":"agent","data":{"type":"text_delta","delta":" to each other."},"timestamp":1783290603599}
+{"id":1027,"event":"agent","data":{"type":"text_delta","delta":" Fits"},"timestamp":1783290603615}
+{"id":1028,"event":"agent","data":{"type":"text_delta","delta":" the"},"timestamp":1783290603642}
+{"id":1029,"event":"agent","data":{"type":"text_delta","delta":" scroll"},"timestamp":1783290603660}
+{"id":1030,"event":"agent","data":{"type":"text_delta","delta":"-free layout perfectly"},"timestamp":1783290603678}
+{"id":1031,"event":"agent","data":{"type":"text_delta","delta":".\n- **Phase"},"timestamp":1783290603698}
+{"id":1032,"event":"agent","data":{"type":"text_delta","delta":" zone"},"timestamp":1783290603719}
+{"id":1033,"event":"agent","data":{"type":"text_delta","delta":" as"},"timestamp":1783290603740}
+{"id":1034,"event":"agent","data":{"type":"text_delta","delta":" nebula** —"},"timestamp":1783290603766}
+{"id":1035,"event":"agent","data":{"type":"text_delta","delta":" the glowing"},"timestamp":1783290603786}
+{"id":1036,"event":"agent","data":{"type":"text_delta","delta":" cloud that"},"timestamp":1783290603805}
+{"id":1037,"event":"agent","data":{"type":"text_delta","delta":" moves per"},"timestamp":1783290603826}
+{"id":1038,"event":"agent","data":{"type":"text_delta","delta":" phase (def"},"timestamp":1783290603857}
+{"id":1039,"event":"agent","data":{"type":"text_delta","delta":"ensive neb"},"timestamp":1783290603870}
+{"id":1040,"event":"agent","data":{"type":"text_delta","delta":"ula near"},"timestamp":1783290603892}
+{"id":1041,"event":"agent","data":{"type":"text_delta","delta":" your"},"timestamp":1783290603909}
+{"id":1042,"event":"agent","data":{"type":"text_delta","delta":" goal, attacking neb"},"timestamp":1783290603937}
+{"id":1043,"event":"agent","data":{"type":"text_delta","delta":"ula near theirs"},"timestamp":1783290603952}
+{"id":1044,"event":"agent","data":{"type":"text_delta","delta":") is visually"},"timestamp":1783290603973}
+{"id":1045,"event":"agent","data":{"type":"text_delta","delta":" unique and teaches"},"timestamp":1783290603997}
+{"id":1046,"event":"agent","data":{"type":"text_delta","delta":" the phase"},"timestamp":1783290604018}
+{"id":1047,"event":"agent","data":{"type":"text_delta","delta":" geography.\n"},"timestamp":1783290604038}
+{"id":1048,"event":"agent","data":{"type":"text_delta","delta":"- **Player"},"timestamp":1783290604059}
+{"id":1049,"event":"agent","data":{"type":"text_delta","delta":" names appear"},"timestamp":1783290604080}
+{"id":1050,"event":"agent","data":{"type":"text_delta","delta":" on"},"timestamp":1783290604099}
+{"id":1051,"event":"agent","data":{"type":"text_delta","delta":" nodes** — when"},"timestamp":1783290604118}
+{"id":1052,"event":"agent","data":{"type":"text_delta","delta":" you"},"timestamp":1783290604139}
+{"id":1053,"event":"agent","data":{"type":"text_delta","delta":" assign a player,"},"timestamp":1783290604165}
+{"id":1054,"event":"agent","data":{"type":"text_delta","delta":" their name fades"},"timestamp":1783290604182}
+{"id":1055,"event":"agent","data":{"type":"text_delta","delta":" in next to their"},"timestamp":1783290604203}
+{"id":1056,"event":"agent","data":{"type":"text_delta","delta":" star"},"timestamp":1783290604236}
+{"id":1057,"event":"agent","data":{"type":"text_delta","delta":". Empty"},"timestamp":1783290604258}
+{"id":1058,"event":"agent","data":{"type":"text_delta","delta":" slots are"},"timestamp":1783290604283}
+{"id":1059,"event":"agent","data":{"type":"text_delta","delta":" hollow circles. F"},"timestamp":1783290604299}
+{"id":1060,"event":"agent","data":{"type":"text_delta","delta":"illed slots"},"timestamp":1783290604323}
+{"id":1061,"event":"agent","data":{"type":"text_delta","delta":" glow"},"timestamp":1783290604345}
+{"id":1062,"event":"agent","data":{"type":"text_delta","delta":".\n"},"timestamp":1783290604359}
+{"id":1063,"event":"agent","data":{"type":"text_delta","delta":"- **Passing"},"timestamp":1783290604380}
+{"id":1064,"event":"agent","data":{"type":"text_delta","delta":" lanes pulse** —"},"timestamp":1783290604399}
+{"id":1065,"event":"agent","data":{"type":"text_delta","delta":" the"},"timestamp":1783290604419}
+{"id":1066,"event":"agent","data":{"type":"text_delta","delta":" lines between players"},"timestamp":1783290604439}
+{"id":1067,"event":"agent","data":{"type":"text_delta","delta":" animate"},"timestamp":1783290604458}
+{"id":1068,"event":"agent","data":{"type":"text_delta","delta":" subtly"},"timestamp":1783290604493}
+{"id":1069,"event":"agent","data":{"type":"text_delta","delta":", making"},"timestamp":1783290604500}
+{"id":1070,"event":"agent","data":{"type":"text_delta","delta":" the network feel alive"},"timestamp":1783290604519}
+{"id":1071,"event":"agent","data":{"type":"text_delta","delta":".\n\n"},"timestamp":1783290604539}
+{"id":1072,"event":"agent","data":{"type":"text_delta","delta":"Option A is the"},"timestamp":1783290604559}
+{"id":1073,"event":"agent","data":{"type":"text_delta","delta":" safe"},"timestamp":1783290604579}
+{"id":1074,"event":"agent","data":{"type":"text_delta","delta":"/"},"timestamp":1783290604599}
+{"id":1075,"event":"agent","data":{"type":"text_delta","delta":"recognizable choice."},"timestamp":1783290604619}
+{"id":1076,"event":"agent","data":{"type":"text_delta","delta":" Option C is the"},"timestamp":1783290604639}
+{"id":1077,"event":"agent","data":{"type":"text_delta","delta":" bold/st"},"timestamp":1783290604659}
+{"id":1078,"event":"agent","data":{"type":"text_delta","delta":"ylish choice."},"timestamp":1783290604679}
+{"id":1079,"event":"agent","data":{"type":"text_delta","delta":" Which do you prefer"},"timestamp":1783290604699}
+{"id":1080,"event":"agent","data":{"type":"text_delta","delta":"?"},"timestamp":1783290604718}
+{"id":1081,"event":"stderr","data":{"chunk":"2026-07-06 00:30:04 [INFO] run_agent: OpenAI client closed (stream_request_complete, shared=False, tcp_force_closed=0) thread=Thread-2 (_call):137033255208640 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=mimo-v2.5\n"},"timestamp":1783290604743}
+{"id":1082,"event":"stderr","data":{"chunk":"2026-07-06 00:30:04 [INFO] agent.conversation_loop: API call #1: model=mimo-v2.5 provider=opencode-go in=57198 out=2875 total=60073 latency=25.4s cache=55424/57198 (97%)\n"},"timestamp":1783290604746}
+{"id":1083,"event":"stderr","data":{"chunk":"2026-07-06 00:30:04 [INFO] agent.conversation_loop: Turn ended: reason=text_response(finish_reason=stop) model=mimo-v2.5 api_calls=1/90 budget=1/90 tool_turns=0 last_msg_role=assistant response_len=9629 session=a2a36baa-d210-421a-8615-09f9d0ad9442\n"},"timestamp":1783290604825}
+{"id":1084,"event":"agent","data":{"type":"status","label":"usage_update","elapsedMs":30812},"timestamp":1783290604895}
+{"id":1085,"event":"agent","data":{"type":"usage","usage":{"input_tokens":57198,"output_tokens":2875,"cached_read_tokens":55424,"thought_tokens":0,"total_tokens":60073},"durationMs":30815},"timestamp":1783290604897}
+{"id":1086,"event":"diagnostic","data":{"type":"runtime_close","rpc_close_reason":"signal","status":"succeeded","signal":"SIGTERM"},"timestamp":1783290605420}
+{"id":1087,"event":"end","data":{"code":null,"signal":"SIGTERM","status":"succeeded","resumable":false},"timestamp":1783290605420}

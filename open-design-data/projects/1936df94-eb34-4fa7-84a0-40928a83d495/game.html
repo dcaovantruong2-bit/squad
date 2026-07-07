@@ -25,56 +25,79 @@
       animation: scanline 8s linear infinite; }
     @keyframes scanline { 0% { transform: translateY(-120px); } 100% { transform: translateY(100vh); } }
 
-    /* ─── Squad Builder ─────────────────────────────────────────── */
-    .squad-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-6); flex-wrap: wrap; gap: var(--space-3); }
-    .budget-bar { width: 100%; height: 12px; background: var(--bg-deep); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: var(--space-2); }
-    .budget-fill { height: 100%; background: var(--accent); box-shadow: 0 0 8px var(--accent-glow); transition: width 0.3s ease; }
-    .budget-fill.over { background: var(--danger); box-shadow: 0 0 8px var(--danger-glow); }
-    .budget-text { font-family: var(--font-display); font-size: 8px; color: var(--fg-dim); text-align: center; }
-    .position-tabs { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-4); }
-    .pos-tab { font-family: var(--font-display); font-size: 7px; padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; color: var(--fg-dim); transition: all var(--motion-fast) ease; }
+    /* ─── Squad Builder — Compact List + Pill Grid ─────────────── */
+    .squad-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3); flex-wrap: wrap; gap: var(--space-3); }
+    .budget-row { display: flex; align-items: center; gap: var(--space-3); }
+    .budget-text { font-family: var(--font-display); font-size: 8px; color: var(--fg-dim); white-space:nowrap; }
+    .budget-text .num { color: var(--gold); }
+    .budget-text .num.over { color: var(--danger); }
+    .budget-track { width: 160px; height: 10px; background: var(--bg-deep); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
+    .budget-fill { height: 100%; background: var(--accent); box-shadow: 0 0 6px var(--accent-glow); transition: width 0.3s ease; }
+    .budget-fill.over { background: var(--danger); box-shadow: 0 0 6px var(--danger-glow); }
+
+    /* Position tabs — compact */
+    .pos-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: var(--space-3); }
+    .pos-tab { font-family: var(--font-display); font-size: 7px; padding: 5px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; cursor: pointer; color: var(--fg-dim); transition: all var(--motion-fast) ease; }
     .pos-tab:hover { border-color: var(--border-bright); }
-    .pos-tab.active { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); background: var(--surface-raised); }
-    .player-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-3); margin-bottom: var(--space-6); }
-    .player-card { background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3); cursor: pointer; transition: all var(--motion-fast) ease; position: relative; }
-    .player-card:hover { border-color: var(--border-bright); transform: translateY(-1px); }
-    .player-card.selected { border-color: var(--accent); box-shadow: 0 0 12px var(--accent-glow); }
-    .player-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2); }
-    .player-name { font-family: var(--font-body); font-size: var(--text-lg); color: var(--fg); }
-    .player-position { font-family: var(--font-display); font-size: 7px; padding: 2px 6px; border-radius: var(--radius-sm); }
-    .pos-ST,.pos-LW,.pos-RW { background: rgba(255,51,68,0.15); color: var(--danger); border: 1px solid var(--danger); }
-    .pos-CM,.pos-CAM,.pos-CDM { background: rgba(0,204,255,0.12); color: var(--info); border: 1px solid var(--info); }
-    .pos-CB,.pos-FB { background: rgba(57,255,20,0.1); color: var(--accent); border: 1px solid var(--accent); }
-    .pos-GK { background: rgba(255,215,0,0.12); color: var(--gold); border: 1px solid var(--gold); }
-    .player-desc { font-family: var(--font-body); font-size: var(--text-sm); color: var(--muted); margin-bottom: var(--space-2); font-style: italic; }
-    .stat-bars { display: flex; gap: var(--space-2); flex-wrap: wrap; }
-    .stat-bar { flex: 1; min-width: 45px; }
-    .stat-label { font-family: var(--font-display); font-size: 6px; color: var(--fg-dim); margin-bottom: 2px; }
-    .stat-track { height: 6px; background: var(--bg-deep); border-radius: 1px; overflow: hidden; }
-    .stat-fill { height: 100%; border-radius: 1px; }
-    .stat-ATK .stat-fill { background: var(--danger); box-shadow: 0 0 4px var(--danger-glow); }
-    .stat-PAC .stat-fill { background: var(--gold); box-shadow: 0 0 4px var(--gold-glow); }
-    .stat-PAS .stat-fill { background: var(--info); box-shadow: 0 0 4px var(--info-glow); }
-    .stat-DEF .stat-fill { background: var(--accent); box-shadow: 0 0 4px var(--accent-glow); }
-    .stat-SPC .stat-fill { background: #c084fc; box-shadow: 0 0 4px rgba(192,132,252,0.4); }
-    .player-cost { font-family: var(--font-display); font-size: 8px; color: var(--gold); margin-top: var(--space-2); }
-    .player-traits { display: flex; gap: 4px; flex-wrap: wrap; margin-top: var(--space-1); }
-    .trait-tag { font-family: var(--font-body); font-size: 11px; padding: 1px 5px; background: var(--surface-raised); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--fg-dim); }
+    .pos-tab.active { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 6px var(--accent-glow); background: var(--surface-raised); }
 
-    /* Squad summary */
-    .squad-summary { background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-4); }
-    .squad-summary h3 { font-family: var(--font-display); font-size: 8px; color: var(--fg-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--space-3); }
-    .squad-selected { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-    .squad-chip { font-family: var(--font-body); font-size: var(--text-sm); padding: 4px 8px; background: var(--surface-raised); border: 1px solid var(--accent); border-radius: var(--radius-sm); color: var(--accent); display: flex; align-items: center; gap: 4px; }
-    .squad-chip .remove-x { cursor: pointer; color: var(--danger); font-weight: bold; margin-left: 4px; }
-    .requirements { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
-    .req-badge { font-family: var(--font-display); font-size: 7px; padding: 4px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--fg-dim); }
-    .req-badge.met { border-color: var(--accent); color: var(--accent); }
-    .req-badge.unmet { border-color: var(--danger); color: var(--danger); }
+    /* Compact table header + rows */
+    .player-table { width:100%; border-collapse:collapse; margin-bottom:var(--space-3); }
+    .player-th { font-family:var(--font-display); font-size:6px; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; padding:4px 6px; border-bottom:1px solid var(--border); text-align:center; white-space:nowrap; }
+    .player-th:first-child { text-align:left; }
+    .player-tr { cursor:pointer; transition:background 0.1s ease; }
+    .player-tr:hover { background:rgba(255,255,255,0.02); }
+    .player-tr.selected { background:rgba(57,255,20,0.04); }
+    .player-td { padding:5px 6px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; text-align:center; font-family:var(--font-mono); font-size:13px; }
+    .player-td:first-child { text-align:left; font-family:var(--font-body); font-size:15px; color:var(--fg); }
+    .player-td .pname-check { color:var(--accent); margin-right:4px; }
+    .player-td .pos-badge { font-family:var(--font-display); font-size:6px; padding:1px 4px; border-radius:2px; margin-right:6px; vertical-align:middle; }
+    .pos-badge.GK { background:rgba(255,215,0,0.12); color:var(--gold); border:1px solid var(--gold); }
+    .pos-badge.CB,.pos-badge.FB { background:rgba(57,255,20,0.1); color:var(--accent); border:1px solid var(--accent); }
+    .pos-badge.CM,.pos-badge.CAM,.pos-badge.CDM { background:rgba(0,204,255,0.12); color:var(--info); border:1px solid var(--info); }
+    .pos-badge.ST,.pos-badge.LW,.pos-badge.RW { background:rgba(255,51,68,0.15); color:var(--danger); border:1px solid var(--danger); }
+    .td-stat { font-family:var(--font-body); font-size:14px; font-weight:bold; }
+    .td-atk { color:#ff3344; }
+    .td-pac { color:var(--gold); }
+    .td-pas { color:var(--info); }
+    .td-def { color:var(--accent); }
+    .td-spc { color:#c084fc; }
+    .td-cost { font-family:var(--font-display); font-size:7px; color:var(--gold); }
+    .td-traits { display:flex; gap:2px; flex-wrap:wrap; justify-content:center; }
+    .td-trait { font-family:var(--font-body); font-size:10px; padding:1px 4px; background:var(--surface-raised); border:1px solid var(--border); border-radius:2px; color:var(--fg-dim); }
 
-    .squad-actions { display: flex; justify-content: center; gap: var(--space-4); padding: var(--space-4) 0; }
-    .squad-error { background: rgba(255,51,68,0.15); border: 1px solid var(--danger); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); color: var(--danger); font-family: var(--font-body); font-size: var(--text-lg); margin-bottom: var(--space-4); display: none; }
-    .squad-error.visible { display: block; }
+    /* Squad summary — pill grid */
+    .squad-section { background:var(--surface); border:2px solid var(--border); border-radius:var(--radius-md); padding:var(--space-3) var(--space-4); margin-bottom:var(--space-3); }
+    .squad-section-title { font-family:var(--font-display); font-size:7px; color:var(--fg-dim); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:var(--space-2); display:flex; align-items:center; gap:var(--space-3); }
+    .squad-section-title .count { color:var(--gold); font-size:8px; }
+    .pill-line { display:flex; align-items:center; gap:6px; margin-bottom:5px; flex-wrap:wrap; }
+    .pill-label { font-family:var(--font-display); font-size:6px; text-transform:uppercase; letter-spacing:0.06em; min-width:24px; }
+    .pill-label-GK { color:var(--gold); }
+    .pill-label-DEF { color:var(--accent); }
+    .pill-label-MID { color:var(--info); }
+    .pill-label-ATT { color:var(--danger); }
+    .pill { display:inline-flex; align-items:center; gap:4px; font-family:var(--font-body); font-size:12px; padding:2px 8px; border-radius:3px; border:1px solid; cursor:pointer; transition:all 0.1s ease; }
+    .pill:hover { filter:brightness(1.2); }
+    .pill .pill-cost { font-family:var(--font-display); font-size:6px; opacity:0.7; }
+    .pill .pill-rm { font-family:var(--font-display); font-size:7px; margin-left:2px; color:var(--danger); opacity:0.5; }
+    .pill .pill-rm:hover { opacity:1; }
+    .pill-GK { border-color:var(--gold); background:rgba(255,215,0,0.08); color:var(--gold); }
+    .pill-DEF { border-color:var(--accent); background:rgba(57,255,20,0.06); color:var(--accent); }
+    .pill-MID { border-color:var(--info); background:rgba(0,204,255,0.06); color:var(--info); }
+    .pill-ATT { border-color:var(--danger); background:rgba(255,51,68,0.06); color:var(--danger); }
+    .pill-open { display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:6px; padding:2px 10px; border:1px dashed var(--border); border-radius:3px; color:var(--muted); min-width:48px; }
+    .pill-line-status { font-family:var(--font-body); font-size:12px; color:var(--fg-dim); margin-left:var(--space-2); }
+    .pill-line-status.met { color:var(--accent); }
+    .pill-line-status.unmet { color:var(--danger); }
+
+    .req-strip { display:flex; flex-wrap:wrap; gap:var(--space-2); margin-top:var(--space-2); }
+    .req-badge { font-family:var(--font-display); font-size:7px; padding:3px 8px; border:1px solid var(--border); border-radius:3px; color:var(--fg-dim); }
+    .req-badge.met { border-color:var(--accent); color:var(--accent); }
+    .req-badge.unmet { border-color:var(--danger); color:var(--danger); }
+
+    .squad-actions { display: flex; justify-content: center; gap: var(--space-4); padding: var(--space-3) 0; }
+    .squad-error { background:rgba(255,51,68,0.15); border:1px solid var(--danger); border-radius:var(--radius-md); padding:var(--space-2) var(--space-4); color:var(--danger); font-family:var(--font-body); font-size:var(--text-lg); margin-bottom:var(--space-3); display:none; }
+    .squad-error.visible { display:block; }
 
     /* ─── Formation Select ──────────────────────────────────────── */
     .form-header { text-align: center; margin-bottom: var(--space-8); }
@@ -303,7 +326,13 @@
       .game-area { grid-template-columns: 1fr; }
       .tactical-pitch { height: 140px; }
       .match-sidebar { order: -1; }
-      .player-grid { grid-template-columns: 1fr; }
+      .player-table { font-size: 11px; }
+      .player-td { padding: 4px 3px; font-size: 11px; }
+      .player-td:first-child { font-size: 13px; }
+      .player-th { font-size: 5px; padding: 3px 3px; }
+      .td-stat { font-size: 12px; }
+      .td-trait { font-size: 9px; }
+      .budget-track { width: 100px; }
       .formations-grid { grid-template-columns: 1fr; }
       .picker-modal { width: 96%; max-height: 90vh; }
       .picker-row { grid-template-columns:1fr 36px 36px 36px 36px 36px 46px 28px; padding:6px 10px; }
@@ -335,28 +364,35 @@
   </section>
 
   <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- SCREEN: SQUAD BUILDER                                         -->
+  <!-- SCREEN: SQUAD BUILDER — Compact List + Pill Grid             -->
   <!-- ═══════════════════════════════════════════════════════════════ -->
   <section class="game-screen" id="screen-squad" data-od-id="squad-builder-screen">
     <div class="squad-header">
-      <h2 style="font-family:var(--font-display);font-size:12px;color:var(--accent);text-shadow:0 0 10px var(--accent-glow)">Build Your Squad</h2>
-      <div style="text-align:right">
-        <div class="budget-text">Budget: <span id="budget-used">0</span> / 360</div>
-        <div class="budget-bar" style="width:200px"><div class="budget-fill" id="budget-fill" style="width:0%"></div></div>
+      <h2 style="font-family:var(--font-display);font-size:11px;color:var(--accent);text-shadow:0 0 8px var(--accent-glow);letter-spacing:0.06em;">Build Your Squad</h2>
+      <div class="budget-row">
+        <div class="budget-track"><div class="budget-fill" id="budget-fill" style="width:0%"></div></div>
+        <div class="budget-text">Budget: <span class="num" id="budget-used">0</span> / 360</div>
       </div>
     </div>
 
     <!-- Position filter tabs -->
-    <div class="position-tabs" id="position-tabs" data-od-id="position-tabs"></div>
+    <div class="pos-tabs" id="pos-tabs" data-od-id="position-tabs"></div>
 
-    <!-- Player grid -->
-    <div class="player-grid" id="player-grid" data-od-id="player-grid"></div>
+    <!-- Compact player table -->
+    <table class="player-table" id="player-table">
+      <thead id="player-thead"></thead>
+      <tbody id="player-tbody"></tbody>
+    </table>
 
-    <!-- Squad summary -->
-    <div class="squad-summary" id="squad-summary" data-od-id="squad-summary">
-      <h3>Your Squad (<span id="squad-count">0</span> players)</h3>
-      <div class="squad-selected" id="squad-selected"></div>
-      <div class="requirements" id="squad-requirements"></div>
+    <!-- Squad summary — Pill grid -->
+    <div class="squad-section" id="squad-section" data-od-id="squad-summary">
+      <div class="squad-section-title">
+        Your Squad <span class="count" id="squad-count">0</span>
+        <span style="flex:1"></span>
+        <span id="squad-cost-display" style="color:var(--gold);font-size:7px;font-family:var(--font-display)">Cost: 0</span>
+      </div>
+      <div id="squad-pills"></div>
+      <div class="req-strip" id="req-strip"></div>
     </div>
 
     <!-- Error box -->
@@ -610,41 +646,55 @@
   document.getElementById('start-btn').addEventListener('click', () => showScreen('squad'));
 
   // ═══════════════════════════════════════════════════════════════════
-  // SQUAD BUILDER
+  // SQUAD BUILDER — Compact List + Pill Grid
   // ═══════════════════════════════════════════════════════════════════
 
   let squadFilter = 'ALL';
 
   function renderSquadBuilder() {
     // Position tabs
-    const positions = ['ALL', 'ST', 'LW', 'RW', 'CM', 'CAM', 'CDM', 'CB', 'FB', 'GK'];
-    const tabsEl = document.getElementById('position-tabs');
-    tabsEl.innerHTML = positions.map(p =>
+    const positions = ['ALL', 'GK', 'DEF', 'MID', 'ATT'];
+    document.getElementById('pos-tabs').innerHTML = positions.map(p =>
       `<div class="pos-tab ${p === squadFilter ? 'active' : ''}" onclick="filterSquad('${p}')">${p}</div>`
     ).join('');
 
-    // Player grid
-    const filtered = squadFilter === 'ALL' ? PLAYERS : PLAYERS.filter(p => p.position === squadFilter);
-    const grid = document.getElementById('player-grid');
-    grid.innerHTML = filtered.map(p => {
-      const selected = G.selectedIds.has(p.id);
+    // Filter players by position group
+    const GROUP_POS = { ALL:null, GK:['GK'], DEF:['CB','FB'], MID:['CM','CDM','CAM'], ATT:['ST','LW','RW'] };
+    const allowed = GROUP_POS[squadFilter];
+    const filtered = allowed ? PLAYERS.filter(p => allowed.includes(p.position)) : PLAYERS;
+
+    // Table header
+    document.getElementById('player-thead').innerHTML =
+      '<tr>' +
+        '<th class="player-th">Player</th>' +
+        '<th class="player-th td-atk">ATK</th>' +
+        '<th class="player-th td-pac">PAC</th>' +
+        '<th class="player-th td-pas">PAS</th>' +
+        '<th class="player-th td-def">DEF</th>' +
+        '<th class="player-th td-spc">SPC</th>' +
+        '<th class="player-th" style="color:var(--gold)">Cost</th>' +
+        '<th class="player-th">Traits</th>' +
+      '</tr>';
+
+    // Table rows
+    document.getElementById('player-tbody').innerHTML = filtered.map(p => {
+      const sel = G.selectedIds.has(p.id);
       const cost = calcCost(p);
-      return `<div class="player-card ${selected ? 'selected' : ''}" onclick="toggleSquadPlayer('${p.id}')" data-od-id="card-${p.id}">
-        <div class="player-card-top">
-          <span class="player-name">${p.name}</span>
-          <span class="player-position pos-${p.position}">${p.position}</span>
-        </div>
-        <div class="player-desc">${p.description}</div>
-        <div class="stat-bars">
-          <div class="stat-bar stat-ATK"><div class="stat-label">ATK</div><div class="stat-track"><div class="stat-fill" style="width:${p.atk*10}%"></div></div></div>
-          <div class="stat-bar stat-PAC"><div class="stat-label">PAC</div><div class="stat-track"><div class="stat-fill" style="width:${p.pac*10}%"></div></div></div>
-          <div class="stat-bar stat-PAS"><div class="stat-label">PAS</div><div class="stat-track"><div class="stat-fill" style="width:${p.pas*10}%"></div></div></div>
-          <div class="stat-bar stat-DEF"><div class="stat-label">DEF</div><div class="stat-track"><div class="stat-fill" style="width:${p.def_*10}%"></div></div></div>
-          <div class="stat-bar stat-SPC"><div class="stat-label">SPC</div><div class="stat-track"><div class="stat-fill" style="width:${p.spc*10}%"></div></div></div>
-        </div>
-        <div class="player-cost">Cost: ${cost}</div>
-        <div class="player-traits">${p.traits.map(t => `<span class="trait-tag">${t}</span>`).join('')}</div>
-      </div>`;
+      const openSlot = G.selectedIds.size < 12;
+      return '<tr class="player-tr' + (sel ? ' selected' : '') + '" onclick="toggleSquadPlayer(\'' + p.id + '\')" data-od-id="row-' + p.id + '">' +
+        '<td class="player-td">' +
+          (sel ? '<span class="pname-check">✓</span>' : '') +
+          '<span class="pos-badge ' + p.position + '">' + p.position + '</span>' +
+          p.name +
+        '</td>' +
+        '<td class="player-td"><span class="td-stat td-atk">' + p.atk + '</span></td>' +
+        '<td class="player-td"><span class="td-stat td-pac">' + p.pac + '</span></td>' +
+        '<td class="player-td"><span class="td-stat td-pas">' + p.pas + '</span></td>' +
+        '<td class="player-td"><span class="td-stat td-def">' + p.def_ + '</span></td>' +
+        '<td class="player-td"><span class="td-stat td-spc">' + p.spc + '</span></td>' +
+        '<td class="player-td"><span class="td-cost">' + cost + '</span></td>' +
+        '<td class="player-td"><div class="td-traits">' + p.traits.map(t => '<span class="td-trait">' + t + '</span>').join('') + '</div></td>' +
+      '</tr>';
     }).join('');
 
     updateSquadSummary();
@@ -659,57 +709,137 @@
     if (G.selectedIds.has(id)) {
       G.selectedIds.delete(id);
     } else {
+      if (G.selectedIds.size >= 12) { showToast('Max 12 players! Remove one first.'); return; }
       G.selectedIds.add(id);
     }
     renderSquadBuilder();
   }
 
+  function getPillGroup(player) {
+    if (player.position === 'GK') return 'GK';
+    if (['CB','FB'].includes(player.position)) return 'DEF';
+    if (['CM','CDM','CAM'].includes(player.position)) return 'MID';
+    return 'ATT';
+  }
+
+  function getOpenSlots(group) {
+    const selected = PLAYERS.filter(p => G.selectedIds.has(p.id));
+    const counts = {};
+    for (const p of selected) {
+      const g = getPillGroup(p);
+      counts[g] = (counts[g] || 0) + 1;
+    }
+    const perGroup = { GK:1, DEF:4, MID:4, ATT:4 };
+    return Math.max(0, (perGroup[group] || 0) - (counts[group] || 0));
+  }
+
+  function getGroupReqs(selected) {
+    const posCounts = {};
+    for (const p of selected) posCounts[p.position] = (posCounts[p.position] || 0) + 1;
+    const defCount = (posCounts['CB']||0) + (posCounts['FB']||0);
+    const midCount = (posCounts['CM']||0) + (posCounts['CDM']||0) + (posCounts['CAM']||0);
+    const attCount = (posCounts['ST']||0) + (posCounts['LW']||0) + (posCounts['RW']||0);
+    const gkCount = posCounts['GK']||0;
+    return {
+      GK: { have: gkCount, need: 1, label: 'GK ≥ 1' },
+      DEF: { have: defCount, need: 3, label: 'DEF ≥ 3' },
+      MID: { have: midCount, need: 3, label: 'MID ≥ 3' },
+      ATT: { have: attCount, need: 2, label: 'ATT ≥ 2' },
+    };
+  }
+
   function updateSquadSummary() {
     const selected = PLAYERS.filter(p => G.selectedIds.has(p.id));
     const totalCost = selected.reduce((s, p) => s + calcCost(p), 0);
-    const budgetPct = Math.min(100, (totalCost / BUDGET) * 100);
     const overBudget = totalCost > BUDGET;
+    const budgetPct = Math.min(100, (totalCost / BUDGET) * 100);
 
+    // Budget
     document.getElementById('budget-used').textContent = totalCost;
     const fill = document.getElementById('budget-fill');
     fill.style.width = budgetPct + '%';
     fill.className = 'budget-fill' + (overBudget ? ' over' : '');
+    document.getElementById('budget-used').className = 'num' + (overBudget ? ' over' : '');
+    document.getElementById('squad-count').textContent = selected.length + '/12';
+    document.getElementById('squad-cost-display').textContent = 'Cost: ' + totalCost;
 
-    document.getElementById('squad-count').textContent = selected.length;
-    const selEl = document.getElementById('squad-selected');
-    selEl.innerHTML = selected.map(p =>
-      `<div class="squad-chip"><span class="pos-${p.position}" style="font-family:var(--font-display);font-size:6px;padding:1px 4px;border-radius:2px">${p.position}</span> ${p.name} <span class="remove-x" onclick="event.stopPropagation();toggleSquadPlayer('${p.id}')">×</span></div>`
-    ).join('');
+    // Group pills
+    const orderedGroups = ['GK','DEF','MID','ATT'];
+    const groupLabels = { GK:'GK', DEF:'DEF', MID:'MID', ATT:'ATT' };
+    const groupColors = { GK:'GK', DEF:'DEF', MID:'MID', ATT:'ATT' };
 
-    // Requirements
+    let pillsHtml = '';
+    const grouped = { GK:[], DEF:[], MID:[], ATT:[] };
+    for (const p of selected) {
+      const g = getPillGroup(p);
+      grouped[g].push(p);
+    }
+
+    for (const g of orderedGroups) {
+      const openCount = getOpenSlots(g);
+      const count = grouped[g].length;
+      // Group label + status
+      const maxNeeded = { GK:1, DEF:4, MID:4, ATT:4 };
+      const full = count >= maxNeeded[g];
+
+      pillsHtml += '<div class="pill-line">' +
+        '<span class="pill-label pill-label-' + groupColors[g] + '">' + groupLabels[g] + '</span>';
+
+      // Filled pills
+      for (const p of grouped[g]) {
+        const cost = calcCost(p);
+        pillsHtml += '<span class="pill pill-' + groupColors[g] + '" onclick="toggleSquadPlayer(\'' + p.id + '\')" title="Click to remove">' +
+          p.name.split(' ').pop() + '<span class="pill-cost">' + cost + '</span>' +
+          '<span class="pill-rm">×</span>' +
+        '</span>';
+      }
+
+      // Open slots
+      for (let i = 0; i < openCount; i++) {
+        pillsHtml += '<span class="pill-open">+ OPEN</span>';
+      }
+
+      // Status badge
+      const reqs = getGroupReqs(selected);
+      const r = reqs[g === 'DEF' ? 'DEF' : (g === 'MID' ? 'MID' : (g === 'ATT' ? 'ATT' : 'GK'))];
+      const met = r && r.have >= r.need;
+      if (count > 0) {
+        pillsHtml += '<span class="pill-line-status ' + (met ? 'met' : 'unmet') + '">' +
+          (met ? '✓×' + Math.min(count, maxNeeded[g]) : '✗ need ' + r.need) +
+        '</span>';
+      }
+
+      pillsHtml += '</div>';
+    }
+
+    document.getElementById('squad-pills').innerHTML = pillsHtml;
+
+    // Requirements strip
     const missing = checkMinimums(selected);
-    const posCounts = {};
-    for (const p of selected) posCounts[p.position] = (posCounts[p.position] || 0) + 1;
-
-    const reqs = [];
-    const gkCount = posCounts['GK'] || 0;
-    const defCount = (posCounts['CB'] || 0) + (posCounts['FB'] || 0);
-    const midCount = (posCounts['CM'] || 0) + (posCounts['CDM'] || 0) + (posCounts['CAM'] || 0);
-    const attCount = (posCounts['ST'] || 0) + (posCounts['LW'] || 0) + (posCounts['RW'] || 0);
-    reqs.push({ label: `GK ≥ 1`, met: gkCount >= 1 });
-    reqs.push({ label: `DEF ≥ 3`, met: defCount >= 3 });
-    reqs.push({ label: `MID ≥ 3`, met: midCount >= 3 });
-    reqs.push({ label: `ATT ≥ 2`, met: attCount >= 2 });
-    reqs.push({ label: `Total ≥ 10`, met: selected.length >= 10 });
-    reqs.push({ label: `Budget ≤ 360`, met: !overBudget });
-
-    document.getElementById('squad-requirements').innerHTML = reqs.map(r =>
-      `<div class="req-badge ${r.met ? 'met' : 'unmet'}">${r.met ? '✓' : '✗'} ${r.label}</div>`
+    const reqs = getGroupReqs(selected);
+    const allReqs = [
+      { label: 'GK ≥ 1', met: reqs.GK.have >= 1 },
+      { label: 'DEF ≥ 3', met: reqs.DEF.have >= 3 },
+      { label: 'MID ≥ 3', met: reqs.MID.have >= 3 },
+      { label: 'ATT ≥ 2', met: reqs.ATT.have >= 2 },
+      { label: 'Total ≥ 10', met: selected.length >= 10 },
+      { label: 'Budget ≤ ' + BUDGET, met: !overBudget },
+    ];
+    document.getElementById('req-strip').innerHTML = allReqs.map(r =>
+      '<div class="req-badge ' + (r.met ? 'met' : 'unmet') + '">' + (r.met ? '✓' : '✗') + ' ' + r.label + '</div>'
     ).join('');
+
+    // Error box hidden
+    document.getElementById('squad-error').classList.remove('visible');
   }
 
-  // Confirm squad button
+  // Confirm squad button — validates on click
   document.getElementById('confirm-squad-btn').addEventListener('click', () => {
     const selected = PLAYERS.filter(p => G.selectedIds.has(p.id));
     const missing = checkMinimums(selected);
     const totalCost = selected.reduce((s, p) => s + calcCost(p), 0);
     const errors = [...missing];
-    if (totalCost > BUDGET) errors.push(`Over budget: ${totalCost}/${BUDGET}`);
+    if (totalCost > BUDGET) errors.push('Over budget: ' + totalCost + '/' + BUDGET);
 
     if (errors.length > 0) {
       const errEl = document.getElementById('squad-error');

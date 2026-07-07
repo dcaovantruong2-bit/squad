@@ -29,6 +29,20 @@
       "kind": "html",
       "contentPath": "0002-9fe2eb7a-1715-41ef-9eaa-b115e1ce81c2.html",
       "promptSource": "message"
+    },
+    {
+      "id": "d8499e34-76c4-4822-b755-167dbd2bac0d",
+      "fileName": "game.html",
+      "version": 3,
+      "label": "Version 3",
+      "createdAt": 1783288979412,
+      "source": "ai",
+      "prompt": "whats the progress",
+      "size": 89827,
+      "mime": "text/html; charset=utf-8",
+      "kind": "html",
+      "contentPath": "0003-d8499e34-76c4-4822-b755-167dbd2bac0d.html",
+      "promptSource": "message"
     }
   ]
 }

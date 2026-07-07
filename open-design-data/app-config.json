@@ -8,7 +8,7 @@
   "agentId": "hermes",
   "agentModels": {
     "hermes": {
-      "model": "opencode-go:mimo-v2.5"
+      "model": "opencode-go:minimax-m3"
     }
   },
   "skillId": null,
