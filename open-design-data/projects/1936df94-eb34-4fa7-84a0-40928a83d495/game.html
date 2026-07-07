@@ -12,8 +12,8 @@
 
     /* ─── Title Screen ──────────────────────────────────────────── */
     #screen-title.active { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 100vh; }
-    .title-logo { font-family: var(--font-display); font-size: 48px; color: var(--accent); text-shadow: 0 0 30px var(--accent-glow), 0 0 60px var(--accent-glow); margin-bottom: var(--space-4); animation: logo-pulse 2s ease-in-out infinite; letter-spacing: 0.15em; }
-    @keyframes logo-pulse { 0%,100% { text-shadow: 0 0 30px var(--accent-glow), 0 0 60px var(--accent-glow); } 50% { text-shadow: 0 0 50px var(--accent-glow), 0 0 100px var(--accent-glow), 0 0 150px var(--accent-glow); } }
+    .title-logo { font-family: var(--font-display); font-size: 48px; color: var(--accent); text-shadow: 0 0 20px var(--accent-glow); margin-bottom: var(--space-4); animation: logo-pulse 2s ease-in-out infinite; letter-spacing: 0.15em; }
+    @keyframes logo-pulse { 0%,100% { text-shadow: 0 0 15px var(--accent-glow); } 50% { text-shadow: 0 0 30px var(--accent-glow); } }
     .title-tagline { font-family: var(--font-display); font-size: 10px; color: var(--gold); text-shadow: 0 0 12px var(--gold-glow); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: var(--space-12); }
     .title-info { font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); margin-bottom: var(--space-8); line-height: 1.6; }
     .title-info span { color: var(--accent); }
@@ -140,7 +140,7 @@
     .phase-bar-icon { font-size: 28px; filter: drop-shadow(0 0 8px var(--accent-glow)); }
     .phase-bar-info { flex: 1; }
     .phase-bar-name { font-family: var(--font-display); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg); }
-    .phase-bar-weight { display: inline-flex; align-items: center; gap: var(--space-1); padding: 2px 8px; background: var(--accent); color: var(--accent-on); border-radius: var(--radius-sm); font-family: var(--font-display); font-size: 7px; text-transform: uppercase; margin-left: var(--space-2); box-shadow: 0 0 8px var(--accent-glow); }
+    .phase-bar-weight { display: inline-flex; align-items: center; gap: var(--space-1); padding: 2px 8px; background: var(--accent); color: var(--accent-on); border-radius: var(--radius-sm); font-family: var(--font-display); font-size: 7px; text-transform: uppercase; margin-left: var(--space-2); box-shadow: 0 0 4px var(--accent-glow); }
     .phase-bar-desc { font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); margin-top: var(--space-1); }
     .phase-bar-zone { font-family: var(--font-display); font-size: 7px; color: var(--info); text-transform: uppercase; letter-spacing: 0.08em; margin-top: var(--space-1); }
     .phase-bar-zone::before { content: '▸ '; color: var(--info); }
@@ -156,7 +156,7 @@
     .team-sheet-row:hover { background:rgba(255,255,255,0.02); }
     .team-sheet-row:last-child { border-bottom:none; }
     .ts-num { font-family:var(--font-display); font-size:7px; color:var(--muted); text-align:center; }
-    .ts-pos { font-family:var(--font-display); font-size:7px; color:var(--fg-dim); text-align:center; text-transform:uppercase; letter-spacing:0.04em; }
+    .ts-pos { font-family:var(--font-display); font-size:7px; color:var(--fg-dim); text-align:center; text-transform:uppercase; letter-spacing:0.06em; }
     .ts-pos.GK { color:var(--gold); }
     .ts-pos.DEF { color:var(--accent); }
     .ts-pos.MID { color:var(--info); }
@@ -168,23 +168,25 @@
     .ts-status.empty { color:var(--muted); }
     .ts-slash { font-family:var(--font-display); font-size:7px; color:var(--fg-dim); text-align:right; }
     /* Phase slot row — overrides with glow */
-    .team-sheet-row.slot-row { cursor:pointer; border-color:var(--accent); background:rgba(57,255,20,0.03); animation:slot-pulse 2s ease-in-out infinite; }
-    @keyframes slot-pulse { 0%,100%{background:rgba(57,255,20,0.03)} 50%{background:rgba(57,255,20,0.08)} }
-    .team-sheet-row.slot-row:hover { background:rgba(57,255,20,0.1); border-color:var(--accent); }
-    .team-sheet-row.slot-row .ts-name { color:var(--accent); }
-    .team-sheet-row.slot-row .ts-num { color:var(--accent); text-shadow:0 0 6px var(--accent-glow); }
-    .team-sheet-row.slot-row .ts-pos { color:var(--accent); }
+    .team-sheet-row.slot-row { cursor:pointer; border-color:var(--border); background:rgba(57,255,20,0.03); animation:slot-pulse 2s ease-in-out infinite; }
+    @keyframes slot-pulse { 0%,100%{background:rgba(57,255,20,0.03)} 50%{background:rgba(57,255,20,0.06)} }
+    .team-sheet-row.slot-row:hover { background:rgba(57,255,20,0.06); border-color:var(--accent); }
+    .team-sheet-row.slot-row .ts-name { color:var(--fg); }
+    .team-sheet-row.slot-row .ts-num { color:var(--fg-dim); text-shadow:none; }
+    .team-sheet-row.slot-row .ts-pos { color:var(--fg-dim); }
     .team-sheet-row.slot-row .ts-slash { display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--accent); }
     .team-sheet-row.slot-row .ts-slash::before { content: '➤'; }
     .team-sheet-row.slot-row.filled-slot { animation:none; background:rgba(57,255,20,0.06); }
     .team-sheet-row.slot-row.filled-slot .ts-slash::before { content:'✓'; color:var(--accent); }
+    .team-sheet-row.slot-row.no-eligible { animation:none; background:rgba(220,38,38,0.06); border-color:var(--danger); cursor:default; }
+    .team-sheet-row.slot-row.no-eligible .ts-slash::before { content:'╳'; color:var(--danger); opacity:0.5; }
     /* Line separator */
     .ts-divider { border:none; border-top:1px solid rgba(255,255,255,0.06); margin:0; }
     .ts-line-label { font-family:var(--font-display); font-size:6px; padding:4px 14px; background:rgba(255,255,255,0.02); color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; }
 
     /* ─── Player Picker Modal ───────────────────────────────────── */
-    .picker-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:200; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
-    .picker-modal { background:var(--bg-deep, #0a0612); border:2px solid var(--accent); border-radius:12px; width:92%; max-width:720px; max-height:85vh; display:flex; flex-direction:column; box-shadow:0 0 40px var(--accent-glow); overflow:hidden; }
+    .picker-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:200; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
+    .picker-modal { background:var(--surface-raised, #2e2250); border:2px solid var(--accent); border-radius:12px; width:92%; max-width:720px; max-height:85vh; display:flex; flex-direction:column; box-shadow:0 0 40px var(--accent-glow); overflow:hidden; }
     .picker-hdr { padding:14px 18px; border-bottom:2px solid var(--border); display:flex; flex-wrap:wrap; align-items:center; gap:6px; position:relative; }
     .picker-hdr-title { font-family:var(--font-display); font-size:11px; color:var(--accent); text-shadow:0 0 8px var(--accent-glow); }
     .picker-hdr-req { font-family:var(--font-body); font-size:13px; color:var(--fg-dim); }
@@ -211,7 +213,7 @@
     .picker-row .pr-chips { font-family:var(--font-display); font-size:8px; color:var(--gold); text-shadow:0 0 4px var(--gold-glow); text-align:right; }
     .picker-row .pr-syn { font-family:var(--font-display); font-size:7px; color:var(--accent); text-align:center; }
     /* Expanded breakdown */
-    .picker-expand { padding:12px 16px; background:rgba(255,255,255,0.02); border:1px solid var(--accent); border-radius:6px; margin:2px 14px 6px; display:none; }
+    .picker-expand { padding:12px 16px; background:rgba(255,255,255,0.04); border:1px solid var(--accent); border-radius:6px; margin:2px 14px 6px; display:none; }
     .picker-expand.open { display:block; animation:exp-in 0.2s ease-out; }
     @keyframes exp-in { 0%{opacity:0;max-height:0} 100%{opacity:1;max-height:500px} }
     .pe-traits { display:flex; gap:4px; margin-bottom:8px; flex-wrap:wrap; }
@@ -228,10 +230,10 @@
     .pe-total { font-family:var(--font-display); font-size:10px; color:var(--gold); text-shadow:0 0 6px var(--gold-glow); margin:8px 0 4px; }
     .pe-syn-title { font-family:var(--font-display); font-size:6px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px; }
     .pe-syn-row { display:flex; align-items:center; gap:5px; margin-bottom:2px; font-family:var(--font-body); font-size:12px; }
-    .pe-syn-row.fired { color:var(--accent); }
-    .pe-syn-row.inact { color:var(--muted); opacity:0.6; }
-    .pe-syn-chk { font-size:11px; width:14px; text-align:center; }
-    .pe-syn-desc { font-size:10px; color:var(--muted); }
+    .pe-syn-row.fired { color: var(--gold); text-shadow: 0 0 6px var(--gold-glow); }
+    .pe-syn-row.inact { color: #8a7aa0; opacity: 0.85; }
+    .pe-syn-chk { font-size: 11px; width: 14px; text-align: center; }
+    .pe-syn-desc { font-size: 10px; color: #9a8ab0; opacity: 0.85; }
     .pe-pick { margin-top:10px; padding:8px 20px; background:var(--accent); color:var(--accent-on); border:none; border-radius:6px; font-family:var(--font-display); font-size:8px; cursor:pointer; box-shadow:0 0 12px var(--accent-glow); transition:all 0.15s ease; text-transform:uppercase; letter-spacing:0.06em; }
     .pe-pick:hover { box-shadow:0 0 20px var(--accent-glow); transform:translateY(-1px); }
 
@@ -242,7 +244,7 @@
 
     /* Target display */
     .target-display { text-align: center; }
-    .target-num { font-family: var(--font-display); font-size: 18px; color: var(--gold); text-shadow: 0 0 10px var(--gold-glow); margin: var(--space-1) 0; }
+    .target-num { font-family: var(--font-display); font-size: 18px; color: var(--gold); text-shadow: 0 0 6px var(--gold-glow); margin: var(--space-1) 0; }
     .round-score-live { font-family: var(--font-body); font-size: var(--text-lg); color: var(--accent); }
 
     /* Slot cards */
@@ -259,7 +261,7 @@
 
     /* Synergy preview */
     .synergy-list { display: flex; flex-direction: column; gap: var(--space-1); }
-    .synergy-row { display: flex; align-items: center; gap: var(--space-2); font-family: var(--font-body); font-size: var(--text-lg); color: var(--gold); }
+    .synergy-row { display: flex; align-items: center; gap: var(--space-2); font-family: var(--font-body); font-size: var(--text-lg); color: #ffd700; text-shadow: 0 0 4px rgba(255,215,0,0.3); }
     .synergy-dot { width: 6px; height: 6px; border-radius: var(--radius-sm); background: var(--gold); box-shadow: 0 0 4px var(--gold-glow); flex-shrink: 0; }
 
     /* Submit section */
@@ -270,8 +272,8 @@
     .result-verdict { font-family: var(--font-display); font-size: 24px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: var(--space-6); }
     .result-verdict.win { color: var(--accent); text-shadow: 0 0 30px var(--accent-glow); animation: verdict-glow 1.5s ease-in-out infinite; }
     .result-verdict.lose { color: var(--danger); text-shadow: 0 0 30px var(--danger-glow); }
-    @keyframes verdict-glow { 0%,100% { text-shadow: 0 0 20px var(--accent-glow); } 50% { text-shadow: 0 0 50px var(--accent-glow), 0 0 80px var(--accent-glow); } }
-    .result-score { font-family: var(--font-display); font-size: 48px; color: var(--gold); text-shadow: 0 0 20px var(--gold-glow); margin-bottom: var(--space-2); }
+    @keyframes verdict-glow { 0%,100% { text-shadow: 0 0 10px var(--accent-glow); } 50% { text-shadow: 0 0 30px var(--accent-glow); } }
+    .result-score { font-family: var(--font-display); font-size: 48px; color: var(--gold); text-shadow: 0 0 10px var(--gold-glow); margin-bottom: var(--space-2); }
     .result-target { font-family: var(--font-body); font-size: var(--text-xl); color: var(--muted); margin-bottom: var(--space-6); }
     .result-breakdown { width: 100%; max-width: 600px; background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-6); text-align: left; }
     .breakdown-title { font-family: var(--font-display); font-size: 8px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-dim); margin-bottom: var(--space-3); }
@@ -286,9 +288,9 @@
     .result-synergies { width: 100%; max-width: 600px; margin-bottom: var(--space-6); }
     .result-synergies h3 { font-family: var(--font-display); font-size: 8px; text-transform: uppercase; color: var(--gold); margin-bottom: var(--space-3); }
     .synergy-fired { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); background: rgba(255,215,0,0.05); border: 1px solid var(--gold-dim); border-radius: var(--radius-sm); margin-bottom: var(--space-2); }
-    .synergy-fired .sf-name { font-family: var(--font-body); font-size: var(--text-lg); color: var(--gold); flex: 1; }
-    .synergy-fired .sf-contrib { font-family: var(--font-body); font-size: var(--text-sm); color: var(--fg-dim); }
-    .synergy-fired .sf-desc { font-family: var(--font-body); font-size: var(--text-sm); color: var(--muted); font-style: italic; }
+    .synergy-fired .sf-name { font-family: var(--font-body); font-size: var(--text-lg); color: #ffd700; text-shadow: 0 0 4px rgba(255,215,0,0.3); flex: 1; }
+    .synergy-fired .sf-contrib { font-family: var(--font-body); font-size: var(--text-sm); color: #b8a8d0; }
+    .synergy-fired .sf-desc { font-family: var(--font-body); font-size: var(--text-sm); color: #9a8ab0; font-style: italic; }
 
     /* ─── Round Result ──────────────────────────────────────────── */
     .round-verdict { font-family: var(--font-display); font-size: 20px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: var(--space-6); }
@@ -323,8 +325,8 @@
     /* ─── Shared Button Styles ──────────────────────────────────── */
     .btn { font-family: var(--font-display); font-size: 8px; text-transform: uppercase; letter-spacing: 0.06em; padding: 12px 24px; border: 2px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--fg); cursor: pointer; transition: all var(--motion-fast) ease; }
     .btn:hover { border-color: var(--border-bright); background: var(--surface-raised); }
-    .btn-primary { border-color: var(--accent); color: var(--accent-on); background: var(--accent); box-shadow: 0 0 12px var(--accent-glow); }
-    .btn-primary:hover { background: var(--accent-dim); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-1px); }
+    .btn-primary { border-color: var(--accent); color: var(--accent-on); background: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
+    .btn-primary:hover { background: var(--accent-dim); box-shadow: 0 0 12px var(--accent-glow); transform: translateY(-1px); }
     .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
     .btn-lg { padding: 16px 32px; font-size: 10px; }
     .btn-danger { border-color: var(--danger); color: #fff; background: var(--danger); }
@@ -360,6 +362,14 @@
       .result-score { font-size: 36px; }
       .team-sheet .ts-name { font-size: 12px; }
       .team-sheet-row { grid-template-columns:18px 24px 1fr 36px 20px; padding:4px 8px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .title-logo, .team-sheet-row.slot-row, .result-verdict.win,
+      .campaign-title.victory, .title-scan { animation: none !important; }
+      .title-logo { text-shadow: 0 0 10px var(--accent-glow); }
+      .phase-bar-icon { filter: none; }
+      .result-verdict.win { text-shadow: 0 0 8px var(--accent-glow); }
     }
   </style>
 </head>
@@ -466,7 +476,7 @@
 
     <!-- Phase info bar -->
     <div class="phase-bar" data-od-id="phase-bar">
-      <div class="phase-bar-icon" id="phase-icon">⚽</div>
+      <div class="phase-bar-icon" id="phase-icon">B</div>
       <div class="phase-bar-info">
         <div><span class="phase-bar-name" id="phase-name">Goal Kick</span><span class="phase-bar-weight" id="phase-weight">DEF</span></div>
         <div class="phase-bar-desc" id="phase-desc"></div>
@@ -504,7 +514,7 @@
     </div>
 
     <div class="submit-section">
-      <button class="btn btn-primary btn-lg" id="submit-phase-btn" disabled>Submit Phase ▸</button>
+      <button class="btn btn-primary btn-lg" id="submit-phase-btn">Submit Phase ▸</button>
     </div>
   </section>
 
@@ -520,7 +530,7 @@
         <button class="picker-close" id="picker-close">✕</button>
       </div>
       <div class="picker-cols">
-        <span>Player</span><span>ATK</span><span>PAC</span><span>PAS</span><span>DEF</span><span>SPC</span><span>Chips</span><span>⚡</span>
+        <span>Player</span><span>ATK</span><span>PAC</span><span>PAS</span><span>DEF</span><span>SPC</span><span>Chips</span><span>SYN</span>
       </div>
       <div class="picker-body" id="picker-body"></div>
     </div>
@@ -1055,10 +1065,6 @@
     const tz = TACTICAL_ZONES[phase.id] || { label:'Pitch' };
     document.getElementById('phase-zone-label').textContent = tz.label;
 
-    G.phasePlacement = {};
-    G.activeSlot = null;
-    G._pickerSlot = null;
-
     const container = document.getElementById('ts-rows');
     let html = '';
 
@@ -1070,16 +1076,21 @@
       const player = pid ? G.squad.find(function(p) { return p.id === pid; }) : null;
       const filled = !!player;
       const label = formatSlotLabel(slot);
+      // Check if ANY eligible player exists
+      const hasEligible = !filled && G.squad.some(function(p) {
+        return p && isPlayerEligible(p, slot) &&
+          !Object.values(G.phasePlacement).includes(p.id);
+      });
 
-      const rowClass = 'team-sheet-row slot-row' + (filled ? ' filled-slot' : '');
+      const rowClass = 'team-sheet-row slot-row' + (filled ? ' filled-slot' : (!hasEligible ? ' no-eligible' : ''));
       const num = getShirtNum(fp);
       const posClass = getPosClass(fp);
 
       html += '<div class="' + rowClass + '" onclick="selectSlot(' + i + ')" data-od-id="ts-' + i + '">' +
         '<span class="ts-num">' + num + '</span>' +
         '<span class="ts-pos ' + posClass + '">' + fp + '</span>' +
-        '<span class="ts-name">' + (filled ? player.name : label ? '⚡ ' + label : '─ Tap to assign ─') + '</span>' +
-        '<span class="ts-chips">' + (filled ? calculateChips(player, fp) + ' ♣' : '') + '</span>' +
+        '<span class="ts-name">' + (filled ? player.name : hasEligible ? (label ? '→ ' + label : '— Tap —') : '⚠ no eligible') + '</span>' +
+        '<span class="ts-chips">' + (filled ? calculateChips(player, fp) + ' ♣' : (hasEligible ? '' : '0 ♣')) + '</span>' +
         '<span class="ts-slash"></span>' +
       '</div>';
     });
@@ -1134,7 +1145,7 @@
 
     container.innerHTML = html;
     renderSynergyPreview();
-    document.getElementById('submit-phase-btn').disabled = true;
+    updateSubmitHint();
   }
 
   function formatSlotLabel(slot) {
@@ -1150,6 +1161,25 @@
       return parts.length ? parts.join(' \u00b7 ') : '';
     }
     return '';
+  }
+
+  function updateSubmitHint() {
+    const phase = G.roundPhases[G.phaseIdx];
+    const filled = phase.slots.filter(function(_, i) { return G.phasePlacement[i] !== undefined; }).length;
+    const total = phase.slots.length;
+    const hint = document.getElementById('submit-hint') || document.createElement('div');
+    if (!hint.id) {
+      hint.id = 'submit-hint';
+      hint.style.cssText = 'font-family:var(--font-body);font-size:var(--text-sm);color:var(--muted);text-align:center;margin-top:var(--space-2)';
+      document.getElementById('submit-phase-btn').parentElement.appendChild(hint);
+    }
+    if (filled === 0) {
+      hint.textContent = 'No players assigned — submit with 0 ♣ from this phase';
+    } else if (filled < total) {
+      hint.textContent = 'Assigned ' + filled + '/' + total + ' slots. Empty slots contribute 0 ♣';
+    } else {
+      hint.textContent = 'All slots filled — ready to submit!';
+    }
   }
 
   function renderSynergyPreview() {
@@ -1196,8 +1226,6 @@
       // Remove player from slot — allow reassignment
       delete G.phasePlacement[index];
       renderTeamSheet();
-      const allFilled = phase.slots.every((_, i) => G.phasePlacement[i] !== undefined);
-      document.getElementById('submit-phase-btn').disabled = !allFilled;
       return;
     }
     openPicker(index);
@@ -1221,9 +1249,6 @@
     G._pickerSlot = null;
 
     renderTeamSheet();
-
-    const allFilled = phase.slots.every((_, i) => G.phasePlacement[i] !== undefined);
-    document.getElementById('submit-phase-btn').disabled = !allFilled;
   }
 
   // ═══════════════════════════════════════════════════════════════════
@@ -1287,7 +1312,7 @@
         '<span class="pr-st def">' + e.player.def_ + '</span>' +
         '<span class="pr-st spc">' + e.player.spc + '</span>' +
         '<span class="pr-chips">' + (e.eligible ? e.finalChips + ' \u2663' : '\u2014') + '</span>' +
-        '<span class="pr-syn">' + (e.synCount > 0 ? '\u26a1' + e.synCount : '') + '</span>' +
+        '<span class="pr-syn">' + (e.synCount > 0 ? 'S' + e.synCount : '') + '</span>' +
       '</div>';
 
       if (e.eligible && !e.used) {
@@ -1623,7 +1648,7 @@
   function renderCampaignComplete() {
     const wins = G.matchResults.filter(r => r.won).length;
     const title = document.getElementById('cc-title');
-    title.textContent = wins >= 3 ? '🏆 Campaign Won!' : 'Campaign Complete';
+    title.textContent = wins >= 3 ? 'Campaign Won!' : 'Campaign Complete';
     title.className = 'campaign-title ' + (wins >= 3 ? 'victory' : 'defeat');
 
     const container = document.getElementById('cc-results');
