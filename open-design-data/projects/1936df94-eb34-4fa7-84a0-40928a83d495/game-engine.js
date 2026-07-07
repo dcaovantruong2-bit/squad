@@ -127,65 +127,70 @@ const ALL_PHASES = [
 
 const FORMATIONS = [
   { id:"4-4-2", name:"4-4-2", handSize:11, globalMult:1.0,
-    slots:["CB","CB","FB","FB","CM","CM","ST","ST"],
+    slots:["CB","CB","FB","FB","CM","CM","CM","CM","ST","ST"],
     positionBonus:{}, description:"Balanced. No frills. Classic.",
     pitchPositions:[
-      {pos:"GK",x:50,y:92},{pos:"CB",x:30,y:72},{pos:"CB",x:70,y:72},
-      {pos:"FB",x:10,y:55},{pos:"FB",x:90,y:55},
-      {pos:"CM",x:30,y:40},{pos:"CM",x:70,y:40},
-      {pos:"ST",x:30,y:18},{pos:"ST",x:70,y:18}
+      {pos:"GK",x:50,y:92},
+      {pos:"CB",x:28,y:75},{pos:"CB",x:72,y:75},
+      {pos:"FB",x:5,y:58},{pos:"FB",x:95,y:58},
+      {pos:"LW",x:15,y:40},{pos:"CM",x:38,y:40},{pos:"CM",x:62,y:40},{pos:"RW",x:85,y:40},
+      {pos:"ST",x:30,y:17},{pos:"ST",x:70,y:17}
     ] },
   { id:"4-3-3", name:"4-3-3", handSize:12, globalMult:1.0,
     slots:["CB","CB","FB","FB","CDM","CM","CM","LW","RW","ST"],
     positionBonus:{"LW":20,"RW":20,"ST":-15,"CDM":-10},
     description:"Wingers thrive (+20). ST and CDM stretched (-15/-10).",
     pitchPositions:[
-      {pos:"GK",x:50,y:92},{pos:"CB",x:30,y:72},{pos:"CB",x:70,y:72},
-      {pos:"FB",x:10,y:55},{pos:"FB",x:90,y:55},
-      {pos:"CDM",x:50,y:55},{pos:"CM",x:30,y:40},{pos:"CM",x:70,y:40},
-      {pos:"LW",x:10,y:20},{pos:"RW",x:90,y:20},{pos:"ST",x:50,y:15}
+      {pos:"GK",x:50,y:92},
+      {pos:"CB",x:28,y:75},{pos:"CB",x:72,y:75},
+      {pos:"FB",x:5,y:58},{pos:"FB",x:95,y:58},
+      {pos:"CDM",x:50,y:50},{pos:"CM",x:30,y:34},{pos:"CM",x:70,y:34},
+      {pos:"LW",x:12,y:17},{pos:"ST",x:50,y:12},{pos:"RW",x:88,y:17}
     ] },
   { id:"5-3-2", name:"5-3-2", handSize:11, globalMult:1.0,
     slots:["CB","CB","CB","FB","FB","CM","CM","CDM","ST","ST"],
     positionBonus:{"CB":25,"FB":12,"LW":-20,"RW":-20},
     description:"Defence wins. CBs+25, FBs+12. Wingers don't exist (-20).",
     pitchPositions:[
-      {pos:"GK",x:50,y:92},{pos:"CB",x:20,y:72},{pos:"CB",x:50,y:72},{pos:"CB",x:80,y:72},
-      {pos:"FB",x:10,y:50},{pos:"FB",x:90,y:50},
-      {pos:"CDM",x:50,y:55},{pos:"CM",x:30,y:38},{pos:"CM",x:70,y:38},
-      {pos:"ST",x:30,y:18},{pos:"ST",x:70,y:18}
+      {pos:"GK",x:50,y:92},
+      {pos:"CB",x:18,y:76},{pos:"CB",x:50,y:76},{pos:"CB",x:82,y:76},
+      {pos:"FB",x:5,y:55},{pos:"FB",x:95,y:55},
+      {pos:"CDM",x:50,y:50},{pos:"CM",x:30,y:36},{pos:"CM",x:70,y:36},
+      {pos:"ST",x:30,y:17},{pos:"ST",x:70,y:17}
     ] },
   { id:"3-4-3", name:"3-4-3", handSize:12, globalMult:1.0,
-    slots:["CB","CB","FB","FB","CM","CM","LW","RW","ST","ST"],
+    slots:["CB","CB","CB","FB","FB","CM","CM","LW","ST","RW"],
     positionBonus:{"ST":20,"LW":15,"RW":15,"CB":-25},
-    description:"All-out attack. Attackers +15-20. CBs exposed (-25).",
+    description:"All-out attack. Front 3 +15-20. CBs exposed (-25).",
     pitchPositions:[
-      {pos:"GK",x:50,y:92},{pos:"CB",x:25,y:72},{pos:"CB",x:50,y:72},{pos:"CB",x:75,y:72},
-      {pos:"FB",x:10,y:50},{pos:"FB",x:90,y:50},
-      {pos:"CM",x:35,y:40},{pos:"CM",x:65,y:40},
-      {pos:"LW",x:10,y:20},{pos:"RW",x:90,y:20},
-      {pos:"ST",x:35,y:15},{pos:"ST",x:65,y:15}
+      {pos:"GK",x:50,y:92},
+      {pos:"CB",x:20,y:76},{pos:"CB",x:50,y:76},{pos:"CB",x:80,y:76},
+      {pos:"FB",x:8,y:50},{pos:"FB",x:92,y:50},
+      {pos:"CM",x:35,y:38},{pos:"CM",x:65,y:38},
+      {pos:"LW",x:12,y:17},{pos:"ST",x:50,y:12},{pos:"RW",x:88,y:17}
     ] },
   { id:"4-2-3-1", name:"4-2-3-1", handSize:12, globalMult:1.0,
     slots:["CB","CB","FB","FB","CM","CM","CAM","LW","RW","ST"],
     positionBonus:{"CM":10,"CAM":25,"ST":-15},
     description:"Possession. CAM+25, CM+10. Lone ST isolated (-15).",
     pitchPositions:[
-      {pos:"GK",x:50,y:92},{pos:"CB",x:30,y:72},{pos:"CB",x:70,y:72},
-      {pos:"FB",x:10,y:55},{pos:"FB",x:90,y:55},
+      {pos:"GK",x:50,y:92},
+      {pos:"CB",x:28,y:75},{pos:"CB",x:72,y:75},
+      {pos:"FB",x:5,y:58},{pos:"FB",x:95,y:58},
       {pos:"CM",x:35,y:50},{pos:"CM",x:65,y:50},
-      {pos:"CAM",x:50,y:35},{pos:"LW",x:10,y:25},{pos:"RW",x:90,y:25},
-      {pos:"ST",x:50,y:15}
+      {pos:"LW",x:10,y:27},{pos:"CAM",x:50,y:27},{pos:"RW",x:90,y:27},
+      {pos:"ST",x:50,y:12}
     ] },
   { id:"4-5-1", name:"4-5-1", handSize:12, globalMult:1.0,
     slots:["CB","CB","FB","FB","CDM","CM","CM","LW","RW","ST"],
     positionBonus:{"CDM":15,"LW":20,"RW":20,"ST":-20,"CB":-5},
     description:"Counter. CDM+15, wingers+20. Lone ST isolated (-20).",
     pitchPositions:[
-      {pos:"GK",x:50,y:92},{pos:"CB",x:30,y:72},{pos:"CB",x:70,y:72},
-      {pos:"FB",x:10,y:55},{pos:"FB",x:90,y:55},
-      {pos:"CDM",x:50,y:55},{pos:"CM",x:30,y:40},{pos:"CM",x:70,y:40},
-      {pos:"LW",x:10,y:22},{pos:"RW",x:90,y:22},{pos:"ST",x:50,y:15}
+      {pos:"GK",x:50,y:92},
+      {pos:"CB",x:28,y:75},{pos:"CB",x:72,y:75},
+      {pos:"FB",x:5,y:58},{pos:"FB",x:95,y:58},
+      {pos:"CDM",x:50,y:52},{pos:"CM",x:28,y:38},{pos:"CM",x:72,y:38},
+      {pos:"LW",x:10,y:22},{pos:"RW",x:90,y:22},{pos:"ST",x:50,y:13}
     ] },
 ];
 

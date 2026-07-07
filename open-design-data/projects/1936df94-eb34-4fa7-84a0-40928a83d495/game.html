@@ -148,23 +148,39 @@
     /* Game area layout */
     .game-area { display: grid; grid-template-columns: 1fr 340px; gap: var(--space-5); margin-bottom: var(--space-5); }
 
-    /* ─── Tactical Side-View Pitch ──────────────────────────────── */
-    .tactical-pitch { width:100%; height:200px; background:#1a3a1a; border:2px solid #2d5a2d; border-radius:8px; position:relative; overflow:hidden; margin-bottom:16px; box-shadow:inset 0 0 40px rgba(0,0,0,0.4); }
-    .tactical-pitch .tp-zone { position:absolute; top:0; bottom:0; border-right:1px solid rgba(57,255,20,0.08); }
-    .tactical-pitch .tp-zone:last-child { border-right:none; }
-    .tactical-pitch .tp-zone-label { position:absolute; bottom:6px; font-family:var(--font-display); font-size:6px; color:rgba(57,255,20,0.2); text-transform:uppercase; letter-spacing:0.08em; pointer-events:none; }
-    .tactical-pitch .tp-dir { position:absolute; top:50%; transform:translateY(-50%); font-family:var(--font-display); font-size:7px; color:rgba(57,255,20,0.2); text-transform:uppercase; letter-spacing:0.1em; pointer-events:none; z-index:0; }
-    .tactical-pitch .tp-dir.left { left:8px; }
-    .tactical-pitch .tp-dir.right { right:8px; }
-    .tactical-pitch .tp-overlay { position:absolute; top:0; bottom:0; background:rgba(57,255,20,0.08); border-left:2px solid rgba(57,255,20,0.35); border-right:2px solid rgba(57,255,20,0.35); transition:all 0.5s ease; pointer-events:none; z-index:1; animation:tp-glow 2s ease-in-out infinite; }
-    @keyframes tp-glow { 0%,100%{background:rgba(57,255,20,0.06)} 50%{background:rgba(57,255,20,0.12)} }
-    .tactical-pitch .tp-overlay-label { position:absolute; top:8px; left:50%; transform:translateX(-50%); font-family:var(--font-display); font-size:8px; color:var(--accent); text-shadow:0 0 8px var(--accent-glow); text-transform:uppercase; letter-spacing:0.08em; white-space:nowrap; z-index:2; pointer-events:none; }
-    .tactical-pitch .tp-hint { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:var(--font-body); font-size:var(--text-lg); color:rgba(255,255,255,0.3); text-align:center; z-index:0; pointer-events:none; }
-    .tactical-token { position:absolute; width:48px; height:44px; background:var(--surface); border:2px solid var(--accent); border-radius:4px; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:3; transform:translate(-50%,-50%); box-shadow:0 0 10px var(--accent-glow); animation:tok-pop 0.3s ease-out; }
-    @keyframes tok-pop { 0%{transform:translate(-50%,-50%) scale(0.5);opacity:0} 100%{transform:translate(-50%,-50%) scale(1);opacity:1} }
-    .tactical-token .tok-pos { font-family:var(--font-display); font-size:7px; color:var(--accent); text-shadow:0 0 4px var(--accent-glow); }
-    .tactical-token .tok-name { font-family:var(--font-body); font-size:11px; color:var(--fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:44px; text-align:center; }
-    .tactical-token .tok-chips { font-family:var(--font-display); font-size:7px; color:var(--gold); text-shadow:0 0 4px var(--gold-glow); }
+    /* ─── Team Sheet (replaces Tactical Pitch) ──────────────────── */
+    .team-sheet { background:var(--surface); border:2px solid var(--border); border-radius:var(--radius-md); overflow:hidden; margin-bottom:var(--space-3); }
+    .team-sheet-header { font-family:var(--font-display); font-size:7px; color:var(--fg-dim); text-transform:uppercase; letter-spacing:0.08em; padding:8px 14px 6px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+    .team-sheet-header .ts-formation { color:var(--accent); }
+    .team-sheet-row { display:grid; grid-template-columns:28px 36px 1fr 52px 28px; gap:4px; padding:6px 14px; border-bottom:1px solid rgba(255,255,255,0.04); align-items:center; cursor:default; transition:background 0.1s ease; }
+    .team-sheet-row:hover { background:rgba(255,255,255,0.02); }
+    .team-sheet-row:last-child { border-bottom:none; }
+    .ts-num { font-family:var(--font-display); font-size:7px; color:var(--muted); text-align:center; }
+    .ts-pos { font-family:var(--font-display); font-size:7px; color:var(--fg-dim); text-align:center; text-transform:uppercase; letter-spacing:0.04em; }
+    .ts-pos.GK { color:var(--gold); }
+    .ts-pos.DEF { color:var(--accent); }
+    .ts-pos.MID { color:var(--info); }
+    .ts-pos.ATT { color:var(--danger); }
+    .ts-name { font-family:var(--font-body); font-size:15px; color:var(--fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .ts-chips { font-family:var(--font-display); font-size:8px; color:var(--gold); text-shadow:0 0 4px var(--gold-glow); text-align:right; }
+    .ts-status { font-family:var(--font-display); font-size:7px; text-align:center; }
+    .ts-status.filled { color:var(--accent); }
+    .ts-status.empty { color:var(--muted); }
+    .ts-slash { font-family:var(--font-display); font-size:7px; color:var(--fg-dim); text-align:right; }
+    /* Phase slot row — overrides with glow */
+    .team-sheet-row.slot-row { cursor:pointer; border-color:var(--accent); background:rgba(57,255,20,0.03); animation:slot-pulse 2s ease-in-out infinite; }
+    @keyframes slot-pulse { 0%,100%{background:rgba(57,255,20,0.03)} 50%{background:rgba(57,255,20,0.08)} }
+    .team-sheet-row.slot-row:hover { background:rgba(57,255,20,0.1); border-color:var(--accent); }
+    .team-sheet-row.slot-row .ts-name { color:var(--accent); }
+    .team-sheet-row.slot-row .ts-num { color:var(--accent); text-shadow:0 0 6px var(--accent-glow); }
+    .team-sheet-row.slot-row .ts-pos { color:var(--accent); }
+    .team-sheet-row.slot-row .ts-slash { display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--accent); }
+    .team-sheet-row.slot-row .ts-slash::before { content: '➤'; }
+    .team-sheet-row.slot-row.filled-slot { animation:none; background:rgba(57,255,20,0.06); }
+    .team-sheet-row.slot-row.filled-slot .ts-slash::before { content:'✓'; color:var(--accent); }
+    /* Line separator */
+    .ts-divider { border:none; border-top:1px solid rgba(255,255,255,0.06); margin:0; }
+    .ts-line-label { font-family:var(--font-display); font-size:6px; padding:4px 14px; background:rgba(255,255,255,0.02); color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; }
 
     /* ─── Player Picker Modal ───────────────────────────────────── */
     .picker-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:200; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
@@ -324,7 +340,8 @@
     /* ─── Responsive ────────────────────────────────────────────── */
     @media (max-width: 920px) {
       .game-area { grid-template-columns: 1fr; }
-      .tactical-pitch { height: 140px; }
+      .team-sheet .ts-name { font-size: 13px; }
+      .team-sheet-row { grid-template-columns:22px 28px 1fr 44px 24px; padding:5px 10px; }
       .match-sidebar { order: -1; }
       .player-table { font-size: 11px; }
       .player-td { padding: 4px 3px; font-size: 11px; }
@@ -341,7 +358,8 @@
     @media (max-width: 600px) {
       .title-logo { font-size: 28px; }
       .result-score { font-size: 36px; }
-      .tactical-pitch { height: 120px; }
+      .team-sheet .ts-name { font-size: 12px; }
+      .team-sheet-row { grid-template-columns:18px 24px 1fr 36px 20px; padding:4px 8px; }
     }
   </style>
 </head>
@@ -459,17 +477,17 @@
     <!-- Game area -->
     <div class="game-area">
       <div data-od-id="match-pitch-area">
-        <!-- Tactical Side-View Pitch -->
-        <div class="tactical-pitch" id="tac-pitch" data-od-id="tactical-pitch">
-          <div class="tp-dir left">◂ YOUR GOAL</div>
-          <div class="tp-zone" style="left:0;width:25%"><span class="tp-zone-label">Def Third</span></div>
-          <div class="tp-zone" style="left:25%;width:25%;border-right:1px solid rgba(57,255,20,0.08)"><span class="tp-zone-label">Midfield</span></div>
-          <div class="tp-zone" style="left:50%;width:25%;border-right:1px solid rgba(57,255,20,0.08)"><span class="tp-zone-label">Att Third</span></div>
-          <div class="tp-zone" style="left:75%;width:25%"><span class="tp-zone-label">Box</span></div>
-          <div class="tp-overlay" id="tp-overlay" style="left:10%;width:30%">
-            <span class="tp-overlay-label" id="tp-overlay-label">Defensive Third</span>
+        <!-- Team Sheet -->
+        <div class="team-sheet" id="team-sheet" data-od-id="team-sheet">
+          <div class="team-sheet-header">
+            <span>Your XI</span>
+            <span class="ts-formation" id="ts-formation">(4-3-3)</span>
           </div>
-          <div class="tp-hint" id="tp-hint">Tap a slot card below →</div>
+          <div id="ts-rows"></div>
+          <div class="team-sheet-header" style="border-top:1px solid var(--border);border-bottom:none;margin-top:0">
+            <span>Phase: <span id="ts-phase-name">Tiki-Taka</span></span>
+            <span style="color:var(--gold)" id="ts-phase-weight">PAS</span>
+          </div>
         </div>
       </div>
       <div class="match-sidebar">
@@ -478,13 +496,9 @@
           <div class="target-num" id="target-num">500</div>
           <div class="round-score-live">Your score: <span id="live-score">0</span></div>
         </div>
-        <div class="sidebar-panel" data-od-id="slot-cards-panel">
-          <div class="panel-title">Phase Slots — tap to assign</div>
-          <div class="slot-cards" id="slot-cards"></div>
-        </div>
         <div class="sidebar-panel" data-od-id="synergy-panel">
-          <div class="panel-title">Synergies</div>
-          <div class="synergy-list" id="synergy-list"></div>
+          <div class="panel-title">Synergies <span style="cursor:pointer;color:var(--accent);font-family:var(--font-body);font-size:12px" onclick="toggleSynergies()" id="syn-toggle">▼ expand</span></div>
+          <div class="synergy-list" id="synergy-list" style="max-height:0;overflow:hidden;transition:max-height 0.3s ease"></div>
         </div>
       </div>
     </div>
@@ -950,17 +964,7 @@
     wingback_push:   { left:'40%', width:'45%', label:'Wing Channel' },
   };
 
-  // X position (%) on the tactical pitch for each field position
-  function tacX(fp) {
-    const m = { GK:8, CB:22, FB:38, CDM:42, CM:50, CAM:58, LW:68, RW:74, ST:85 };
-    return m[fp] || 50;
-  }
-
-  // Vertical Y position (%) — staggered per slot index
-  const TAC_Y = [50, 30, 70, 50, 30, 70];
-
   const FORMULA_TEXT = {
-    ST:'ATK\u00d73 + PAC\u00d72 + SPC\u00d71',
     LW:'ATK\u00d72 + PAC\u00d73 + PAS\u00d71',
     RW:'ATK\u00d72 + PAC\u00d73 + PAS\u00d71',
     CM:'PAS\u00d73 + ATK\u00d71 + DEF\u00d72',
@@ -985,6 +989,17 @@
 
   const STAT_COLORS = { ATK:'#ff3344', PAC:'var(--gold)', PAS:'var(--info)', DEF:'var(--accent)', SPC:'#c084fc' };
   const STAT_KEY = { ATK:'atk', PAC:'pac', PAS:'pas', DEF:'def_', SPC:'spc' };
+
+  function getPosClass(fp) {
+    if (fp === 'GK') return 'GK';
+    if (['CB','FB'].includes(fp)) return 'DEF';
+    if (['CDM','CM','CAM'].includes(fp)) return 'MID';
+    return 'ATT';
+  }
+  function getShirtNum(fp) {
+    const map = { GK:1, CB:4, CB1:5, CB2:5, FB:2, FB1:2, FB2:3, CDM:6, CM:8, CM1:8, CM2:11, CAM:10, LW:7, RW:11, ST:9, ST1:9, ST2:12 };
+    return map[fp] || 0;
+  }
 
   function renderMatch() {
     const matchData = CAMPAIGN_MATCHES[G.matchIdx] || CAMPAIGN_MATCHES[0];
@@ -1021,86 +1036,105 @@
       phaseDots.appendChild(dot);
     }
 
-    renderPhase();
+    renderTeamSheet();
   }
 
-  function renderPhase() {
+  function renderTeamSheet() {
     const phase = G.roundPhases[G.phaseIdx];
-    if (!phase) { console.error('No phase at index', G.phaseIdx); return; }
+    if (!phase) { console.error('No phase'); return; }
 
     document.getElementById('phase-icon').textContent = phase.icon;
     document.getElementById('phase-name').textContent = phase.name;
     document.getElementById('phase-desc').textContent = phase.desc;
     document.getElementById('phase-weight').textContent = phase.weight;
+    document.getElementById('ts-formation').textContent = '(' + G.formation.name + ')';
+    document.getElementById('ts-phase-name').textContent = phase.name;
+    document.getElementById('ts-phase-weight').textContent = phase.weight;
 
-    // Tactical zone overlay
-    const tz = TACTICAL_ZONES[phase.id] || { left:'10%', width:'60%', label:'Pitch' };
-    const overlay = document.getElementById('tp-overlay');
-    overlay.style.left = tz.left;
-    overlay.style.width = tz.width;
-    document.getElementById('tp-overlay-label').textContent = tz.label;
+    // Zone label in phase bar
+    const tz = TACTICAL_ZONES[phase.id] || { label:'Pitch' };
     document.getElementById('phase-zone-label').textContent = tz.label;
 
     G.phasePlacement = {};
     G.activeSlot = null;
     G._pickerSlot = null;
-    renderSlotCards(phase);
-    renderTacticalPitch(phase);
+
+    const container = document.getElementById('ts-rows');
+    let html = '';
+
+    // ─── Phase Slots ───
+    html += '<div class="ts-line-label">Phase Slots — tap to assign</div>';
+    phase.slots.forEach(function(slot, i) {
+      const fp = slotFieldPosition(slot);
+      const pid = G.phasePlacement[i];
+      const player = pid ? G.squad.find(function(p) { return p.id === pid; }) : null;
+      const filled = !!player;
+      const label = formatSlotLabel(slot);
+
+      const rowClass = 'team-sheet-row slot-row' + (filled ? ' filled-slot' : '');
+      const num = getShirtNum(fp);
+      const posClass = getPosClass(fp);
+
+      html += '<div class="' + rowClass + '" onclick="selectSlot(' + i + ')" data-od-id="ts-' + i + '">' +
+        '<span class="ts-num">' + num + '</span>' +
+        '<span class="ts-pos ' + posClass + '">' + fp + '</span>' +
+        '<span class="ts-name">' + (filled ? player.name : label ? '⚡ ' + label : '─ Tap to assign ─') + '</span>' +
+        '<span class="ts-chips">' + (filled ? calculateChips(player, fp) + ' ♣' : '') + '</span>' +
+        '<span class="ts-slash"></span>' +
+      '</div>';
+    });
+
+    // ─── Divider + Squad ───
+    html += '<hr class="ts-divider">';
+    html += '<div class="ts-line-label">Available Squad</div>';
+
+    const orderedGroups = ['GK', 'DEF', 'MID', 'ATT'];
+    const lineLabels = { GK:'Goalkeeper', DEF:'Defenders', MID:'Midfielders', ATT:'Attackers' };
+    const grouped = { GK:[], DEF:[], MID:[], ATT:[] };
+
+    G.squad.forEach(function(p) {
+      grouped[getPillGroup(p)].push(p);
+    });
+
+    // Sort each group by chips (desc)
+    for (var gi = 0; gi < orderedGroups.length; gi++) {
+      var g = orderedGroups[gi];
+      grouped[g].sort(function(a, b) { return calculateChips(b, b.position) - calculateChips(a, a.position); });
+    }
+
+    var usedPhaseIds = {};
+    for (var key in G.phasePlacement) {
+      usedPhaseIds[G.phasePlacement[key]] = true;
+    }
+
+    for (var gi2 = 0; gi2 < orderedGroups.length; gi2++) {
+      var g2 = orderedGroups[gi2];
+      var players = grouped[g2];
+      if (players.length === 0) continue;
+
+      html += '<div class="ts-line-label">' + lineLabels[g2] + '</div>';
+      players.forEach(function(p) {
+        if (usedPhaseIds[p.id]) return; // already shown in phase slots
+        var fp = p.position;
+        var num = getShirtNum(fp);
+        var fatigueStatus = (G.fatigue[p.id] !== undefined && G.fatigue[p.id] < 1);
+        var chips = calculateChips(p, fp);
+
+        html += '<div class="team-sheet-row" data-od-id="ts-squad-' + p.id + '">' +
+          '<span class="ts-num">' + num + '</span>' +
+          '<span class="ts-pos ' + getPosClass(fp) + '">' + fp + '</span>' +
+          '<span class="ts-name">' + p.name + '</span>' +
+          '<span class="ts-chips">' + chips + ' ♣</span>' +
+          '<span class="ts-status ' + (fatigueStatus ? 'empty' : 'filled') + '">' +
+            (fatigueStatus ? '×' + G.fatigue[p.id].toFixed(1) : '✓') +
+          '</span>' +
+        '</div>';
+      });
+    }
+
+    container.innerHTML = html;
     renderSynergyPreview();
     document.getElementById('submit-phase-btn').disabled = true;
-  }
-
-  function renderTacticalPitch(phase) {
-    const pitch = document.getElementById('tac-pitch');
-    // Remove old tokens
-    pitch.querySelectorAll('.tactical-token').forEach(t => t.remove());
-
-    const hint = document.getElementById('tp-hint');
-    const filledCount = Object.keys(G.phasePlacement).length;
-    if (filledCount > 0 && hint) hint.style.display = 'none';
-    else if (hint) hint.style.display = '';
-
-    let tokenIdx = 0;
-    for (const [idx, pid] of Object.entries(G.phasePlacement)) {
-      const i = parseInt(idx);
-      const player = G.squad.find(p => p.id === pid);
-      if (!player) continue;
-      const slot = phase.slots[i];
-      const fp = slotFieldPosition(slot);
-      const baseChips = calculateChips(player, fp);
-
-      const x = tacX(fp);
-      const y = TAC_Y[i] || 50;
-
-      const tok = document.createElement('div');
-      tok.className = 'tactical-token';
-      tok.style.left = x + '%';
-      tok.style.top = y + '%';
-      tok.innerHTML = '<span class="tok-pos">' + fp + '</span><span class="tok-name">' + player.name.split(' ').pop() + '</span><span class="tok-chips">' + baseChips + '</span>';
-      pitch.appendChild(tok);
-      tokenIdx++;
-    }
-  }
-
-  function renderSlotCards(phase) {
-    const container = document.getElementById('slot-cards');
-    container.innerHTML = phase.slots.map((slot, i) => {
-      const placed = G.phasePlacement[i] !== undefined;
-      const player = placed ? G.squad.find(p => p.id === G.phasePlacement[i]) : null;
-      const fp = slotFieldPosition(slot);
-      const lbl = formatSlotLabel(slot);
-
-      let cls = 'slot-card';
-      if (placed) cls += ' filled';
-
-      return '<div class="' + cls + '" onclick="selectSlot(' + i + ')" data-od-id="slot-card-' + i + '">' +
-        '<span class="slot-card-num">' + (i + 1) + '</span>' +
-        '<div class="slot-card-req"><span class="req-pos">' + fp + '</span><span class="req-stats">' + lbl + '</span></div>' +
-        (placed
-          ? '<span class="slot-card-chips">' + player.name.split(' ').pop() + '</span><span class="slot-card-status">\u2713</span>'
-          : '<span class="slot-card-status">\u25cb</span>') +
-      '</div>';
-    }).join('');
   }
 
   function formatSlotLabel(slot) {
@@ -1161,9 +1195,7 @@
     if (placed) {
       // Remove player from slot — allow reassignment
       delete G.phasePlacement[index];
-      renderTacticalPitch(phase);
-      renderSlotCards(phase);
-      renderSynergyPreview();
+      renderTeamSheet();
       const allFilled = phase.slots.every((_, i) => G.phasePlacement[i] !== undefined);
       document.getElementById('submit-phase-btn').disabled = !allFilled;
       return;
@@ -1188,9 +1220,7 @@
     G.phasePlacement[G._pickerSlot] = playerId;
     G._pickerSlot = null;
 
-    renderTacticalPitch(phase);
-    renderSlotCards(phase);
-    renderSynergyPreview();
+    renderTeamSheet();
 
     const allFilled = phase.slots.every((_, i) => G.phasePlacement[i] !== undefined);
     document.getElementById('submit-phase-btn').disabled = !allFilled;
@@ -1376,6 +1406,18 @@
   document.getElementById('picker-overlay').addEventListener('click', function(e) {
     if (e.target === e.currentTarget) closePicker();
   });
+
+  function toggleSynergies() {
+    const list = document.getElementById('synergy-list');
+    const toggle = document.getElementById('syn-toggle');
+    if (list.style.maxHeight === '0px' || !list.style.maxHeight || list.style.maxHeight === '0') {
+      list.style.maxHeight = list.scrollHeight + 'px';
+      toggle.textContent = '▲ collapse';
+    } else {
+      list.style.maxHeight = '0px';
+      toggle.textContent = '▼ expand';
+    }
+  }
 
   document.getElementById('submit-phase-btn').addEventListener('click', () => {
     const phase = G.roundPhases[G.phaseIdx];

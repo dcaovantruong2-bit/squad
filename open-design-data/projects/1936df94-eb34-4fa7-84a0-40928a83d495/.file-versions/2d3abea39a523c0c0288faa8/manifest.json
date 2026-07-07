@@ -43,6 +43,20 @@
       "kind": "html",
       "contentPath": "0003-d8499e34-76c4-4822-b755-167dbd2bac0d.html",
       "promptSource": "message"
+    },
+    {
+      "id": "ddc0fc39-adb7-454b-b705-db0b5a66a80f",
+      "fileName": "game.html",
+      "version": 4,
+      "label": "Version 4",
+      "createdAt": 1783384954253,
+      "source": "ai",
+      "prompt": "yes perfect do it",
+      "size": 94358,
+      "mime": "text/html; charset=utf-8",
+      "kind": "html",
+      "contentPath": "0004-ddc0fc39-adb7-454b-b705-db0b5a66a80f.html",
+      "promptSource": "message"
     }
   ]
 }

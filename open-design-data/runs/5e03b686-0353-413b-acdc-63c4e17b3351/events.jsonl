@@ -1704,3 +1704,703 @@
 {"id":1704,"event":"stderr","data":{"chunk":"2026-07-07 02:42:18 [INFO] run_agent: OpenAI client closed (stream_request_complete, shared=False, tcp_force_closed=0) thread=Thread-104 (_call):129183985415872 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=deepseek-v4-flash\n"},"timestamp":1783384938010}
 {"id":1705,"event":"stderr","data":{"chunk":"2026-07-07 02:42:18 [INFO] agent.conversation_loop: API call #21: model=deepseek-v4-flash provider=opencode-go in=150447 out=270 total=150717 latency=7.2s cache=150272/150447 (100%)\n"},"timestamp":1783384938011}
 {"id":1706,"event":"agent","data":{"type":"status","label":"tool_call","elapsedMs":222968},"timestamp":1783384938021}
+{"id":1707,"event":"stderr","data":{"chunk":"2026-07-07 02:42:18 [INFO] agent.tool_executor: tool terminal completed (0.45s, 507 chars)\n"},"timestamp":1783384938470}
+{"id":1708,"event":"agent","data":{"type":"status","label":"tool_call_update","elapsedMs":223427},"timestamp":1783384938479}
+{"id":1709,"event":"stderr","data":{"chunk":"2026-07-07 02:42:18 [INFO] run_agent: OpenAI client created (chat_completion_stream_request, shared=False) thread=Thread-106 (_call):129183985415872 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=deepseek-v4-flash\n"},"timestamp":1783384938509}
+{"id":1710,"event":"agent","data":{"type":"thinking_delta","delta":"The"},"timestamp":1783384942634}
+{"id":1711,"event":"agent","data":{"type":"thinking_delta","delta":" commit"},"timestamp":1783384942808}
+{"id":1712,"event":"agent","data":{"type":"thinking_delta","delta":" worked"},"timestamp":1783384942811}
+{"id":1713,"event":"agent","data":{"type":"thinking_delta","delta":" but"},"timestamp":1783384942814}
+{"id":1714,"event":"agent","data":{"type":"thinking_delta","delta":" it"},"timestamp":1783384942816}
+{"id":1715,"event":"agent","data":{"type":"thinking_delta","delta":"'s"},"timestamp":1783384942817}
+{"id":1716,"event":"agent","data":{"type":"thinking_delta","delta":" committing"},"timestamp":1783384942819}
+{"id":1717,"event":"agent","data":{"type":"thinking_delta","delta":" the"},"timestamp":1783384942820}
+{"id":1718,"event":"agent","data":{"type":"thinking_delta","delta":" run"},"timestamp":1783384942822}
+{"id":1719,"event":"agent","data":{"type":"thinking_delta","delta":" event"},"timestamp":1783384942824}
+{"id":1720,"event":"agent","data":{"type":"thinking_delta","delta":" files"},"timestamp":1783384942826}
+{"id":1721,"event":"agent","data":{"type":"thinking_delta","delta":" too"},"timestamp":1783384942827}
+{"id":1722,"event":"agent","data":{"type":"thinking_delta","delta":"."},"timestamp":1783384942848}
+{"id":1723,"event":"agent","data":{"type":"thinking_delta","delta":" Let"},"timestamp":1783384942852}
+{"id":1724,"event":"agent","data":{"type":"thinking_delta","delta":" me"},"timestamp":1783384942853}
+{"id":1725,"event":"agent","data":{"type":"thinking_delta","delta":" check"},"timestamp":1783384942855}
+{"id":1726,"event":"agent","data":{"type":"thinking_delta","delta":" if"},"timestamp":1783384942872}
+{"id":1727,"event":"agent","data":{"type":"thinking_delta","delta":" a"},"timestamp":1783384942873}
+{"id":1728,"event":"agent","data":{"type":"thinking_delta","delta":" ."},"timestamp":1783384942875}
+{"id":1729,"event":"agent","data":{"type":"thinking_delta","delta":"git"},"timestamp":1783384942881}
+{"id":1730,"event":"agent","data":{"type":"thinking_delta","delta":"ignore"},"timestamp":1783384942882}
+{"id":1731,"event":"agent","data":{"type":"thinking_delta","delta":" exists"},"timestamp":1783384942884}
+{"id":1732,"event":"agent","data":{"type":"thinking_delta","delta":" and"},"timestamp":1783384943012}
+{"id":1733,"event":"agent","data":{"type":"thinking_delta","delta":" if"},"timestamp":1783384943014}
+{"id":1734,"event":"agent","data":{"type":"thinking_delta","delta":" the"},"timestamp":1783384943016}
+{"id":1735,"event":"agent","data":{"type":"thinking_delta","delta":" open"},"timestamp":1783384943017}
+{"id":1736,"event":"agent","data":{"type":"thinking_delta","delta":"-design"},"timestamp":1783384943018}
+{"id":1737,"event":"agent","data":{"type":"thinking_delta","delta":"-data"},"timestamp":1783384943026}
+{"id":1738,"event":"agent","data":{"type":"thinking_delta","delta":"/r"},"timestamp":1783384943028}
+{"id":1739,"event":"agent","data":{"type":"thinking_delta","delta":"uns"},"timestamp":1783384943045}
+{"id":1740,"event":"agent","data":{"type":"thinking_delta","delta":" directory"},"timestamp":1783384943049}
+{"id":1741,"event":"agent","data":{"type":"thinking_delta","delta":" should"},"timestamp":1783384943050}
+{"id":1742,"event":"agent","data":{"type":"thinking_delta","delta":" be"},"timestamp":1783384943052}
+{"id":1743,"event":"agent","data":{"type":"thinking_delta","delta":" excluded"},"timestamp":1783384943053}
+{"id":1744,"event":"agent","data":{"type":"thinking_delta","delta":"."},"timestamp":1783384943054}
+{"id":1745,"event":"agent","data":{"type":"thinking_delta","delta":" Let"},"timestamp":1783384943057}
+{"id":1746,"event":"agent","data":{"type":"thinking_delta","delta":" me"},"timestamp":1783384943159}
+{"id":1747,"event":"agent","data":{"type":"thinking_delta","delta":" also"},"timestamp":1783384943161}
+{"id":1748,"event":"agent","data":{"type":"thinking_delta","delta":" push"},"timestamp":1783384943163}
+{"id":1749,"event":"agent","data":{"type":"thinking_delta","delta":".\n\n"},"timestamp":1783384943164}
+{"id":1750,"event":"agent","data":{"type":"thinking_delta","delta":"Actually"},"timestamp":1783384943166}
+{"id":1751,"event":"agent","data":{"type":"thinking_delta","delta":","},"timestamp":1783384943168}
+{"id":1752,"event":"agent","data":{"type":"thinking_delta","delta":" let"},"timestamp":1783384943169}
+{"id":1753,"event":"agent","data":{"type":"thinking_delta","delta":" me"},"timestamp":1783384943170}
+{"id":1754,"event":"agent","data":{"type":"thinking_delta","delta":" just"},"timestamp":1783384943172}
+{"id":1755,"event":"agent","data":{"type":"thinking_delta","delta":" verify"},"timestamp":1783384943174}
+{"id":1756,"event":"agent","data":{"type":"thinking_delta","delta":" the"},"timestamp":1783384943175}
+{"id":1757,"event":"agent","data":{"type":"thinking_delta","delta":" commit"},"timestamp":1783384943177}
+{"id":1758,"event":"agent","data":{"type":"thinking_delta","delta":" captured"},"timestamp":1783384943196}
+{"id":1759,"event":"agent","data":{"type":"thinking_delta","delta":" the"},"timestamp":1783384943227}
+{"id":1760,"event":"agent","data":{"type":"thinking_delta","delta":" game"},"timestamp":1783384943230}
+{"id":1761,"event":"agent","data":{"type":"thinking_delta","delta":".html"},"timestamp":1783384943241}
+{"id":1762,"event":"agent","data":{"type":"thinking_delta","delta":" changes"},"timestamp":1783384943244}
+{"id":1763,"event":"agent","data":{"type":"thinking_delta","delta":"."},"timestamp":1783384943255}
+{"id":1764,"event":"stderr","data":{"chunk":"2026-07-07 02:42:23 [INFO] run_agent: OpenAI client closed (stream_request_complete, shared=False, tcp_force_closed=0) thread=Thread-106 (_call):129183985415872 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=deepseek-v4-flash\n"},"timestamp":1783384943930}
+{"id":1765,"event":"stderr","data":{"chunk":"2026-07-07 02:42:23 [INFO] agent.conversation_loop: API call #22: model=deepseek-v4-flash provider=opencode-go in=150937 out=162 total=151099 latency=5.4s cache=150656/150937 (100%)\n"},"timestamp":1783384943931}
+{"id":1766,"event":"agent","data":{"type":"status","label":"tool_call","elapsedMs":228893},"timestamp":1783384943945}
+{"id":1767,"event":"stderr","data":{"chunk":"2026-07-07 02:42:24 [INFO] agent.tool_executor: tool terminal completed (0.14s, 585 chars)\n"},"timestamp":1783384944082}
+{"id":1768,"event":"agent","data":{"type":"status","label":"tool_call_update","elapsedMs":229041},"timestamp":1783384944093}
+{"id":1769,"event":"stderr","data":{"chunk":"2026-07-07 02:42:24 [INFO] run_agent: OpenAI client created (chat_completion_stream_request, shared=False) thread=Thread-108 (_call):129183985415872 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=deepseek-v4-flash\n"},"timestamp":1783384944124}
+{"id":1770,"event":"agent","data":{"type":"thinking_delta","delta":"Good"},"timestamp":1783384947137}
+{"id":1771,"event":"agent","data":{"type":"thinking_delta","delta":","},"timestamp":1783384947304}
+{"id":1772,"event":"agent","data":{"type":"thinking_delta","delta":" the"},"timestamp":1783384947320}
+{"id":1773,"event":"agent","data":{"type":"thinking_delta","delta":" commit"},"timestamp":1783384947327}
+{"id":1774,"event":"agent","data":{"type":"thinking_delta","delta":" is"},"timestamp":1783384947329}
+{"id":1775,"event":"agent","data":{"type":"thinking_delta","delta":" in"},"timestamp":1783384947483}
+{"id":1776,"event":"agent","data":{"type":"thinking_delta","delta":"."},"timestamp":1783384947484}
+{"id":1777,"event":"agent","data":{"type":"thinking_delta","delta":" Now"},"timestamp":1783384947487}
+{"id":1778,"event":"agent","data":{"type":"thinking_delta","delta":" let"},"timestamp":1783384947489}
+{"id":1779,"event":"agent","data":{"type":"thinking_delta","delta":" me"},"timestamp":1783384947491}
+{"id":1780,"event":"agent","data":{"type":"thinking_delta","delta":" provide"},"timestamp":1783384947493}
+{"id":1781,"event":"agent","data":{"type":"thinking_delta","delta":" the"},"timestamp":1783384947495}
+{"id":1782,"event":"agent","data":{"type":"thinking_delta","delta":" summary"},"timestamp":1783384947496}
+{"id":1783,"event":"agent","data":{"type":"thinking_delta","delta":" to"},"timestamp":1783384947500}
+{"id":1784,"event":"agent","data":{"type":"thinking_delta","delta":" the"},"timestamp":1783384947502}
+{"id":1785,"event":"agent","data":{"type":"thinking_delta","delta":" user"},"timestamp":1783384947504}
+{"id":1786,"event":"agent","data":{"type":"thinking_delta","delta":" about"},"timestamp":1783384947505}
+{"id":1787,"event":"agent","data":{"type":"thinking_delta","delta":" what"},"timestamp":1783384947507}
+{"id":1788,"event":"agent","data":{"type":"thinking_delta","delta":" was"},"timestamp":1783384947508}
+{"id":1789,"event":"agent","data":{"type":"thinking_delta","delta":" changed"},"timestamp":1783384947510}
+{"id":1790,"event":"agent","data":{"type":"thinking_delta","delta":".\n\n"},"timestamp":1783384947512}
+{"id":1791,"event":"agent","data":{"type":"thinking_delta","delta":"Let"},"timestamp":1783384947513}
+{"id":1792,"event":"agent","data":{"type":"thinking_delta","delta":" me"},"timestamp":1783384947515}
+{"id":1793,"event":"agent","data":{"type":"thinking_delta","delta":" write"},"timestamp":1783384947516}
+{"id":1794,"event":"agent","data":{"type":"thinking_delta","delta":" a"},"timestamp":1783384947521}
+{"id":1795,"event":"agent","data":{"type":"thinking_delta","delta":" clear"},"timestamp":1783384947523}
+{"id":1796,"event":"agent","data":{"type":"thinking_delta","delta":" summary"},"timestamp":1783384947664}
+{"id":1797,"event":"agent","data":{"type":"thinking_delta","delta":" and"},"timestamp":1783384947666}
+{"id":1798,"event":"agent","data":{"type":"thinking_delta","delta":" add"},"timestamp":1783384947668}
+{"id":1799,"event":"agent","data":{"type":"thinking_delta","delta":" a"},"timestamp":1783384947670}
+{"id":1800,"event":"agent","data":{"type":"thinking_delta","delta":" verify"},"timestamp":1783384947671}
+{"id":1801,"event":"agent","data":{"type":"thinking_delta","delta":"-score"},"timestamp":1783384947673}
+{"id":1802,"event":"agent","data":{"type":"thinking_delta","delta":"card"},"timestamp":1783384947675}
+{"id":1803,"event":"agent","data":{"type":"thinking_delta","delta":"."},"timestamp":1783384947678}
+{"id":1804,"event":"agent","data":{"type":"text_delta","delta":"\n\n---\n\n"},"timestamp":1783384947680}
+{"id":1805,"event":"agent","data":{"type":"text_delta","delta":"**"},"timestamp":1783384947681}
+{"id":1806,"event":"agent","data":{"type":"text_delta","delta":"S"},"timestamp":1783384947683}
+{"id":1807,"event":"agent","data":{"type":"text_delta","delta":"quad"},"timestamp":1783384947684}
+{"id":1808,"event":"agent","data":{"type":"text_delta","delta":" Builder"},"timestamp":1783384947686}
+{"id":1809,"event":"agent","data":{"type":"text_delta","delta":" —"},"timestamp":1783384947687}
+{"id":1810,"event":"agent","data":{"type":"text_delta","delta":" Complete"},"timestamp":1783384947689}
+{"id":1811,"event":"agent","data":{"type":"text_delta","delta":" Red"},"timestamp":1783384947698}
+{"id":1812,"event":"agent","data":{"type":"text_delta","delta":"esign"},"timestamp":1783384947980}
+{"id":1813,"event":"agent","data":{"type":"text_delta","delta":"**\n\n"},"timestamp":1783384947982}
+{"id":1814,"event":"agent","data":{"type":"text_delta","delta":"Here"},"timestamp":1783384947984}
+{"id":1815,"event":"agent","data":{"type":"text_delta","delta":"'s"},"timestamp":1783384947985}
+{"id":1816,"event":"agent","data":{"type":"text_delta","delta":" what"},"timestamp":1783384947987}
+{"id":1817,"event":"agent","data":{"type":"text_delta","delta":" changed"},"timestamp":1783384947988}
+{"id":1818,"event":"agent","data":{"type":"text_delta","delta":" in"},"timestamp":1783384947989}
+{"id":1819,"event":"agent","data":{"type":"text_delta","delta":" `"},"timestamp":1783384947990}
+{"id":1820,"event":"agent","data":{"type":"text_delta","delta":"game"},"timestamp":1783384947992}
+{"id":1821,"event":"agent","data":{"type":"text_delta","delta":".html"},"timestamp":1783384947992}
+{"id":1822,"event":"agent","data":{"type":"text_delta","delta":"`"},"timestamp":1783384947993}
+{"id":1823,"event":"agent","data":{"type":"text_delta","delta":":\n\n"},"timestamp":1783384947994}
+{"id":1824,"event":"agent","data":{"type":"text_delta","delta":"**"},"timestamp":1783384947996}
+{"id":1825,"event":"agent","data":{"type":"text_delta","delta":"Before"},"timestamp":1783384947997}
+{"id":1826,"event":"agent","data":{"type":"text_delta","delta":":**"},"timestamp":1783384947998}
+{"id":1827,"event":"agent","data":{"type":"text_delta","delta":" Card"},"timestamp":1783384947999}
+{"id":1828,"event":"agent","data":{"type":"text_delta","delta":" grid"},"timestamp":1783384948001}
+{"id":1829,"event":"agent","data":{"type":"text_delta","delta":" ("},"timestamp":1783384948010}
+{"id":1830,"event":"agent","data":{"type":"text_delta","delta":"36"},"timestamp":1783384948013}
+{"id":1831,"event":"agent","data":{"type":"text_delta","delta":" cards"},"timestamp":1783384948015}
+{"id":1832,"event":"agent","data":{"type":"text_delta","delta":","},"timestamp":1783384948018}
+{"id":1833,"event":"agent","data":{"type":"text_delta","delta":" stat"},"timestamp":1783384948020}
+{"id":1834,"event":"agent","data":{"type":"text_delta","delta":" bars"},"timestamp":1783384948021}
+{"id":1835,"event":"agent","data":{"type":"text_delta","delta":" too"},"timestamp":1783384948159}
+{"id":1836,"event":"agent","data":{"type":"text_delta","delta":" small"},"timestamp":1783384948162}
+{"id":1837,"event":"agent","data":{"type":"text_delta","delta":","},"timestamp":1783384948165}
+{"id":1838,"event":"agent","data":{"type":"text_delta","delta":" overlapping"},"timestamp":1783384948166}
+{"id":1839,"event":"agent","data":{"type":"text_delta","delta":")"},"timestamp":1783384948169}
+{"id":1840,"event":"agent","data":{"type":"text_delta","delta":" +"},"timestamp":1783384948170}
+{"id":1841,"event":"agent","data":{"type":"text_delta","delta":" flat"},"timestamp":1783384948181}
+{"id":1842,"event":"agent","data":{"type":"text_delta","delta":" squad"},"timestamp":1783384948344}
+{"id":1843,"event":"agent","data":{"type":"text_delta","delta":" chip"},"timestamp":1783384948345}
+{"id":1844,"event":"agent","data":{"type":"text_delta","delta":" list"},"timestamp":1783384948347}
+{"id":1845,"event":"agent","data":{"type":"text_delta","delta":"\n\n"},"timestamp":1783384948348}
+{"id":1846,"event":"agent","data":{"type":"text_delta","delta":"**"},"timestamp":1783384948349}
+{"id":1847,"event":"agent","data":{"type":"text_delta","delta":"After"},"timestamp":1783384948350}
+{"id":1848,"event":"agent","data":{"type":"text_delta","delta":":**"},"timestamp":1783384948351}
+{"id":1849,"event":"agent","data":{"type":"text_delta","delta":" Compact"},"timestamp":1783384948354}
+{"id":1850,"event":"agent","data":{"type":"text_delta","delta":" table"},"timestamp":1783384948357}
+{"id":1851,"event":"agent","data":{"type":"text_delta","delta":" +"},"timestamp":1783384948358}
+{"id":1852,"event":"agent","data":{"type":"text_delta","delta":" color"},"timestamp":1783384948370}
+{"id":1853,"event":"agent","data":{"type":"text_delta","delta":"-c"},"timestamp":1783384948372}
+{"id":1854,"event":"agent","data":{"type":"text_delta","delta":"oded"},"timestamp":1783384948509}
+{"id":1855,"event":"agent","data":{"type":"text_delta","delta":" pill"},"timestamp":1783384948511}
+{"id":1856,"event":"agent","data":{"type":"text_delta","delta":" grid"},"timestamp":1783384948513}
+{"id":1857,"event":"agent","data":{"type":"text_delta","delta":" squad"},"timestamp":1783384948514}
+{"id":1858,"event":"agent","data":{"type":"text_delta","delta":" section"},"timestamp":1783384948516}
+{"id":1859,"event":"agent","data":{"type":"text_delta","delta":"\n\n"},"timestamp":1783384948518}
+{"id":1860,"event":"agent","data":{"type":"text_delta","delta":"**"},"timestamp":1783384948519}
+{"id":1861,"event":"agent","data":{"type":"text_delta","delta":"Player"},"timestamp":1783384948521}
+{"id":1862,"event":"agent","data":{"type":"text_delta","delta":" Table"},"timestamp":1783384948522}
+{"id":1863,"event":"agent","data":{"type":"text_delta","delta":" ("},"timestamp":1783384948523}
+{"id":1864,"event":"agent","data":{"type":"text_delta","delta":"top"},"timestamp":1783384948524}
+{"id":1865,"event":"agent","data":{"type":"text_delta","delta":" half"},"timestamp":1783384948526}
+{"id":1866,"event":"agent","data":{"type":"text_delta","delta":"):"},"timestamp":1783384948528}
+{"id":1867,"event":"agent","data":{"type":"text_delta","delta":"**\n"},"timestamp":1783384948530}
+{"id":1868,"event":"agent","data":{"type":"text_delta","delta":"-"},"timestamp":1783384948532}
+{"id":1869,"event":"agent","data":{"type":"text_delta","delta":" Tab"},"timestamp":1783384948534}
+{"id":1870,"event":"agent","data":{"type":"text_delta","delta":"bed"},"timestamp":1783384948569}
+{"id":1871,"event":"agent","data":{"type":"text_delta","delta":" filters"},"timestamp":1783384948571}
+{"id":1872,"event":"agent","data":{"type":"text_delta","delta":":"},"timestamp":1783384948614}
+{"id":1873,"event":"agent","data":{"type":"text_delta","delta":" **"},"timestamp":1783384948617}
+{"id":1874,"event":"agent","data":{"type":"text_delta","delta":"ALL"},"timestamp":1783384948713}
+{"id":1875,"event":"agent","data":{"type":"text_delta","delta":" /"},"timestamp":1783384948716}
+{"id":1876,"event":"agent","data":{"type":"text_delta","delta":" GK"},"timestamp":1783384948724}
+{"id":1877,"event":"agent","data":{"type":"text_delta","delta":" /"},"timestamp":1783384948726}
+{"id":1878,"event":"agent","data":{"type":"text_delta","delta":" DEF"},"timestamp":1783384948727}
+{"id":1879,"event":"agent","data":{"type":"text_delta","delta":" /"},"timestamp":1783384948729}
+{"id":1880,"event":"agent","data":{"type":"text_delta","delta":" MID"},"timestamp":1783384948731}
+{"id":1881,"event":"agent","data":{"type":"text_delta","delta":" /"},"timestamp":1783384948734}
+{"id":1882,"event":"agent","data":{"type":"text_delta","delta":" ATT"},"timestamp":1783384948736}
+{"id":1883,"event":"agent","data":{"type":"text_delta","delta":"**"},"timestamp":1783384948737}
+{"id":1884,"event":"agent","data":{"type":"text_delta","delta":" —"},"timestamp":1783384948738}
+{"id":1885,"event":"agent","data":{"type":"text_delta","delta":" quickly"},"timestamp":1783384948739}
+{"id":1886,"event":"agent","data":{"type":"text_delta","delta":" filter"},"timestamp":1783384948744}
+{"id":1887,"event":"agent","data":{"type":"text_delta","delta":" by"},"timestamp":1783384948922}
+{"id":1888,"event":"agent","data":{"type":"text_delta","delta":" position"},"timestamp":1783384948934}
+{"id":1889,"event":"agent","data":{"type":"text_delta","delta":" group"},"timestamp":1783384948939}
+{"id":1890,"event":"agent","data":{"type":"text_delta","delta":"\n"},"timestamp":1783384948941}
+{"id":1891,"event":"agent","data":{"type":"text_delta","delta":"-"},"timestamp":1783384948942}
+{"id":1892,"event":"agent","data":{"type":"text_delta","delta":" Compact"},"timestamp":1783384948943}
+{"id":1893,"event":"agent","data":{"type":"text_delta","delta":" table"},"timestamp":1783384948945}
+{"id":1894,"event":"agent","data":{"type":"text_delta","delta":" with"},"timestamp":1783384948946}
+{"id":1895,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384948947}
+{"id":1896,"event":"agent","data":{"type":"text_delta","delta":"8"},"timestamp":1783384948948}
+{"id":1897,"event":"agent","data":{"type":"text_delta","delta":" columns"},"timestamp":1783384948949}
+{"id":1898,"event":"agent","data":{"type":"text_delta","delta":":"},"timestamp":1783384948954}
+{"id":1899,"event":"agent","data":{"type":"text_delta","delta":" Player"},"timestamp":1783384948955}
+{"id":1900,"event":"agent","data":{"type":"text_delta","delta":" name"},"timestamp":1783384948957}
+{"id":1901,"event":"agent","data":{"type":"text_delta","delta":","},"timestamp":1783384948959}
+{"id":1902,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384948960}
+{"id":1903,"event":"agent","data":{"type":"text_delta","delta":"5"},"timestamp":1783384948965}
+{"id":1904,"event":"agent","data":{"type":"text_delta","delta":" color"},"timestamp":1783384948967}
+{"id":1905,"event":"agent","data":{"type":"text_delta","delta":"-c"},"timestamp":1783384948968}
+{"id":1906,"event":"agent","data":{"type":"text_delta","delta":"oded"},"timestamp":1783384948970}
+{"id":1907,"event":"agent","data":{"type":"text_delta","delta":" stat"},"timestamp":1783384948977}
+{"id":1908,"event":"agent","data":{"type":"text_delta","delta":" numbers"},"timestamp":1783384949010}
+{"id":1909,"event":"agent","data":{"type":"text_delta","delta":" (`"},"timestamp":1783384949012}
+{"id":1910,"event":"agent","data":{"type":"text_delta","delta":"AT"},"timestamp":1783384949018}
+{"id":1911,"event":"agent","data":{"type":"text_delta","delta":"K"},"timestamp":1783384949019}
+{"id":1912,"event":"agent","data":{"type":"text_delta","delta":"`"},"timestamp":1783384949022}
+{"id":1913,"event":"agent","data":{"type":"text_delta","delta":" red"},"timestamp":1783384949083}
+{"id":1914,"event":"agent","data":{"type":"text_delta","delta":","},"timestamp":1783384949085}
+{"id":1915,"event":"agent","data":{"type":"text_delta","delta":" `"},"timestamp":1783384949087}
+{"id":1916,"event":"agent","data":{"type":"text_delta","delta":"PAC"},"timestamp":1783384949089}
+{"id":1917,"event":"agent","data":{"type":"text_delta","delta":"`"},"timestamp":1783384949104}
+{"id":1918,"event":"agent","data":{"type":"text_delta","delta":" gold"},"timestamp":1783384949108}
+{"id":1919,"event":"agent","data":{"type":"text_delta","delta":","},"timestamp":1783384949110}
+{"id":1920,"event":"agent","data":{"type":"text_delta","delta":" `"},"timestamp":1783384949111}
+{"id":1921,"event":"agent","data":{"type":"text_delta","delta":"P"},"timestamp":1783384949113}
+{"id":1922,"event":"agent","data":{"type":"text_delta","delta":"AS"},"timestamp":1783384949126}
+{"id":1923,"event":"agent","data":{"type":"text_delta","delta":"`"},"timestamp":1783384949128}
+{"id":1924,"event":"agent","data":{"type":"text_delta","delta":" blue"},"timestamp":1783384949130}
+{"id":1925,"event":"agent","data":{"type":"text_delta","delta":","},"timestamp":1783384949131}
+{"id":1926,"event":"agent","data":{"type":"text_delta","delta":" `"},"timestamp":1783384949133}
+{"id":1927,"event":"agent","data":{"type":"text_delta","delta":"DEF"},"timestamp":1783384949134}
+{"id":1928,"event":"agent","data":{"type":"text_delta","delta":"`"},"timestamp":1783384949136}
+{"id":1929,"event":"agent","data":{"type":"text_delta","delta":" green"},"timestamp":1783384949137}
+{"id":1930,"event":"agent","data":{"type":"text_delta","delta":","},"timestamp":1783384949148}
+{"id":1931,"event":"agent","data":{"type":"text_delta","delta":" `"},"timestamp":1783384949152}
+{"id":1932,"event":"agent","data":{"type":"text_delta","delta":"SP"},"timestamp":1783384949154}
+{"id":1933,"event":"agent","data":{"type":"text_delta","delta":"C"},"timestamp":1783384949157}
+{"id":1934,"event":"agent","data":{"type":"text_delta","delta":"`"},"timestamp":1783384949292}
+{"id":1935,"event":"agent","data":{"type":"text_delta","delta":" purple"},"timestamp":1783384949294}
+{"id":1936,"event":"agent","data":{"type":"text_delta","delta":"),"},"timestamp":1783384949296}
+{"id":1937,"event":"agent","data":{"type":"text_delta","delta":" Cost"},"timestamp":1783384949306}
+{"id":1938,"event":"agent","data":{"type":"text_delta","delta":","},"timestamp":1783384949308}
+{"id":1939,"event":"agent","data":{"type":"text_delta","delta":" Traits"},"timestamp":1783384949309}
+{"id":1940,"event":"agent","data":{"type":"text_delta","delta":"\n"},"timestamp":1783384949311}
+{"id":1941,"event":"agent","data":{"type":"text_delta","delta":"-"},"timestamp":1783384949312}
+{"id":1942,"event":"agent","data":{"type":"text_delta","delta":" Selected"},"timestamp":1783384949315}
+{"id":1943,"event":"agent","data":{"type":"text_delta","delta":" players"},"timestamp":1783384949318}
+{"id":1944,"event":"agent","data":{"type":"text_delta","delta":" get"},"timestamp":1783384949319}
+{"id":1945,"event":"agent","data":{"type":"text_delta","delta":" a"},"timestamp":1783384949321}
+{"id":1946,"event":"agent","data":{"type":"text_delta","delta":" `"},"timestamp":1783384949322}
+{"id":1947,"event":"agent","data":{"type":"text_delta","delta":"✓"},"timestamp":1783384949324}
+{"id":1948,"event":"agent","data":{"type":"text_delta","delta":"`"},"timestamp":1783384949325}
+{"id":1949,"event":"agent","data":{"type":"text_delta","delta":" check"},"timestamp":1783384949337}
+{"id":1950,"event":"agent","data":{"type":"text_delta","delta":"mark"},"timestamp":1783384949341}
+{"id":1951,"event":"agent","data":{"type":"text_delta","delta":" and"},"timestamp":1783384949343}
+{"id":1952,"event":"agent","data":{"type":"text_delta","delta":" highlighted"},"timestamp":1783384949350}
+{"id":1953,"event":"agent","data":{"type":"text_delta","delta":" row"},"timestamp":1783384949606}
+{"id":1954,"event":"agent","data":{"type":"text_delta","delta":"\n"},"timestamp":1783384949608}
+{"id":1955,"event":"agent","data":{"type":"text_delta","delta":"-"},"timestamp":1783384949609}
+{"id":1956,"event":"agent","data":{"type":"text_delta","delta":" Click"},"timestamp":1783384949611}
+{"id":1957,"event":"agent","data":{"type":"text_delta","delta":" any"},"timestamp":1783384949612}
+{"id":1958,"event":"agent","data":{"type":"text_delta","delta":" row"},"timestamp":1783384949614}
+{"id":1959,"event":"agent","data":{"type":"text_delta","delta":" to"},"timestamp":1783384949615}
+{"id":1960,"event":"agent","data":{"type":"text_delta","delta":" toggle"},"timestamp":1783384949617}
+{"id":1961,"event":"agent","data":{"type":"text_delta","delta":" selection"},"timestamp":1783384949778}
+{"id":1962,"event":"agent","data":{"type":"text_delta","delta":" ("},"timestamp":1783384949781}
+{"id":1963,"event":"agent","data":{"type":"text_delta","delta":"12"},"timestamp":1783384949783}
+{"id":1964,"event":"agent","data":{"type":"text_delta","delta":" player"},"timestamp":1783384949785}
+{"id":1965,"event":"agent","data":{"type":"text_delta","delta":" max"},"timestamp":1783384949787}
+{"id":1966,"event":"agent","data":{"type":"text_delta","delta":" with"},"timestamp":1783384949789}
+{"id":1967,"event":"agent","data":{"type":"text_delta","delta":" toast"},"timestamp":1783384949792}
+{"id":1968,"event":"agent","data":{"type":"text_delta","delta":" warning"},"timestamp":1783384949795}
+{"id":1969,"event":"agent","data":{"type":"text_delta","delta":")\n\n"},"timestamp":1783384949796}
+{"id":1970,"event":"agent","data":{"type":"text_delta","delta":"**"},"timestamp":1783384949798}
+{"id":1971,"event":"agent","data":{"type":"text_delta","delta":"S"},"timestamp":1783384949799}
+{"id":1972,"event":"agent","data":{"type":"text_delta","delta":"quad"},"timestamp":1783384949800}
+{"id":1973,"event":"agent","data":{"type":"text_delta","delta":" Summary"},"timestamp":1783384949802}
+{"id":1974,"event":"agent","data":{"type":"text_delta","delta":" ("},"timestamp":1783384949803}
+{"id":1975,"event":"agent","data":{"type":"text_delta","delta":"bottom"},"timestamp":1783384949804}
+{"id":1976,"event":"agent","data":{"type":"text_delta","delta":" half"},"timestamp":1783384949806}
+{"id":1977,"event":"agent","data":{"type":"text_delta","delta":"):"},"timestamp":1783384949807}
+{"id":1978,"event":"agent","data":{"type":"text_delta","delta":"**\n"},"timestamp":1783384949956}
+{"id":1979,"event":"agent","data":{"type":"text_delta","delta":"```\n"},"timestamp":1783384949958}
+{"id":1980,"event":"agent","data":{"type":"text_delta","delta":"GK"},"timestamp":1783384949960}
+{"id":1981,"event":"agent","data":{"type":"text_delta","delta":" ─"},"timestamp":1783384949967}
+{"id":1982,"event":"agent","data":{"type":"text_delta","delta":"─"},"timestamp":1783384949970}
+{"id":1983,"event":"agent","data":{"type":"text_delta","delta":" ["},"timestamp":1783384949971}
+{"id":1984,"event":"agent","data":{"type":"text_delta","delta":"G"},"timestamp":1783384949973}
+{"id":1985,"event":"agent","data":{"type":"text_delta","delta":"igi"},"timestamp":1783384949974}
+{"id":1986,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384949980}
+{"id":1987,"event":"agent","data":{"type":"text_delta","delta":"32"},"timestamp":1783384949985}
+{"id":1988,"event":"agent","data":{"type":"text_delta","delta":" ✓"},"timestamp":1783384949988}
+{"id":1989,"event":"agent","data":{"type":"text_delta","delta":"×"},"timestamp":1783384949992}
+{"id":1990,"event":"agent","data":{"type":"text_delta","delta":"1"},"timestamp":1783384949994}
+{"id":1991,"event":"agent","data":{"type":"text_delta","delta":"]\n"},"timestamp":1783384949995}
+{"id":1992,"event":"agent","data":{"type":"text_delta","delta":"DEF"},"timestamp":1783384949997}
+{"id":1993,"event":"agent","data":{"type":"text_delta","delta":" ─"},"timestamp":1783384950000}
+{"id":1994,"event":"agent","data":{"type":"text_delta","delta":"─"},"timestamp":1783384950001}
+{"id":1995,"event":"agent","data":{"type":"text_delta","delta":" ["},"timestamp":1783384950003}
+{"id":1996,"event":"agent","data":{"type":"text_delta","delta":"Van"},"timestamp":1783384950012}
+{"id":1997,"event":"agent","data":{"type":"text_delta","delta":"A"},"timestamp":1783384950014}
+{"id":1998,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384950018}
+{"id":1999,"event":"agent","data":{"type":"text_delta","delta":"51"},"timestamp":1783384950021}
+{"id":2000,"event":"agent","data":{"type":"text_delta","delta":"]"},"timestamp":1783384950023}
+{"id":2001,"event":"agent","data":{"type":"text_delta","delta":" ["},"timestamp":1783384950038}
+{"id":2002,"event":"agent","data":{"type":"text_delta","delta":"Big"},"timestamp":1783384950044}
+{"id":2003,"event":"agent","data":{"type":"text_delta","delta":"P"},"timestamp":1783384950045}
+{"id":2004,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384950048}
+{"id":2005,"event":"agent","data":{"type":"text_delta","delta":"43"},"timestamp":1783384950049}
+{"id":2006,"event":"agent","data":{"type":"text_delta","delta":"]"},"timestamp":1783384950134}
+{"id":2007,"event":"agent","data":{"type":"text_delta","delta":" ["},"timestamp":1783384950136}
+{"id":2008,"event":"agent","data":{"type":"text_delta","delta":"D"},"timestamp":1783384950138}
+{"id":2009,"event":"agent","data":{"type":"text_delta","delta":"anny"},"timestamp":1783384950139}
+{"id":2010,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384950148}
+{"id":2011,"event":"agent","data":{"type":"text_delta","delta":"38"},"timestamp":1783384950153}
+{"id":2012,"event":"agent","data":{"type":"text_delta","delta":"]"},"timestamp":1783384950155}
+{"id":2013,"event":"agent","data":{"type":"text_delta","delta":" ["},"timestamp":1783384950157}
+{"id":2014,"event":"agent","data":{"type":"text_delta","delta":"T"},"timestamp":1783384950159}
+{"id":2015,"event":"agent","data":{"type":"text_delta","delta":"urb"},"timestamp":1783384950161}
+{"id":2016,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384950163}
+{"id":2017,"event":"agent","data":{"type":"text_delta","delta":"35"},"timestamp":1783384950165}
+{"id":2018,"event":"agent","data":{"type":"text_delta","delta":"]"},"timestamp":1783384950166}
+{"id":2019,"event":"agent","data":{"type":"text_delta","delta":" ✓"},"timestamp":1783384950168}
+{"id":2020,"event":"agent","data":{"type":"text_delta","delta":"×"},"timestamp":1783384950169}
+{"id":2021,"event":"agent","data":{"type":"text_delta","delta":"4"},"timestamp":1783384950170}
+{"id":2022,"event":"agent","data":{"type":"text_delta","delta":"\n"},"timestamp":1783384950171}
+{"id":2023,"event":"agent","data":{"type":"text_delta","delta":"MID"},"timestamp":1783384950172}
+{"id":2024,"event":"agent","data":{"type":"text_delta","delta":" ─"},"timestamp":1783384950174}
+{"id":2025,"event":"agent","data":{"type":"text_delta","delta":"─"},"timestamp":1783384950175}
+{"id":2026,"event":"agent","data":{"type":"text_delta","delta":" ["},"timestamp":1783384950177}
+{"id":2027,"event":"agent","data":{"type":"text_delta","delta":"S"},"timestamp":1783384950178}
+{"id":2028,"event":"agent","data":{"type":"text_delta","delta":"erg"},"timestamp":1783384950295}
+{"id":2029,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384950297}
+{"id":2030,"event":"agent","data":{"type":"text_delta","delta":"48"},"timestamp":1783384950298}
+{"id":2031,"event":"agent","data":{"type":"text_delta","delta":"]"},"timestamp":1783384950300}
+{"id":2032,"event":"agent","data":{"type":"text_delta","delta":" ["},"timestamp":1783384950302}
+{"id":2033,"event":"agent","data":{"type":"text_delta","delta":"L"},"timestamp":1783384950306}
+{"id":2034,"event":"agent","data":{"type":"text_delta","delta":"uka"},"timestamp":1783384950307}
+{"id":2035,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384950309}
+{"id":2036,"event":"agent","data":{"type":"text_delta","delta":"50"},"timestamp":1783384950310}
+{"id":2037,"event":"agent","data":{"type":"text_delta","delta":"]"},"timestamp":1783384950312}
+{"id":2038,"event":"agent","data":{"type":"text_delta","delta":" ["},"timestamp":1783384950313}
+{"id":2039,"event":"agent","data":{"type":"text_delta","delta":"K"},"timestamp":1783384950314}
+{"id":2040,"event":"agent","data":{"type":"text_delta","delta":"ev"},"timestamp":1783384950316}
+{"id":2041,"event":"agent","data":{"type":"text_delta","delta":"n"},"timestamp":1783384950317}
+{"id":2042,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384950319}
+{"id":2043,"event":"agent","data":{"type":"text_delta","delta":"55"},"timestamp":1783384950320}
+{"id":2044,"event":"agent","data":{"type":"text_delta","delta":"]"},"timestamp":1783384950321}
+{"id":2045,"event":"agent","data":{"type":"text_delta","delta":" ✓"},"timestamp":1783384950323}
+{"id":2046,"event":"agent","data":{"type":"text_delta","delta":"×"},"timestamp":1783384950324}
+{"id":2047,"event":"agent","data":{"type":"text_delta","delta":"3"},"timestamp":1783384950469}
+{"id":2048,"event":"agent","data":{"type":"text_delta","delta":"\n"},"timestamp":1783384950471}
+{"id":2049,"event":"agent","data":{"type":"text_delta","delta":"ATT"},"timestamp":1783384950472}
+{"id":2050,"event":"agent","data":{"type":"text_delta","delta":" ─"},"timestamp":1783384950474}
+{"id":2051,"event":"agent","data":{"type":"text_delta","delta":"─"},"timestamp":1783384950475}
+{"id":2052,"event":"agent","data":{"type":"text_delta","delta":" ["},"timestamp":1783384950476}
+{"id":2053,"event":"agent","data":{"type":"text_delta","delta":"Ter"},"timestamp":1783384950477}
+{"id":2054,"event":"agent","data":{"type":"text_delta","delta":"ry"},"timestamp":1783384950479}
+{"id":2055,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384950480}
+{"id":2056,"event":"agent","data":{"type":"text_delta","delta":"53"},"timestamp":1783384950482}
+{"id":2057,"event":"agent","data":{"type":"text_delta","delta":"]"},"timestamp":1783384950483}
+{"id":2058,"event":"agent","data":{"type":"text_delta","delta":" ["},"timestamp":1783384950484}
+{"id":2059,"event":"agent","data":{"type":"text_delta","delta":"Big"},"timestamp":1783384950485}
+{"id":2060,"event":"agent","data":{"type":"text_delta","delta":"Z"},"timestamp":1783384950487}
+{"id":2061,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384950488}
+{"id":2062,"event":"agent","data":{"type":"text_delta","delta":"44"},"timestamp":1783384950490}
+{"id":2063,"event":"agent","data":{"type":"text_delta","delta":"]"},"timestamp":1783384950492}
+{"id":2064,"event":"agent","data":{"type":"text_delta","delta":" [+"},"timestamp":1783384950493}
+{"id":2065,"event":"agent","data":{"type":"text_delta","delta":" OPEN"},"timestamp":1783384950495}
+{"id":2066,"event":"agent","data":{"type":"text_delta","delta":"]"},"timestamp":1783384950496}
+{"id":2067,"event":"agent","data":{"type":"text_delta","delta":" [+"},"timestamp":1783384950497}
+{"id":2068,"event":"agent","data":{"type":"text_delta","delta":" OPEN"},"timestamp":1783384950498}
+{"id":2069,"event":"agent","data":{"type":"text_delta","delta":"]"},"timestamp":1783384950499}
+{"id":2070,"event":"agent","data":{"type":"text_delta","delta":" ✗"},"timestamp":1783384950500}
+{"id":2071,"event":"agent","data":{"type":"text_delta","delta":" need"},"timestamp":1783384950501}
+{"id":2072,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384950507}
+{"id":2073,"event":"agent","data":{"type":"text_delta","delta":"2"},"timestamp":1783384950510}
+{"id":2074,"event":"agent","data":{"type":"text_delta","delta":"\n"},"timestamp":1783384950511}
+{"id":2075,"event":"agent","data":{"type":"text_delta","delta":"```\n"},"timestamp":1783384950512}
+{"id":2076,"event":"agent","data":{"type":"text_delta","delta":"-"},"timestamp":1783384950513}
+{"id":2077,"event":"agent","data":{"type":"text_delta","delta":" **"},"timestamp":1783384950643}
+{"id":2078,"event":"agent","data":{"type":"text_delta","delta":"Color"},"timestamp":1783384950644}
+{"id":2079,"event":"agent","data":{"type":"text_delta","delta":" coded"},"timestamp":1783384950645}
+{"id":2080,"event":"agent","data":{"type":"text_delta","delta":":**"},"timestamp":1783384950647}
+{"id":2081,"event":"agent","data":{"type":"text_delta","delta":" GK"},"timestamp":1783384950648}
+{"id":2082,"event":"agent","data":{"type":"text_delta","delta":" ="},"timestamp":1783384950649}
+{"id":2083,"event":"agent","data":{"type":"text_delta","delta":" gold"},"timestamp":1783384950650}
+{"id":2084,"event":"agent","data":{"type":"text_delta","delta":" pills"},"timestamp":1783384950658}
+{"id":2085,"event":"agent","data":{"type":"text_delta","delta":","},"timestamp":1783384950841}
+{"id":2086,"event":"agent","data":{"type":"text_delta","delta":" DEF"},"timestamp":1783384950842}
+{"id":2087,"event":"agent","data":{"type":"text_delta","delta":" ="},"timestamp":1783384950844}
+{"id":2088,"event":"agent","data":{"type":"text_delta","delta":" green"},"timestamp":1783384950845}
+{"id":2089,"event":"agent","data":{"type":"text_delta","delta":","},"timestamp":1783384950847}
+{"id":2090,"event":"agent","data":{"type":"text_delta","delta":" MID"},"timestamp":1783384950848}
+{"id":2091,"event":"agent","data":{"type":"text_delta","delta":" ="},"timestamp":1783384950854}
+{"id":2092,"event":"agent","data":{"type":"text_delta","delta":" blue"},"timestamp":1783384950856}
+{"id":2093,"event":"agent","data":{"type":"text_delta","delta":","},"timestamp":1783384950858}
+{"id":2094,"event":"agent","data":{"type":"text_delta","delta":" ATT"},"timestamp":1783384950861}
+{"id":2095,"event":"agent","data":{"type":"text_delta","delta":" ="},"timestamp":1783384950862}
+{"id":2096,"event":"agent","data":{"type":"text_delta","delta":" red"},"timestamp":1783384950864}
+{"id":2097,"event":"agent","data":{"type":"text_delta","delta":"\n"},"timestamp":1783384950866}
+{"id":2098,"event":"agent","data":{"type":"text_delta","delta":"-"},"timestamp":1783384950868}
+{"id":2099,"event":"agent","data":{"type":"text_delta","delta":" Open"},"timestamp":1783384950869}
+{"id":2100,"event":"agent","data":{"type":"text_delta","delta":" slots"},"timestamp":1783384950871}
+{"id":2101,"event":"agent","data":{"type":"text_delta","delta":" shown"},"timestamp":1783384950874}
+{"id":2102,"event":"agent","data":{"type":"text_delta","delta":" as"},"timestamp":1783384950985}
+{"id":2103,"event":"agent","data":{"type":"text_delta","delta":" dashed"},"timestamp":1783384950987}
+{"id":2104,"event":"agent","data":{"type":"text_delta","delta":" **"},"timestamp":1783384950988}
+{"id":2105,"event":"agent","data":{"type":"text_delta","delta":"`"},"timestamp":1783384950990}
+{"id":2106,"event":"agent","data":{"type":"text_delta","delta":"+"},"timestamp":1783384950991}
+{"id":2107,"event":"agent","data":{"type":"text_delta","delta":" OPEN"},"timestamp":1783384950994}
+{"id":2108,"event":"agent","data":{"type":"text_delta","delta":"`"},"timestamp":1783384950995}
+{"id":2109,"event":"agent","data":{"type":"text_delta","delta":"**"},"timestamp":1783384950997}
+{"id":2110,"event":"agent","data":{"type":"text_delta","delta":" pills"},"timestamp":1783384950998}
+{"id":2111,"event":"agent","data":{"type":"text_delta","delta":"\n"},"timestamp":1783384951000}
+{"id":2112,"event":"agent","data":{"type":"text_delta","delta":"-"},"timestamp":1783384951001}
+{"id":2113,"event":"agent","data":{"type":"text_delta","delta":" Per"},"timestamp":1783384951003}
+{"id":2114,"event":"agent","data":{"type":"text_delta","delta":"-line"},"timestamp":1783384951004}
+{"id":2115,"event":"agent","data":{"type":"text_delta","delta":" status"},"timestamp":1783384951006}
+{"id":2116,"event":"agent","data":{"type":"text_delta","delta":":"},"timestamp":1783384951008}
+{"id":2117,"event":"agent","data":{"type":"text_delta","delta":" `"},"timestamp":1783384951009}
+{"id":2118,"event":"agent","data":{"type":"text_delta","delta":"✓"},"timestamp":1783384951011}
+{"id":2119,"event":"agent","data":{"type":"text_delta","delta":"×"},"timestamp":1783384951013}
+{"id":2120,"event":"agent","data":{"type":"text_delta","delta":"4"},"timestamp":1783384951014}
+{"id":2121,"event":"agent","data":{"type":"text_delta","delta":"`"},"timestamp":1783384951016}
+{"id":2122,"event":"agent","data":{"type":"text_delta","delta":" ("},"timestamp":1783384951017}
+{"id":2123,"event":"agent","data":{"type":"text_delta","delta":"met"},"timestamp":1783384951019}
+{"id":2124,"event":"agent","data":{"type":"text_delta","delta":")"},"timestamp":1783384951164}
+{"id":2125,"event":"agent","data":{"type":"text_delta","delta":" or"},"timestamp":1783384951171}
+{"id":2126,"event":"agent","data":{"type":"text_delta","delta":" `"},"timestamp":1783384951173}
+{"id":2127,"event":"agent","data":{"type":"text_delta","delta":"✗"},"timestamp":1783384951174}
+{"id":2128,"event":"agent","data":{"type":"text_delta","delta":" need"},"timestamp":1783384951176}
+{"id":2129,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384951183}
+{"id":2130,"event":"agent","data":{"type":"text_delta","delta":"3"},"timestamp":1783384951185}
+{"id":2131,"event":"agent","data":{"type":"text_delta","delta":"`"},"timestamp":1783384951191}
+{"id":2132,"event":"agent","data":{"type":"text_delta","delta":" ("},"timestamp":1783384951195}
+{"id":2133,"event":"agent","data":{"type":"text_delta","delta":"un"},"timestamp":1783384951196}
+{"id":2134,"event":"agent","data":{"type":"text_delta","delta":"met"},"timestamp":1783384951199}
+{"id":2135,"event":"agent","data":{"type":"text_delta","delta":")\n"},"timestamp":1783384951201}
+{"id":2136,"event":"agent","data":{"type":"text_delta","delta":"-"},"timestamp":1783384951202}
+{"id":2137,"event":"agent","data":{"type":"text_delta","delta":" Bottom"},"timestamp":1783384951203}
+{"id":2138,"event":"agent","data":{"type":"text_delta","delta":" requirement"},"timestamp":1783384951204}
+{"id":2139,"event":"agent","data":{"type":"text_delta","delta":" strip"},"timestamp":1783384951205}
+{"id":2140,"event":"agent","data":{"type":"text_delta","delta":":"},"timestamp":1783384951207}
+{"id":2141,"event":"agent","data":{"type":"text_delta","delta":" `"},"timestamp":1783384951208}
+{"id":2142,"event":"agent","data":{"type":"text_delta","delta":"✓"},"timestamp":1783384951210}
+{"id":2143,"event":"agent","data":{"type":"text_delta","delta":" GK"},"timestamp":1783384951211}
+{"id":2144,"event":"agent","data":{"type":"text_delta","delta":" ≥"},"timestamp":1783384951345}
+{"id":2145,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384951347}
+{"id":2146,"event":"agent","data":{"type":"text_delta","delta":"1"},"timestamp":1783384951348}
+{"id":2147,"event":"agent","data":{"type":"text_delta","delta":" ·"},"timestamp":1783384951350}
+{"id":2148,"event":"agent","data":{"type":"text_delta","delta":" ✓"},"timestamp":1783384951351}
+{"id":2149,"event":"agent","data":{"type":"text_delta","delta":" DEF"},"timestamp":1783384951355}
+{"id":2150,"event":"agent","data":{"type":"text_delta","delta":" ≥"},"timestamp":1783384951357}
+{"id":2151,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384951358}
+{"id":2152,"event":"agent","data":{"type":"text_delta","delta":"3"},"timestamp":1783384951360}
+{"id":2153,"event":"agent","data":{"type":"text_delta","delta":" ·"},"timestamp":1783384951361}
+{"id":2154,"event":"agent","data":{"type":"text_delta","delta":" ✓"},"timestamp":1783384951363}
+{"id":2155,"event":"agent","data":{"type":"text_delta","delta":" MID"},"timestamp":1783384951364}
+{"id":2156,"event":"agent","data":{"type":"text_delta","delta":" ≥"},"timestamp":1783384951365}
+{"id":2157,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384951367}
+{"id":2158,"event":"agent","data":{"type":"text_delta","delta":"3"},"timestamp":1783384951368}
+{"id":2159,"event":"agent","data":{"type":"text_delta","delta":" ·"},"timestamp":1783384951370}
+{"id":2160,"event":"agent","data":{"type":"text_delta","delta":" ✗"},"timestamp":1783384951371}
+{"id":2161,"event":"agent","data":{"type":"text_delta","delta":" ATT"},"timestamp":1783384951373}
+{"id":2162,"event":"agent","data":{"type":"text_delta","delta":" ≥"},"timestamp":1783384951374}
+{"id":2163,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384951376}
+{"id":2164,"event":"agent","data":{"type":"text_delta","delta":"2"},"timestamp":1783384951377}
+{"id":2165,"event":"agent","data":{"type":"text_delta","delta":" ·"},"timestamp":1783384951380}
+{"id":2166,"event":"agent","data":{"type":"text_delta","delta":" ✓"},"timestamp":1783384951381}
+{"id":2167,"event":"agent","data":{"type":"text_delta","delta":" Total"},"timestamp":1783384951382}
+{"id":2168,"event":"agent","data":{"type":"text_delta","delta":" ≥"},"timestamp":1783384951383}
+{"id":2169,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384951384}
+{"id":2170,"event":"agent","data":{"type":"text_delta","delta":"10"},"timestamp":1783384951385}
+{"id":2171,"event":"agent","data":{"type":"text_delta","delta":" ·"},"timestamp":1783384951386}
+{"id":2172,"event":"agent","data":{"type":"text_delta","delta":" ✓"},"timestamp":1783384951387}
+{"id":2173,"event":"agent","data":{"type":"text_delta","delta":" Budget"},"timestamp":1783384951388}
+{"id":2174,"event":"agent","data":{"type":"text_delta","delta":" ≤"},"timestamp":1783384951514}
+{"id":2175,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384951516}
+{"id":2176,"event":"agent","data":{"type":"text_delta","delta":"360"},"timestamp":1783384951518}
+{"id":2177,"event":"agent","data":{"type":"text_delta","delta":"`\n"},"timestamp":1783384951519}
+{"id":2178,"event":"agent","data":{"type":"text_delta","delta":"-"},"timestamp":1783384951521}
+{"id":2179,"event":"agent","data":{"type":"text_delta","delta":" Budget"},"timestamp":1783384951524}
+{"id":2180,"event":"agent","data":{"type":"text_delta","delta":" bar"},"timestamp":1783384951525}
+{"id":2181,"event":"agent","data":{"type":"text_delta","delta":" at"},"timestamp":1783384951526}
+{"id":2182,"event":"agent","data":{"type":"text_delta","delta":" top"},"timestamp":1783384951529}
+{"id":2183,"event":"agent","data":{"type":"text_delta","delta":" with"},"timestamp":1783384951531}
+{"id":2184,"event":"agent","data":{"type":"text_delta","delta":" live"},"timestamp":1783384951532}
+{"id":2185,"event":"agent","data":{"type":"text_delta","delta":" cost"},"timestamp":1783384951533}
+{"id":2186,"event":"agent","data":{"type":"text_delta","delta":" tracking"},"timestamp":1783384951535}
+{"id":2187,"event":"agent","data":{"type":"text_delta","delta":" (`"},"timestamp":1783384951536}
+{"id":2188,"event":"agent","data":{"type":"text_delta","delta":"184"},"timestamp":1783384951546}
+{"id":2189,"event":"agent","data":{"type":"text_delta","delta":" /"},"timestamp":1783384951682}
+{"id":2190,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384951684}
+{"id":2191,"event":"agent","data":{"type":"text_delta","delta":"360"},"timestamp":1783384951685}
+{"id":2192,"event":"agent","data":{"type":"text_delta","delta":"`)\n"},"timestamp":1783384951687}
+{"id":2193,"event":"agent","data":{"type":"text_delta","delta":"-"},"timestamp":1783384951693}
+{"id":2194,"event":"agent","data":{"type":"text_delta","delta":" Click"},"timestamp":1783384951696}
+{"id":2195,"event":"agent","data":{"type":"text_delta","delta":" any"},"timestamp":1783384951697}
+{"id":2196,"event":"agent","data":{"type":"text_delta","delta":" pill"},"timestamp":1783384951698}
+{"id":2197,"event":"agent","data":{"type":"text_delta","delta":" to"},"timestamp":1783384951699}
+{"id":2198,"event":"agent","data":{"type":"text_delta","delta":" remove"},"timestamp":1783384951700}
+{"id":2199,"event":"agent","data":{"type":"text_delta","delta":" that"},"timestamp":1783384951875}
+{"id":2200,"event":"agent","data":{"type":"text_delta","delta":" player"},"timestamp":1783384951878}
+{"id":2201,"event":"agent","data":{"type":"text_delta","delta":" instantly"},"timestamp":1783384951879}
+{"id":2202,"event":"agent","data":{"type":"text_delta","delta":"\n\n"},"timestamp":1783384951881}
+{"id":2203,"event":"agent","data":{"type":"text_delta","delta":"<od"},"timestamp":1783384951883}
+{"id":2204,"event":"agent","data":{"type":"text_delta","delta":"-card"},"timestamp":1783384951885}
+{"id":2205,"event":"agent","data":{"type":"text_delta","delta":" type"},"timestamp":1783384951886}
+{"id":2206,"event":"agent","data":{"type":"text_delta","delta":"=\""},"timestamp":1783384951887}
+{"id":2207,"event":"agent","data":{"type":"text_delta","delta":"verify"},"timestamp":1783384951889}
+{"id":2208,"event":"agent","data":{"type":"text_delta","delta":"-score"},"timestamp":1783384951890}
+{"id":2209,"event":"agent","data":{"type":"text_delta","delta":"card"},"timestamp":1783384951892}
+{"id":2210,"event":"agent","data":{"type":"text_delta","delta":"\">\n"},"timestamp":1783384951893}
+{"id":2211,"event":"agent","data":{"type":"text_delta","delta":"{"},"timestamp":1783384951895}
+{"id":2212,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783384951896}
+{"id":2213,"event":"agent","data":{"type":"text_delta","delta":"status"},"timestamp":1783384951898}
+{"id":2214,"event":"agent","data":{"type":"text_delta","delta":"\":"},"timestamp":1783384951899}
+{"id":2215,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783384951901}
+{"id":2216,"event":"agent","data":{"type":"text_delta","delta":"pass"},"timestamp":1783384951902}
+{"id":2217,"event":"agent","data":{"type":"text_delta","delta":"\","},"timestamp":1783384951904}
+{"id":2218,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783384951906}
+{"id":2219,"event":"agent","data":{"type":"text_delta","delta":"summary"},"timestamp":1783384951908}
+{"id":2220,"event":"agent","data":{"type":"text_delta","delta":"\":"},"timestamp":1783384951909}
+{"id":2221,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783384951910}
+{"id":2222,"event":"agent","data":{"type":"text_delta","delta":"3"},"timestamp":1783384951912}
+{"id":2223,"event":"agent","data":{"type":"text_delta","delta":"/"},"timestamp":1783384951913}
+{"id":2224,"event":"agent","data":{"type":"text_delta","delta":"3"},"timestamp":1783384951914}
+{"id":2225,"event":"agent","data":{"type":"text_delta","delta":" checks"},"timestamp":1783384951915}
+{"id":2226,"event":"agent","data":{"type":"text_delta","delta":" passed"},"timestamp":1783384951916}
+{"id":2227,"event":"agent","data":{"type":"text_delta","delta":"\","},"timestamp":1783384951917}
+{"id":2228,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783384951918}
+{"id":2229,"event":"agent","data":{"type":"text_delta","delta":"rows"},"timestamp":1783384951919}
+{"id":2230,"event":"agent","data":{"type":"text_delta","delta":"\":"},"timestamp":1783384951921}
+{"id":2231,"event":"agent","data":{"type":"text_delta","delta":" [\n"},"timestamp":1783384952020}
+{"id":2232,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384952024}
+{"id":2233,"event":"agent","data":{"type":"text_delta","delta":" {\""},"timestamp":1783384952026}
+{"id":2234,"event":"agent","data":{"type":"text_delta","delta":"rule"},"timestamp":1783384952029}
+{"id":2235,"event":"agent","data":{"type":"text_delta","delta":"\":"},"timestamp":1783384952032}
+{"id":2236,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783384952034}
+{"id":2237,"event":"agent","data":{"type":"text_delta","delta":"JS"},"timestamp":1783384952036}
+{"id":2238,"event":"agent","data":{"type":"text_delta","delta":" syntax"},"timestamp":1783384952039}
+{"id":2239,"event":"agent","data":{"type":"text_delta","delta":" valid"},"timestamp":1783384952042}
+{"id":2240,"event":"agent","data":{"type":"text_delta","delta":" —"},"timestamp":1783384952044}
+{"id":2241,"event":"agent","data":{"type":"text_delta","delta":" no"},"timestamp":1783384952046}
+{"id":2242,"event":"agent","data":{"type":"text_delta","delta":" parse"},"timestamp":1783384952048}
+{"id":2243,"event":"agent","data":{"type":"text_delta","delta":" errors"},"timestamp":1783384952050}
+{"id":2244,"event":"agent","data":{"type":"text_delta","delta":"\","},"timestamp":1783384952053}
+{"id":2245,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783384952055}
+{"id":2246,"event":"agent","data":{"type":"text_delta","delta":"status"},"timestamp":1783384952056}
+{"id":2247,"event":"agent","data":{"type":"text_delta","delta":"\":"},"timestamp":1783384952058}
+{"id":2248,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783384952060}
+{"id":2249,"event":"agent","data":{"type":"text_delta","delta":"pass"},"timestamp":1783384952064}
+{"id":2250,"event":"agent","data":{"type":"text_delta","delta":"\","},"timestamp":1783384952065}
+{"id":2251,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783384952067}
+{"id":2252,"event":"agent","data":{"type":"text_delta","delta":"note"},"timestamp":1783384952069}
+{"id":2253,"event":"agent","data":{"type":"text_delta","delta":"\":"},"timestamp":1783384952077}
+{"id":2254,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783384952080}
+{"id":2255,"event":"agent","data":{"type":"text_delta","delta":"new"},"timestamp":1783384952082}
+{"id":2256,"event":"agent","data":{"type":"text_delta","delta":" Function"},"timestamp":1783384952084}
+{"id":2257,"event":"agent","data":{"type":"text_delta","delta":"()"},"timestamp":1783384952086}
+{"id":2258,"event":"agent","data":{"type":"text_delta","delta":" parse"},"timestamp":1783384952202}
+{"id":2259,"event":"agent","data":{"type":"text_delta","delta":" succeeded"},"timestamp":1783384952204}
+{"id":2260,"event":"agent","data":{"type":"text_delta","delta":"\"},\n"},"timestamp":1783384952205}
+{"id":2261,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384952207}
+{"id":2262,"event":"agent","data":{"type":"text_delta","delta":" {\""},"timestamp":1783384952208}
+{"id":2263,"event":"agent","data":{"type":"text_delta","delta":"rule"},"timestamp":1783384952209}
+{"id":2264,"event":"agent","data":{"type":"text_delta","delta":"\":"},"timestamp":1783384952211}
+{"id":2265,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783384952213}
+{"id":2266,"event":"agent","data":{"type":"text_delta","delta":"All"},"timestamp":1783384952214}
+{"id":2267,"event":"agent","data":{"type":"text_delta","delta":" element"},"timestamp":1783384952216}
+{"id":2268,"event":"agent","data":{"type":"text_delta","delta":" IDs"},"timestamp":1783384952217}
+{"id":2269,"event":"agent","data":{"type":"text_delta","delta":" match"},"timestamp":1783384952218}
+{"id":2270,"event":"agent","data":{"type":"text_delta","delta":" HTML"},"timestamp":1783384952221}
+{"id":2271,"event":"agent","data":{"type":"text_delta","delta":" ↔"},"timestamp":1783384952222}
+{"id":2272,"event":"agent","data":{"type":"text_delta","delta":" JS"},"timestamp":1783384952223}
+{"id":2273,"event":"agent","data":{"type":"text_delta","delta":"\","},"timestamp":1783384952225}
+{"id":2274,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783384952226}
+{"id":2275,"event":"agent","data":{"type":"text_delta","delta":"status"},"timestamp":1783384952227}
+{"id":2276,"event":"agent","data":{"type":"text_delta","delta":"\":"},"timestamp":1783384952229}
+{"id":2277,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783384952230}
+{"id":2278,"event":"agent","data":{"type":"text_delta","delta":"pass"},"timestamp":1783384952233}
+{"id":2279,"event":"agent","data":{"type":"text_delta","delta":"\","},"timestamp":1783384952235}
+{"id":2280,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783384952236}
+{"id":2281,"event":"agent","data":{"type":"text_delta","delta":"note"},"timestamp":1783384952237}
+{"id":2282,"event":"agent","data":{"type":"text_delta","delta":"\":"},"timestamp":1783384952238}
+{"id":2283,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783384952330}
+{"id":2284,"event":"agent","data":{"type":"text_delta","delta":"11"},"timestamp":1783384952332}
+{"id":2285,"event":"agent","data":{"type":"text_delta","delta":" squad"},"timestamp":1783384952333}
+{"id":2286,"event":"agent","data":{"type":"text_delta","delta":" builder"},"timestamp":1783384952335}
+{"id":2287,"event":"agent","data":{"type":"text_delta","delta":" element"},"timestamp":1783384952336}
+{"id":2288,"event":"agent","data":{"type":"text_delta","delta":" IDs"},"timestamp":1783384952337}
+{"id":2289,"event":"agent","data":{"type":"text_delta","delta":" all"},"timestamp":1783384952339}
+{"id":2290,"event":"agent","data":{"type":"text_delta","delta":" have"},"timestamp":1783384952340}
+{"id":2291,"event":"agent","data":{"type":"text_delta","delta":" matching"},"timestamp":1783384952370}
+{"id":2292,"event":"agent","data":{"type":"text_delta","delta":" references"},"timestamp":1783384952393}
+{"id":2293,"event":"agent","data":{"type":"text_delta","delta":" in"},"timestamp":1783384952396}
+{"id":2294,"event":"agent","data":{"type":"text_delta","delta":" HTML"},"timestamp":1783384952419}
+{"id":2295,"event":"agent","data":{"type":"text_delta","delta":" and"},"timestamp":1783384952440}
+{"id":2296,"event":"agent","data":{"type":"text_delta","delta":" JS"},"timestamp":1783384952442}
+{"id":2297,"event":"agent","data":{"type":"text_delta","delta":"\"},\n"},"timestamp":1783384952444}
+{"id":2298,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384952447}
+{"id":2299,"event":"agent","data":{"type":"text_delta","delta":" {\""},"timestamp":1783384952449}
+{"id":2300,"event":"agent","data":{"type":"text_delta","delta":"rule"},"timestamp":1783384952450}
+{"id":2301,"event":"agent","data":{"type":"text_delta","delta":"\":"},"timestamp":1783384952494}
+{"id":2302,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783384952496}
+{"id":2303,"event":"agent","data":{"type":"text_delta","delta":"All"},"timestamp":1783384952499}
+{"id":2304,"event":"agent","data":{"type":"text_delta","delta":" game"},"timestamp":1783384952501}
+{"id":2305,"event":"agent","data":{"type":"text_delta","delta":" engine"},"timestamp":1783384952502}
+{"id":2306,"event":"agent","data":{"type":"text_delta","delta":" functions"},"timestamp":1783384952513}
+{"id":2307,"event":"agent","data":{"type":"text_delta","delta":" present"},"timestamp":1783384952518}
+{"id":2308,"event":"agent","data":{"type":"text_delta","delta":"\","},"timestamp":1783384952540}
+{"id":2309,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783384952544}
+{"id":2310,"event":"agent","data":{"type":"text_delta","delta":"status"},"timestamp":1783384952561}
+{"id":2311,"event":"agent","data":{"type":"text_delta","delta":"\":"},"timestamp":1783384952564}
+{"id":2312,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783384952566}
+{"id":2313,"event":"agent","data":{"type":"text_delta","delta":"pass"},"timestamp":1783384952568}
+{"id":2314,"event":"agent","data":{"type":"text_delta","delta":"\","},"timestamp":1783384952815}
+{"id":2315,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783384952818}
+{"id":2316,"event":"agent","data":{"type":"text_delta","delta":"note"},"timestamp":1783384952821}
+{"id":2317,"event":"agent","data":{"type":"text_delta","delta":"\":"},"timestamp":1783384952823}
+{"id":2318,"event":"agent","data":{"type":"text_delta","delta":" \""},"timestamp":1783384952824}
+{"id":2319,"event":"agent","data":{"type":"text_delta","delta":"15"},"timestamp":1783384952826}
+{"id":2320,"event":"agent","data":{"type":"text_delta","delta":" functions"},"timestamp":1783384952827}
+{"id":2321,"event":"agent","data":{"type":"text_delta","delta":" +"},"timestamp":1783384952828}
+{"id":2322,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384952829}
+{"id":2323,"event":"agent","data":{"type":"text_delta","delta":"6"},"timestamp":1783384952830}
+{"id":2324,"event":"agent","data":{"type":"text_delta","delta":" constants"},"timestamp":1783384952832}
+{"id":2325,"event":"agent","data":{"type":"text_delta","delta":" verified"},"timestamp":1783384952834}
+{"id":2326,"event":"agent","data":{"type":"text_delta","delta":" ("},"timestamp":1783384952836}
+{"id":2327,"event":"agent","data":{"type":"text_delta","delta":"PLAY"},"timestamp":1783384952838}
+{"id":2328,"event":"agent","data":{"type":"text_delta","delta":"ERS"},"timestamp":1783384952842}
+{"id":2329,"event":"agent","data":{"type":"text_delta","delta":","},"timestamp":1783384952843}
+{"id":2330,"event":"agent","data":{"type":"text_delta","delta":" FORM"},"timestamp":1783384952845}
+{"id":2331,"event":"agent","data":{"type":"text_delta","delta":"ATIONS"},"timestamp":1783384952846}
+{"id":2332,"event":"agent","data":{"type":"text_delta","delta":","},"timestamp":1783384952847}
+{"id":2333,"event":"agent","data":{"type":"text_delta","delta":" SY"},"timestamp":1783384952849}
+{"id":2334,"event":"agent","data":{"type":"text_delta","delta":"NER"},"timestamp":1783384952853}
+{"id":2335,"event":"agent","data":{"type":"text_delta","delta":"G"},"timestamp":1783384952855}
+{"id":2336,"event":"agent","data":{"type":"text_delta","delta":"IES"},"timestamp":1783384952856}
+{"id":2337,"event":"agent","data":{"type":"text_delta","delta":","},"timestamp":1783384952858}
+{"id":2338,"event":"agent","data":{"type":"text_delta","delta":" B"},"timestamp":1783384952859}
+{"id":2339,"event":"agent","data":{"type":"text_delta","delta":"UD"},"timestamp":1783384952860}
+{"id":2340,"event":"agent","data":{"type":"text_delta","delta":"GET"},"timestamp":1783384952861}
+{"id":2341,"event":"agent","data":{"type":"text_delta","delta":","},"timestamp":1783384952862}
+{"id":2342,"event":"agent","data":{"type":"text_delta","delta":" etc"},"timestamp":1783384952864}
+{"id":2343,"event":"agent","data":{"type":"text_delta","delta":".)"},"timestamp":1783384953032}
+{"id":2344,"event":"agent","data":{"type":"text_delta","delta":"\"}\n"},"timestamp":1783384953038}
+{"id":2345,"event":"agent","data":{"type":"text_delta","delta":"]"},"timestamp":1783384953040}
+{"id":2346,"event":"agent","data":{"type":"text_delta","delta":" }\n"},"timestamp":1783384953042}
+{"id":2347,"event":"agent","data":{"type":"text_delta","delta":"</od"},"timestamp":1783384953044}
+{"id":2348,"event":"agent","data":{"type":"text_delta","delta":"-card"},"timestamp":1783384953046}
+{"id":2349,"event":"agent","data":{"type":"text_delta","delta":">\n\n"},"timestamp":1783384953047}
+{"id":2350,"event":"agent","data":{"type":"text_delta","delta":"**"},"timestamp":1783384953049}
+{"id":2351,"event":"agent","data":{"type":"text_delta","delta":"Open"},"timestamp":1783384953050}
+{"id":2352,"event":"agent","data":{"type":"text_delta","delta":"**"},"timestamp":1783384953051}
+{"id":2353,"event":"agent","data":{"type":"text_delta","delta":" `"},"timestamp":1783384953054}
+{"id":2354,"event":"agent","data":{"type":"text_delta","delta":"game"},"timestamp":1783384953056}
+{"id":2355,"event":"agent","data":{"type":"text_delta","delta":".html"},"timestamp":1783384953057}
+{"id":2356,"event":"agent","data":{"type":"text_delta","delta":"`"},"timestamp":1783384953058}
+{"id":2357,"event":"agent","data":{"type":"text_delta","delta":" in"},"timestamp":1783384953060}
+{"id":2358,"event":"agent","data":{"type":"text_delta","delta":" your"},"timestamp":1783384953061}
+{"id":2359,"event":"agent","data":{"type":"text_delta","delta":" browser"},"timestamp":1783384953062}
+{"id":2360,"event":"agent","data":{"type":"text_delta","delta":" ("},"timestamp":1783384953064}
+{"id":2361,"event":"agent","data":{"type":"text_delta","delta":"or"},"timestamp":1783384953065}
+{"id":2362,"event":"agent","data":{"type":"text_delta","delta":" `"},"timestamp":1783384953067}
+{"id":2363,"event":"agent","data":{"type":"text_delta","delta":"python"},"timestamp":1783384953068}
+{"id":2364,"event":"agent","data":{"type":"text_delta","delta":"3"},"timestamp":1783384953069}
+{"id":2365,"event":"agent","data":{"type":"text_delta","delta":" -"},"timestamp":1783384953071}
+{"id":2366,"event":"agent","data":{"type":"text_delta","delta":"m"},"timestamp":1783384953074}
+{"id":2367,"event":"agent","data":{"type":"text_delta","delta":" http"},"timestamp":1783384953075}
+{"id":2368,"event":"agent","data":{"type":"text_delta","delta":".server"},"timestamp":1783384953192}
+{"id":2369,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783384953194}
+{"id":2370,"event":"agent","data":{"type":"text_delta","delta":"800"},"timestamp":1783384953195}
+{"id":2371,"event":"agent","data":{"type":"text_delta","delta":"0"},"timestamp":1783384953197}
+{"id":2372,"event":"agent","data":{"type":"text_delta","delta":"`"},"timestamp":1783384953198}
+{"id":2373,"event":"agent","data":{"type":"text_delta","delta":" from"},"timestamp":1783384953200}
+{"id":2374,"event":"agent","data":{"type":"text_delta","delta":" the"},"timestamp":1783384953201}
+{"id":2375,"event":"agent","data":{"type":"text_delta","delta":" project"},"timestamp":1783384953202}
+{"id":2376,"event":"agent","data":{"type":"text_delta","delta":" folder"},"timestamp":1783384953204}
+{"id":2377,"event":"agent","data":{"type":"text_delta","delta":")"},"timestamp":1783384953205}
+{"id":2378,"event":"agent","data":{"type":"text_delta","delta":" to"},"timestamp":1783384953207}
+{"id":2379,"event":"agent","data":{"type":"text_delta","delta":" try"},"timestamp":1783384953208}
+{"id":2380,"event":"agent","data":{"type":"text_delta","delta":" the"},"timestamp":1783384953289}
+{"id":2381,"event":"agent","data":{"type":"text_delta","delta":" new"},"timestamp":1783384953291}
+{"id":2382,"event":"agent","data":{"type":"text_delta","delta":" squad"},"timestamp":1783384953293}
+{"id":2383,"event":"agent","data":{"type":"text_delta","delta":" builder"},"timestamp":1783384953294}
+{"id":2384,"event":"agent","data":{"type":"text_delta","delta":"."},"timestamp":1783384953296}
+{"id":2385,"event":"agent","data":{"type":"text_delta","delta":" Click"},"timestamp":1783384953297}
+{"id":2386,"event":"agent","data":{"type":"text_delta","delta":" Start"},"timestamp":1783384953298}
+{"id":2387,"event":"agent","data":{"type":"text_delta","delta":" Campaign"},"timestamp":1783384953299}
+{"id":2388,"event":"agent","data":{"type":"text_delta","delta":" →"},"timestamp":1783384953301}
+{"id":2389,"event":"agent","data":{"type":"text_delta","delta":" Build"},"timestamp":1783384953302}
+{"id":2390,"event":"agent","data":{"type":"text_delta","delta":" Your"},"timestamp":1783384953303}
+{"id":2391,"event":"agent","data":{"type":"text_delta","delta":" Squad"},"timestamp":1783384953442}
+{"id":2392,"event":"agent","data":{"type":"text_delta","delta":" to"},"timestamp":1783384953445}
+{"id":2393,"event":"agent","data":{"type":"text_delta","delta":" see"},"timestamp":1783384953446}
+{"id":2394,"event":"agent","data":{"type":"text_delta","delta":" it"},"timestamp":1783384953448}
+{"id":2395,"event":"agent","data":{"type":"text_delta","delta":"."},"timestamp":1783384953449}
+{"id":2396,"event":"stderr","data":{"chunk":"2026-07-07 02:42:33 [INFO] run_agent: OpenAI client closed (stream_request_complete, shared=False, tcp_force_closed=0) thread=Thread-108 (_call):129183985415872 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=deepseek-v4-flash\n2026-07-07 02:42:33 [INFO] agent.conversation_loop: API call #23: model=deepseek-v4-flash provider=opencode-go in=151300 out=636 total=151936 latency=9.3s cache=151040/151300 (100%)\n"},"timestamp":1783384953450}
+{"id":2397,"event":"stderr","data":{"chunk":"2026-07-07 02:42:33 [INFO] agent.conversation_loop: Turn ended: reason=text_response(finish_reason=stop) model=deepseek-v4-flash api_calls=23/90 budget=22/90 tool_turns=22 last_msg_role=assistant response_len=1931 session=d6dbe9c0-bdde-4b3b-a280-a061444dd8ef\n"},"timestamp":1783384953474}
+{"id":2398,"event":"stderr","data":{"chunk":"2026-07-07 02:42:33 [INFO] run_agent: OpenAI client created (agent_init, shared=True) thread=bg-review:129183985415872 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=deepseek-v4-flash\n"},"timestamp":1783384953511}
+{"id":2399,"event":"agent","data":{"type":"status","label":"usage_update","elapsedMs":238648},"timestamp":1783384953700}
+{"id":2400,"event":"agent","data":{"type":"usage","usage":{"input_tokens":3060699,"output_tokens":18769,"cached_read_tokens":2986624,"thought_tokens":0,"total_tokens":3079468},"durationMs":238650},"timestamp":1783384953703}
+{"id":2401,"event":"stderr","data":{"chunk":"2026-07-07 02:42:33 [INFO] agent.auxiliary_client: Auxiliary auto-detect: using main provider opencode-go (deepseek-v4-flash)\n"},"timestamp":1783384953726}
+{"id":2402,"event":"stderr","data":{"chunk":"2026-07-07 02:42:33 [INFO] agent.auxiliary_client: Auxiliary title_generation: using auto (deepseek-v4-flash) at https://opencode.ai/zen/go/v1/\n"},"timestamp":1783384953727}
+{"id":2403,"event":"stderr","data":{"chunk":"2026-07-07 02:42:33 [INFO] agent.turn_context: conversation turn: session=d6dbe9c0-bdde-4b3b-a280-a061444dd8ef model=deepseek-v4-flash provider=opencode-go platform=acp history=52 msg='Review the conversation above and update the skill library. Be ACTIVE — most ses...'\n"},"timestamp":1783384953912}
+{"id":2404,"event":"stderr","data":{"chunk":"2026-07-07 02:42:33 [INFO] run_agent: OpenAI client created (chat_completion_stream_request, shared=False) thread=Thread-110 (_call):129184008492736 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=deepseek-v4-flash\n"},"timestamp":1783384953942}
+{"id":2405,"event":"diagnostic","data":{"type":"runtime_close","rpc_close_reason":"signal","status":"succeeded","signal":"SIGTERM"},"timestamp":1783384954266}
+{"id":2406,"event":"end","data":{"code":null,"signal":"SIGTERM","status":"succeeded","resumable":false},"timestamp":1783384954267}
