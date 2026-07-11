@@ -144,10 +144,10 @@ id = "covering_defender"
 name = "Covering Defender"
 rarity = "uncommon"
 trigger_type = "covering_defender"
-trigger = { position = "CB", stat_a = "pac", threshold_a = 7, stat_b = "def_", threshold_b = 9, different_players = true }
+trigger = { position = "CB", stat_a = "pac", threshold_a = 7, stat_b = "def_", threshold_b = 8, different_players = true }
 effect_type = "add_chips"
 effect = { add_chips = 25 }
-description = "CB PAC≥7 + another CB DEF≥9: +25 chips to both — stopper + sweeper"
+description = "CB PAC≥7 + another CB DEF≥8: +25 chips to both — stopper + sweeper"
 
 # ── Counter-Attack (LW + ST + RW) ─────────────────────────────────────────
 
@@ -204,10 +204,10 @@ id = "set_piece_threat"
 name = "Set Piece Threat"
 rarity = "uncommon"
 trigger_type = "set_piece_threat"
-trigger = { stat_a = "def_", threshold_a = 9, stat_b = "spc", threshold_b = 8, different_players = true }
+trigger = { stat_a = "def_", threshold_a = 8, stat_b = "spc", threshold_b = 7, different_players = true }
 effect_type = "add_chips"
-effect = { add_chips = 50, global = true }
-description = "DEF≥9 + SPC≥8 (diff players): +50 global chips"
+effect = { add_chips = 35, global = true }
+description = "DEF≥8 + SPC≥7 (diff players): +35 global chips"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Squad-Persistent Synergies (Trait-Based)
@@ -323,3 +323,27 @@ trigger = { traits = ["clinical", "pacey"], min_count = 2 }
 effect_type = "persistent_add"
 effect = { add_chips = 5, target_trait_combo = ["clinical", "pacey"] }
 description = "2+ players with clinical+pacey: those players get +5 chips per phase"
+
+# ── New: Aerial Fortress — 3+ aerial players ──────────────────────────────
+[[synergies]]
+id = "aerial_fortress"
+name = "Aerial Fortress"
+persistent = true
+rarity = "uncommon"
+trigger_type = "squad_trait_count"
+trigger = { trait = "aerial", min_count = 3 }
+effect_type = "persistent_add"
+effect = { add_chips = 7, target_position = ["ST", "CB", "GK"] }
+description = "3+ aerial players in squad: STs, CBs, GKs get +7 chips per phase"
+
+# ── New: Playmaker Network — 3+ playmaker players ──────────────────────────
+[[synergies]]
+id = "playmaker_network"
+name = "Playmaker Network"
+persistent = true
+rarity = "common"
+trigger_type = "squad_trait_count"
+trigger = { trait = "playmaker", min_count = 3 }
+effect_type = "persistent_multiply"
+effect = { multiply = 1.1, target_position = ["CM", "CAM", "CDM"] }
+description = "3+ playmakers in squad: midfielders get ×1.1 mult each phase"

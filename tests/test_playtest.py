@@ -41,15 +41,15 @@ class TestCalculateChipsAllPositions:
     """Verify every position formula works correctly."""
 
     @pytest.mark.parametrize("pos,expected_formula", [
-        ("ST",  lambda p: p.atk * 3 + p.pac * 2 + p.spc * 1),
+        ("ST",  lambda p: p.atk * 4 + p.pac * 2 + p.spc * 1),
         ("LW",  lambda p: p.atk * 2 + p.pac * 3 + p.pas * 1),
         ("RW",  lambda p: p.atk * 2 + p.pac * 3 + p.pas * 1),
-        ("CM",  lambda p: p.pas * 3 + p.atk * 1 + p.def_ * 2),
+        ("CM",  lambda p: p.pas * 3 + p.atk * 2 + p.def_ * 1),
         ("CAM", lambda p: p.pas * 3 + p.atk * 2 + p.spc * 1),
-        ("CDM", lambda p: p.def_ * 3 + p.pas * 2 + p.atk * 1),
-        ("CB",  lambda p: p.def_ * 4 + p.spc * 1 + p.pac * 1),
+        ("CDM", lambda p: p.def_ * 2 + p.pas * 3 + p.atk * 1),
+        ("CB",  lambda p: p.def_ * 3 + p.pac * 2 + p.atk * 1),
         ("FB",  lambda p: p.def_ * 2 + p.pac * 3 + p.pas * 1),
-        ("GK",  lambda p: p.def_ * 3 + p.spc * 2),
+        ("GK",  lambda p: p.def_ * 3 + p.spc * 1),
     ])
     def test_formula_matches_chips_formula_dict(self, pos, expected_formula):
         """The CHIPS_FORMULA dict should contain the exact same formula."""
@@ -77,14 +77,14 @@ class TestCalculateChipsAllPositions:
     def test_max_stats_player(self):
         """Player with all stats = 10."""
         p = _mk_player("m", "Max", "ST", atk=10, pac=10, pas=10, def_=10, spc=10)
-        assert calculate_chips(p, "ST") == 10*3 + 10*2 + 10*1  # 60
-        assert calculate_chips(p, "CB") == 10*4 + 10*1 + 10*1  # 60
+        assert calculate_chips(p, "ST") == 10*4 + 10*2 + 10*1  # 70
+        assert calculate_chips(p, "CB") == 10*3 + 10*2 + 10*1  # 60
 
     def test_chips_is_integer(self):
         p = _mk_player("t", "T", "ST", atk=7, pac=8, pas=6, def_=4, spc=5)
         result = calculate_chips(p, "ST")
         assert isinstance(result, int)
-        assert result == 7*3 + 8*2 + 5*1  # 42
+        assert result == 7*4 + 8*2 + 5*1  # 49
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -169,25 +169,25 @@ class TestDetectSynergiesEdgeCases:
         field = [(gigi_wall, "GK")]
         result = detect_synergies(field, [
             SynergyCard("sp", "Set Piece Threat", "uncommon", "set_piece_threat",
-                        {"stat_a": "def_", "threshold_a": 9,
-                         "stat_b": "spc", "threshold_b": 8,
+                        {"stat_a": "def_", "threshold_a": 8,
+                         "stat_b": "spc", "threshold_b": 7,
                          "different_players": True},
-                        effect={"add_chips": 50, "global": True})
+                        effect={"add_chips": 35, "global": True})
         ])
         assert result["__global__"]["global_add"] == 0
 
     def test_set_piece_threat_two_players(self, il_capitano, terry_henri):
         """Set Piece Threat with two different qualifying players."""
-        # Van Aura: def_=10 (≥9), Terry: spc=8 (≥8), different players → fires
+        # Van Aura: def_=10 (≥8), Terry: spc=8 (≥7), different players → fires
         field = [(il_capitano, "CB"), (terry_henri, "ST")]
         result = detect_synergies(field, [
             SynergyCard("sp", "Set Piece Threat", "uncommon", "set_piece_threat",
-                        {"stat_a": "def_", "threshold_a": 9,
-                         "stat_b": "spc", "threshold_b": 8,
+                        {"stat_a": "def_", "threshold_a": 8,
+                         "stat_b": "spc", "threshold_b": 7,
                          "different_players": True},
-                        effect={"add_chips": 50, "global": True})
+                        effect={"add_chips": 35, "global": True})
         ])
-        assert result["__global__"]["global_add"] == 50
+        assert result["__global__"]["global_add"] == 35
 
     def test_overload_min_duplicates_default(self, terry_henri, big_zlat):
         """Overload with min_duplicates=2, exactly 2 matching."""
@@ -211,12 +211,12 @@ class TestDetectSynergiesEdgeCases:
         assert result[terry_henri.id]["add_chips"] == 15
 
     def test_covering_defender(self, il_capitano, jt_rock, rolls_royce):
-        """Covering Defender: one fast CB (PAC≥7) + one strong CB (DEF≥9)."""
+        """Covering Defender: one fast CB (PAC≥7) + one strong CB (DEF≥8)."""
         field = [(il_capitano, "CB"), (jt_rock, "CB"), (rolls_royce, "CB")]
         result = detect_synergies(field, [
             SynergyCard("cd", "Covering Defender", "uncommon", "covering_defender",
                          {"position": "CB", "stat_a": "pac", "threshold_a": 7,
-                          "stat_b": "def_", "threshold_b": 9},
+                          "stat_b": "def_", "threshold_b": 8},
                          effect={"add_chips": 30})
         ])
         # Rolls (PAC 8) + il_capitano (DEF 10) should fire
@@ -382,14 +382,14 @@ class TestCalculateRoundScoreEdgeCases:
         fm = FormationCard("test", "Test", ["ST"], 11, 1.0,
                            position_bonus={"ST": 50})
         result = calculate_round_score([(terry_henri, "ST")], [], formation=fm)
-        assert result["total"] == 103
+        assert result["total"] == 112
 
     def test_formation_negative_bonus(self, terry_henri):
         """Negative formation bonus reduces chips."""
         fm = FormationCard("test", "Test", ["ST"], 11, 1.0,
                            position_bonus={"ST": -30})
         result = calculate_round_score([(terry_henri, "ST")], [], formation=fm)
-        assert result["total"] == 23
+        assert result["total"] == 32
 
     def test_formation_global_mult(self, terry_henri):
         """Formation global_mult applies after everything."""
@@ -468,13 +468,13 @@ class TestCalculateRoundScoreEdgeCases:
         p2 = _mk_player("b", "B", "ST", atk=9, pac=9, pas=6, def_=1, spc=8)
         field = [(p1, "CB"), (p2, "ST")]
         sp = SynergyCard("sp", "Set Piece Threat", "uncommon", "set_piece_threat",
-                         {"stat_a": "def_", "threshold_a": 9,
-                          "stat_b": "spc", "threshold_b": 8,
+                         {"stat_a": "def_", "threshold_a": 8,
+                          "stat_b": "spc", "threshold_b": 7,
                           "different_players": True},
-                         effect={"add_chips": 50, "global": True})
+                         effect={"add_chips": 35, "global": True})
         result = calculate_round_score(field, [sp])
         assert "Set Piece Threat" in result["fired_synergies"]
-        assert result["global_add"] >= 50
+        assert result["global_add"] >= 35
 
 
 # ═══════════════════════════════════════════════════════════════════════════

@@ -13,15 +13,15 @@ from src.cards import PlayerCard, SynergyCard, FormationCard
 # CB cares about DEF, CM cares about PAS, etc.
 
 CHIPS_FORMULA = {
-    "ST":  lambda p: p.atk * 3 + p.pac * 2 + p.spc * 1,
+    "ST":  lambda p: p.atk * 4 + p.pac * 2 + p.spc * 1,
     "LW":  lambda p: p.atk * 2 + p.pac * 3 + p.pas * 1,
     "RW":  lambda p: p.atk * 2 + p.pac * 3 + p.pas * 1,
-    "CM":  lambda p: p.pas * 3 + p.atk * 1 + p.def_ * 2,
+    "CM":  lambda p: p.pas * 3 + p.atk * 2 + p.def_ * 1,
     "CAM": lambda p: p.pas * 3 + p.atk * 2 + p.spc * 1,
-    "CDM": lambda p: p.def_ * 3 + p.pas * 2 + p.atk * 1,
-    "CB":  lambda p: p.def_ * 4 + p.spc * 1 + p.pac * 1,
+    "CDM": lambda p: p.def_ * 2 + p.pas * 3 + p.atk * 1,
+    "CB":  lambda p: p.def_ * 3 + p.pac * 2 + p.atk * 1,
     "FB":  lambda p: p.def_ * 2 + p.pac * 3 + p.pas * 1,
-    "GK":  lambda p: p.def_ * 3 + p.spc * 2,
+    "GK":  lambda p: p.def_ * 3 + p.spc * 1,
 }
 
 

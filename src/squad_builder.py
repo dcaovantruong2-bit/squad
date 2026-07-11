@@ -19,7 +19,7 @@ from src.ui.console import cprint, clear_screen
 
 # ─── Constants ──────────────────────────────────────────────────────────
 BUDGET = 360
-MIN_TOTAL = 10
+MIN_TOTAL = 11
 
 # Pre-load all synergies for computing synergy potential in the builder
 _ALL_SYNERGIES = load_synergies()
@@ -59,7 +59,7 @@ def check_minimums(squad: list[PlayerCard]) -> list[str]:
             missing.append(f"{cfg['label']} (have {total})")
 
     if len(squad) < MIN_TOTAL:
-        missing.append(f"10 players minimum (have {len(squad)})")
+        missing.append(f"11 players minimum (have {len(squad)})")
 
     return missing
 

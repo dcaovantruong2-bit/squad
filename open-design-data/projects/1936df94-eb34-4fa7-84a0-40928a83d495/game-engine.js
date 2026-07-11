@@ -14,21 +14,21 @@ const PLAYERS = [
   { id:"big_zlat", name:"Big Zlat", position:"ST", atk:8, pac:5, pas:7, def_:2, spc:10, traits:["physical","technical"], description:"Acrobatic target man. Impossible is nothing." },
   { id:"kun_kun", name:"Kun Kun", position:"ST", atk:8, pac:8, pas:5, def_:1, spc:7, traits:["pacey","poacher"], description:"Low center of gravity. Always in the right place." },
   { id:"the_waz", name:"The Waz", position:"ST", atk:8, pac:6, pas:7, def_:5, spc:6, traits:["physical","leader"], description:"Bulldog forward. Fights for every ball." },
-  { id:"flash_forward", name:"Theo Walk-not", position:"ST", atk:4, pac:7, pas:1, def_:1, spc:2, traits:["pacey","poacher"], description:"All pace, no finish." },
+  { id:"flash_forward", name:"Theo Walk-not", position:"ST", atk:5, pac:7, pas:2, def_:1, spc:3, traits:["pacey","poacher"], description:"All pace, half a finish." },
   { id:"lewan_goalski", name:"Lewan-goal-ski", position:"ST", atk:9, pac:5, pas:2, def_:1, spc:5, traits:["poacher","clinical"], description:"Lives in the six-yard box." },
   // RW
   { id:"rob_cutter", name:"Arjen Cutback", position:"RW", atk:8, pac:9, pas:6, def_:1, spc:8, traits:["pacey","clinical"], description:"Cut inside on his left." },
-  { id:"rabona_ron", name:"El Shaa-ra-wrong", position:"RW", atk:4, pac:5, pas:4, def_:1, spc:5, traits:["pacey","clinical"], description:"Fancy flicks." },
+  { id:"rabona_ron", name:"El Shaa-ra-wrong", position:"RW", atk:5, pac:6, pas:5, def_:1, spc:6, traits:["pacey","clinical"], description:"Fancy flicks." },
   { id:"riyad_mahrizzle", name:"Riyad Mah-rizzle", position:"RW", atk:7, pac:7, pas:8, def_:2, spc:9, traits:["technical","playmaker"], description:"Silky dribbler on the wing." },
   // LW
   { id:"bale_out", name:"Bale Out", position:"LW", atk:8, pac:10, pas:6, def_:3, spc:7, traits:["pacey","physical"], description:"Pace AND power." },
   { id:"kylian_express", name:"Dictator Kylian", position:"LW", atk:7, pac:10, pas:5, def_:2, spc:7, traits:["pacey","clinical"], description:"Lightning in boots." },
-  { id:"cult_carl", name:"Wilfried Za-ha-ha", position:"LW", atk:3, pac:6, pas:4, def_:2, spc:3, traits:["pacey","clinical"], description:"Fans love him." },
+  { id:"cult_carl", name:"Wilfried Za-ha-ha", position:"LW", atk:5, pac:7, pas:5, def_:2, spc:3, traits:["pacey","clinical"], description:"Fans love him." },
   // CM
   { id:"maestro_xav", name:"Maestro Xav", position:"CM", atk:3, pac:4, pas:10, def_:6, spc:7, traits:["playmaker","technical"], description:"Metronomic passer." },
   { id:"don_andres", name:"Don Andres", position:"CM", atk:6, pac:7, pas:9, def_:3, spc:10, traits:["technical","playmaker"], description:"Dribbling illusionist." },
   { id:"captain_stevie", name:"Captain Stevie", position:"CM", atk:8, pac:6, pas:8, def_:6, spc:8, traits:["leader","physical"], description:"Box-to-box thunder." },
-  { id:"jimmy_journey", name:"Park Ji-zoom", position:"CM", atk:2, pac:3, pas:5, def_:4, spc:2, traits:["physical","leader","journeyman"], description:"Does a job." },
+  { id:"jimmy_journey", name:"Park Ji-zoom", position:"CM", atk:3, pac:4, pas:7, def_:4, spc:2, traits:["physical","leader","journeyman"], description:"Does a job." },
   { id:"yaya_too_strong", name:"Yaya Too Strong", position:"CM", atk:4, pac:6, pas:5, def_:9, spc:4, traits:["destroyer","physical","leader"], description:"Towering presence." },
   // CAM
   { id:"el_mago", name:"Juan Maestro", position:"CAM", atk:6, pac:5, pas:10, def_:2, spc:9, traits:["technical","playmaker"], description:"Wizard of the final third." },
@@ -37,22 +37,22 @@ const PLAYERS = [
   // CDM
   { id:"wall_claude", name:"N'Golo Kanteen", position:"CDM", atk:2, pac:4, pas:6, def_:10, spc:3, traits:["destroyer","technical"], description:"The destroyer." },
   { id:"frenkie_de_con", name:"Toni Cruise", position:"CDM", atk:4, pac:7, pas:10, def_:7, spc:7, traits:["technical","playmaker"], description:"Deep-lying conductor." },
-  { id:"bog_bob", name:"Nigel de Wrong", position:"CDM", atk:1, pac:3, pas:4, def_:6, spc:2, traits:["destroyer","physical"], description:"Does the dirty work." },
+  { id:"bog_bob", name:"Nigel de Wrong", position:"CDM", atk:2, pac:4, pas:5, def_:7, spc:2, traits:["destroyer","physical"], description:"Does the dirty work." },
   // CB
   { id:"il_capitano", name:"Van Aura", position:"CB", atk:3, pac:6, pas:7, def_:10, spc:5, traits:["leader","technical"], description:"Elegant reader of the game." },
   { id:"jt_rock", name:"JT The Rock", position:"CB", atk:4, pac:3, pas:4, def_:10, spc:4, traits:["physical","aerial"], description:"Physical wall." },
   { id:"rolls_royce", name:"The Rolls Royce", position:"CB", atk:2, pac:8, pas:6, def_:9, spc:6, traits:["technical","leader"], description:"Elegant, composed." },
-  { id:"old_man_dan", name:"Per Merterslower", position:"CB", atk:1, pac:1, pas:4, def_:7, spc:2, traits:["leader","aerial"], description:"Reads the game." },
+  { id:"old_man_dan", name:"Per Merterslower", position:"CB", atk:2, pac:2, pas:5, def_:8, spc:2, traits:["leader","aerial"], description:"Reads the game." },
   // FB
   { id:"el_tren", name:"Jordi Overlap", position:"FB", atk:5, pac:9, pas:7, def_:7, spc:5, traits:["pacey","physical"], description:"The Brazilian train." },
   { id:"mr_reliable", name:"Lahm-burger", position:"FB", atk:3, pac:7, pas:8, def_:9, spc:4, traits:["technical","leader"], description:"Two-footed, intelligent." },
   { id:"cafu_express", name:"Cafu Express", position:"FB", atk:6, pac:10, pas:7, def_:6, spc:5, traits:["pacey","physical"], description:"Relentless engine." },
-  { id:"the_crab", name:"Kola-sin-wreck", position:"FB", atk:1, pac:5, pas:3, def_:6, spc:1, traits:["destroyer","leader"], description:"Tackles first." },
+  { id:"the_crab", name:"Kola-sin-wreck", position:"FB", atk:2, pac:6, pas:4, def_:7, spc:1, traits:["destroyer","leader"], description:"Tackles first." },
   { id:"david_albino", name:"David Alaba-daba", position:"FB", atk:3, pac:8, pas:7, def_:8, spc:5, traits:["technical","leader"], description:"Versatile." },
   // GK
   { id:"gigi_wall", name:"Gigi The Wall", position:"GK", atk:1, pac:3, pas:5, def_:10, spc:8, traits:["leader","aerial"], description:"Commanded the box for 20 years." },
   { id:"sergio_muro", name:"Thibaut Courteeth", position:"GK", atk:1, pac:2, pas:3, def_:10, spc:5, traits:["destroyer","leader"], description:"The wall." },
-  { id:"sweaty_keeper", name:"Claudio Bra-voops", position:"GK", atk:1, pac:4, pas:3, def_:6, spc:3, traits:["aerial"], description:"Rushes out." },
+  { id:"sweaty_keeper", name:"Claudio Bra-voops", position:"GK", atk:1, pac:5, pas:4, def_:7, spc:3, traits:["aerial"], description:"Rushes out." },
   { id:"rocket_raya", name:"Rocket Raya", position:"GK", atk:1, pac:5, pas:8, def_:6, spc:8, traits:["technical","leader"], description:"Sweeper-keeper." },
 ];
 
@@ -61,15 +61,15 @@ const PLAYERS = [
 // ═══════════════════════════════════════════════════════════════════════
 
 const CHIPS_FORMULA = {
-  ST:  (p) => p.atk * 3 + p.pac * 2 + p.spc * 1,
+  ST:  (p) => p.atk * 4 + p.pac * 2 + p.spc * 1,
   LW:  (p) => p.atk * 2 + p.pac * 3 + p.pas * 1,
   RW:  (p) => p.atk * 2 + p.pac * 3 + p.pas * 1,
-  CM:  (p) => p.pas * 3 + p.atk * 1 + p.def_ * 2,
+  CM:  (p) => p.pas * 3 + p.atk * 2 + p.def_ * 1,
   CAM: (p) => p.pas * 3 + p.atk * 2 + p.spc * 1,
-  CDM: (p) => p.def_ * 3 + p.pas * 2 + p.atk * 1,
-  CB:  (p) => p.def_ * 4 + p.spc * 1 + p.pac * 1,
+  CDM: (p) => p.def_ * 2 + p.pas * 3 + p.atk * 1,
+  CB:  (p) => p.def_ * 3 + p.pac * 2 + p.atk * 1,
   FB:  (p) => p.def_ * 2 + p.pac * 3 + p.pas * 1,
-  GK:  (p) => p.def_ * 3 + p.spc * 2,
+  GK:  (p) => p.def_ * 3 + p.spc * 1,
 };
 
 function calculateChips(player, fieldPosition) {
@@ -127,19 +127,19 @@ const ALL_PHASES = [
 
 const FORMATIONS = [
   { id:"4-4-2", name:"4-4-2", handSize:11, globalMult:1.0,
-    slots:["CB","CB","FB","FB","CM","CM","CM","CM","ST","ST"],
+    slots:["CB","CB","FB","FB","CM","CM","ST","ST"],
     positionBonus:{}, description:"Balanced. No frills. Classic.",
     pitchPositions:[
       {pos:"GK",x:50,y:92},
       {pos:"CB",x:28,y:75},{pos:"CB",x:72,y:75},
       {pos:"FB",x:5,y:58},{pos:"FB",x:95,y:58},
-      {pos:"LW",x:15,y:40},{pos:"CM",x:38,y:40},{pos:"CM",x:62,y:40},{pos:"RW",x:85,y:40},
+      {pos:"CM",x:30,y:40},{pos:"CM",x:70,y:40},
       {pos:"ST",x:30,y:17},{pos:"ST",x:70,y:17}
     ] },
-  { id:"4-3-3", name:"4-3-3", handSize:12, globalMult:1.0,
+  { id:"4-3-3", name:"4-3-3", handSize:12, globalMult:1.05,
     slots:["CB","CB","FB","FB","CDM","CM","CM","LW","RW","ST"],
     positionBonus:{"LW":20,"RW":20,"ST":-15,"CDM":-10},
-    description:"Wingers thrive (+20). ST and CDM stretched (-15/-10).",
+    description:"Attacking. Wingers thrive (+20). ST and CDM stretched (-15/-10). +5% global.",
     pitchPositions:[
       {pos:"GK",x:50,y:92},
       {pos:"CB",x:28,y:75},{pos:"CB",x:72,y:75},
@@ -147,10 +147,10 @@ const FORMATIONS = [
       {pos:"CDM",x:50,y:50},{pos:"CM",x:30,y:34},{pos:"CM",x:70,y:34},
       {pos:"LW",x:12,y:17},{pos:"ST",x:50,y:12},{pos:"RW",x:88,y:17}
     ] },
-  { id:"5-3-2", name:"5-3-2", handSize:11, globalMult:1.0,
+  { id:"5-3-2", name:"5-3-2", handSize:11, globalMult:0.95,
     slots:["CB","CB","CB","FB","FB","CM","CM","CDM","ST","ST"],
     positionBonus:{"CB":25,"FB":12,"LW":-20,"RW":-20},
-    description:"Defence wins. CBs+25, FBs+12. Wingers don't exist (-20).",
+    description:"Defence wins. CBs+25, FBs+12. Wingers don't exist (-20). -5% global.",
     pitchPositions:[
       {pos:"GK",x:50,y:92},
       {pos:"CB",x:18,y:76},{pos:"CB",x:50,y:76},{pos:"CB",x:82,y:76},
@@ -158,10 +158,10 @@ const FORMATIONS = [
       {pos:"CDM",x:50,y:50},{pos:"CM",x:30,y:36},{pos:"CM",x:70,y:36},
       {pos:"ST",x:30,y:17},{pos:"ST",x:70,y:17}
     ] },
-  { id:"3-4-3", name:"3-4-3", handSize:12, globalMult:1.0,
+  { id:"3-4-3", name:"3-4-3", handSize:12, globalMult:1.08,
     slots:["CB","CB","CB","FB","FB","CM","CM","LW","ST","RW"],
     positionBonus:{"ST":20,"LW":15,"RW":15,"CB":-25},
-    description:"All-out attack. Front 3 +15-20. CBs exposed (-25).",
+    description:"All-out attack. Front 3 +15-20. CBs exposed (-25). +8% global.",
     pitchPositions:[
       {pos:"GK",x:50,y:92},
       {pos:"CB",x:20,y:76},{pos:"CB",x:50,y:76},{pos:"CB",x:80,y:76},
@@ -169,28 +169,28 @@ const FORMATIONS = [
       {pos:"CM",x:35,y:38},{pos:"CM",x:65,y:38},
       {pos:"LW",x:12,y:17},{pos:"ST",x:50,y:12},{pos:"RW",x:88,y:17}
     ] },
-  { id:"4-2-3-1", name:"4-2-3-1", handSize:12, globalMult:1.0,
+  { id:"4-2-3-1", name:"4-2-3-1", handSize:12, globalMult:1.02,
     slots:["CB","CB","FB","FB","CM","CM","CAM","LW","RW","ST"],
     positionBonus:{"CM":10,"CAM":25,"ST":-15},
-    description:"Possession. CAM+25, CM+10. Lone ST isolated (-15).",
+    description:"Possession. CAM+25, CM+10. Lone ST isolated (-15). +2% global.",
     pitchPositions:[
       {pos:"GK",x:50,y:92},
       {pos:"CB",x:28,y:75},{pos:"CB",x:72,y:75},
       {pos:"FB",x:5,y:58},{pos:"FB",x:95,y:58},
-      {pos:"CM",x:35,y:50},{pos:"CM",x:65,y:50},
-      {pos:"LW",x:10,y:27},{pos:"CAM",x:50,y:27},{pos:"RW",x:90,y:27},
-      {pos:"ST",x:50,y:12}
+      {pos:"CM",x:30,y:40},{pos:"CM",x:70,y:40},
+      {pos:"CAM",x:50,y:30},
+      {pos:"LW",x:12,y:17},{pos:"ST",x:50,y:12},{pos:"RW",x:88,y:17}
     ] },
-  { id:"4-5-1", name:"4-5-1", handSize:12, globalMult:1.0,
+  { id:"4-5-1", name:"4-5-1", handSize:12, globalMult:0.98,
     slots:["CB","CB","FB","FB","CDM","CM","CM","LW","RW","ST"],
     positionBonus:{"CDM":15,"LW":20,"RW":20,"ST":-20,"CB":-5},
-    description:"Counter. CDM+15, wingers+20. Lone ST isolated (-20).",
+    description:"Counter. CDM+15, wingers+20. Lone ST isolated (-20). -2% global.",
     pitchPositions:[
       {pos:"GK",x:50,y:92},
       {pos:"CB",x:28,y:75},{pos:"CB",x:72,y:75},
       {pos:"FB",x:5,y:58},{pos:"FB",x:95,y:58},
-      {pos:"CDM",x:50,y:52},{pos:"CM",x:28,y:38},{pos:"CM",x:72,y:38},
-      {pos:"LW",x:10,y:22},{pos:"RW",x:90,y:22},{pos:"ST",x:50,y:13}
+      {pos:"CDM",x:50,y:50},{pos:"CM",x:30,y:36},{pos:"CM",x:70,y:36},
+      {pos:"LW",x:12,y:17},{pos:"ST",x:50,y:12},{pos:"RW",x:88,y:17}
     ] },
 ];
 
@@ -327,9 +327,9 @@ const SYNERGIES = [
     effectType:"multiply", effect:{multiply:1.5},
     description:"FB PAC + LW PAS ≥ 15: ×1.5 mult to FB" },
   { id:"set_piece_threat", name:"Set Piece Threat", rarity:"uncommon", persistent:false,
-    triggerType:"set_piece_threat", trigger:{stat_a:"def_",threshold_a:9,stat_b:"spc",threshold_b:8,different_players:true},
-    effectType:"add_chips", effect:{add_chips:50,global:true},
-    description:"DEF≥9 + SPC≥8 (diff players): +50 global chips" },
+    triggerType:"set_piece_threat", trigger:{stat_a:"def_",threshold_a:8,stat_b:"spc",threshold_b:7,different_players:true},
+    effectType:"add_chips", effect:{add_chips:35,global:true},
+    description:"DEF≥8 + SPC≥7 (diff players): +35 global chips" },
   // Squad-persistent synergies
   { id:"pace_in_behind", name:"Pace in Behind", rarity:"uncommon", persistent:true,
     triggerType:"squad_trait_count", trigger:{trait:"pacey",min_count:4},
@@ -371,6 +371,14 @@ const SYNERGIES = [
     triggerType:"squad_trait_combo", trigger:{traits:["clinical","pacey"],min_count:2},
     effectType:"persistent_add", effect:{add_chips:5,target_trait_combo:["clinical","pacey"]},
     description:"2+ clinical+pacey: those players get +5 chips per phase" },
+  { id:"aerial_fortress", name:"Aerial Fortress", rarity:"uncommon", persistent:true,
+    triggerType:"squad_trait_count", trigger:{trait:"aerial",min_count:3},
+    effectType:"persistent_add", effect:{add_chips:7,target_position:["ST","CB","GK"]},
+    description:"3+ aerial: STs, CBs, GKs get +7 chips per phase" },
+  { id:"playmaker_network", name:"Playmaker Network", rarity:"common", persistent:true,
+    triggerType:"squad_trait_count", trigger:{trait:"playmaker",min_count:3},
+    effectType:"persistent_multiply", effect:{multiply:1.1,target_position:["CM","CAM","CDM"]},
+    description:"3+ playmakers: midfielders get ×1.1 mult each phase" },
 ];
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -938,7 +946,7 @@ const ROLE_GROUPS = {
   Midfielders: { positions: ["CM","CDM","CAM"], min: 3, label: "Midfielders (CM/CDM/CAM)" },
   Attackers: { positions: ["ST","LW","RW"], min: 2, label: "Attackers (ST/LW/RW)" },
 };
-const MIN_TOTAL = 10;
+const MIN_TOTAL = 11;
 const BUDGET = 360;
 
 function checkMinimums(squad) {
@@ -951,6 +959,6 @@ function checkMinimums(squad) {
     const total = cfg.positions.reduce((s, pos) => s + (posCounts[pos] || 0), 0);
     if (total < cfg.min) missing.push(cfg.label + ' (have ' + total + ')');
   }
-  if (squad.length < MIN_TOTAL) missing.push('10 players minimum (have ' + squad.length + ')');
+  if (squad.length < MIN_TOTAL) missing.push('11 players minimum (have ' + squad.length + ')');
   return missing;
 }
