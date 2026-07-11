@@ -144,11 +144,9 @@ def start_round(match: MatchState) -> None:
     match.round_score = 0
     match.field = []
     match.carryover = None
-    # Re-sample 5 random phase-specific synergies for this round
+    # All 18 phase-specific synergies available every round (no RNG)
     if match.synergy_pool:
-        match.synergies = random.sample(
-            match.synergy_pool, min(5, len(match.synergy_pool))
-        )
+        match.synergies = list(match.synergy_pool)
 
 
 def start_phase(match: MatchState) -> None:

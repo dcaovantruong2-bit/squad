@@ -720,9 +720,9 @@ def run_phase_selection(match: MatchState) -> None:
             else:
                 cprint(f"  [dim]Pick your first phase. Order matters for carryover![/dim]", style="dim")
             
-            # Show synergy context for this round
+            # Show round synergies (all 18 available)
             if match.synergies:
-                cprint("  [bold]📋 Round Synergies (pick phases that match your squad):[/bold]", style="bold yellow")
+                cprint("  [bold]📋 All 18 Phase Synergies Available (check ⚡ Potential per phase):[/bold]", style="bold yellow")
                 for s in match.synergies:
                     color = rarity_styles.get(s.rarity, "dim")
                     cprint(f"    ✦ [bold]{s.name:22s}[/bold]  [{color}]{s.description}[/{color}]", style="yellow")
@@ -823,7 +823,7 @@ def run_phase_selection(match: MatchState) -> None:
     cprint(f"\n  ✅ [bold green]Phase order set![/bold green]", style="bold green")
     cprint(f"  {order_str}", style="bold yellow")
     cprint(f"  [dim]Order matters for carryover (e.g. Double Pivot → next attacker gets bonus)[/dim]", style="dim")
-    input("\n  Press Enter to begin...")
+    input("  Press Enter to begin Round...")
 
 
 def play_match(match: MatchState) -> bool:
@@ -837,26 +837,13 @@ def play_match(match: MatchState) -> bool:
         # Show this round's 5 random phase synergies as a tactical briefing
         if match.synergies:
             clear_screen()
-            cprint("\n  [bold]📋 ROUND SYNERGIES[/bold]", style="bold yellow")
-            cprint(f"  [dim]Round {round_num+1} / 3 — Target: {match.current_target} — "
-                   f"Score: {match.round_score}[/dim]", style="dim")
+            cprint(f"  [bold]📋 ROUND {round_num+1} / 3[/bold]", style="bold yellow")
+            cprint(f"  Target: {match.current_target}  —  Score: {match.round_score}", style="bold")
             cprint("  " + "─" * 55, style="dim")
-            
-            for s in match.synergies:
-                rarity_color = {
-                    "Common": "dim",
-                    "Uncommon": "cyan",
-                    "Rare": "yellow",
-                    "Epic": "magenta",
-                    "Legendary": "bold green",
-                }.get(s.rarity, "dim")
-                
-                cprint(f"    ✦ [bold]{s.name:22s}[/bold]  [{rarity_color}]{s.rarity:10s}[/{rarity_color}]"
-                       f"  [dim]{s.description}[/dim]", style="yellow")
-            
-            cprint(f"  [dim]These synergies apply to phases where conditions are met.[/dim]", style="dim")
+            cprint(f"  [dim]All {len(match.synergies)} phase synergies available this round.[/dim]", style="dim")
+            cprint(f"  [dim]Check ⚡ Potential next to each phase card when picking.[/dim]", style="dim")
             cprint(f"  [dim]Build your phase selections around them![/dim]", style="dim")
-            input("\\n  Press Enter to begin Round...")
+            input("  Press Enter to begin Round...")
 
         # Phase selection: deal 6, pick 3 in order
         run_phase_selection(match)
@@ -903,11 +890,11 @@ def play_match(match: MatchState) -> bool:
     clear_screen()
     if match.is_match_won:
         cprint(f"\n  🏆 [bold green]MATCH WON![/bold green] {match.rounds_won}-{match.rounds_lost}", style="bold green")
-        input("\n  Press Enter to continue...")
+        input()
         return True
     else:
         cprint(f"\n  💀 [bold red]MATCH LOST[/bold red] {match.rounds_won}-{match.rounds_lost}", style="bold red")
-        input("\n  Press Enter to continue...")
+        input()
         return False
 
 
@@ -961,7 +948,7 @@ def main():
         cprint(f"  {type(exc).__name__}: {exc}", style="red")
         cprint("\n  Sorry about that! The game hit a snag.", style="yellow")
         cprint("  Please report what you were doing so we can fix it.", style="dim")
-        input("\n  Press Enter to exit...")
+        input("  Press Enter to begin Round...")
 
 
 def _run_game():
@@ -1032,7 +1019,7 @@ def _run_game():
                f"R3={match.round_targets[2]}", style="dim")
         if formation:
             cprint(f"  Formation: [bold]{formation.name}[/bold] (×{formation.global_mult} mult)", style="cyan")
-        input("\n  Press Enter to kick off...")
+        input("  Press Enter to begin Round...")
 
         won = play_match(match)
 
@@ -1051,7 +1038,7 @@ def _run_game():
                 cprint("  So close to the title...", style="dim")
             else:
                 cprint("  Better luck next season.", style="dim")
-            input("\n  Press Enter to exit...")
+            input("  Press Enter to begin Round...")
             return
 
         # Match won!
@@ -1063,7 +1050,7 @@ def _run_game():
 
         if match_idx < 4:
             cprint(f"\n  Campaign: {match_idx + 1}/5 matches won", style="bold yellow")
-        input("\n  Press Enter to continue...")
+        input("  Press Enter to begin Round...")
 
     # ── All 5 matches won! ──
     clear_screen()
