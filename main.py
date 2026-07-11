@@ -136,51 +136,82 @@ def show_field(field: list[tuple], fatigue: dict) -> None:
 # ─── Phase Score Display ──────────────────────────────────────────────
 
 def show_phase_result(result: dict) -> None:
-    """Show detailed scoring result for a phase with full math breakdown."""
-    # Context bar at top
-    cprint("\n  [bold yellow]⚽ PHASE COMPLETE[/bold yellow]", style="bold yellow")
+    """Show scoring result like Balatro — chips × mult for each player with clear math."""
+    clear_screen()
+    
+    # ── Header — Phase name + context ──
+    cprint("", style="")
+    cprint("  ╔═══════════════════════════════════════════════════╗", style="bold yellow")
+    cprint(f"  ║            [bold]{result['phase_name']:>12s}[/bold]            ║", style="bold yellow")
+    cprint("  ╚═══════════════════════════════════════════════════╝", style="bold yellow")
+    cprint("")
+    
+    all_fired = set()
+    
+    # ── Per-player scoring breakdown (Balatro-style) ──
+    for entry in result["breakdown"]:
+        p = entry["player"]
+        pos = entry["position"]
+        base = entry["base_chips"]
+        add = entry["add_chips"]
+        mult = entry["multiply"]
+        fatigue_mult = entry.get("fatigue", 1.0)
+        subtotal = entry["subtotal"]
+        
+        chips_total = base + add
+        
+        # Build display line: Player (Pos) base + add = subtotal  [×mult ×fat]
+        line = f"  [bold]{p:20s}[/bold] ({pos:3s})  [green]{base:3d}[/green]"
+        if add > 0:
+            line += f" +[yellow]{add:3d}[/yellow]"
+        elif add < 0:
+            line += f" -[red]{-add:3d}[/red]"
+        line += f" = [bold]{chips_total:3d}[/bold]"
+        
+        # Show multipliers if any
+        mult_label = ""
+        if mult != 1.0:
+            mult_label += f" ×{mult:.2f}"
+        if fatigue_mult != 1.0:
+            mult_label += f" ×{fatigue_mult:.2f}f"
+        if mult_label:
+            line += f" [dim]{mult_label}[/dim]"
+        
+        line += f"  = [bold cyan]{subtotal:>4d}[/bold cyan]"
+        
+        cprint(line, style="bold" if mult != 1.0 or fatigue_mult != 1.0 else "dim")
+        
+        # Track fired synergies for display below
+        for syn in entry.get("fired_synergies", []):
+            all_fired.add(syn.split(" (")[0])
+    
+    # ── Running Total + Global Effects ──
+    cprint("")
     cprint("  " + "─" * 55, style="dim")
     
-    # Phase name
-    cprint(f"\n  [bold]{result['phase_name']}[/bold] RESULT", style="bold yellow")
-    cprint("  " + "━" * 55, style="bold yellow")
+    subtotal = result.get("subtotal_before_globals", 0)
+    cprint(f"  [bold]Subtotal:[/bold]  {subtotal:>6d}", style="bold")
     
-    # Scoring breakdown table
-    cprint("")
-    Table.render_phase_breakdown(result["breakdown"])
-    
-    # Subtotal
-    cprint("  " + "─" * 58, style="dim")
-    cprint(f"  {'Subtotal':20s}  {'':13s}  {result['subtotal_before_globals']:6d}",
-           style="bold")
-    
-    # Global effects
-    if result.get("global_mult", 1.0) != 1.0:
-        cprint(f"  × {'Global mult':20s}  {'':13s}  ×{result['global_mult']}",
-               style="magenta")
     if result.get("global_add", 0) != 0:
-        cprint(f"  + {'Global bonus':20s}  {'':13s}  +{result['global_add']}",
-               style="magenta")
+        cprint(f"  [magenta]+ Global bonus:[/magenta]      +{result['global_add']:>3d}", style="magenta")
+    if result.get("global_mult", 1.0) != 1.0:
+        cprint(f"  [magenta]× Global mult:[/magenta]        ×{result['global_mult']:.3f}", style="magenta")
     if result.get("formation_mult", 1.0) != 1.0:
-        cprint(f"  × {'Formation':20s} ({result.get('formation_name', '')})  "
-               f"{'':13s}  ×{result['formation_mult']}",
-               style="cyan")
+        cprint(f"  [cyan]× {result.get('formation_name', 'Formation')}:[/cyan]       ×{result['formation_mult']:.2f}", style="cyan")
     
-    # Phase total - BIG and centered
-    cprint("\n  " + "═" * 58, style="bold yellow")
-    cprint(f"  [bold]PHASE TOTAL:[/bold]  [bold green]{result['total']:6d}[/bold green]",
-           style="bold yellow")
-    cprint("  " + "═" * 58, style="bold yellow")
+    # ── PHASE TOTAL — big number like Balatro ──
+    cprint("")
+    cprint("  " + "═" * 55, style="bold yellow")
+    cprint(f"  [bold]PHASE TOTAL:[/bold]     [bold green]{result['total']:>7d}[/bold green]", style="bold yellow")
+    cprint("  " + "═" * 55, style="bold yellow")
     
-    # Synergies
-    if result.get("fired_synergies"):
-        contributors = result.get("synergy_contributors", {})
-        descriptions = result.get("synergy_descriptions", {})
-        SynergyBox.render_phase_synergies(
-            result["fired_synergies"],
-            contributors,
-            descriptions,
-        )
+    # ── Synergies fired in this phase ──
+    phase_syns = [s for s in all_fired if "(persistent)" not in s]
+    if phase_syns:
+        cprint("")
+        cprint(f"  [yellow]⚡ Synergies: {', '.join(sorted(phase_syns)[:5])}[/yellow]", style="yellow")
+        if len(phase_syns) > 5:
+            cprint(f"  [dim]           +{len(phase_syns)-5} more[/dim]", style="dim")
 
 
 def show_round_result(score: int, target: int, won: bool,

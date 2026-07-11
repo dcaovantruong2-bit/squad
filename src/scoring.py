@@ -667,6 +667,7 @@ def calculate_round_score(
             "multiply": round(player_syn["multiply"], 2),
             "fatigue": round(fatigue_mult, 2),
             "subtotal": round(after_mult),
+            "fired_synergies": player_syn["fired_synergies"],
         })
         total += after_mult
 
