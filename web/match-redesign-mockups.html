@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Match Screen Redesign — 5 Options</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1038; color: #e0d8f0; font-family: 'VT323', monospace; padding: 20px; }
+  h1 { font-family: 'Press Start 2P', monospace; font-size: 14px; color: #39ff14; text-align: center; margin: 20px 0; text-shadow: 0 0 10px #39ff14; }
+  h2 { font-family: 'Press Start 2P', monospace; font-size: 10px; color: #ffd700; margin: 30px 0 15px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,215,0,0.3); }
+  .options { display: flex; flex-direction: column; gap: 30px; max-width: 900px; margin: 0 auto; }
+  .option { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 20px; }
+  .option-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .option-title { font-family: 'Press Start 2P', monospace; font-size: 9px; color: #39ff14; }
+  .option-vibe { font-size: 14px; color: #a090c0; }
+
+  /* Mock styles */
+  .mock { border: 1px solid rgba(57,255,20,0.2); border-radius: 6px; overflow: hidden; }
+  .mock-header { background: rgba(57,255,20,0.05); padding: 8px 12px; font-size: 14px; color: #39ff14; border-bottom: 1px solid rgba(57,255,20,0.2); display: flex; justify-content: space-between; }
+  .mock-body { padding: 12px; font-size: 14px; line-height: 1.6; }
+  .mock-body .slot { background: rgba(57,255,20,0.05); border: 1px solid rgba(57,255,20,0.2); border-radius: 4px; padding: 8px 12px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+  .mock-body .slot .pos { color: #39ff14; font-family: 'Press Start 2P', monospace; font-size: 7px; }
+  .mock-body .slot .req { color: #a090c0; font-size: 13px; }
+  .mock-body .slot .fill { color: #ffd700; }
+  .mock-body .slot.filled { border-color: #39ff14; background: rgba(57,255,20,0.08); }
+  .mock-body .player-row { display: flex; justify-content: space-between; padding: 4px 8px; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; }
+  .mock-body .player-row:hover { background: rgba(57,255,20,0.04); }
+  .mock-body .player-row .name { color: #e0d8f0; }
+  .mock-body .player-row .chips { color: #ffd700; }
+  .mock-body .section-title { font-family: 'Press Start 2P', monospace; font-size: 6px; color: #a090c0; margin: 10px 0 6px; text-transform: uppercase; }
+  .pros { font-size: 13px; color: #80d080; margin-top: 8px; }
+  .cons { font-size: 13px; color: #d08080; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .label { font-family: 'Press Start 2P', monospace; font-size: 6px; padding: 2px 6px; border-radius: 2px; }
+  .label-green { background: rgba(57,255,20,0.15); color: #39ff14; }
+  .label-gold { background: rgba(255,215,0,0.15); color: #ffd700; }
+  .badge { font-family: 'Press Start 2P', monospace; font-size: 5px; padding: 2px 5px; border-radius: 2px; }
+  .badge-gk { background: rgba(255,215,0,0.12); color: #ffd700; border: 1px solid #ffd700; }
+  .badge-def { background: rgba(57,255,20,0.1); color: #39ff14; border: 1px solid #39ff14; }
+  .badge-mid { background: rgba(0,204,255,0.12); color: #00ccff; border: 1px solid #00ccff; }
+  .badge-att { background: rgba(255,51,68,0.15); color: #ff3344; border: 1px solid #ff3344; }
+</style>
+</head>
+<body>
+<h1>🎯 Match Screen Redesign</h1>
+<p style="text-align:center;color:#a090c0;margin-bottom:20px;font-size:16px;">5 ways to show phase slots + eligible players (without the full squad list)</p>
+
+<div class="options">
+
+<!-- OPTION A -->
+<div class="option">
+<div class="option-header">
+<span class="option-title">A. Split Panel — Slots Left, Players Right</span>
+<span class="option-vibe">▸ Balatro hand view</span>
+</div>
+<div class="mock">
+<div class="mock-header"><span>⚡ Wing Attack — pick your players</span><span>Score: 0/500</span></div>
+<div class="mock-body">
+  <div class="mock" style="margin:0">
+  <div style="padding:8px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <div>
+      <div class="section-title">Phase Slots</div>
+      <div class="slot" style="cursor:pointer"><span><span class="badge badge-def">FB</span> <span class="req">PAC≥7</span></span><span class="fill">▸ Tap to fill</span></div>
+      <div class="slot filled" style="cursor:pointer"><span><span class="badge badge-att">LW</span> <span class="req">PAC≥7</span></span><span style="color:#39ff14">✅ Bale Out</span></div>
+    </div>
+    <div>
+      <div class="section-title">Pick for FB (PAC≥7)</div>
+      <div class="player-row"><span><span class="badge badge-def">FB</span> Kyle Jogger</span><span class="chips">92 ♣</span></div>
+      <div class="player-row"><span><span class="badge badge-def">FB</span> Dani Elvis</span><span class="chips">88 ♣</span></div>
+      <div class="player-row"><span><span class="badge badge-def">FB</span> Lahm-burger</span><span class="chips">74 ♣</span></div>
+      <div class="player-row"><span><span class="badge badge-def">FB</span> The Tank</span><span class="chips">52 ♣</span></div>
+    </div>
+  </div>
+  </div>
+</div>
+</div>
+<div class="pros">✅ Click slot → see eligible players side-by-side · Clean focus · No scroll</div>
+</div>
+
+<!-- OPTION B -->
+<div class="option">
+<div class="option-header">
+<span class="option-title">B. Vertical Wizard — Click Slot → Show Players Below</span>
+<span class="option-vibe">▸ Progressive disclosure</span>
+</div>
+<div class="mock">
+<div class="mock-header"><span>🛡️ Goal Kick</span><span>Score: 0/500  ·  Round 1/3</span></div>
+<div class="mock-body">
+  <div style="text-align:center;margin-bottom:10px;font-size:13px;color:#a090c0;">Step 1 of 3 — tap a slot to fill it</div>
+  <div class="slot filled" style="cursor:pointer"><span><span class="badge badge-gk">GK</span> Goalkeeper</span><span style="color:#39ff14">✅ Gigi The Wall</span></div>
+  <div class="slot" style="cursor:pointer;border-color:#ffd700;background:rgba(255,215,0,0.05)"><span><span class="badge badge-def">CB</span> DEF≥7</span><span class="fill">◀ YOUR TAP</span></div>
+  <div class="slot" style="cursor:pointer;opacity:0.5"><span><span class="badge badge-def">CB</span> DEF≥6</span><span class="fill">Waiting...</span></div>
+
+  <div class="mock" style="margin-top:10px;border-color:#ffd700;">
+    <div style="padding:8px;">
+      <div class="section-title" style="color:#ffd700;">Eligible for CB (DEF≥7)</div>
+      <div class="player-row"><span><span class="badge badge-def">CB</span> El Capitán <span style="color:#a090c0">DEF 10</span></span><span class="chips">86 ♣</span></div>
+      <div class="player-row"><span><span class="badge badge-def">CB</span> The Rolls Royce <span style="color:#a090c0">DEF 9</span></span><span class="chips">82 ♣</span></div>
+      <div class="player-row"><span><span class="badge badge-def">CB</span> Per Merterslower <span style="color:#a090c0">DEF 8</span></span><span class="chips">64 ♣</span></div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="pros">✅ Natural flow — top to bottom · Each step shows only what's needed · Good for mobile</div>
+</div>
+
+<!-- OPTION C -->
+<div class="option">
+<div class="option-header">
+<span class="option-title">C. Card Hand — Slots as Cards, Players as Deck</span>
+<span class="option-vibe">▸ Balatro joker selection</span>
+</div>
+<div class="mock">
+<div class="mock-header"><span>🃏 Tiki-Taka</span><span>Pick your 3 cards</span></div>
+<div class="mock-body">
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;">
+    <div style="background:rgba(57,255,20,0.08);border:2px solid #39ff14;border-radius:6px;padding:10px;text-align:center;cursor:pointer;">
+      <div class="badge badge-mid" style="display:inline-block;margin-bottom:4px">CM</div>
+      <div style="font-size:11px;color:#a090c0;">PAS≥8</div>
+      <div style="font-size:10px;margin-top:6px;color:#39ff14;">✅ Toni Cruise</div>
+      <div style="font-size:10px;color:#ffd700;">96 ♣</div>
+    </div>
+    <div style="background:rgba(255,215,0,0.05);border:2px solid #ffd700;border-radius:6px;padding:10px;text-align:center;cursor:pointer;">
+      <div class="badge badge-mid" style="display:inline-block;margin-bottom:4px">CM</div>
+      <div style="font-size:11px;color:#a090c0;">PAS≥7</div>
+      <div style="font-size:10px;margin-top:8px;color:#a090c0;">Tap to pick</div>
+      <div style="font-size:10px;color:#a090c0;">—</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.02);border:2px dashed rgba(255,255,255,0.1);border-radius:6px;padding:10px;text-align:center;cursor:pointer;">
+      <div class="badge badge-mid" style="display:inline-block;margin-bottom:4px">CM</div>
+      <div style="font-size:11px;color:#a090c0;">PAS≥6</div>
+      <div style="font-size:10px;margin-top:8px;color:#a090c0;">Tap to pick</div>
+      <div style="font-size:10px;color:#a090c0;">—</div>
+    </div>
+  </div>
+  <div class="mock" style="margin:0;border-color:rgba(255,255,255,0.1);">
+  <div style="padding:8px;">
+    <div class="section-title">Your squad (tap to assign to highlighted slot)</div>
+    <div style="display:flex;flex-wrap:wrap;gap:4px;">
+      <span style="background:rgba(0,204,255,0.1);border:1px solid #00ccff;border-radius:3px;padding:3px 6px;font-size:12px;">Captain Stevie  <span style="color:#ffd700;">98♣</span></span>
+      <span style="background:rgba(0,204,255,0.1);border:1px solid #00ccff;border-radius:3px;padding:3px 6px;font-size:12px;">Don Andres  <span style="color:#ffd700;">88♣</span></span>
+      <span style="background:rgba(0,204,255,0.1);border:1px solid #00ccff;border-radius:3px;padding:3px 6px;font-size:12px;">The Puppet Master  <span style="color:#ffd700;">84♣</span></span>
+      <span style="background:rgba(0,204,255,0.1);border:1px solid #00ccff;border-radius:3px;padding:3px 6px;font-size:12px;">Park Ji-zoom  <span style="color:#ffd700;">62♣</span></span>
+    </div>
+  </div>
+  </div>
+</div>
+</div>
+<div class="pros">✅ Feels like Balatro's joker hand · Slot cards scale horizontally · Tappable squad chips</div>
+</div>
+
+<!-- OPTION D -->
+<div class="option">
+<div class="option-header">
+<span class="option-title">D. Minimal — Slots Only, Click Opens Modal</span>
+<span class="option-vibe">▸ Apple clean</span>
+</div>
+<div class="mock">
+<div class="mock-header"><span>⚽ COUNTER-ATTACK</span><span>Round 1/3 · Target 500</span></div>
+<div class="mock-body" style="text-align:center;">
+  <div style="font-size:13px;color:#a090c0;margin-bottom:12px;">Tap any empty slot to open the player picker</div>
+  <div style="display:flex;gap:10px;justify-content:center;">
+    <div style="background:rgba(255,51,68,0.1);border:2px solid #ff3344;border-radius:8px;width:120px;padding:16px 10px;text-align:center;cursor:pointer;">
+      <div style="font-size:20px;margin-bottom:4px;">⚡</div>
+      <div class="badge badge-att" style="display:inline-block">LW</div>
+      <div style="font-size:11px;color:#a090c0;margin-top:4px;">PAC≥7</div>
+      <div style="font-size:10px;color:#ffd700;margin-top:6px;">Tap →</div>
+    </div>
+    <div style="background:rgba(255,51,68,0.1);border:2px solid #ff3344;border-radius:8px;width:120px;padding:16px 10px;text-align:center;cursor:pointer;">
+      <div style="font-size:20px;margin-bottom:4px;">🎯</div>
+      <div class="badge badge-att" style="display:inline-block">ST</div>
+      <div style="font-size:11px;color:#a090c0;margin-top:4px;">ATK≥7</div>
+      <div style="font-size:10px;color:#ffd700;margin-top:6px;">Tap →</div>
+    </div>
+    <div style="background:rgba(255,51,68,0.1);border:2px solid #ff3344;border-radius:8px;width:120px;padding:16px 10px;text-align:center;cursor:pointer;">
+      <div style="font-size:20px;margin-bottom:4px;">⚡</div>
+      <div class="badge badge-att" style="display:inline-block">RW</div>
+      <div style="font-size:11px;color:#a090c0;margin-top:4px;">PAC≥7</div>
+      <div style="font-size:10px;color:#ffd700;margin-top:6px;">Tap →</div>
+    </div>
+  </div>
+  <div style="margin-top:12px;font-size:13px;color:#a090c0;">Tap a slot → player picker modal opens with eligible players only</div>
+</div>
+</div>
+<div class="pros">✅ Full-screen focus on slots · Cleanest design · Modal keeps everything organized</div>
+</div>
+
+<!-- OPTION E -->
+<div class="option">
+<div class="option-header">
+<span class="option-title">E. Horizontal Stepper — Slots as Steps, Players Below</span>
+<span class="option-vibe">▸ Wizard UI</span>
+</div>
+<div class="mock">
+<div class="mock-header"><span>📋 Build-Up  (PAS weight)</span><span>Step 1/3</span></div>
+<div class="mock-body">
+  <div style="display:flex;gap:8px;margin-bottom:12px;justify-content:center;">
+    <div style="background:rgba(57,255,20,0.08);border:1px solid #39ff14;border-radius:20px;padding:4px 12px;font-size:12px;color:#39ff14;">① FB PAS≥6 <span style="color:#39ff14;">✅</span></div>
+    <div style="background:rgba(255,215,0,0.08);border:1px solid #ffd700;border-radius:20px;padding:4px 12px;font-size:12px;color:#ffd700;">② FB PAS≥6 ◀</div>
+    <div style="background:rgba(255,255,255,0.03);border:1px dashed rgba(255,255,255,0.1);border-radius:20px;padding:4px 12px;font-size:12px;color:#a090c0;">③ CM PAS≥7</div>
+  </div>
+  <div class="mock" style="margin:0;">
+  <div style="padding:8px;">
+    <div class="section-title">Pick a player for FB (PAS≥6)</div>
+    <div class="player-row"><span><span class="badge badge-def">FB</span> Lahm-burger <span style="color:#a090c0">PAS 8</span></span><span class="chips">86 ♣</span></div>
+    <div class="player-row"><span><span class="badge badge-def">FB</span> Dani Elvis <span style="color:#a090c0">PAS 7</span></span><span class="chips">84 ♣</span></div>
+    <div class="player-row"><span><span class="badge badge-def">FB</span> Kyle Jogger <span style="color:#a090c0">PAS 7</span></span><span class="chips">82 ♣</span></div>
+    <div class="player-row"><span><span class="badge badge-def">FB</span> Dave <span style="color:#a090c0">PAS 7</span></span><span class="chips">78 ♣</span></div>
+    <div class="player-row"><span><span class="badge badge-def">FB</span> The Tank <span style="color:#a090c0">PAS 4</span></span><span class="chips">52 ♣</span></div>
+  </div>
+  </div>
+</div>
+</div>
+<div class="pros">✅ Progress bar feel · Large touch targets · Shows all eligible at once with stat</div>
+
+</div>
+
+<div style="max-width:900px;margin:30px auto 0;padding:20px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:8px;">
+<div style="font-family:'Press Start 2P',monospace;font-size:9px;color:#39ff14;margin-bottom:10px;">💬 MY RECOMMENDATION</div>
+<p style="font-size:15px;color:#e0d8f0;line-height:1.8;">
+<strong style="color:#ffd700;">Option C (Card Hand)</strong> feels most like Balatro — slots as cards, squad as a deck. It's instant to scan and the card metaphor matches our phase selection screen.<br><br>
+<strong style="color:#ffd700;">Option D (Minimal)</strong> is the fastest to implement since most of the modal infrastructure already exists. Just strip the full squad list.<br><br>
+Pick one and I'll build it into the actual game.
+</p>
+</div>
+
+</body>
+</html>

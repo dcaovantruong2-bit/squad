@@ -655,27 +655,19 @@
       </div>
     </div>
 
-    <!-- Game area -->
-    <div class="game-area">
-      <div data-od-id="match-pitch-area">
-        <!-- Team Sheet -->
-        <div class="team-sheet" id="team-sheet" data-od-id="team-sheet">
-          <div class="team-sheet-header">
-            <span>Your XI</span>
-            <span class="ts-formation" id="ts-formation">(4-3-3)</span>
-          </div>
-          <div id="ts-rows"></div>
-          <div class="team-sheet-header" style="border-top:1px solid var(--border);border-bottom:none;margin-top:0">
-            <span>Phase: <span id="ts-phase-name">Tiki-Taka</span></span>
-            <span style="color:var(--gold)" id="ts-phase-weight">PAS</span>
-          </div>
-        </div>
+    <!-- Game area — Split Panel -->
+    <div class="match-panels" style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);align-items:start;">
+      <!-- LEFT: Phase slots as cards -->
+      <div class="slot-panel" data-od-id="slot-panel">
+        <div class="panel-title" style="margin-bottom:var(--space-2)">Phase Slots</div>
+        <div id="slot-cards" style="display:flex;flex-direction:column;gap:var(--space-2)"></div>
+        <div class="slot-summary" id="slot-summary" style="margin-top:var(--space-3);font-family:var(--font-body);font-size:var(--text-lg);color:var(--muted);text-align:center"></div>
       </div>
-      <div class="match-sidebar">
-        <div class="sidebar-panel target-display" data-od-id="target-panel">
-          <div class="panel-title">Round Target</div>
-          <div class="target-num" id="target-num">500</div>
-          <div class="round-score-live">Your score: <span id="live-score">0</span></div>
+      <!-- RIGHT: Eligible players + Synergies -->
+      <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <div class="sidebar-panel eligible-panel" data-od-id="eligible-panel">
+          <div class="panel-title" id="eligible-title">Tap a slot to see eligible players</div>
+          <div id="eligible-list" style="font-family:var(--font-body);font-size:var(--text-lg);color:var(--muted);text-align:center;padding:var(--space-4)">No slot selected</div>
         </div>
         <div class="sidebar-panel" data-od-id="synergy-panel">
           <div class="panel-title">Synergies <span style="cursor:pointer;color:var(--accent);font-family:var(--font-body);font-size:12px" onclick="toggleSynergies()" id="syn-toggle">▼ expand</span></div>
@@ -762,8 +754,9 @@
   <!-- ═══════════════════════════════════════════════════════════════ -->
   <!-- GAME ENGINE (inline for SPA reliability)                      -->
   <!-- ═══════════════════════════════════════════════════════════════ -->
-  <script src="game-engine.js">
+  <script src="game-engine.js"></script>
 
+  <script>
   // ═══════════════════════════════════════════════════════════════════
   // VISUAL ANIMATIONS
   // ═══════════════════════════════════════════════════════════════════
@@ -827,8 +820,7 @@
       setTimeout(function() { spawnSynergyParticles(el); }, i * 150 + 100);
     });
   }
-
-</script>
+  </script>
   <script>
   // ═══════════════════════════════════════════════════════════════════
   // GAME STATE — all in memory, no localStorage needed
@@ -1369,118 +1361,179 @@
     document.getElementById('match-label').textContent = matchData.tier;
     document.getElementById('rounds-won').textContent = G.roundsWon;
     document.getElementById('rounds-lost').textContent = G.roundsLost;
+    renderMatchPhase();
+  }
+
+  function renderMatchPhase() {
+    const phase = G.roundPhases[G.phaseIdx];
+    if (!phase) { console.error('No phase'); return; }
+
+    document.getElementById('phase-icon').textContent = phase.icon;
+    document.getElementById('phase-name').textContent = phase.name;
+    document.getElementById('phase-desc').textContent = phase.desc || '';
+    document.getElementById('phase-weight').textContent = phase.weight;
+
+    const tz = TACTICAL_ZONES[phase.id] || { label:'Pitch' };
+    document.getElementById('phase-zone-label').textContent = tz.label;
+
+    // Opponent name
+    if (CAMPAIGN_MATCHES[G.matchIdx]) {
+      document.getElementById('opponent-name').textContent = CAMPAIGN_MATCHES[G.matchIdx].opponent;
+    }
+
+    // Progress dots
     document.getElementById('round-num').textContent = G.round + 1;
-    document.getElementById('phase-num').textContent = G.phaseIdx + 1; document.getElementById('phase-dots').innerHTML = Array(3).fill().map((_,i) => `<span class="${i <= G.phaseIdx ? 'dot-filled' : 'dot-empty'}"></span>`).join('');
-
-    const target = matchData.targets[G.round] || 999;
-    document.getElementById('target-num').textContent = target;
-    document.getElementById('live-score').textContent = G.roundScore;
-
-    // Round dots
+    document.getElementById('phase-num').textContent = G.phaseIdx + 1;
     const roundDots = document.getElementById('round-dots');
     roundDots.innerHTML = '';
-    for (let i = 0; i < 3; i++) {
-      const dot = document.createElement('div');
+    for (let i = 0; i <= G.round; i++) {
+      const dot = document.createElement('span');
       dot.className = 'progress-dot';
       if (i < G.round) dot.classList.add(G.roundWins[i] ? 'done' : 'lose');
       else if (i === G.round) dot.classList.add('active');
       roundDots.appendChild(dot);
     }
-
-    // Phase dots
     const phaseDots = document.getElementById('phase-dots');
     phaseDots.innerHTML = '';
-    for (let i = 0; i < 6; i++) {
-      const dot = document.createElement('div');
+    for (let i = 0; i < 3; i++) {
+      const dot = document.createElement('span');
       dot.className = 'progress-dot';
       if (i < G.phaseIdx) dot.classList.add('done');
       else if (i === G.phaseIdx) dot.classList.add('active');
       phaseDots.appendChild(dot);
     }
 
-    renderTeamSheet();
+    // Target
+    const target = CAMPAIGN_MATCHES[G.matchIdx] ? CAMPAIGN_MATCHES[G.matchIdx].targets[G.round] : 500;
+    document.getElementById('target-num').textContent = target;
+    document.getElementById('live-score').textContent = G.roundScore;
+
+    renderSlotCards();
+    renderEligiblePlayers(null);
+    renderSynergyPreview();
   }
 
-  function renderTeamSheet() {
+  function renderSlotCards() {
     const phase = G.roundPhases[G.phaseIdx];
-    if (!phase) { console.error('No phase'); return; }
-
-    document.getElementById('phase-icon').textContent = phase.icon;
-    document.getElementById('phase-name').textContent = phase.name;
-    document.getElementById('phase-desc').textContent = phase.desc;
-    document.getElementById('phase-weight').textContent = phase.weight;
-    document.getElementById('ts-formation').textContent = '(' + G.formation.name + ')';
-    document.getElementById('ts-phase-name').textContent = phase.name;
-    document.getElementById('ts-phase-weight').textContent = phase.weight;
-
-    // Zone label in phase bar
-    const tz = TACTICAL_ZONES[phase.id] || { label:'Pitch' };
-    document.getElementById('phase-zone-label').textContent = tz.label;
-
-    const container = document.getElementById('ts-rows');
+    const container = document.getElementById('slot-cards');
     let html = '';
-
-    // ─── Phase Slots ───
-    html += '<div class="ts-line-label">Phase Slots — tap to assign</div>';
     phase.slots.forEach(function(slot, i) {
       const fp = slotFieldPosition(slot);
       const pid = G.phasePlacement[i];
       const player = pid ? G.squad.find(function(p) { return p.id === pid; }) : null;
       const filled = !!player;
       const label = formatSlotLabel(slot);
-      // Check if ANY eligible player exists
       const hasEligible = !filled && G.squad.some(function(p) {
-        return p && isPlayerEligible(p, slot) &&
-          !Object.values(G.phasePlacement).includes(p.id);
+        return p && isPlayerEligible(p, slot) && !Object.values(G.phasePlacement).includes(p.id);
       });
 
-      const rowClass = 'team-sheet-row slot-row' + (filled ? ' filled-slot' : (!hasEligible ? ' no-eligible' : ''));
-      const num = getShirtNum(fp);
+      const chips = filled ? calculateChips(player, fp) : 0;
       const posClass = getPosClass(fp);
 
-      html += '<div class="' + rowClass + '" onclick="selectSlot(' + i + ')" data-od-id="ts-' + i + '">' +
-        '<span class="ts-num">' + num + '</span>' +
-        '<span class="ts-pos ' + posClass + '">' + fp + '</span>' +
-        '<span class="ts-name">' + (filled ? player.name : hasEligible ? (label ? '→ ' + label : '— Tap —') : '⚠ no eligible') + '</span>' +
-        '<span class="ts-chips">' + (filled ? calculateChips(player, fp) + ' ♣' : (hasEligible ? '' : '0 ♣')) + '</span>' +
-        '<span class="ts-slash"></span>' +
+      html += '<div class="' + (filled ? 'slot-card filled' : 'slot-card') + '" onclick="selectSlot(' + i + ')" data-od-id="slot-' + i + '">' +
+        '<div><span style="font-family:var(--font-display);font-size:9px;color:' +
+          (filled ? 'var(--accent)' : 'var(--fg-dim)') + '">' + fp + '</span>' +
+        (label ? '<span style="font-family:var(--font-body);font-size:var(--text-sm);color:var(--muted);margin-left:var(--space-2)">' + label + '</span>' : '') +
+        '</div>' +
+        '<span style="font-family:var(--font-body);font-size:var(--text-lg);color:' +
+          (filled ? 'var(--fg)' : 'var(--muted)') + '">' +
+          (filled ? player.name : (hasEligible ? '▸ Tap to fill' : 'No eligible')) +
+        '</span>' +
+        (filled ? '<span style="font-family:var(--font-display);font-size:8px;color:var(--gold)">' + chips + ' ♣</span>' : '') +
       '</div>';
     });
+    container.innerHTML = html;
 
-    // ─── Divider + Squad ───
-    html += '<hr class="ts-divider">';
-    html += '<div class="ts-line-label">Available Squad</div>';
+    // Summary
+    const filled = Object.keys(G.phasePlacement).length;
+    const total = phase.slots.length;
+    document.getElementById('slot-summary').textContent = filled + '/' + total + ' slots filled' +
+      (filled > 0 ? ' · preview below' : '');
+  }
 
-    const orderedGroups = ['GK', 'DEF', 'MID', 'ATT'];
-    const lineLabels = { GK:'Goalkeeper', DEF:'Defenders', MID:'Midfielders', ATT:'Attackers' };
-    const grouped = { GK:[], DEF:[], MID:[], ATT:[] };
+  let _selectedSlot = null;
 
-    G.squad.forEach(function(p) {
-      grouped[getPillGroup(p)].push(p);
+  function renderEligiblePlayers(slotIdx) {
+    _selectedSlot = slotIdx;
+    const phase = G.roundPhases[G.phaseIdx];
+    const titleEl = document.getElementById('eligible-title');
+    const listEl = document.getElementById('eligible-list');
+
+    if (slotIdx === null || slotIdx === undefined) {
+      titleEl.textContent = 'Tap a slot to see eligible players';
+      listEl.innerHTML = '<div style="text-align:center;padding:var(--space-4);color:var(--muted);font-family:var(--font-body);font-size:var(--text-lg)">No slot selected</div>';
+      return;
+    }
+
+    const slot = phase.slots[slotIdx];
+    const fp = slotFieldPosition(slot);
+    const pid = G.phasePlacement[slotIdx];
+    if (pid) {
+      const player = G.squad.find(p => p.id === pid);
+      titleEl.textContent = fp + ' — ' + player.name + ' assigned';
+      listEl.innerHTML = '<div style="text-align:center;padding:var(--space-4)">' +
+        '<div style="font-family:var(--font-body);font-size:var(--text-lg);color:var(--accent);margin-bottom:var(--space-2)">✅ Slot filled</div>' +
+        '<span style="font-family:var(--font-display);font-size:7px;color:var(--muted);cursor:pointer" onclick="removeSlot(' + slotIdx + ')">[tap to remove]</span>' +
+        '</div>';
+      return;
+    }
+
+    const usedIds = new Set(Object.values(G.phasePlacement));
+    const eligible = G.squad.filter(function(p) {
+      return !usedIds.has(p.id) && isPlayerEligible(p, slot);
+    }).sort(function(a, b) { return calculateChips(b, fp) - calculateChips(a, fp); });
+
+    if (eligible.length === 0) {
+      titleEl.textContent = 'No eligible players for ' + fp;
+      listEl.innerHTML = '<div style="text-align:center;padding:var(--space-4);color:var(--warn);font-family:var(--font-body);font-size:var(--text-lg)">' +
+        'No one meets the requirements</div>';
+      return;
+    }
+
+    titleEl.textContent = 'Pick ' + fp + ' (' + eligible.length + ' eligible)';
+    let html = '';
+    eligible.forEach(function(p) {
+      const chips = calculateChips(p, fp);
+      const fatigue = G.fatigue[p.id] !== undefined ? G.fatigue[p.id] : 1.0;
+      const fatigueStr = fatigue < 1.0 ? ' ×' + fatigue.toFixed(1) : '';
+      html += '<div class="picker-row" onclick="openPickerFromEligible(' + slotIdx + ',\'' + p.id + '\')" style="grid-template-columns:1fr 54px 28px">' +
+        '<span class="pr-name">' + p.name + '</span>' +
+        '<span class="pr-chips">' + chips + ' ♣</span>' +
+        '<span style="font-family:var(--font-body);font-size:var(--text-sm);color:' + (fatigue < 1.0 ? 'var(--warn)' : 'var(--accent)') + '">' + (fatigue < 1.0 ? fatigueStr : '✓') + '</span>' +
+      '</div>';
     });
+    listEl.innerHTML = html + '<div style="margin-top:var(--space-2);text-align:center"><span style="font-family:var(--font-body);font-size:var(--text-sm);color:var(--muted);cursor:pointer" onclick="openPicker(' + slotIdx + ')">[view full stats →]</span></div>';
+  }
 
-    // Sort each group by chips (desc)
-    for (var gi = 0; gi < orderedGroups.length; gi++) {
-      var g = orderedGroups[gi];
-      grouped[g].sort(function(a, b) { return calculateChips(b, b.position) - calculateChips(a, a.position); });
+  function removeSlot(index) {
+    delete G.phasePlacement[index];
+    renderSlotCards();
+    renderEligiblePlayers(_selectedSlot);
+    renderSynergyPreview();
+  }
+
+  function selectSlot(index) {
+    const placed = G.phasePlacement[index] !== undefined;
+    if (placed) {
+      // Offer to remove
+      _selectedSlot = index;
+      renderSlotCards();
+      renderEligiblePlayers(index);
+      return;
     }
+    _selectedSlot = index;
+    renderSlotCards();
+    renderEligiblePlayers(index);
+  }
 
-    var usedPhaseIds = {};
-    for (var key in G.phasePlacement) {
-      usedPhaseIds[G.phasePlacement[key]] = true;
-    }
-
-    for (var gi2 = 0; gi2 < orderedGroups.length; gi2++) {
-      var g2 = orderedGroups[gi2];
-      var players = grouped[g2];
-      if (players.length === 0) continue;
-
-      html += '<div class="ts-line-label">' + lineLabels[g2] + '</div>';
-      players.forEach(function(p) {
-        if (usedPhaseIds[p.id]) return; // already shown in phase slots
-        var fp = p.position;
-        var num = getShirtNum(fp);
-        var fatigueStatus = (G.fatigue[p.id] !== undefined && G.fatigue[p.id] < 1);
+  function openPickerFromEligible(slotIdx, playerId) {
+    // Use the existing picker to assign and show stats
+    G.phasePlacement[slotIdx] = playerId;
+    G._pickerSlot = null;
+    renderSlotCards();
+    renderEligiblePlayers(null);
+    renderSynergyPreview();
+  }
         var chips = calculateChips(p, fp);
 
         html += '<div class="team-sheet-row" data-od-id="ts-squad-' + p.id + '">' +
@@ -1571,18 +1624,6 @@
   // MATCH ACTIONS
   // ═══════════════════════════════════════════════════════════════════
 
-  function selectSlot(index) {
-    const phase = G.roundPhases[G.phaseIdx];
-    const placed = G.phasePlacement[index] !== undefined;
-    if (placed) {
-      // Remove player from slot — allow reassignment
-      delete G.phasePlacement[index];
-      renderTeamSheet();
-      return;
-    }
-    openPicker(index);
-  }
-
   function placeMatchPlayer(playerId) {
     if (G._pickerSlot === null || G._pickerSlot === undefined) return;
 
@@ -1600,7 +1641,9 @@
     G.phasePlacement[G._pickerSlot] = playerId;
     G._pickerSlot = null;
 
-    renderTeamSheet();
+    renderSlotCards();
+    renderEligiblePlayers(null);
+    renderSynergyPreview();
   }
 
   // ═══════════════════════════════════════════════════════════════════
