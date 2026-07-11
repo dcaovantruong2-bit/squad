@@ -66,8 +66,8 @@ def sample_phase_result(sample_player):
         "fired_synergies": ["Clean Sheet", "Stretch the Backline"],
         "next_carryover": None,
         "synergy_contributors": {
-            "Clean Sheet": ["Gigi The Wall [GK]", "Van Aura [CB]"],
-            "Stretch the Backline": ["Jordi Overlap [FB]", "Bale Out [LW]"],
+            "Clean Sheet": ["Gigi The Wall [GK]", "El Capitán [CB]"],
+            "Stretch the Backline": ["Dani Elvis [FB]", "Bale Out [LW]"],
         },
         "synergy_descriptions": {
             "Clean Sheet": "GK DEF + CB DEF ≥ 18: +20 chips to both",

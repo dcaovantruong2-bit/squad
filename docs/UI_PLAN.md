@@ -14,11 +14,11 @@
 | 3 | Formation Select | `main.py:393` | Choose tactical formation |
 | 4 | Persistent Synergies | `main.py:676` | (Informational — acknowledge) |
 | 5 | Match Intro | `main.py:694` | (Informational — prepare) |
-| 6 | Round Start | `main.py:553` | (Informational — read synergies) |
+| 6 | Phase Selection | `main.py:697` | Pick 3 of 6 phase cards in order |
 | 7 | Phase Header + Placement | `main.py:311` | Fill 2-3 slots with players |
 | 8 | Live Score Preview | `main.py:357` | (Informational — see running score) |
-| 9 | Phase Result | `main.py:128` | (Informational — see breakdown) |
-| 10 | Round Result | `main.py:198` | (Informational — won/lost) |
+| 9 | Phase Result | `main.py:138` | (Informational — Balatro-style breakdown) |
+| 10 | Round Result | `main.py:186` | (Informational — won/lost) |
 | 11 | Match Result | `main.py:598` | (Informational — advance/eliminated) |
 | 12 | Campaign Champion | `main.py:751` | (Celebration) |
 

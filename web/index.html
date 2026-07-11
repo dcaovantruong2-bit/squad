@@ -2854,26 +2854,27 @@ function checkMinimums(squad) {
   };
 
   const FORMULA_TEXT = {
+    ST:'ATK\u00d74 + PAC\u00d72 + SPC\u00d71',
     LW:'ATK\u00d72 + PAC\u00d73 + PAS\u00d71',
     RW:'ATK\u00d72 + PAC\u00d73 + PAS\u00d71',
-    CM:'PAS\u00d73 + ATK\u00d71 + DEF\u00d72',
+    CM:'PAS\u00d73 + ATK\u00d72 + DEF\u00d71',
     CAM:'PAS\u00d73 + ATK\u00d72 + SPC\u00d71',
-    CDM:'DEF\u00d73 + PAS\u00d72 + ATK\u00d71',
-    CB:'DEF\u00d74 + SPC\u00d71 + PAC\u00d71',
+    CDM:'DEF\u00d72 + PAS\u00d73 + ATK\u00d71',
+    CB:'DEF\u00d73 + PAC\u00d72 + ATK\u00d71',
     FB:'DEF\u00d72 + PAC\u00d73 + PAS\u00d71',
-    GK:'DEF\u00d73 + SPC\u00d72'
+    GK:'DEF\u00d73 + SPC\u00d71'
   };
 
   const FORMULA_PARTS = {
-    ST:[['ATK',3],['PAC',2],['SPC',1]],
+    ST:[['ATK',4],['PAC',2],['SPC',1]],
     LW:[['ATK',2],['PAC',3],['PAS',1]],
     RW:[['ATK',2],['PAC',3],['PAS',1]],
-    CM:[['PAS',3],['ATK',1],['DEF',2]],
+    CM:[['PAS',3],['ATK',2],['DEF',1]],
     CAM:[['PAS',3],['ATK',2],['SPC',1]],
-    CDM:[['DEF',3],['PAS',2],['ATK',1]],
-    CB:[['DEF',4],['SPC',1],['PAC',1]],
+    CDM:[['DEF',2],['PAS',3],['ATK',1]],
+    CB:[['DEF',3],['PAC',2],['ATK',1]],
     FB:[['DEF',2],['PAC',3],['PAS',1]],
-    GK:[['DEF',3],['SPC',2]]
+    GK:[['DEF',3],['SPC',1]]
   };
 
   const STAT_COLORS = { ATK:'#ff3344', PAC:'var(--gold)', PAS:'var(--info)', DEF:'var(--accent)', SPC:'#c084fc' };

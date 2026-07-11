@@ -25,7 +25,7 @@ def big_zlat():
 @pytest.fixture
 def kun_kun():
     return PlayerCard(
-        id="kun_kun", name="Kun Kun", position="ST",
+        id="kun_kun", name="El Caníbal", position="ST",
         atk=8, pac=8, pas=5, def_=1, spc=7,
         traits=["pacey", "poacher"]
     )
@@ -61,7 +61,7 @@ def bale_out():
 @pytest.fixture
 def maestro_xav():
     return PlayerCard(
-        id="maestro_xav", name="Maestro Xav", position="CM",
+        id="maestro_xav", name="The Puppet Master", position="CM",
         atk=3, pac=4, pas=10, def_=6, spc=7,
         traits=["playmaker", "technical"]
     )
@@ -97,7 +97,7 @@ def wall_claude():
 @pytest.fixture
 def il_capitano():
     return PlayerCard(
-        id="il_capitano", name="Van Aura", position="CB",
+        id="il_capitano", name="El Capitán", position="CB",
         atk=3, pac=6, pas=7, def_=10, spc=5,
         traits=["leader", "technical"]
     )
@@ -106,7 +106,7 @@ def il_capitano():
 @pytest.fixture
 def jt_rock():
     return PlayerCard(
-        id="jt_rock", name="JT The Rock", position="CB",
+        id="jt_rock", name="Campbell-Soup", position="CB",
         atk=4, pac=3, pas=4, def_=10, spc=4,
         traits=["physical", "aerial"]
     )
@@ -124,7 +124,7 @@ def rolls_royce():
 @pytest.fixture
 def el_tren():
     return PlayerCard(
-        id="el_tren", name="Jordi Overlap", position="FB",
+        id="el_tren", name="Dani Elvis", position="FB",
         atk=5, pac=9, pas=7, def_=7, spc=5,
         traits=["pacey", "physical"]
     )
@@ -160,7 +160,7 @@ def frenkie_de_con():
 @pytest.fixture
 def cafu_express():
     return PlayerCard(
-        id="cafu_express", name="Cafu Express", position="FB",
+        id="cafu_express", name="Kyle Jogger", position="FB",
         atk=6, pac=10, pas=7, def_=6, spc=5,
         traits=["pacey", "physical"]
     )
@@ -178,7 +178,7 @@ def el_mago():
 @pytest.fixture
 def sergio_muro():
     return PlayerCard(
-        id="sergio_muro", name="Thibaut Courteeth", position="GK",
+        id="sergio_muro", name="Saint Lloris", position="GK",
         atk=1, pac=2, pas=3, def_=10, spc=5,
         traits=["destroyer", "leader"]
     )
@@ -241,7 +241,7 @@ def sweaty_keeper():
 @pytest.fixture
 def the_crab():
     return PlayerCard(
-        id="the_crab", name="Kola-sin-wreck", position="FB",
+        id="the_crab", name="The Tank", position="FB",
         atk=1, pac=5, pas=3, def_=6, spc=1,
         traits=["destroyer", "leader"]
     )
