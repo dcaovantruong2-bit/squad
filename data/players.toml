@@ -27,7 +27,7 @@ description = "Acrobatic target man. Impossible is nothing."
 
 [[players]]
 id = "kun_kun"
-name = "Kun Kun"
+name = "El Caníbal"
 position = "ST"
 atk = 8
 pac = 8
@@ -35,7 +35,7 @@ pas = 5
 def_ = 1
 spc = 7
 traits = ["pacey", "poacher"]
-description = "Low center of gravity. Always in the right place."
+description = "Low center of gravity. Never met a keester he wouldn't nibble."
 
 [[players]]
 id = "the_waz"
@@ -75,7 +75,7 @@ description = "Pace AND power. The knock-and-run king."
 
 [[players]]
 id = "maestro_xav"
-name = "Maestro Xav"
+name = "The Puppet Master"
 position = "CM"
 atk = 3
 pac = 4
@@ -83,7 +83,7 @@ pas = 10
 def_ = 6
 spc = 7
 traits = ["playmaker", "technical"]
-description = "Metronomic passer. The ball obeys."
+description = "Metronomic passer. Pulls the strings. The ball obeys."
 
 [[players]]
 id = "don_andres"
@@ -123,7 +123,7 @@ description = "The destroyer. Attack ends here."
 
 [[players]]
 id = "il_capitano"
-name = "Van Aura"
+name = "El Capitán"
 position = "CB"
 atk = 3
 pac = 6
@@ -131,11 +131,11 @@ pas = 7
 def_ = 10
 spc = 5
 traits = ["leader", "technical"]
-description = "Elegant reader of the game. Tackles without touching."
+description = "Elegant reader of the game. Also reads your last will. Tackles without touching... usually."
 
 [[players]]
 id = "jt_rock"
-name = "JT The Rock"
+name = "Campbell-Soup"
 position = "CB"
 atk = 4
 pac = 3
@@ -143,11 +143,11 @@ pas = 4
 def_ = 10
 spc = 4
 traits = ["physical", "aerial"]
-description = "Physical wall. Heads everything. Blocks everything."
+description = "He eats attackers for lunch. Hot and hearty. Clears everything."
 
 [[players]]
 id = "el_tren"
-name = "Jordi Overlap"
+name = "Dani Elvis"
 position = "FB"
 atk = 5
 pac = 9
@@ -155,7 +155,7 @@ pas = 7
 def_ = 7
 spc = 5
 traits = ["pacey", "physical"]
-description = "The Brazilian train. Up and down, all day."
+description = "The Brazilian train. Up and down, all day. Thank you, thank you very much."
 
 [[players]]
 id = "mr_reliable"
@@ -207,7 +207,7 @@ description = "Deep-lying conductor. The pass before the assist."
 
 [[players]]
 id = "cafu_express"
-name = "Cafu Express"
+name = "Kyle Jogger"
 position = "FB"
 atk = 6
 pac = 10
@@ -215,7 +215,7 @@ pas = 7
 def_ = 6
 spc = 5
 traits = ["pacey", "physical"]
-description = "Relentless engine. Up and down all match."
+description = "Relentless engine. Why run when you can sprint? Every play. Every game."
 
 [[players]]
 id = "el_mago"
@@ -231,7 +231,7 @@ description = "Wizard of the final third. Sees passes nobody else does."
 
 [[players]]
 id = "sergio_muro"
-name = "Thibaut Courteeth"
+name = "Saint Lloris"
 position = "GK"
 atk = 1
 pac = 2
@@ -239,7 +239,7 @@ pas = 3
 def_ = 10
 spc = 5
 traits = ["destroyer", "leader"]
-description = "The wall. Commands his box with an iron fist."
+description = "World Cup winner. Captain. Conceded 4 goals in a final. Still a saint."
 
 [[players]]
 id = "kylian_express"
@@ -315,7 +315,7 @@ description = "Rushes out. Way out. Sometimes it works. Chaos merchant."
 
 [[players]]
 id = "the_crab"
-name = "Kola-sin-wreck"
+name = "The Tank"
 position = "FB"
 atk = 2
 pac = 6
@@ -323,7 +323,7 @@ pas = 4
 def_ = 7
 spc = 1
 traits = ["destroyer", "leader"]
-description = "Tackles first, asks questions never. Sideways passing merchant."
+description = "No pace. No grace. Still destroys you. Tank on tracks."
 
 [[players]]
 id = "bog_bob"
@@ -387,7 +387,7 @@ description = "Towering presence. Strides forward. Controls the middle."
 
 [[players]]
 id = "david_albino"
-name = "David Alaba-daba"
+name = "Dave"
 position = "FB"
 atk = 3
 pac = 8
@@ -395,7 +395,7 @@ pas = 7
 def_ = 8
 spc = 5
 traits = ["technical", "leader"]
-description = "Versatile. Plays any defensive role. Calm on the ball."
+description = "Plays left. Plays right. Plays centre. Never complains. Never beaten."
 
 [[players]]
 id = "rocket_raya"
@@ -417,9 +417,9 @@ atk = 8
 pac = 5
 pas = 8
 def_ = 3
-spc = 7
+spc = 10
 traits = ["playmaker", "clinical"]
-description = "Penalty box merchant. Arrives late. Scores. Assists. Stats monster."
+description = "Penalty box merchant. Arrives late. Scores. Assists. Set piece demon. Stats monster."
 
 [[players]]
 id = "cult_carl"
