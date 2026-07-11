@@ -14,6 +14,7 @@ from src.scoring import (
 from src.match import (
     MatchState, create_match, start_round, start_phase,
     place_player, remove_from_field, resolve_phase, advance_phase, check_round,
+    set_selected_phases,
     FATIGUE_PENALTY, OPPONENTS, get_opponent, CAMPAIGN_MATCHES, _generate_targets,
 )
 from src.phases import (
@@ -506,7 +507,8 @@ class TestMatchStateTransitions:
         ms.round_score = 999
         ms.rounds_won = 3
         start_round(ms)
-        assert len(ms.phases) == 6
+        assert len(ms.phase_hand) == 6  # dealt 6 phases
+        assert len(ms.phases) == 0      # none selected yet
         assert ms.current_phase_idx == 0
         assert ms.fatigue == {}
         assert ms.round_score == 0
@@ -922,7 +924,8 @@ class TestStressEdgeCases:
 
         # Round 1
         start_round(ms)
-        for _ in range(6):
+        set_selected_phases(ms, ms.phase_hand[:3])
+        for _ in range(3):
             start_phase(ms)
             for p in full_squad[:3]:
                 place_player(ms, p, p.position)
@@ -933,7 +936,8 @@ class TestStressEdgeCases:
 
         # Round 2 — should win match
         start_round(ms)
-        for _ in range(6):
+        set_selected_phases(ms, ms.phase_hand[:3])
+        for _ in range(3):
             start_phase(ms)
             for p in full_squad[:3]:
                 place_player(ms, p, p.position)

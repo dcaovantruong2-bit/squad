@@ -240,3 +240,9 @@ def shuffle_phases() -> list[Phase]:
     chosen = random.sample(phases, min(6, len(phases)))
     random.shuffle(chosen)
     return chosen
+
+
+def deal_phases(hand_size: int = 6) -> list[Phase]:
+    """Deal `hand_size` random phase cards (no duplicates). Player picks which to play."""
+    phases = get_all_phases()
+    return random.sample(phases, min(hand_size, len(phases)))

@@ -4,7 +4,8 @@ import pytest
 from src.phases import (get_all_phases, shuffle_phases, slot_positions,
                         slot_label, is_player_eligible)
 from src.match import (MatchState, start_round, start_phase, place_player,
-                       resolve_phase, advance_phase, check_round, FATIGUE_PENALTY)
+                       resolve_phase, advance_phase, check_round, set_selected_phases,
+                       FATIGUE_PENALTY)
 
 
 class TestPhaseDefinitions:
@@ -147,28 +148,33 @@ class TestPhaseFlow:
     def test_phases_shuffled_each_round(self, full_squad):
         state = MatchState(squad=full_squad, synergies=[])
         start_round(state)
-        assert len(state.phases) == 6
+        assert len(state.phase_hand) == 6
+        assert len(state.phases) == 0
         assert state.round_score == 0
 
     def test_advance_phase_returns_false_on_good_phase(self, full_squad):
         state = MatchState(squad=full_squad, synergies=[])
         start_round(state)
+        # Select first 3 phases from hand for testing
+        set_selected_phases(state, state.phase_hand[:3])
         state.current_phase_idx = 0
-        assert advance_phase(state) == False  # Phase 1→2, still more
+        assert advance_phase(state) == False  # Phase 1→2, still more (0→1)
 
     def test_advance_phase_returns_true_on_last_phase(self, full_squad):
         state = MatchState(squad=full_squad, synergies=[])
         start_round(state)
-        state.current_phase_idx = 5
-        assert advance_phase(state) == True  # Phase 6→7, round over
+        set_selected_phases(state, state.phase_hand[:3])
+        state.current_phase_idx = 2
+        assert advance_phase(state) == True  # Phase 3→4, round over (2→3)
 
     def test_resolve_scoring(self, full_squad):
         state = MatchState(squad=full_squad, synergies=[])
         start_round(state)
+        set_selected_phases(state, state.phase_hand[:3])
 
         # Place a player for the first phase
         start_phase(state)
-        place_player(state, full_squad[0], "ST")
+        place_player(state, full_squad[0], full_squad[0].position)
 
         result = resolve_phase(state)
         assert result["total"] > 0
@@ -179,9 +185,10 @@ class TestPhaseFlow:
     def test_round_accumulates_phase_scores(self, full_squad):
         state = MatchState(squad=full_squad, synergies=[])
         start_round(state)
+        set_selected_phases(state, state.phase_hand[:3])
 
         total = 0
-        for phase_idx in range(6):
+        for phase_idx in range(3):
             start_phase(state)
             # Play one player per phase to keep it simple
             available = [p for p in full_squad
@@ -190,7 +197,7 @@ class TestPhaseFlow:
                 place_player(state, available[0], available[0].position)
             result = resolve_phase(state)
             total += result["total"]
-            if phase_idx < 5:
+            if phase_idx < 2:
                 advance_phase(state)
             else:
                 advance_phase(state)
@@ -203,13 +210,14 @@ class TestPhaseFlow:
         state = MatchState(squad=full_squad, synergies=[],
                            round_targets=[1, 99999, 99999])  # R1: trivially easy
         start_round(state)
+        set_selected_phases(state, state.phase_hand[:3])
 
-        for phase_idx in range(6):
+        for phase_idx in range(3):
             start_phase(state)
             if full_squad:
                 place_player(state, full_squad[0], full_squad[0].position)
             resolve_phase(state)
-            if phase_idx < 5:
+            if phase_idx < 2:
                 advance_phase(state)
             else:
                 advance_phase(state)

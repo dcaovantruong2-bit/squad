@@ -12,7 +12,7 @@ from src.squad_builder import build_squad
 from src.formations import get_all_formations
 from src.match import (MatchState, create_match, start_round, start_phase,
                        place_player, resolve_phase,
-                       advance_phase, check_round,
+                       advance_phase, check_round, set_selected_phases,
                        CAMPAIGN_MATCHES)
 from src.phases import (slot_positions, slot_label, is_player_eligible)
 from src.scoring import (detect_squad_synergies, calculate_chips,
@@ -662,7 +662,98 @@ def select_formation(squad) -> object:
         return formations[0]
 
 
-# ─── Main Game Loop ───────────────────────────────────────────────────
+# ─── Phase Selection (Balatro-Like) ───────────────────────────────────────
+
+def run_phase_selection(match: MatchState) -> None:
+    """Show 6 dealt phase cards, let player pick 3 in order."""
+    hand = match.phase_hand
+    selected = []
+    
+    weight_icons = {"DEF": "🛡️", "PAS": "🔄", "PAC": "⚡", "ATK": "🎯", "SPC": "✨"}
+    rarity_styles = {"common": "dim", "uncommon": "cyan", "rare": "yellow"}
+    
+    for pick_num in range(3):
+        available = [p for p in hand if p not in selected]
+        
+        while True:
+            clear_screen()
+            cprint("  ╔═══════════════════════════════════════════════════╗", style="bold cyan")
+            cprint(f"  ║        🃏  PICK PHASE {pick_num + 1} / 3                    ║", style="bold cyan")
+            cprint("  ╚═══════════════════════════════════════════════════╝", style="bold cyan")
+            cprint(f"  Round {match.current_round + 1}/3 — Target: {match.current_target}", style="bold")
+            
+            if selected:
+                picked_names = " → ".join(p.name for p in selected)
+                cprint(f"\n  [bold]Selected order:[/bold] {picked_names}  [dim](next pick will go after)[/dim]", style="bold yellow")
+            else:
+                cprint(f"\n  [dim]Pick your first phase. Order matters for carryover![/dim]", style="dim")
+            
+            # Show synergy context for this round
+            if match.synergies:
+                cprint(f"\n  [bold]📋 Round Synergies (pick phases that match your squad):[/bold]", style="bold yellow")
+                for s in match.synergies:
+                    color = rarity_styles.get(s.rarity, "dim")
+                    cprint(f"    ✦ [bold]{s.name:22s}[/bold]  [{color}]{s.description}[/{color}]", style="yellow")
+            
+            cprint(f"\n  [bold]Available Phases:[/bold]", style="bold")
+            
+            for i, phase in enumerate(available):
+                icon = weight_icons.get(phase.weight, "⚽")
+                slots_str = " → ".join(slot_label(s) for s in phase.slots)
+                
+                cprint(f"")
+                cprint(f"  [{i}] {icon} [bold]{phase.name}[/bold]", style="bold")
+                cprint(f"      [dim]{phase.description}[/dim]", style="dim")
+                cprint(f"      Slots: {slots_str}  |  Cards: {len(phase.slots)}", style="dim")
+                
+                # Show which squad players would excel in this phase
+                eligible_by_slot = []
+                for slot_def in phase.slots:
+                    qualifying = [p for p in match.squad
+                                  if is_player_eligible(p, slot_def)
+                                  and p.id not in {pp.id for pp, _ in match.field}]
+                    if qualifying:
+                        best = max(qualifying, key=lambda p: calculate_chips(p, 
+                            slot_def if isinstance(slot_def, str) else 
+                            (slot_def["as"] if isinstance(slot_def, dict) else slot_def[0])))
+                        pos = slot_def if isinstance(slot_def, str) else (
+                            slot_def["as"] if isinstance(slot_def, dict) else slot_def[0])
+                        eligible_by_slot.append(f"{best.name} ({best.position}→{pos})")
+                
+                if eligible_by_slot:
+                    cprint(f"      [green]Best fit:[/green] {', '.join(eligible_by_slot)}", style="green")
+            
+            cprint(f"\n  [dim]Pick 0-{len(available) - 1}: [/dim]", style="dim", end="")
+            
+            try:
+                raw = input().strip()
+            except (EOFError, KeyboardInterrupt):
+                return
+            
+            if raw == "":
+                continue
+            
+            try:
+                idx = int(raw)
+                if 0 <= idx < len(available):
+                    selected.append(available[idx])
+                    break
+                else:
+                    cprint(f"  Number out of range. Pick 0-{len(available) - 1}.", style="red")
+                    input("  Press Enter...")
+            except ValueError:
+                cprint(f"  Enter a number 0-{len(available) - 1}.", style="red")
+                input("  Press Enter...")
+    
+    # Show final selected order
+    set_selected_phases(match, selected)
+    clear_screen()
+    order_str = " → ".join(f"[bold]{p.name}[/bold]" for p in selected)
+    cprint(f"\n  ✅ [bold green]Phase order set![/bold green]", style="bold green")
+    cprint(f"  {order_str}", style="bold yellow")
+    cprint(f"  [dim]Order matters for carryover (e.g. Double Pivot → next attacker gets bonus)[/dim]", style="dim")
+    input("\n  Press Enter to begin...")
+
 
 def play_match(match: MatchState) -> bool:
     """Play a full match (3 rounds, each with 6 phases). Returns True if won."""
@@ -692,12 +783,15 @@ def play_match(match: MatchState) -> bool:
                 cprint(f"    ✦ [bold]{s.name:22s}[/bold]  [{rarity_color}]{s.rarity:10s}[/{rarity_color}]"
                        f"  [dim]{s.description}[/dim]", style="yellow")
             
-            cprint(f"\n  [dim]These synergies apply to phases where conditions are met.[/dim]", style="dim")
+            cprint(f"  [dim]These synergies apply to phases where conditions are met.[/dim]", style="dim")
             cprint(f"  [dim]Build your phase selections around them![/dim]", style="dim")
-            input("\n  Press Enter to begin Round...")
+            input("\\n  Press Enter to begin Round...")
 
-        # Run 6 phases
-        for phase_idx in range(6):
+        # Phase selection: deal 6, pick 3 in order
+        run_phase_selection(match)
+
+        # Run 3 selected phases
+        for phase_idx in range(3):
             match.current_phase_idx = phase_idx
             start_phase(match)
             run_phase_placement(match)
@@ -716,7 +810,7 @@ def play_match(match: MatchState) -> bool:
 
             input("\n  Press Enter for next phase...")
 
-            if phase_idx < 5:
+            if phase_idx < 2:
                 advance_phase(match)
 
         advance_phase(match)  # Marks round complete

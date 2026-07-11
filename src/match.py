@@ -11,7 +11,7 @@ CAMPAIGN_MATCHES. Same squad, harder targets each match. Lose one = game over.
 import random
 from dataclasses import dataclass, field
 from src.cards import PlayerCard, SynergyCard, FormationCard
-from src.phases import Phase, shuffle_phases
+from src.phases import Phase, shuffle_phases, deal_phases
 from src.scoring import calculate_round_score
 
 
@@ -33,6 +33,8 @@ class MatchState:
 
     # Phase tracking
     phases: list[Phase] = field(default_factory=list)
+    phase_hand: list[Phase] = field(default_factory=list)  # 6 dealt phase cards
+    selected_phases: list[Phase] = field(default_factory=list)  # 3 player-selected, in order
     current_phase_idx: int = 0
     phase_results: list[dict] = field(default_factory=list)
     round_score: int = 0
@@ -128,8 +130,10 @@ def _generate_targets() -> list[int]:
 # ─── Round Management ────────────────────────────────────────────────
 
 def start_round(match: MatchState) -> None:
-    """Set up a new round — shuffle phases, reset fatigue, re-roll synergies, clear state."""
-    match.phases = shuffle_phases()
+    """Set up a new round — deal 6 phase cards, reset fatigue, re-roll synergies, clear state."""
+    match.phase_hand = deal_phases(6)
+    match.selected_phases = []
+    match.phases = []  # populated when player selects phases
     match.current_phase_idx = 0
     match.fatigue = {}
     match.phase_results = []
@@ -146,6 +150,13 @@ def start_round(match: MatchState) -> None:
 def start_phase(match: MatchState) -> None:
     """Set up the current phase — clear field for placement."""
     match.field = []
+
+
+def set_selected_phases(match: MatchState, selected: list[Phase]) -> None:
+    """Set the player's chosen 3 phases (in order) from the dealt hand."""
+    match.selected_phases = list(selected)
+    match.phases = list(selected)
+    match.current_phase_idx = 0
 
 
 def place_player(match: MatchState, player: PlayerCard, slot_position: str) -> bool:
