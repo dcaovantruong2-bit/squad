@@ -127,13 +127,13 @@ const ALL_PHASES = [
 
 const FORMATIONS = [
   { id:"4-4-2", name:"4-4-2", handSize:11, globalMult:1.0,
-    slots:["CB","CB","FB","FB","CM","CM","ST","ST"],
+    slots:["CB","CB","FB","FB","CM","CM","CM","CM","ST","ST"],
     positionBonus:{}, description:"Balanced. No frills. Classic.",
     pitchPositions:[
       {pos:"GK",x:50,y:92},
       {pos:"CB",x:28,y:75},{pos:"CB",x:72,y:75},
       {pos:"FB",x:5,y:58},{pos:"FB",x:95,y:58},
-      {pos:"CM",x:30,y:40},{pos:"CM",x:70,y:40},
+      {pos:"LW",x:12,y:40},{pos:"CM",x:37,y:40},{pos:"CM",x:63,y:40},{pos:"RW",x:88,y:40},
       {pos:"ST",x:30,y:17},{pos:"ST",x:70,y:17}
     ] },
   { id:"4-3-3", name:"4-3-3", handSize:12, globalMult:1.05,

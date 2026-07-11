@@ -8,7 +8,7 @@
   "agentId": "hermes",
   "agentModels": {
     "hermes": {
-      "model": "opencode-go:minimax-m3"
+      "model": "opencode-go:deepseek-v4-flash"
     }
   },
   "skillId": null,

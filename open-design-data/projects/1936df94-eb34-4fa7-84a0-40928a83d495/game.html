@@ -17,81 +17,89 @@
     .title-tagline { font-family: var(--font-display); font-size: 10px; color: var(--gold); text-shadow: 0 0 12px var(--gold-glow); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: var(--space-12); }
     .title-info { font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); margin-bottom: var(--space-8); line-height: 1.6; }
     .title-info span { color: var(--accent); }
-    .title-crt { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 999;
-      background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, transparent 1px, transparent 2px);
-      background-size: 100% 3px; }
-    .title-scan { position: fixed; top: 0; left: 0; right: 0; height: 120px; pointer-events: none; z-index: 998;
-      background: linear-gradient(180deg, rgba(57,255,20,0.03) 0%, transparent 100%);
-      animation: scanline 8s linear infinite; }
-    @keyframes scanline { 0% { transform: translateY(-120px); } 100% { transform: translateY(100vh); } }
+    /* CRT scanlines: single overlay via body::after in game.css — no duplicate */
 
-    /* ─── Squad Builder — Compact List + Pill Grid ─────────────── */
+    /* ─── Squad Builder — Visual Grid + Pill Grid ─────────────── */
     .squad-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3); flex-wrap: wrap; gap: var(--space-3); }
     .budget-row { display: flex; align-items: center; gap: var(--space-3); }
-    .budget-text { font-family: var(--font-display); font-size: 8px; color: var(--fg-dim); white-space:nowrap; }
+    .budget-text { font-family: var(--font-display); font-size: 11px; color: var(--fg-dim); white-space:nowrap; }
     .budget-text .num { color: var(--gold); }
     .budget-text .num.over { color: var(--danger); }
     .budget-track { width: 160px; height: 10px; background: var(--bg-deep); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
     .budget-fill { height: 100%; background: var(--accent); box-shadow: 0 0 6px var(--accent-glow); transition: width 0.3s ease; }
     .budget-fill.over { background: var(--danger); box-shadow: 0 0 6px var(--danger-glow); }
 
-    /* Position tabs — compact */
-    .pos-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: var(--space-3); }
-    .pos-tab { font-family: var(--font-display); font-size: 7px; padding: 5px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; cursor: pointer; color: var(--fg-dim); transition: all var(--motion-fast) ease; }
+    /* Position tabs */
+    .pos-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: var(--space-3); }
+    .pos-tab { font-family: var(--font-display); font-size: 11px; padding: 6px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; cursor: pointer; color: var(--fg-dim); transition: all var(--motion-fast) ease; }
     .pos-tab:hover { border-color: var(--border-bright); }
     .pos-tab.active { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 6px var(--accent-glow); background: var(--surface-raised); }
 
-    /* Compact table header + rows */
-    .player-table { width:100%; border-collapse:collapse; margin-bottom:var(--space-3); }
-    .player-th { font-family:var(--font-display); font-size:6px; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; padding:4px 6px; border-bottom:1px solid var(--border); text-align:center; white-space:nowrap; }
-    .player-th:first-child { text-align:left; }
-    .player-tr { cursor:pointer; transition:background 0.1s ease; }
-    .player-tr:hover { background:rgba(255,255,255,0.02); }
-    .player-tr.selected { background:rgba(57,255,20,0.04); }
-    .player-td { padding:5px 6px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; text-align:center; font-family:var(--font-mono); font-size:13px; }
-    .player-td:first-child { text-align:left; font-family:var(--font-body); font-size:15px; color:var(--fg); }
-    .player-td .pname-check { color:var(--accent); margin-right:4px; }
-    .player-td .pos-badge { font-family:var(--font-display); font-size:6px; padding:1px 4px; border-radius:2px; margin-right:6px; vertical-align:middle; }
-    .pos-badge.GK { background:rgba(255,215,0,0.12); color:var(--gold); border:1px solid var(--gold); }
-    .pos-badge.CB,.pos-badge.FB { background:rgba(57,255,20,0.1); color:var(--accent); border:1px solid var(--accent); }
-    .pos-badge.CM,.pos-badge.CAM,.pos-badge.CDM { background:rgba(0,204,255,0.12); color:var(--info); border:1px solid var(--info); }
-    .pos-badge.ST,.pos-badge.LW,.pos-badge.RW { background:rgba(255,51,68,0.15); color:var(--danger); border:1px solid var(--danger); }
-    .td-stat { font-family:var(--font-body); font-size:14px; font-weight:bold; }
-    .td-atk { color:#ff3344; }
-    .td-pac { color:var(--gold); }
-    .td-pas { color:var(--info); }
-    .td-def { color:var(--accent); }
-    .td-spc { color:#c084fc; }
-    .td-cost { font-family:var(--font-display); font-size:7px; color:var(--gold); }
-    .td-traits { display:flex; gap:2px; flex-wrap:wrap; justify-content:center; }
-    .td-trait { font-family:var(--font-body); font-size:10px; padding:1px 4px; background:var(--surface-raised); border:1px solid var(--border); border-radius:2px; color:var(--fg-dim); }
+    /* Sub-tab pills */
+    .sub-tabs { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: var(--space-3); padding-left: var(--space-2); }
+    .sub-tab { font-family: var(--font-display); font-size: 10px; padding: 4px 10px; background: var(--bg-deep); border: 1px solid var(--border); border-radius: 2px; cursor: pointer; color: var(--muted); transition: all var(--motion-fast) ease; letter-spacing: 0.04em; }
+    .sub-tab:hover { border-color: var(--border-bright); color: var(--fg-dim); }
+    .sub-tab.active { border-color: var(--gold); color: var(--gold); background: rgba(255,215,0,0.08); box-shadow: 0 0 4px var(--gold-glow); }
+
+    /* Player card grid — tabbed position hub */
+    .player-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: var(--space-4); max-height: calc(100vh - 360px); overflow-y: auto; padding: var(--space-2); scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+    .player-card { display: flex; flex-direction: column; cursor: pointer; transition: all 0.15s ease; position: relative; padding: 10px 12px; border-radius: var(--radius-md); border: 2px solid transparent; background: var(--surface); }
+    .player-card:hover { background: var(--surface-raised); border-color: var(--border-bright); }
+    .player-card.selected { border-color: var(--accent); background: rgba(57,255,20,0.06); box-shadow: 0 0 12px var(--accent-glow); }
+    .player-card.selected::after { content:'✓'; position:absolute; top:6px; right:8px; font-size:16px; color:var(--accent); font-family:var(--font-display); text-shadow:0 0 6px var(--accent-glow); }
+    .pc-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .pc-pos { font-family: var(--font-display); font-size: 11px; padding: 2px 8px; border-radius: 2px; letter-spacing: 0.06em; font-weight: 700; }
+    .pc-pos.GK { background: rgba(255,215,0,0.15); color: var(--gold); border: 1px solid var(--gold); }
+    .pc-pos.CB, .pc-pos.FB { background: rgba(57,255,20,0.1); color: var(--accent); border: 1px solid var(--accent); }
+    .pc-pos.CM, .pc-pos.CAM, .pc-pos.CDM { background: rgba(0,204,255,0.1); color: var(--info); border: 1px solid var(--info); }
+    .pc-pos.ST, .pc-pos.LW, .pc-pos.RW { background: rgba(255,51,68,0.12); color: var(--danger); border: 1px solid var(--danger); }
+    .pc-name { font-family: var(--font-body); font-size: 17px; color: var(--fg); font-weight: 600; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pc-cost { font-family: var(--font-display); font-size: 12px; color: var(--gold); text-shadow: 0 0 4px var(--gold-glow); }
+    /* Stat bars */
+    .pc-stats { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
+    .pc-stat { display: flex; align-items: center; gap: 6px; }
+    .pc-stat-label { font-family: var(--font-display); font-size: 10px; color: var(--muted); width: 28px; text-align: right; letter-spacing: 0.04em; }
+    .pc-stat-bar { flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+    .pc-stat-fill { height: 100%; border-radius: 2px; transition: width 0.2s ease; }
+    .pc-stat-fill.atk { background: #ff3344; }
+    .pc-stat-fill.pac { background: var(--gold); }
+    .pc-stat-fill.pas { background: var(--info); }
+    .pc-stat-fill.def { background: var(--accent); }
+    .pc-stat-fill.spc { background: #c084fc; }
+    .pc-stat-val { font-family: var(--font-mono); font-size: 16px; font-weight: 700; width: 20px; }
+    .pc-stat-val.atk { color: #ff3344; }
+    .pc-stat-val.pac { color: var(--gold); }
+    .pc-stat-val.pas { color: var(--info); }
+    .pc-stat-val.def { color: var(--accent); }
+    .pc-stat-val.spc { color: #c084fc; }
+    .pc-traits { font-family: var(--font-body); font-size: 15px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
     /* Squad summary — pill grid */
     .squad-section { background:var(--surface); border:2px solid var(--border); border-radius:var(--radius-md); padding:var(--space-3) var(--space-4); margin-bottom:var(--space-3); }
-    .squad-section-title { font-family:var(--font-display); font-size:7px; color:var(--fg-dim); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:var(--space-2); display:flex; align-items:center; gap:var(--space-3); }
-    .squad-section-title .count { color:var(--gold); font-size:8px; }
+    .squad-section-title { font-family:var(--font-display); font-size:10px; color:var(--fg-dim); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:var(--space-2); display:flex; align-items:center; gap:var(--space-3); }
+    .squad-section-title .count { color:var(--gold); font-size:11px; }
     .pill-line { display:flex; align-items:center; gap:6px; margin-bottom:5px; flex-wrap:wrap; }
-    .pill-label { font-family:var(--font-display); font-size:6px; text-transform:uppercase; letter-spacing:0.06em; min-width:24px; }
+    .pill-label { font-family:var(--font-display); font-size:10px; text-transform:uppercase; letter-spacing:0.06em; min-width:28px; }
     .pill-label-GK { color:var(--gold); }
     .pill-label-DEF { color:var(--accent); }
     .pill-label-MID { color:var(--info); }
     .pill-label-ATT { color:var(--danger); }
-    .pill { display:inline-flex; align-items:center; gap:4px; font-family:var(--font-body); font-size:12px; padding:2px 8px; border-radius:3px; border:1px solid; cursor:pointer; transition:all 0.1s ease; }
+    .pill { display:inline-flex; align-items:center; gap:4px; font-family:var(--font-body); font-size:16px; padding:3px 10px; border-radius:3px; border:1px solid; cursor:pointer; transition:all 0.1s ease; }
     .pill:hover { filter:brightness(1.2); }
-    .pill .pill-cost { font-family:var(--font-display); font-size:6px; opacity:0.7; }
-    .pill .pill-rm { font-family:var(--font-display); font-size:7px; margin-left:2px; color:var(--danger); opacity:0.5; }
+    .pill .pill-cost { font-family:var(--font-display); font-size:10px; opacity:0.7; }
+    .pill .pill-rm { font-family:var(--font-display); font-size:10px; margin-left:2px; color:var(--danger); opacity:0.5; }
     .pill .pill-rm:hover { opacity:1; }
     .pill-GK { border-color:var(--gold); background:rgba(255,215,0,0.08); color:var(--gold); }
     .pill-DEF { border-color:var(--accent); background:rgba(57,255,20,0.06); color:var(--accent); }
     .pill-MID { border-color:var(--info); background:rgba(0,204,255,0.06); color:var(--info); }
     .pill-ATT { border-color:var(--danger); background:rgba(255,51,68,0.06); color:var(--danger); }
-    .pill-open { display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:6px; padding:2px 10px; border:1px dashed var(--border); border-radius:3px; color:var(--muted); min-width:48px; }
-    .pill-line-status { font-family:var(--font-body); font-size:12px; color:var(--fg-dim); margin-left:var(--space-2); }
+    .pill-open { display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:10px; padding:3px 12px; border:1px dashed var(--border); border-radius:3px; color:var(--muted); min-width:52px; }
+    .pill-line-status { font-family:var(--font-body); font-size:17px; color:var(--fg-dim); margin-left:var(--space-2); }
     .pill-line-status.met { color:var(--accent); }
     .pill-line-status.unmet { color:var(--danger); }
 
     .req-strip { display:flex; flex-wrap:wrap; gap:var(--space-2); margin-top:var(--space-2); }
-    .req-badge { font-family:var(--font-display); font-size:7px; padding:3px 8px; border:1px solid var(--border); border-radius:3px; color:var(--fg-dim); }
+    .req-badge { font-family:var(--font-display); font-size:10px; padding:4px 10px; border:1px solid var(--border); border-radius:3px; color:var(--fg-dim); }
     .req-badge.met { border-color:var(--accent); color:var(--accent); }
     .req-badge.unmet { border-color:var(--danger); color:var(--danger); }
 
@@ -99,36 +107,70 @@
     .squad-error { background:rgba(255,51,68,0.15); border:1px solid var(--danger); border-radius:var(--radius-md); padding:var(--space-2) var(--space-4); color:var(--danger); font-family:var(--font-body); font-size:var(--text-lg); margin-bottom:var(--space-3); display:none; }
     .squad-error.visible { display:block; }
 
-    /* ─── Formation Select ──────────────────────────────────────── */
-    .form-header { text-align: center; margin-bottom: var(--space-8); }
+    /* ─── Formation Select — Carousel ────────────────────────────── */
+    .form-header { text-align: center; margin-bottom: var(--space-6); }
     .form-title { font-family: var(--font-display); font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); margin-bottom: var(--space-2); }
     .form-subtitle { font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); }
-    .formations-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--space-6); margin-bottom: var(--space-8); }
-    .formation-card { background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-md); padding: var(--space-5); cursor: pointer; transition: all var(--motion-fast) ease; position: relative; }
-    .formation-card:hover { border-color: var(--accent); box-shadow: 0 0 16px var(--accent-glow); transform: translateY(-2px); }
-    .formation-card.selected { border-color: var(--accent); box-shadow: 0 0 24px var(--accent-glow); background: var(--surface-raised); }
-    .formation-name { font-family: var(--font-display); font-size: 16px; text-align: center; margin-bottom: var(--space-2); color: var(--fg); }
-    .formation-desc { font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); text-align: center; margin-bottom: var(--space-4); }
-    .form-pitch { background: var(--pitch-green); border: 2px solid var(--pitch-dark); border-radius: var(--radius-sm); aspect-ratio: 68/105; max-height: 180px; margin: 0 auto var(--space-4); position: relative; overflow: hidden; box-shadow: inset 0 0 30px rgba(0,0,0,0.4); }
+
+    .carousel-wrap { max-width: 520px; margin: 0 auto var(--space-4); display: flex; align-items: center; gap: var(--space-3); }
+    .carousel-arrow { flex-shrink:0; width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); cursor:pointer; font-size:20px; color:var(--fg-dim); transition:all var(--motion-fast) ease; }
+    .carousel-arrow:hover { border-color:var(--accent); color:var(--accent); box-shadow:0 0 8px var(--accent-glow); }
+    .carousel-arrow:disabled { opacity:0.3; cursor:default; border-color:var(--border); color:var(--muted); box-shadow:none; }
+    .carousel-arrow:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+    .carousel-frame { flex:1; min-height:0; }
+    .carousel-card { background:var(--surface); border:2px solid var(--border); border-radius:var(--radius-md); padding:var(--space-5) var(--space-5) var(--space-4); transition:all var(--motion-fast) ease; position:relative; }
+
+    .carousel-dots { display:flex; justify-content:center; gap:var(--space-2); margin-bottom:var(--space-4); }
+    .carousel-dot { width:10px; height:10px; border-radius:50%; background:var(--surface); border:1px solid var(--border); cursor:pointer; transition:all var(--motion-fast) ease; }
+    .carousel-dot:hover { border-color:var(--accent); }
+    .carousel-dot.active { background:var(--accent); border-color:var(--accent); box-shadow:0 0 6px var(--accent-glow); }
+
+    .formation-name { font-family: var(--font-display); font-size: 18px; text-align: center; margin-bottom: var(--space-1); color: var(--fg); letter-spacing: 0.08em; }
+    .formation-index { font-family:var(--font-body); font-size:var(--text-base); color:var(--muted); text-align:center; margin-bottom:var(--space-3); }
+    .form-pitch { background: var(--pitch-green); border: 2px solid var(--pitch-dark); border-radius: var(--radius-sm); aspect-ratio: 68/105; max-height: 220px; margin: 0 auto var(--space-4); position: relative; overflow: hidden; box-shadow: inset 0 0 30px rgba(0,0,0,0.4); }
     .form-pitch::before { content:''; position:absolute; top:50%; left:0; right:0; height:1px; background:var(--pitch-line); }
-    .form-pitch::after { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:40px; height:40px; border:1px solid var(--pitch-line); border-radius:50%; }
-    .form-slot { position: absolute; width: 22px; height: 22px; background: var(--accent); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 6px; color: var(--accent-on); transform: translate(-50%, -50%); box-shadow: 0 0 6px var(--accent-glow); }
-    .bonuses { display: flex; flex-wrap: wrap; gap: var(--space-2); justify-content: center; margin-bottom: var(--space-3); }
-    .bonus-tag { font-family: var(--font-display); font-size: 7px; padding: 2px 6px; border-radius: var(--radius-sm); }
+    .form-pitch::after { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:44px; height:44px; border:1px solid var(--pitch-line); border-radius:50%; }
+    .form-slot { position: absolute; width: 26px; height: 26px; background: var(--accent); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 9px; color: var(--accent-on); transform: translate(-50%, -50%); box-shadow: 0 0 6px var(--accent-glow); }
+    .form-rec { position:absolute; top:8px; right:8px; font-family:var(--font-display); font-size:10px; padding:3px 8px; background:var(--accent); color:var(--accent-on); border-radius:3px; text-transform:uppercase; letter-spacing:0.06em; box-shadow:0 0 8px var(--accent-glow); animation:rec-pulse 2s ease-in-out infinite; }
+    @keyframes rec-pulse { 0%,100%{box-shadow:0 0 6px var(--accent-glow)} 50%{box-shadow:0 0 14px var(--accent-glow)} }
+
+    /* Detail panel below carousel */
+    .form-detail { max-width:520px; margin:0 auto var(--space-4); background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); padding:var(--space-4) var(--space-5); }
+    .form-desc { font-family:var(--font-body); font-size:var(--text-lg); color:var(--muted); margin-bottom:var(--space-3); line-height:1.5; }
+    .form-detail-meta { display: flex; gap: var(--space-5); flex-wrap: wrap; margin-bottom: var(--space-3); }
+    .form-detail-stat { font-family:var(--font-display); font-size:10px; color:var(--fg-dim); text-transform:uppercase; letter-spacing:0.06em; }
+    .form-detail-stat .val { color:var(--fg); font-size:18px; display:block; margin-top:2px; font-family:var(--font-body); }
+    .form-detail-stat .val.green { color:var(--accent); }
+    .form-detail-stat .val.gold { color:var(--gold); }
+    .bonuses { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+    .bonus-tag { font-family: var(--font-display); font-size: 9px; padding: 3px 8px; border-radius: var(--radius-sm); }
     .bonus-pos { background: rgba(57,255,20,0.1); color: var(--accent); border: 1px solid var(--accent); }
     .bonus-neg { background: rgba(255,51,68,0.1); color: var(--danger); border: 1px solid var(--danger); }
-    .form-meta { display: flex; justify-content: center; gap: var(--space-6); font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); }
+    .fit-rows { display:flex; flex-direction:column; gap:2px; margin:var(--space-3) 0; }
+    .fit-row { display:flex; align-items:center; gap:var(--space-3); padding:4px var(--space-2); background:rgba(255,255,255,0.02); border-radius:var(--radius-sm); }
+    .fit-row-pos { font-family:var(--font-display); font-size:9px; text-transform:uppercase; letter-spacing:0.06em; min-width:36px; padding:1px 4px; border-radius:2px; text-align:center; }
+    .fit-row-pos.GK { color:#1a0a00; background:var(--gold); }
+    .fit-row-pos.CB, .fit-row-pos.FB { color:#fff; background:#1a4a7a; }
+    .fit-row-pos.CDM, .fit-row-pos.CM, .fit-row-pos.CAM { color:#fff; background:#1a5a1a; }
+    .fit-row-pos.ST, .fit-row-pos.LW, .fit-row-pos.RW { color:#fff; background:#7a1a1a; }
+    .fit-row-players { flex:1; font-family:var(--font-body); font-size:14px; color:var(--fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .fit-row-count { font-family:var(--font-body); font-size:14px; font-weight:600; color:var(--fg-dim); min-width:44px; text-align:center; }
+    .fit-row-status { font-family:var(--font-body); font-size:13px; min-width:90px; text-align:right; }
+    .fit-row-status.green { color:var(--accent); }
+    .fit-row-status.gold { color:var(--gold); }
+    .fit-row-status.poor { color:var(--danger); }
 
     /* ─── Match Screen ──────────────────────────────────────────── */
     .match-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-4); flex-wrap: wrap; gap: var(--space-3); }
     .match-vs { display: flex; align-items: center; gap: var(--space-4); }
-    .match-team-name { font-family: var(--font-display); font-size: 8px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-dim); }
+    .match-team-name { font-family: var(--font-display); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-dim); }
     .match-team.you .match-team-name { color: var(--accent); text-shadow: 0 0 8px var(--accent-glow); }
     .match-score { font-family: var(--font-display); font-size: 20px; min-width: 80px; text-align: center; color: var(--fg); }
     .score-dash { color: var(--muted); margin: 0 var(--space-2); }
     .match-progress { display: flex; gap: var(--space-6); margin-bottom: var(--space-4); flex-wrap: wrap; }
     .progress-group { flex: 1; min-width: 160px; }
-    .progress-label { font-family: var(--font-display); font-size: 7px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: var(--space-2); }
+    .progress-label { font-family: var(--font-display); font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: var(--space-2); }
     .progress-dots { display: flex; gap: var(--space-2); }
     .progress-dot { width: 28px; height: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); transition: all 0.3s ease; }
     .progress-dot.active { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
@@ -140,33 +182,48 @@
     .phase-bar-icon { font-size: 28px; filter: drop-shadow(0 0 8px var(--accent-glow)); }
     .phase-bar-info { flex: 1; }
     .phase-bar-name { font-family: var(--font-display); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg); }
-    .phase-bar-weight { display: inline-flex; align-items: center; gap: var(--space-1); padding: 2px 8px; background: var(--accent); color: var(--accent-on); border-radius: var(--radius-sm); font-family: var(--font-display); font-size: 7px; text-transform: uppercase; margin-left: var(--space-2); box-shadow: 0 0 4px var(--accent-glow); }
+    .phase-bar-weight { display: inline-flex; align-items: center; gap: var(--space-1); padding: 3px 10px; background: var(--accent); color: var(--accent-on); border-radius: var(--radius-sm); font-family: var(--font-display); font-size: 9px; text-transform: uppercase; margin-left: var(--space-2); box-shadow: 0 0 4px var(--accent-glow); }
     .phase-bar-desc { font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); margin-top: var(--space-1); }
-    .phase-bar-zone { font-family: var(--font-display); font-size: 7px; color: var(--info); text-transform: uppercase; letter-spacing: 0.08em; margin-top: var(--space-1); }
+    .phase-bar-zone { font-family: var(--font-display); font-size: 9px; color: var(--info); text-transform: uppercase; letter-spacing: 0.08em; margin-top: var(--space-1); }
     .phase-bar-zone::before { content: '▸ '; color: var(--info); }
+
+    /* Live phase score bar */
+    .live-score-bar { display:flex; align-items:center; justify-content:space-between; gap:var(--space-3); background:var(--surface-raised); border:2px solid var(--border); border-radius:var(--radius-md); padding:var(--space-3) var(--space-5); margin-bottom:var(--space-4); }
+    .live-score-info { display:flex; align-items:baseline; gap:var(--space-2); }
+    .live-score-label { font-family:var(--font-display); font-size:9px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); }
+    .live-score-value { font-family:var(--font-display); font-size:32px; color:var(--gold); text-shadow:0 0 12px var(--gold-glow); transition:all 0.3s ease; font-variant-numeric:tabular-nums; }
+    .live-score-unit { font-family:var(--font-display); font-size:20px; color:var(--gold); text-shadow:0 0 8px var(--gold-glow); }
+    .live-score-detail { font-family:var(--font-body); font-size:var(--text-sm); color:var(--muted); margin-left:var(--space-2); }
+    .live-score-detail.change { transition:opacity 0.2s ease; }
+    .live-synergy-badges { display:flex; gap:var(--space-1); flex-wrap:wrap; justify-content:flex-end; max-width:380px; }
+    .live-syn-badge { font-family:var(--font-display); font-size:9px; padding:3px 10px; border-radius:3px; white-space:nowrap; letter-spacing:0.04em; }
+    .live-syn-badge.fired { background:rgba(57,255,20,0.12); border:1px solid var(--accent); color:var(--accent); text-shadow:0 0 4px var(--accent-glow); }
+    .live-syn-badge.inactive { background:rgba(255,255,255,0.04); border:1px solid var(--border); color:var(--muted); }
+    .live-syn-empty { font-family:var(--font-body); font-size:var(--text-sm); color:var(--muted); }
+    .live-syn-point { color:var(--accent); font-family:var(--font-mono); font-size:var(--text-sm); margin-left:var(--space-1); }
 
     /* Game area layout */
     .game-area { display: grid; grid-template-columns: 1fr 340px; gap: var(--space-5); margin-bottom: var(--space-5); }
 
     /* ─── Team Sheet (replaces Tactical Pitch) ──────────────────── */
     .team-sheet { background:var(--surface); border:2px solid var(--border); border-radius:var(--radius-md); overflow:hidden; margin-bottom:var(--space-3); }
-    .team-sheet-header { font-family:var(--font-display); font-size:7px; color:var(--fg-dim); text-transform:uppercase; letter-spacing:0.08em; padding:8px 14px 6px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+    .team-sheet-header { font-family:var(--font-display); font-size:9px; color:var(--fg-dim); text-transform:uppercase; letter-spacing:0.08em; padding:8px 14px 6px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
     .team-sheet-header .ts-formation { color:var(--accent); }
     .team-sheet-row { display:grid; grid-template-columns:28px 36px 1fr 52px 28px; gap:4px; padding:6px 14px; border-bottom:1px solid rgba(255,255,255,0.04); align-items:center; cursor:default; transition:background 0.1s ease; }
     .team-sheet-row:hover { background:rgba(255,255,255,0.02); }
     .team-sheet-row:last-child { border-bottom:none; }
-    .ts-num { font-family:var(--font-display); font-size:7px; color:var(--muted); text-align:center; }
-    .ts-pos { font-family:var(--font-display); font-size:7px; color:var(--fg-dim); text-align:center; text-transform:uppercase; letter-spacing:0.06em; }
+    .ts-num { font-family:var(--font-display); font-size:9px; color:var(--muted); text-align:center; }
+    .ts-pos { font-family:var(--font-display); font-size:9px; color:var(--fg-dim); text-align:center; text-transform:uppercase; letter-spacing:0.06em; }
     .ts-pos.GK { color:var(--gold); }
     .ts-pos.DEF { color:var(--accent); }
     .ts-pos.MID { color:var(--info); }
     .ts-pos.ATT { color:var(--danger); }
-    .ts-name { font-family:var(--font-body); font-size:15px; color:var(--fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .ts-chips { font-family:var(--font-display); font-size:8px; color:var(--gold); text-shadow:0 0 4px var(--gold-glow); text-align:right; }
-    .ts-status { font-family:var(--font-display); font-size:7px; text-align:center; }
+    .ts-name { font-family:var(--font-body); font-size:17px; color:var(--fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .ts-chips { font-family:var(--font-display); font-size:10px; color:var(--gold); text-shadow:0 0 4px var(--gold-glow); text-align:right; }
+    .ts-status { font-family:var(--font-display); font-size:9px; text-align:center; }
     .ts-status.filled { color:var(--accent); }
     .ts-status.empty { color:var(--muted); }
-    .ts-slash { font-family:var(--font-display); font-size:7px; color:var(--fg-dim); text-align:right; }
+    .ts-slash { font-family:var(--font-display); font-size:9px; color:var(--fg-dim); text-align:right; }
     /* Phase slot row — overrides with glow */
     .team-sheet-row.slot-row { cursor:pointer; border-color:var(--border); background:rgba(57,255,20,0.03); animation:slot-pulse 2s ease-in-out infinite; }
     @keyframes slot-pulse { 0%,100%{background:rgba(57,255,20,0.03)} 50%{background:rgba(57,255,20,0.06)} }
@@ -182,19 +239,19 @@
     .team-sheet-row.slot-row.no-eligible .ts-slash::before { content:'╳'; color:var(--danger); opacity:0.5; }
     /* Line separator */
     .ts-divider { border:none; border-top:1px solid rgba(255,255,255,0.06); margin:0; }
-    .ts-line-label { font-family:var(--font-display); font-size:6px; padding:4px 14px; background:rgba(255,255,255,0.02); color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; }
+    .ts-line-label { font-family:var(--font-display); font-size:8px; padding:4px 14px; background:rgba(255,255,255,0.02); color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; }
 
     /* ─── Player Picker Modal ───────────────────────────────────── */
     .picker-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:200; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
     .picker-modal { background:var(--surface-raised, #2e2250); border:2px solid var(--accent); border-radius:12px; width:92%; max-width:720px; max-height:85vh; display:flex; flex-direction:column; box-shadow:0 0 40px var(--accent-glow); overflow:hidden; }
     .picker-hdr { padding:14px 18px; border-bottom:2px solid var(--border); display:flex; flex-wrap:wrap; align-items:center; gap:6px; position:relative; }
     .picker-hdr-title { font-family:var(--font-display); font-size:11px; color:var(--accent); text-shadow:0 0 8px var(--accent-glow); }
-    .picker-hdr-req { font-family:var(--font-body); font-size:13px; color:var(--fg-dim); }
-    .picker-hdr-formula { font-family:var(--font-mono, monospace); font-size:12px; color:var(--gold); width:100%; margin-top:2px; }
+    .picker-hdr-req { font-family:var(--font-body); font-size:16px; color:var(--fg-dim); }
+    .picker-hdr-formula { font-family:var(--font-mono, monospace); font-size:15px; color:var(--gold); width:100%; margin-top:2px; }
     .picker-close { position:absolute; top:10px; right:14px; background:none; border:none; color:var(--muted); font-size:18px; cursor:pointer; font-family:var(--font-body); line-height:1; }
     .picker-close:hover { color:var(--danger); }
     .picker-cols { display:grid; grid-template-columns:1fr 42px 42px 42px 42px 42px 54px 32px; gap:3px; padding:5px 14px; border-bottom:1px solid var(--border); }
-    .picker-cols span { font-family:var(--font-display); font-size:6px; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; text-align:center; }
+    .picker-cols span { font-family:var(--font-display); font-size:8px; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; text-align:center; }
     .picker-cols span:first-child { text-align:left; }
     .picker-body { overflow-y:auto; flex:1; padding:4px 0; }
     .picker-body::-webkit-scrollbar { width:4px; }
@@ -203,44 +260,44 @@
     .picker-row:hover { background:rgba(255,255,255,0.03); }
     .picker-row.used { opacity:0.3; cursor:default; }
     .picker-row.inel { opacity:0.3; cursor:default; }
-    .picker-row .pr-name { font-family:var(--font-body); font-size:14px; color:var(--fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .picker-row .pr-st { font-family:var(--font-mono, monospace); font-size:13px; text-align:center; }
+    .picker-row .pr-name { font-family:var(--font-body); font-size:16px; color:var(--fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .picker-row .pr-st { font-family:var(--font-mono, monospace); font-size:15px; text-align:center; }
     .picker-row .pr-st.atk { color:#ff3344; }
     .picker-row .pr-st.pac { color:var(--gold); }
     .picker-row .pr-st.pas { color:var(--info); }
     .picker-row .pr-st.def { color:var(--accent); }
     .picker-row .pr-st.spc { color:#c084fc; }
-    .picker-row .pr-chips { font-family:var(--font-display); font-size:8px; color:var(--gold); text-shadow:0 0 4px var(--gold-glow); text-align:right; }
-    .picker-row .pr-syn { font-family:var(--font-display); font-size:7px; color:var(--accent); text-align:center; }
+    .picker-row .pr-chips { font-family:var(--font-display); font-size:10px; color:var(--gold); text-shadow:0 0 4px var(--gold-glow); text-align:right; }
+    .picker-row .pr-syn { font-family:var(--font-display); font-size:9px; color:var(--accent); text-align:center; }
     /* Expanded breakdown */
     .picker-expand { padding:12px 16px; background:rgba(255,255,255,0.04); border:1px solid var(--accent); border-radius:6px; margin:2px 14px 6px; display:none; }
     .picker-expand.open { display:block; animation:exp-in 0.2s ease-out; }
     @keyframes exp-in { 0%{opacity:0;max-height:0} 100%{opacity:1;max-height:500px} }
     .pe-traits { display:flex; gap:4px; margin-bottom:8px; flex-wrap:wrap; }
-    .pe-traits span { font-family:var(--font-body); font-size:11px; padding:1px 5px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:3px; color:var(--fg-dim); }
+    .pe-traits span { font-family:var(--font-body); font-size:14px; padding:1px 5px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:3px; color:var(--fg-dim); }
     .pe-stat-row { display:flex; align-items:center; gap:6px; margin-bottom:3px; }
-    .pe-stat-lbl { font-family:var(--font-display); font-size:7px; width:28px; }
+    .pe-stat-lbl { font-family:var(--font-display); font-size:9px; width:28px; }
     .pe-stat-bar { flex:1; height:7px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }
     .pe-stat-fill { height:100%; border-radius:2px; }
-    .pe-stat-val { font-family:var(--font-mono, monospace); font-size:12px; width:18px; text-align:right; }
-    .pe-stat-mult { font-family:var(--font-mono, monospace); font-size:11px; color:var(--muted); width:28px; }
-    .pe-stat-res { font-family:var(--font-mono, monospace); font-size:12px; width:36px; text-align:right; }
+    .pe-stat-val { font-family:var(--font-mono, monospace); font-size:15px; width:18px; text-align:right; }
+    .pe-stat-mult { font-family:var(--font-mono, monospace); font-size:14px; color:var(--muted); width:28px; }
+    .pe-stat-res { font-family:var(--font-mono, monospace); font-size:15px; width:36px; text-align:right; }
     .pe-divider { border:none; border-top:1px solid var(--border); margin:8px 0; }
-    .pe-info { font-family:var(--font-mono, monospace); font-size:12px; color:var(--fg-dim); margin-bottom:2px; }
-    .pe-total { font-family:var(--font-display); font-size:10px; color:var(--gold); text-shadow:0 0 6px var(--gold-glow); margin:8px 0 4px; }
-    .pe-syn-title { font-family:var(--font-display); font-size:6px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px; }
-    .pe-syn-row { display:flex; align-items:center; gap:5px; margin-bottom:2px; font-family:var(--font-body); font-size:12px; }
+    .pe-info { font-family:var(--font-mono, monospace); font-size:15px; color:var(--fg-dim); margin-bottom:2px; }
+    .pe-total { font-family:var(--font-display); font-size:12px; color:var(--gold); text-shadow:0 0 6px var(--gold-glow); margin:8px 0 4px; }
+    .pe-syn-title { font-family:var(--font-display); font-size:8px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px; }
+    .pe-syn-row { display:flex; align-items:center; gap:5px; margin-bottom:2px; font-family:var(--font-body); font-size:15px; }
     .pe-syn-row.fired { color: var(--gold); text-shadow: 0 0 6px var(--gold-glow); }
     .pe-syn-row.inact { color: #8a7aa0; opacity: 0.85; }
     .pe-syn-chk { font-size: 11px; width: 14px; text-align: center; }
-    .pe-syn-desc { font-size: 10px; color: #9a8ab0; opacity: 0.85; }
-    .pe-pick { margin-top:10px; padding:8px 20px; background:var(--accent); color:var(--accent-on); border:none; border-radius:6px; font-family:var(--font-display); font-size:8px; cursor:pointer; box-shadow:0 0 12px var(--accent-glow); transition:all 0.15s ease; text-transform:uppercase; letter-spacing:0.06em; }
+    .pe-syn-desc { font-size: 13px; color: #9a8ab0; opacity: 0.85; }
+    .pe-pick { margin-top:10px; padding:10px 24px; background:var(--accent); color:var(--accent-on); border:none; border-radius:6px; font-family:var(--font-display); font-size:10px; cursor:pointer; box-shadow:0 0 12px var(--accent-glow); transition:all 0.15s ease; text-transform:uppercase; letter-spacing:0.06em; }
     .pe-pick:hover { box-shadow:0 0 20px var(--accent-glow); transform:translateY(-1px); }
 
     /* Sidebar panels */
     .match-sidebar { display: flex; flex-direction: column; gap: var(--space-3); }
     .sidebar-panel { background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3); }
-    .panel-title { font-family: var(--font-display); font-size: 7px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-dim); margin-bottom: var(--space-2); padding-bottom: var(--space-1); border-bottom: 1px solid var(--border); }
+    .panel-title { font-family: var(--font-display); font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-dim); margin-bottom: var(--space-2); padding-bottom: var(--space-1); border-bottom: 1px solid var(--border); }
 
     /* Target display */
     .target-display { text-align: center; }
@@ -251,13 +308,14 @@
     .slot-cards { display: flex; flex-direction: column; gap: var(--space-2); }
     .slot-card { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-3); background: var(--bg-deep); border: 2px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all var(--motion-fast) ease; }
     .slot-card:hover { border-color: var(--border-bright); background: var(--surface-raised); }
-    .slot-card.filled { border-color: var(--accent-dim); background: rgba(57,255,20,0.05); }
-    .slot-card-num { font-family: var(--font-display); font-size: 8px; color: var(--muted); min-width: 16px; text-align: center; }
-    .slot-card-req { font-family: var(--font-body); font-size: var(--text-lg); color: var(--fg); flex: 1; }
+    .slot-card.filled { border-color: var(--border-bright); background: rgba(57,255,20,0.04); }
+    .slot-card.filled.syn-fired { border-color: var(--accent); background: rgba(57,255,20,0.08); box-shadow: 0 0 8px var(--accent-glow); }
+    .slot-card-num { font-family: var(--font-display); font-size: 10px; color: var(--muted); min-width: 16px; text-align: center; }
+    .slot-card-req { font-family: var(--font-body); font-size: var(--text-xl); color: var(--fg); flex: 1; }
     .slot-card-req .req-pos { color: var(--accent); font-weight: bold; }
     .slot-card-req .req-stats { color: var(--fg-dim); font-size: var(--text-sm); }
-    .slot-card-status { font-family: var(--font-display); font-size: 8px; color: var(--muted); }
-    .slot-card-chips { font-family: var(--font-display); font-size: 8px; color: var(--gold); text-shadow: 0 0 4px var(--gold-glow); min-width: 40px; text-align: right; }
+    .slot-card-status { font-family: var(--font-display); font-size: 10px; color: var(--muted); }
+    .slot-card-chips { font-family: var(--font-display); font-size: 10px; color: var(--gold); text-shadow: 0 0 4px var(--gold-glow); min-width: 40px; text-align: right; }
 
     /* Synergy preview */
     .synergy-list { display: flex; flex-direction: column; gap: var(--space-1); }
@@ -267,30 +325,46 @@
     /* Submit section */
     .submit-section { text-align: center; padding: var(--space-4) 0; }
 
-    /* ─── Phase Result ──────────────────────────────────────────── */
-    .result-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
-    .result-verdict { font-family: var(--font-display); font-size: 24px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: var(--space-6); }
-    .result-verdict.win { color: var(--accent); text-shadow: 0 0 30px var(--accent-glow); animation: verdict-glow 1.5s ease-in-out infinite; }
-    .result-verdict.lose { color: var(--danger); text-shadow: 0 0 30px var(--danger-glow); }
+    /* ─── Phase Result — Option C: Accordion ────────────────────── */
+    .pr-hero { text-align: center; margin-bottom: var(--space-5); }
+    .pr-verdict { font-family: var(--font-display); font-size: var(--text-xl); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: var(--space-3); }
+    .pr-verdict.win { color: var(--accent); text-shadow: 0 0 30px var(--accent-glow); animation: verdict-glow 1.5s ease-in-out infinite; }
+    .pr-verdict.lose { color: var(--danger); text-shadow: 0 0 30px var(--danger-glow); }
     @keyframes verdict-glow { 0%,100% { text-shadow: 0 0 10px var(--accent-glow); } 50% { text-shadow: 0 0 30px var(--accent-glow); } }
-    .result-score { font-family: var(--font-display); font-size: 48px; color: var(--gold); text-shadow: 0 0 10px var(--gold-glow); margin-bottom: var(--space-2); }
-    .result-target { font-family: var(--font-body); font-size: var(--text-xl); color: var(--muted); margin-bottom: var(--space-6); }
-    .result-breakdown { width: 100%; max-width: 600px; background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-6); text-align: left; }
-    .breakdown-title { font-family: var(--font-display); font-size: 8px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-dim); margin-bottom: var(--space-3); }
-    .breakdown-row { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) 0; border-bottom: 1px solid var(--border); }
-    .breakdown-row:last-child { border-bottom: none; }
-    .bd-player { font-family: var(--font-body); font-size: var(--text-lg); color: var(--fg); flex: 1; }
-    .bd-pos { font-family: var(--font-display); font-size: 7px; color: var(--accent); min-width: 28px; }
-    .bd-base { font-family: var(--font-body); font-size: var(--text-lg); color: var(--fg-dim); min-width: 40px; text-align: right; }
-    .bd-mult { font-family: var(--font-body); font-size: var(--text-lg); color: var(--info); min-width: 40px; text-align: right; }
-    .bd-fatigue { font-family: var(--font-body); font-size: var(--text-lg); color: var(--warn); min-width: 40px; text-align: right; }
-    .bd-subtotal { font-family: var(--font-display); font-size: 8px; color: var(--gold); min-width: 48px; text-align: right; }
-    .result-synergies { width: 100%; max-width: 600px; margin-bottom: var(--space-6); }
-    .result-synergies h3 { font-family: var(--font-display); font-size: 8px; text-transform: uppercase; color: var(--gold); margin-bottom: var(--space-3); }
-    .synergy-fired { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); background: rgba(255,215,0,0.05); border: 1px solid var(--gold-dim); border-radius: var(--radius-sm); margin-bottom: var(--space-2); }
-    .synergy-fired .sf-name { font-family: var(--font-body); font-size: var(--text-lg); color: #ffd700; text-shadow: 0 0 4px rgba(255,215,0,0.3); flex: 1; }
-    .synergy-fired .sf-contrib { font-family: var(--font-body); font-size: var(--text-sm); color: #b8a8d0; }
-    .synergy-fired .sf-desc { font-family: var(--font-body); font-size: var(--text-sm); color: #9a8ab0; font-style: italic; }
+    .pr-score { font-family: var(--font-display); font-size: 56px; color: var(--gold); text-shadow: 0 0 15px var(--gold-glow); line-height: 1; margin-bottom: var(--space-2); }
+    .pr-target { font-family: var(--font-body); font-size: var(--text-lg); color: var(--fg-dim); }
+    .pr-table-wrap { width: 100%; max-width: 640px; background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3); margin-bottom: var(--space-4); }
+    .pr-table-title { font-family: var(--font-display); font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-dim); margin-bottom: var(--space-2); }
+    .pr-tr { display: grid; grid-template-columns: 30px 1fr 44px 36px 36px 50px; align-items: center; gap: var(--space-1); padding: var(--space-1) 0; border-bottom: 1px solid var(--border-soft); font-family: var(--font-body); font-size: var(--text-lg); }
+    .pr-tr:last-child { border-bottom: none; }
+    .pr-td-pos { font-family: var(--font-display); font-size: 8px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); text-align: center; }
+    .pr-td-name { color: var(--fg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .pr-td-base { color: var(--fg-dim); text-align: right; }
+    .pr-td-form { color: var(--info); text-align: right; font-size: var(--text-sm); }
+    .pr-td-fatigue { text-align: right; font-size: var(--text-sm); }
+    .pr-td-fatigue.ok { color: var(--accent); }
+    .pr-td-fatigue.tired { color: var(--warn); }
+    .pr-td-chips { font-family: var(--font-display); font-size: 10px; color: var(--gold); text-shadow: 0 0 6px var(--gold-glow); text-align: right; }
+    .pr-syn-section { width: 100%; max-width: 640px; margin-bottom: var(--space-6); }
+    .pr-syn-header { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-3); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; font-family: var(--font-body); font-size: var(--text-lg); color: var(--fg); user-select: none; }
+    .pr-syn-header:hover { background: var(--surface-hover); }
+    .pr-syn-count { color: var(--fg); }
+    .pr-syn-total { margin-left: auto; font-family: var(--font-display); font-size: 10px; color: var(--gold); text-shadow: 0 0 4px var(--gold-glow); }
+    .pr-syn-arrow { color: var(--muted); font-size: var(--text-sm); transition: transform 0.2s; }
+    .pr-syn-body { display: none; padding: var(--space-2) 0; }
+    .pr-syn-body.open { display: block; }
+    .pr-syn-group-title { font-family: var(--font-display); font-size: 7px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-dim); padding: var(--space-2) var(--space-2) var(--space-1); }
+    .pr-syn-item { display: grid; grid-template-columns: 10px 1fr 44px; gap: var(--space-2); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); align-items: start; }
+    .pr-syn-item.triggered { background: rgba(57,255,20,0.04); }
+    .pr-syn-item.inactive { opacity: 0.5; }
+    .pr-syn-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+    .pr-syn-dot.active { background: var(--accent); box-shadow: 0 0 4px var(--accent-glow); }
+    .pr-syn-dot.inactive { background: var(--muted); }
+    .pr-syn-name { font-family: var(--font-body); font-size: var(--text-xl); color: var(--fg); }
+    .pr-syn-desc { font-family: var(--font-body); font-size: var(--text-base); color: var(--muted); line-height: 1.3; }
+    .pr-syn-contrib { font-family: var(--font-body); font-size: var(--text-base); color: var(--fg-dim); }
+    .pr-syn-value { font-family: var(--font-display); font-size: 10px; color: var(--gold); text-shadow: 0 0 4px var(--gold-glow); text-align: right; }
+    .pr-syn-none { font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); padding: var(--space-2); }
 
     /* ─── Round Result ──────────────────────────────────────────── */
     .round-verdict { font-family: var(--font-display); font-size: 20px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: var(--space-6); }
@@ -298,12 +372,12 @@
     .round-verdict.lose { color: var(--danger); text-shadow: 0 0 20px var(--danger-glow); }
     .round-scores { display: flex; gap: var(--space-8); justify-content: center; margin-bottom: var(--space-6); }
     .round-score-card { text-align: center; }
-    .round-score-label { font-family: var(--font-display); font-size: 7px; color: var(--muted); text-transform: uppercase; margin-bottom: var(--space-2); }
+    .round-score-label { font-family: var(--font-display); font-size: 9px; color: var(--muted); text-transform: uppercase; margin-bottom: var(--space-2); }
     .round-score-value { font-family: var(--font-display); font-size: 24px; }
     .round-score-value.yours { color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
     .round-score-value.target { color: var(--gold); text-shadow: 0 0 10px var(--gold-glow); }
     .match-progress-rounds { display: flex; gap: var(--space-3); justify-content: center; margin-bottom: var(--space-6); }
-    .round-indicator { font-family: var(--font-display); font-size: 7px; padding: 4px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--fg-dim); }
+    .round-indicator { font-family: var(--font-display); font-size: 9px; padding: 4px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--fg-dim); }
     .round-indicator.won { border-color: var(--accent); color: var(--accent); background: rgba(57,255,20,0.1); }
     .round-indicator.lost { border-color: var(--danger); color: var(--danger); background: rgba(255,51,68,0.1); }
     .round-indicator.current { border-color: var(--gold); color: var(--gold); background: rgba(255,215,0,0.1); }
@@ -318,7 +392,7 @@
     .match-result-card.lost { border-color: var(--danger); }
     .mrc-name { font-family: var(--font-body); font-size: var(--text-xl); color: var(--fg); flex: 1; }
     .mrc-opponent { font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); }
-    .mrc-result { font-family: var(--font-display); font-size: 10px; padding: 4px 12px; border-radius: var(--radius-sm); }
+    .mrc-result { font-family: var(--font-display); font-size: 11px; padding: 4px 12px; border-radius: var(--radius-sm); }
     .mrc-result.won { background: rgba(57,255,20,0.15); color: var(--accent); border: 1px solid var(--accent); }
     .mrc-result.lost { background: rgba(255,51,68,0.15); color: var(--danger); border: 1px solid var(--danger); }
 
@@ -328,6 +402,9 @@
     .btn-primary { border-color: var(--accent); color: var(--accent-on); background: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
     .btn-primary:hover { background: var(--accent-dim); box-shadow: 0 0 12px var(--accent-glow); transform: translateY(-1px); }
     .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; box-shadow: 0 0 12px var(--accent-glow); }
+    .pos-tab:focus-visible, .sub-tab:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+    .player-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     .btn-lg { padding: 16px 32px; font-size: 10px; }
     .btn-danger { border-color: var(--danger); color: #fff; background: var(--danger); }
 
@@ -342,34 +419,37 @@
     /* ─── Responsive ────────────────────────────────────────────── */
     @media (max-width: 920px) {
       .game-area { grid-template-columns: 1fr; }
-      .team-sheet .ts-name { font-size: 13px; }
+      .team-sheet .ts-name { font-size: 15px; }
       .team-sheet-row { grid-template-columns:22px 28px 1fr 44px 24px; padding:5px 10px; }
       .match-sidebar { order: -1; }
-      .player-table { font-size: 11px; }
-      .player-td { padding: 4px 3px; font-size: 11px; }
-      .player-td:first-child { font-size: 13px; }
-      .player-th { font-size: 5px; padding: 3px 3px; }
-      .td-stat { font-size: 12px; }
-      .td-trait { font-size: 9px; }
+      .player-grid { gap: 8px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+      .player-card { padding: 8px 10px; }
+      .pc-name { font-size: 15px; }
+      .pc-stat-val { font-size: 14px; }
       .budget-track { width: 100px; }
       .formations-grid { grid-template-columns: 1fr; }
       .picker-modal { width: 96%; max-height: 90vh; }
       .picker-row { grid-template-columns:1fr 36px 36px 36px 36px 36px 46px 28px; padding:6px 10px; }
       .picker-cols { grid-template-columns:1fr 36px 36px 36px 36px 36px 46px 28px; }
+      .carousel-wrap { max-width: 100%; gap: var(--space-2); }
+      .carousel-card { padding: var(--space-3); }
+      .form-pitch { max-height: 180px; }
+      .form-detail { max-width: 100%; }
     }
     @media (max-width: 600px) {
       .title-logo { font-size: 28px; }
-      .result-score { font-size: 36px; }
-      .team-sheet .ts-name { font-size: 12px; }
+      .pr-score { font-size: 40px; }
+      .team-sheet .ts-name { font-size: 14px; }
       .team-sheet-row { grid-template-columns:18px 24px 1fr 36px 20px; padding:4px 8px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .title-logo, .team-sheet-row.slot-row, .result-verdict.win,
-      .campaign-title.victory, .title-scan { animation: none !important; }
+      .title-logo, .team-sheet-row.slot-row, .pr-verdict.win,
+      .campaign-title.victory, .form-rec { animation: none !important; }
       .title-logo { text-shadow: 0 0 10px var(--accent-glow); }
       .phase-bar-icon { filter: none; }
-      .result-verdict.win { text-shadow: 0 0 8px var(--accent-glow); }
+      .pr-verdict.win { text-shadow: 0 0 8px var(--accent-glow); }
+      .form-rec { box-shadow: 0 0 6px var(--accent-glow); }
     }
   
     /* ─── Card Flip Animation ────────────────────────────────────── */
@@ -408,7 +488,7 @@
       100% { transform: scale(1); }
     }
     /* ─── Score Cascade ──────────────────────────────────────────── */
-    .result-score {
+    .pr-score {
       font-variant-numeric: tabular-nums;
     }
     .score-cascading {
@@ -420,20 +500,7 @@
       100% { text-shadow: 0 0 10px var(--gold-glow); }
     }
     /* ─── Synergy Particle Burst ─────────────────────────────────── */
-    .synergy-particle {
-      position: fixed;
-      pointer-events: none;
-      z-index: 999;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      animation: particle-fly 1s ease-out forwards;
-    }
-    @keyframes particle-fly {
-      0% { opacity: 1; transform: translate(0, 0) scale(1); }
-      100% { opacity: 0; transform: translate(var(--px), var(--py)) scale(0); }
-    }
-    .synergy-fired {
+    .pr-syn-item {
       animation: syn-appear 0.5s ease-out;
     }
     @keyframes syn-appear {
@@ -441,13 +508,15 @@
       60% { transform: translateX(5px); opacity: 1; }
       100% { transform: translateX(0); opacity: 1; }
     }
-
+    @keyframes particle-fly {
+      0% { opacity: 1; transform: translate(0, 0) scale(1); }
+      100% { opacity: 0; transform: translate(var(--px), var(--py)) scale(0); }
+    }
+    .synergy-particle { position: fixed; pointer-events: none; z-index: 999; width: 6px; height: 6px; border-radius: 50%; animation: particle-fly 1s ease-out forwards; }
 </style>
 </head>
 <body>
-  <!-- CRT overlay (always visible) -->
-  <div class="title-crt"></div>
-  <div class="title-scan"></div>
+  <!-- CRT overlay handled by body::after in game.css -->
 
   <!-- ═══════════════════════════════════════════════════════════════ -->
   <!-- SCREEN: TITLE                                                 -->
@@ -476,12 +545,10 @@
 
     <!-- Position filter tabs -->
     <div class="pos-tabs" id="pos-tabs" data-od-id="position-tabs"></div>
+    <div class="sub-tabs" id="sub-tabs" data-od-id="sub-position-tabs"></div>
 
-    <!-- Compact player table -->
-    <table class="player-table" id="player-table">
-      <thead id="player-thead"></thead>
-      <tbody id="player-tbody"></tbody>
-    </table>
+    <!-- Player card grid — tabbed position hub -->
+    <div class="player-grid" id="player-grid" data-od-id="player-cards"></div>
 
     <!-- Squad summary — Pill grid -->
     <div class="squad-section" id="squad-section" data-od-id="squad-summary">
@@ -505,14 +572,26 @@
   </section>
 
   <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- SCREEN: FORMATION SELECT                                      -->
+  <!-- SCREEN: FORMATION SELECT — Carousel                            -->
   <!-- ═══════════════════════════════════════════════════════════════ -->
   <section class="game-screen" id="screen-formation" data-od-id="formation-select-screen">
     <div class="form-header">
       <h1 class="form-title" data-od-id="formation-title">Choose Formation</h1>
-      <p class="form-subtitle" data-od-id="formation-subtitle">Your shape determines position bonuses and trade-offs.</p>
+      <p class="form-subtitle" data-od-id="formation-subtitle">Browse formations. Select the one that fits your squad.</p>
     </div>
-    <div class="formations-grid" id="formations-grid" data-od-id="formations-grid"></div>
+
+    <div class="carousel-dots" id="carousel-dots"></div>
+
+    <div class="carousel-wrap">
+      <button class="carousel-arrow" id="carousel-prev" onclick="carouselPrev()" aria-label="Previous formation">◂</button>
+      <div class="carousel-frame">
+        <div class="carousel-card" id="carousel-card"></div>
+      </div>
+      <button class="carousel-arrow" id="carousel-next" onclick="carouselNext()" aria-label="Next formation">▸</button>
+    </div>
+
+    <div class="form-detail" id="form-detail"></div>
+
     <div class="squad-actions">
       <button class="btn" onclick="showScreen('squad')">◂ Back</button>
       <button class="btn btn-primary btn-lg" id="confirm-formation-btn" disabled>Start Match ▸</button>
@@ -583,7 +662,7 @@
       100% { transform: scale(1); }
     }
     /* ─── Score Cascade ──────────────────────────────────────────── */
-    .result-score {
+    .pr-score {
       font-variant-numeric: tabular-nums;
     }
     .score-cascading {
@@ -595,20 +674,7 @@
       100% { text-shadow: 0 0 10px var(--gold-glow); }
     }
     /* ─── Synergy Particle Burst ─────────────────────────────────── */
-    .synergy-particle {
-      position: fixed;
-      pointer-events: none;
-      z-index: 999;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      animation: particle-fly 1s ease-out forwards;
-    }
-    @keyframes particle-fly {
-      0% { opacity: 1; transform: translate(0, 0) scale(1); }
-      100% { opacity: 0; transform: translate(var(--px), var(--py)) scale(0); }
-    }
-    .synergy-fired {
+    .pr-syn-item {
       animation: syn-appear 0.5s ease-out;
     }
     @keyframes syn-appear {
@@ -616,7 +682,11 @@
       60% { transform: translateX(5px); opacity: 1; }
       100% { transform: translateX(0); opacity: 1; }
     }
-
+    @keyframes particle-fly {
+      0% { opacity: 1; transform: translate(0, 0) scale(1); }
+      100% { opacity: 0; transform: translate(var(--px), var(--py)) scale(0); }
+    }
+    .synergy-particle { position: fixed; pointer-events: none; z-index: 999; width: 6px; height: 6px; border-radius: 50%; animation: particle-fly 1s ease-out forwards; }
 </style>
   </section>
 
@@ -656,6 +726,19 @@
         <div><span class="phase-bar-name" id="phase-name">Goal Kick</span><span class="phase-bar-weight" id="phase-weight">DEF</span></div>
         <div class="phase-bar-desc" id="phase-desc"></div>
         <div class="phase-bar-zone" id="phase-zone-label">Defensive Third</div>
+      </div>
+    </div>
+
+    <!-- Live Phase Score -->
+    <div class="live-score-bar" data-od-id="live-score-bar">
+      <div class="live-score-info">
+        <span class="live-score-label">Phase Score:</span>
+        <span class="live-score-value" id="live-phase-score">0</span>
+        <span class="live-score-unit">♣</span>
+        <span class="live-score-detail" id="live-score-detail"></span>
+      </div>
+      <div class="live-synergy-badges" id="live-synergy-badges">
+        <span class="live-syn-empty">Place players to trigger synergies</span>
       </div>
     </div>
 
@@ -707,19 +790,28 @@
   <!-- SCREEN: PHASE RESULT                                          -->
   <!-- ═══════════════════════════════════════════════════════════════ -->
   <section class="game-screen" id="screen-phase-result" data-od-id="phase-result-screen">
-    <div class="result-screen">
-      <div class="result-verdict" id="pr-verdict">Phase Complete</div>
-      <div class="result-score" id="pr-score">0</div>
-      <div class="result-target" id="pr-target">Target: 500</div>
+    <div style="display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:var(--space-6);text-align:center;">
+      <!-- Hero Score -->
+      <div class="pr-hero">
+        <div class="pr-verdict" id="pr-verdict">Phase Complete</div>
+        <div class="pr-score" id="pr-score">0</div>
+        <div class="pr-target" id="pr-target">Target: 500</div>
+      </div>
 
-      <div class="result-breakdown" id="pr-breakdown" data-od-id="phase-breakdown">
-        <div class="breakdown-title">Player Contributions</div>
+      <!-- Player Contributions Table -->
+      <div class="pr-table-wrap">
+        <div class="pr-table-title">Contributions</div>
         <div id="pr-breakdown-rows"></div>
       </div>
 
-      <div class="result-synergies" id="pr-synergies" data-od-id="phase-synergies">
-        <h3>Synergies Fired</h3>
-        <div id="pr-synergy-list"></div>
+      <!-- Synergies Accordion -->
+      <div class="pr-syn-section">
+        <div class="pr-syn-header" id="pr-syn-toggle">
+          <span>▸▸ <span class="pr-syn-count" id="pr-syn-count">0</span> SYNERGIES FIRED</span>
+          <span class="pr-syn-total" id="pr-syn-total">+0</span>
+          <span class="pr-syn-arrow" id="pr-syn-arrow">▼</span>
+        </div>
+        <div class="pr-syn-body" id="pr-syn-body"></div>
       </div>
 
       <button class="btn btn-primary btn-lg" id="pr-continue-btn">Continue ▸</button>
@@ -814,16 +906,6 @@
     }
   }
 
-  /** Animate synergy list items appearing */
-  function animateSynergies() {
-    var items = document.querySelectorAll('.synergy-fired');
-    items.forEach(function(el, i) {
-      el.style.animation = 'none';
-      el.offsetHeight; // trigger reflow
-      el.style.animation = 'syn-appear 0.5s ease-out ' + (i * 0.15) + 's both';
-      setTimeout(function() { spawnSynergyParticles(el); }, i * 150 + 100);
-    });
-  }
   </script>
   <script>
   // ═══════════════════════════════════════════════════════════════════
@@ -907,6 +989,10 @@
   // ═══════════════════════════════════════════════════════════════════
 
   let squadFilter = 'ALL';
+  let subFilter = null; // null = show all in group, or specific position like 'CB'
+
+  const GROUP_POS = { ALL:null, GK:['GK'], DEF:['CB','FB'], MID:['CDM','CM','CAM'], ATT:['ST','LW','RW'] };
+  const SUB_TABS = { ALL:[], GK:[], DEF:['CB','FB'], MID:['CDM','CM','CAM'], ATT:['ST','LW','RW'] };
 
   function renderSquadBuilder() {
     // Position tabs
@@ -915,43 +1001,49 @@
       `<div class="pos-tab ${p === squadFilter ? 'active' : ''}" onclick="filterSquad('${p}')">${p}</div>`
     ).join('');
 
-    // Filter players by position group
-    const GROUP_POS = { ALL:null, GK:['GK'], DEF:['CB','FB'], MID:['CM','CDM','CAM'], ATT:['ST','LW','RW'] };
+    // Sub-tabs (only for DEF/MID/ATT)
+    const subs = SUB_TABS[squadFilter] || [];
+    const subTabsEl = document.getElementById('sub-tabs');
+    if (subs.length > 0) {
+      subTabsEl.innerHTML = `<div class="sub-tab ${!subFilter ? 'active' : ''}" onclick="filterSub(null)">ALL ${squadFilter}</div>` +
+        subs.map(s => `<div class="sub-tab ${subFilter === s ? 'active' : ''}" onclick="filterSub('${s}')">${s}</div>`).join('');
+      subTabsEl.style.display = 'flex';
+    } else {
+      subTabsEl.innerHTML = '';
+      subTabsEl.style.display = 'none';
+    }
+
+    // Filter players by position group + sub-filter
     const allowed = GROUP_POS[squadFilter];
-    const filtered = allowed ? PLAYERS.filter(p => allowed.includes(p.position)) : PLAYERS;
+    let filtered = allowed ? PLAYERS.filter(p => allowed.includes(p.position)) : PLAYERS;
+    if (subFilter) {
+      filtered = filtered.filter(p => p.position === subFilter);
+    }
 
-    // Table header
-    document.getElementById('player-thead').innerHTML =
-      '<tr>' +
-        '<th class="player-th">Player</th>' +
-        '<th class="player-th td-atk">ATK</th>' +
-        '<th class="player-th td-pac">PAC</th>' +
-        '<th class="player-th td-pas">PAS</th>' +
-        '<th class="player-th td-def">DEF</th>' +
-        '<th class="player-th td-spc">SPC</th>' +
-        '<th class="player-th" style="color:var(--gold)">Cost</th>' +
-        '<th class="player-th">Traits</th>' +
-      '</tr>';
+    // Player card grid with stat bars
+    const statKeys = ['atk','pac','pas','def_','spc'];
+    const statNames = ['ATK','PAC','PAS','DEF','SPC'];
+    const statColors = ['atk','pac','pas','def','spc'];
 
-    // Table rows
-    document.getElementById('player-tbody').innerHTML = filtered.map(p => {
+    document.getElementById('player-grid').innerHTML = filtered.map(p => {
       const sel = G.selectedIds.has(p.id);
       const cost = calcCost(p);
-      const openSlot = G.selectedIds.size < 12;
-      return '<tr class="player-tr' + (sel ? ' selected' : '') + '" onclick="toggleSquadPlayer(\'' + p.id + '\')" data-od-id="row-' + p.id + '">' +
-        '<td class="player-td">' +
-          (sel ? '<span class="pname-check">✓</span>' : '') +
-          '<span class="pos-badge ' + p.position + '">' + p.position + '</span>' +
-          p.name +
-        '</td>' +
-        '<td class="player-td"><span class="td-stat td-atk">' + p.atk + '</span></td>' +
-        '<td class="player-td"><span class="td-stat td-pac">' + p.pac + '</span></td>' +
-        '<td class="player-td"><span class="td-stat td-pas">' + p.pas + '</span></td>' +
-        '<td class="player-td"><span class="td-stat td-def">' + p.def_ + '</span></td>' +
-        '<td class="player-td"><span class="td-stat td-spc">' + p.spc + '</span></td>' +
-        '<td class="player-td"><span class="td-cost">' + cost + '</span></td>' +
-        '<td class="player-td"><div class="td-traits">' + p.traits.map(t => '<span class="td-trait">' + t + '</span>').join('') + '</div></td>' +
-      '</tr>';
+      const statsHtml = statKeys.map((k, i) =>
+        `<div class="pc-stat">
+          <span class="pc-stat-label">${statNames[i]}</span>
+          <div class="pc-stat-bar"><div class="pc-stat-fill ${statColors[i]}" style="width:${p[k]*10}%"></div></div>
+          <span class="pc-stat-val ${statColors[i]}">${p[k]}</span>
+        </div>`
+      ).join('');
+      return `<div class="player-card${sel ? ' selected' : ''}" onclick="toggleSquadPlayer('${p.id}')" data-od-id="card-${p.id}">
+        <div class="pc-header">
+          <span class="pc-pos ${p.position}">${p.position}</span>
+          <span class="pc-name">${p.name}</span>
+          <span class="pc-cost">${cost}</span>
+        </div>
+        <div class="pc-stats">${statsHtml}</div>
+        <div class="pc-traits">${p.traits.join(' · ')}</div>
+      </div>`;
     }).join('');
 
     updateSquadSummary();
@@ -959,6 +1051,12 @@
 
   function filterSquad(pos) {
     squadFilter = pos;
+    subFilter = null; // reset sub-filter when switching groups
+    renderSquadBuilder();
+  }
+
+  function filterSub(pos) {
+    subFilter = pos;
     renderSquadBuilder();
   }
 
@@ -1129,41 +1227,140 @@
   // ═══════════════════════════════════════════════════════════════════
 
   let selectedFormationId = null;
+  let _carouselIdx = 0;
 
-  function renderFormationSelect() {
-    selectedFormationId = null;
-    const grid = document.getElementById('formations-grid');
-    grid.innerHTML = FORMATIONS.map(f => {
-      const bonusHtml = Object.entries(f.positionBonus).map(([pos, val]) => {
-        const cls = val > 0 ? 'bonus-pos' : 'bonus-neg';
-        const sign = val > 0 ? '+' : '';
-        return `<span class="bonus-tag ${cls}">${pos} ${sign}${val}</span>`;
-      }).join('');
-
-      const pitchSlots = f.pitchPositions.map(p =>
-        `<div class="form-slot" style="left:${p.x}%;top:${p.y}%">${p.pos}</div>`
-      ).join('');
-
-      return `<div class="formation-card" data-od-id="formation-${f.id}" onclick="selectFormation('${f.id}')">
-        <div class="formation-name">${f.name}</div>
-        <div class="formation-desc">${f.description}</div>
-        <div class="form-pitch">${pitchSlots}</div>
-        ${bonusHtml ? `<div class="bonuses">${bonusHtml}</div>` : '<div class="bonuses"><span class="bonus-tag bonus-pos">No bonuses</span></div>'}
-        <div class="form-meta">
-          <span>Hand: ${f.handSize}</span>
-          <span>Slots: ${f.slots.length}</span>
-          <span>Mult: ×${f.globalMult}</span>
-        </div>
-      </div>`;
-    }).join('');
-
-    document.getElementById('confirm-formation-btn').disabled = true;
+  function getFormationFit(formation, squad) {
+    // Count positions in squad
+    const counts = {};
+    squad.forEach(p => { counts[p.position] = (counts[p.position] || 0) + 1; });
+    // Count slots needed per position
+    const slotCounts = {};
+    formation.slots.forEach(s => { slotCounts[s] = (slotCounts[s] || 0) + 1; });
+    // Calculate fit: how many slots can be filled with available players
+    let filled = 0;
+    let total = formation.slots.length;
+    Object.entries(slotCounts).forEach(([pos, needed]) => {
+      const have = counts[pos] || 0;
+      filled += Math.min(have, needed);
+    });
+    return { filled, total, pct: Math.round((filled / total) * 100) };
   }
 
-  function selectFormation(id) {
-    selectedFormationId = id;
-    document.querySelectorAll('.formation-card').forEach(c => c.classList.remove('selected'));
-    document.querySelector(`[data-od-id="formation-${id}"]`).classList.add('selected');
+  function renderCarousel(idx) {
+    const f = FORMATIONS[idx];
+    const squad = G.squad || [];
+    const fit = getFormationFit(f, squad);
+    const fits = FORMATIONS.map(f2 => ({ id: f2.id, ...getFormationFit(f2, squad) }));
+    const maxPct = Math.max(...fits.map(f2 => f2.pct));
+    const bestIds = fits.filter(f2 => f2.pct === maxPct).map(f2 => f2.id);
+    const isRec = bestIds.includes(f.id);
+
+    // Pitch slots
+    const pitchSlots = f.pitchPositions.map(p =>
+      `<div class="form-slot" style="left:${p.x}%;top:${p.y}%">${p.pos}</div>`
+    ).join('');
+
+    // Bonuses
+    const bonusEntries = Object.entries(f.positionBonus);
+    const bonusHtml = bonusEntries.length
+      ? bonusEntries.map(([pos, val]) => {
+          const cls = val > 0 ? 'bonus-pos' : 'bonus-neg';
+          const sign = val > 0 ? '+' : '';
+          return `<span class="bonus-tag ${cls}">${pos} ${sign}${val}</span>`;
+        }).join('')
+      : '';
+
+    // Card
+    document.getElementById('carousel-card').innerHTML = `
+      ${isRec ? `<div class="form-rec">RECOMMENDED</div>` : ''}
+      <div class="formation-name">${f.name}</div>
+      <div class="formation-index">Formation ${idx + 1} of ${FORMATIONS.length}</div>
+      <div class="form-pitch">${pitchSlots}</div>
+    `;
+
+    // Detail panel — Position Fit Breakdown
+    // Count squad players per position
+    const posCounts = {};
+    squad.forEach(p => { posCounts[p.position] = (posCounts[p.position] || 0) + 1; });
+    // Count slots needed per position for this formation
+    const slotNeeded = {};
+    f.slots.forEach(s => { slotNeeded[s] = (slotNeeded[s] || 0) + 1; });
+    // All unique positions across squad + formation slots
+    const allPositions = [...new Set([...Object.keys(slotNeeded), ...Object.keys(posCounts)])];
+    const posOrder = ['GK','CB','FB','CDM','CM','CAM','ST','LW','RW'];
+    const sortedPositions = allPositions.sort((a,b) => posOrder.indexOf(a) - posOrder.indexOf(b));
+
+    const posRows = sortedPositions.map(pos => {
+      const needed = slotNeeded[pos] || 0;
+      const have = posCounts[pos] || 0;
+      if (needed === 0 && have > 0) return ''; // Player with no slot needed — skip
+      const eligible = squad.filter(p => p.position === pos);
+      const availNames = eligible.map(p => p.name.split(' ')[0]).join(', ');
+      let status, statusClass;
+      if (needed === 0) return '';
+      if (have >= needed) { status = '✓ FULL'; statusClass = 'green'; }
+      else if (have === 0) { status = `✗ EMPTY (need ${needed})`; statusClass = 'poor'; }
+      else { status = `✗ NEED ${needed - have} more`; statusClass = 'gold'; }
+      return `<div class="fit-row">
+        <span class="fit-row-pos fit-row-pos-${pos}">${pos}</span>
+        <span class="fit-row-players">${availNames || '—'}</span>
+        <span class="fit-row-count">${have}/${needed}</span>
+        <span class="fit-row-status ${statusClass}">${status}</span>
+      </div>`;
+    }).filter(Boolean).join('');
+
+    const totalHave = squad.length;
+    const totalNeeded = f.slots.length;
+    const allFull = sortedPositions.every(pos => {
+      const needed = slotNeeded[pos] || 0;
+      return needed === 0 || (posCounts[pos] || 0) >= needed;
+    });
+
+    document.getElementById('form-detail').innerHTML = `
+      <div class="form-desc">${f.description}</div>
+      <div class="form-detail-meta">
+        <div class="form-detail-stat">
+          Global Mult
+          <span class="val ${f.globalMult >= 1.0 ? 'green' : 'gold'}">×${f.globalMult}</span>
+        </div>
+        <div class="form-detail-stat">
+          Slots Filled
+          <span class="val ${fit.pct >= 80 ? 'green' : fit.pct >= 50 ? 'gold' : 'poor'}">${fit.filled}/${fit.total}</span>
+        </div>
+        <div class="form-detail-stat">
+          Overall
+          <span class="val ${allFull ? 'green' : 'gold'}">${allFull ? '✓ READY' : Math.round((fit.filled/fit.total)*100) + '%'}</span>
+        </div>
+      </div>
+      <div class="fit-rows">${posRows}</div>
+      ${bonusHtml ? `<div class="bonuses">${bonusHtml}</div>` : ''}
+      <div style="font-family:var(--font-body);font-size:14px;color:var(--muted);margin-top:var(--space-2);text-align:center;">
+        Squad: ${totalHave} players · ${totalNeeded} slots needed
+      </div>
+    `;
+
+    // Dot indicators
+    const dotsHtml = FORMATIONS.map((_, i) =>
+      `<div class="carousel-dot${i === idx ? ' active' : ''}" onclick="carouselGo(${i})"></div>`
+    ).join('');
+    document.getElementById('carousel-dots').innerHTML = dotsHtml;
+
+    // Arrow states
+    document.getElementById('carousel-prev').disabled = idx === 0;
+    document.getElementById('carousel-next').disabled = idx === FORMATIONS.length - 1;
+
+    // Selection state
+    selectedFormationId = f.id;
+    document.getElementById('confirm-formation-btn').disabled = false;
+  }
+
+  function carouselPrev() { if (_carouselIdx > 0) { _carouselIdx--; renderCarousel(_carouselIdx); } }
+  function carouselNext() { if (_carouselIdx < FORMATIONS.length - 1) { _carouselIdx++; renderCarousel(_carouselIdx); } }
+  function carouselGo(i) { _carouselIdx = i; renderCarousel(_carouselIdx); }
+
+  function renderFormationSelect() {
+    _carouselIdx = 0;
+    renderCarousel(0);
     document.getElementById('confirm-formation-btn').disabled = false;
   }
 
@@ -1417,9 +1614,106 @@
     renderSynergyPreview();
   }
 
+  // ═══════════════════════════════════════════════════════════════════
+  // LIVE PHASE SCORE + SYNERGY INDICATORS
+  // ═══════════════════════════════════════════════════════════════════
+
+  function updateLivePhaseDisplay() {
+    const phase = G.roundPhases[G.phaseIdx];
+    if (!phase) return;
+
+    // Build field from current placements
+    const field = [];
+    for (const [idx, pid] of Object.entries(G.phasePlacement)) {
+      const player = G.squad.find(p => p.id === pid);
+      const slot = phase.slots[parseInt(idx)];
+      if (player && slot) field.push([player, slotFieldPosition(slot)]);
+    }
+
+    // Detect synergies live
+    const synResult = field.length >= 2 ? detectSynergies(field, SYNERGIES) : {};
+    const globalMeta = synResult.__global__ || {};
+    delete synResult.__global__;
+    delete synResult.__carryover__;
+
+    // Collect fired synergy names
+    const firedSet = new Set();
+    for (const v of Object.values(synResult)) {
+      for (const name of (v.fired_synergies || [])) firedSet.add(name.split(' (')[0]);
+    }
+    // Add persistent synergies
+    for (const name of (G.persistentBuffs && G.persistentBuffs.fired_synergies || [])) {
+      firedSet.add(name + ' (P)');
+    }
+
+    // Calculate total chips from placed players
+    let totalChips = 0;
+    const placementList = [];
+    for (const [idx, pid] of Object.entries(G.phasePlacement)) {
+      const player = G.squad.find(p => p.id === pid);
+      const slot = phase.slots[parseInt(idx)];
+      if (player && slot) {
+        const fp = slotFieldPosition(slot);
+        const baseChips = calculateChips(player, fp);
+        const fBonus = (G.formation && G.formation.positionBonus && G.formation.positionBonus[fp]) || 0;
+        const totalWithBonus = baseChips + fBonus;
+
+        // Get synergy add for this player
+        const ps = synResult[player.id] || { add_chips: 0, multiply: 1.0 };
+        const fatigueMult = G.fatigue[player.id] !== undefined ? G.fatigue[player.id] : 1.0;
+        const afterSyn = Math.round((totalWithBonus + (ps.add_chips || 0)) * (ps.multiply || 1.0) * fatigueMult);
+        placementList.push({ player, fp, chips: afterSyn });
+        totalChips += afterSyn;
+      }
+    }
+
+    // Update DOM
+    document.getElementById('live-phase-score').textContent = totalChips;
+    const detailEl = document.getElementById('live-score-detail');
+    if (field.length === 0) {
+      detailEl.textContent = '— assign players';
+    } else if (field.length < phase.slots.length) {
+      detailEl.textContent = field.length + '/' + phase.slots.length + ' slots · ' + firedSet.size + ' syn';
+    } else {
+      detailEl.textContent = 'all slots · ' + firedSet.size + ' syn · READY';
+    }
+
+    // Update synergy badges
+    const badgesEl = document.getElementById('live-synergy-badges');
+    if (firedSet.size === 0 && field.length === 0) {
+      badgesEl.innerHTML = '<span class="live-syn-empty">Place players to trigger synergies</span>';
+    } else if (firedSet.size === 0) {
+      badgesEl.innerHTML = '<span class="live-syn-empty">No synergies with current placements</span>';
+    } else {
+      let badgesHtml = '';
+      for (const name of firedSet) {
+        const isP = name.endsWith(' (P)');
+        badgesHtml += '<span class="live-syn-badge fired">' + name + '</span>';
+      }
+      badgesEl.innerHTML = badgesHtml;
+    }
+
+    // Also update submit hint
+    updateSubmitHint();
+  }
+
   function renderSlotCards() {
     const phase = G.roundPhases[G.phaseIdx];
     const container = document.getElementById('slot-cards');
+    // Detect synergies live to show badge on slot cards
+    const field = [];
+    for (const [fj, pid] of Object.entries(G.phasePlacement)) {
+      const p = G.squad.find(s => s.id === pid);
+      const sl = phase.slots[parseInt(fj)];
+      if (p && sl) field.push([p, slotFieldPosition(sl)]);
+    }
+    const synResult = field.length >= 2 ? detectSynergies(field, SYNERGIES) : {};
+    const synPlayerSet = new Set();
+    for (const [sk, v] of Object.entries(synResult)) {
+      if (sk === '__global__' || sk === '__carryover__') continue;
+      if (v && v.fired_synergies && v.fired_synergies.length > 0) synPlayerSet.add(sk);
+    }
+
     let html = '';
     phase.slots.forEach(function(slot, i) {
       const fp = slotFieldPosition(slot);
@@ -1433,10 +1727,13 @@
 
       const chips = filled ? calculateChips(player, fp) : 0;
       const posClass = getPosClass(fp);
+      const synActive = filled && synPlayerSet.has(player.id);
+      const playerSynCount = synActive ? (synResult[player.id] && synResult[player.id].fired_synergies ? synResult[player.id].fired_synergies.length : 0) : 0;
 
-      html += '<div class="' + (filled ? 'slot-card filled' : 'slot-card') + '" onclick="selectSlot(' + i + ')" data-od-id="slot-' + i + '">' +
+      html += '<div class="' + (filled ? 'slot-card filled' : 'slot-card') + (synActive ? ' syn-fired' : '') + '" onclick="selectSlot(' + i + ')" data-od-id="slot-' + i + '">' +
         '<div><span style="font-family:var(--font-display);font-size:9px;color:' +
           (filled ? 'var(--accent)' : 'var(--fg-dim)') + '">' + fp + '</span>' +
+        (synActive ? '<span class="slot-syn-badge" style="font-family:var(--font-display);font-size:7px;color:var(--accent);background:rgba(57,255,20,0.1);border:1px solid var(--accent);border-radius:2px;padding:1px 6px;margin-left:var(--space-2)">⚡' + playerSynCount + '</span>' : '') +
         (label ? '<span style="font-family:var(--font-body);font-size:var(--text-sm);color:var(--muted);margin-left:var(--space-2)">' + label + '</span>' : '') +
         '</div>' +
         '<span style="font-family:var(--font-body);font-size:var(--text-lg);color:' +
@@ -1453,8 +1750,9 @@
     const total = phase.slots.length;
     document.getElementById('slot-summary').textContent = filled + '/' + total + ' slots filled' +
       (filled > 0 ? ' · preview below' : '');
-  }
 
+    updateLivePhaseDisplay();
+  }
   let _selectedSlot = null;
 
   function renderEligiblePlayers(slotIdx) {
@@ -1514,6 +1812,7 @@
     renderSlotCards();
     renderEligiblePlayers(_selectedSlot);
     renderSynergyPreview();
+    updateLivePhaseDisplay();
   }
 
   function selectSlot(index) {
@@ -1537,6 +1836,7 @@
     renderSlotCards();
     renderEligiblePlayers(null);
     renderSynergyPreview();
+    updateLivePhaseDisplay();
   }function formatSlotLabel(slot) {
     if (typeof slot === 'string') return '';
     if (typeof slot === 'object' && slot.as) {
@@ -1628,6 +1928,7 @@
     renderSlotCards();
     renderEligiblePlayers(null);
     renderSynergyPreview();
+    updateLivePhaseDisplay();
   }
 
   // ═══════════════════════════════════════════════════════════════════
@@ -1866,45 +2167,152 @@
     if (!pr) { showScreen('match'); return; }
 
     const result = pr.result;
-    document.getElementById('pr-score').textContent = '0'; setTimeout(function() { animateScoreCascade(result.total, 800); }, 100);
-    document.getElementById('pr-target').textContent = `Target: ${pr.target} · Running total: ${pr.roundScore}`;
+    const target = pr.target;
+    const running = pr.roundScore;
 
-    // Breakdown
-    const rows = result.breakdown.map(b => {
-      const multDisplay = b.multiply !== 1.0 ? `×${b.multiply}` : '—';
-      const fatigueDisplay = b.fatigue !== 1.0 ? `×${b.fatigue}` : '—';
-      return `<div class="breakdown-row">
-        <span class="bd-pos">${b.position}</span>
-        <span class="bd-player">${b.player}</span>
-        <span class="bd-base">${b.base_chips}${b.add_chips ? '+' + b.add_chips : ''}</span>
-        <span class="bd-mult">${multDisplay}</span>
-        <span class="bd-fatigue">${fatigueDisplay}</span>
-        <span class="bd-subtotal">${b.subtotal} ♣</span>
-      </div>`;
+    // Hero score cascade
+    document.getElementById('pr-score').textContent = '0';
+    setTimeout(function() { animateScoreCascade(result.total, 800); }, 100);
+    document.getElementById('pr-target').textContent = `Target: ${target} · Running: ${running}`;
+
+    // Player Contributions Table
+    const formation = G.formation || {};
+    const posBonusMap = formation.positionBonus || {};
+    const headerRow = '<div class="pr-tr" style="color:var(--muted);font-size:var(--text-sm);border-bottom:2px solid var(--border-soft);padding-bottom:var(--space-1)"><span class="pr-td-pos">POS</span><span class="pr-td-name">Player</span><span class="pr-td-base">Base</span><span class="pr-td-form">Form</span><span class="pr-td-fatigue">Fati</span><span class="pr-td-chips">Chips</span></div>';
+
+    const rowsHtml = result.breakdown.map(b => {
+      const posFormBonus = posBonusMap[b.position] || 0;
+      const baseWithoutForm = b.base_chips - posFormBonus;
+      const formDisplay = posFormBonus > 0 ? '+' + posFormBonus : '—';
+      const fatigueClass = b.fatigue < 1.0 ? 'tired' : 'ok';
+      const fatigueDisplay = b.fatigue < 1.0 ? '×' + b.fatigue : '✓';
+      return '<div class="pr-tr">' +
+        '<span class="pr-td-pos">' + b.position + '</span>' +
+        '<span class="pr-td-name">' + b.player + '</span>' +
+        '<span class="pr-td-base">' + baseWithoutForm + '</span>' +
+        '<span class="pr-td-form">' + formDisplay + '</span>' +
+        '<span class="pr-td-fatigue ' + fatigueClass + '">' + fatigueDisplay + '</span>' +
+        '<span class="pr-td-chips">' + b.subtotal + '♣</span>' +
+        '</div>';
     }).join('');
-    document.getElementById('pr-breakdown-rows').innerHTML = rows;
 
-    // Synergies — use top-level fired_synergies from result
-    const synList = document.getElementById('pr-synergy-list');
-    const firedNames = new Set(result.fired_synergies || []);
+    document.getElementById('pr-breakdown-rows').innerHTML = headerRow + rowsHtml;
 
-    if (firedNames.size > 0) {
-      const contributors = result.synergy_contributors || {};
-      setTimeout(animateSynergies, 50);
-      synList.innerHTML = [...firedNames].map(name => {
-        const desc = (result.synergy_descriptions || {})[name] || '';
-        const contribs = contributors[name] || [];
-        return `<div class="synergy-fired">
-          <div class="synergy-dot"></div>
-          <span class="sf-name">${name}</span>
-          ${contribs.length ? `<span class="sf-contrib">${contribs.join(', ')}</span>` : ''}
-          <span class="sf-desc">${desc}</span>
-        </div>`;
-      }).join('');
-    } else {
-      synList.innerHTML = '<div style="font-family:var(--font-body);font-size:var(--text-lg);color:var(--muted)">No synergies fired this phase</div>';
+    // Synergies Accordion
+    const firedNames = result.fired_synergies || [];
+    document.getElementById('pr-syn-count').textContent = firedNames.length;
+
+    // Calculate total synergy chip adds
+    let totalSynAdd = 0;
+    for (const b of result.breakdown) {
+      totalSynAdd += (b.add_chips || 0);
     }
+    document.getElementById('pr-syn-total').textContent = '+' + Math.round(totalSynAdd);
+
+    const synBody = document.getElementById('pr-syn-body');
+    const contributors = result.synergy_contributors || {};
+    const descriptions = result.synergy_descriptions || {};
+
+    if (firedNames.length === 0) {
+      synBody.innerHTML = '<div class="pr-syn-none">No synergies fired this phase</div>';
+    } else {
+      // Categorize by persistent
+      var phaseSyns = [];
+      var persistentSyns = [];
+      for (var si = 0; si < firedNames.length; si++) {
+        var name = firedNames[si];
+        var synDef = null;
+        for (var sj = 0; sj < SYNERGIES.length; sj++) {
+          if (SYNERGIES[sj].name === name) { synDef = SYNERGIES[sj]; break; }
+        }
+        if (synDef && synDef.persistent) persistentSyns.push(name);
+        else phaseSyns.push(name);
+      }
+
+      var synHtml = '';
+
+      if (phaseSyns.length > 0) {
+        synHtml += '<div class="pr-syn-group-title">Phase-Specific</div>';
+        for (var si = 0; si < phaseSyns.length; si++) {
+          var name = phaseSyns[si];
+          var isActive = name.indexOf('INACTIVE') === -1;
+          var synergyNames = phaseSyns; // needed inside
+          var contribText = '';
+          var cList = contributors[name];
+          if (cList && cList.length > 0) {
+            contribText = '<div class="pr-syn-contrib">' + cList.join(' · ') + '</div>';
+          }
+          var descText = descriptions[name] || '';
+          // Extract value from synergy definition
+          var valText = '';
+          var synDef = null;
+          for (var sj = 0; sj < SYNERGIES.length; sj++) {
+            if (SYNERGIES[sj].name === name) { synDef = SYNERGIES[sj]; break; }
+          }
+          if (synDef) {
+            if (synDef.effectType === 'add_chips' && synDef.effect && synDef.effect.add_chips) {
+              valText = '+' + synDef.effect.add_chips;
+            } else if (synDef.effectType === 'multiply' && synDef.effect && synDef.effect.multiply) {
+              valText = '×' + synDef.effect.multiply;
+            }
+          }
+          synHtml += '<div class="pr-syn-item triggered">' +
+            '<div class="pr-syn-dot active"></div>' +
+            '<div class="pr-syn-info"><div class="pr-syn-name">' + name + '</div>' +
+            (descText ? '<div class="pr-syn-desc">' + descText + '</div>' : '') +
+            contribText + '</div>' +
+            (valText ? '<div class="pr-syn-value">' + valText + '</div>' : '') +
+            '</div>';
+        }
+      }
+
+      if (persistentSyns.length > 0) {
+        synHtml += '<div class="pr-syn-group-title">Persistent</div>';
+        for (var si = 0; si < persistentSyns.length; si++) {
+          var name = persistentSyns[si];
+          var contribText = '';
+          var cList = contributors[name];
+          if (cList && cList.length > 0) {
+            contribText = '<div class="pr-syn-contrib">' + cList.join(' · ') + '</div>';
+          }
+          var descText = descriptions[name] || '';
+          var valText = '';
+          var synDef = null;
+          for (var sj = 0; sj < SYNERGIES.length; sj++) {
+            if (SYNERGIES[sj].name === name) { synDef = SYNERGIES[sj]; break; }
+          }
+          if (synDef) {
+            if (synDef.effectType === 'persistent_add' && synDef.effect && synDef.effect.add_chips) {
+              valText = '+' + synDef.effect.add_chips;
+            } else if (synDef.effectType === 'persistent_multiply' && synDef.effect && synDef.effect.multiply) {
+              valText = '×' + synDef.effect.multiply;
+            }
+          }
+          synHtml += '<div class="pr-syn-item triggered">' +
+            '<div class="pr-syn-dot active"></div>' +
+            '<div class="pr-syn-info"><div class="pr-syn-name">' + name + '</div>' +
+            (descText ? '<div class="pr-syn-desc">' + descText + '</div>' : '') +
+            contribText + '</div>' +
+            (valText ? '<div class="pr-syn-value">' + valText + '</div>' : '') +
+            '</div>';
+        }
+      }
+
+      synBody.innerHTML = synHtml;
+    }
+
+    // Accordion stays collapsed by default
+    document.getElementById('pr-syn-body').classList.remove('open');
+    document.getElementById('pr-syn-arrow').classList.remove('open');
   }
+
+  // Accordion toggle
+  document.getElementById('pr-syn-toggle').addEventListener('click', function() {
+    var body = document.getElementById('pr-syn-body');
+    var arrow = document.getElementById('pr-syn-arrow');
+    body.classList.toggle('open');
+    arrow.classList.toggle('open');
+  });
 
   document.getElementById('pr-continue-btn').addEventListener('click', () => {
     G.phaseIdx++;

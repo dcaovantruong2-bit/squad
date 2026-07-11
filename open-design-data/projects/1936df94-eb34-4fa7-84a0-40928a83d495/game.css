@@ -115,7 +115,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 p { text-wrap: pretty; }
 h1, h2, h3, h4 { text-wrap: balance; font-family: var(--font-display); }
 
-/* ─── CRT Scanline Overlay (global) ────────────────────────────────── */
+/* ─── CRT Scanline Overlay (global, subtle) ────────────────────────── */
 body::after {
   content: '';
   position: fixed;
@@ -123,9 +123,9 @@ body::after {
   background: repeating-linear-gradient(
     0deg,
     transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.12) 2px,
-    rgba(0, 0, 0, 0.12) 4px
+    transparent 4px,
+    rgba(0, 0, 0, 0.03) 4px,
+    rgba(0, 0, 0, 0.03) 8px
   );
   pointer-events: none;
   z-index: 9999;
@@ -177,7 +177,7 @@ body::after {
   border-radius: var(--radius-md);
   border: 2px solid var(--border);
   font-family: var(--font-display);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -188,6 +188,7 @@ body::after {
 }
 .btn:active { transform: translateY(1px); }
 .btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; box-shadow: 0 0 12px var(--accent-glow); }
 
 .btn-primary {
   background: var(--accent);
@@ -221,12 +222,12 @@ body::after {
 
 .btn-lg {
   padding: var(--space-4) var(--space-8);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .btn-sm {
   padding: var(--space-2) var(--space-4);
-  font-size: 8px;
+  font-size: 10px;
 }
 
 /* ─── Cards ────────────────────────────────────────────────────────── */
@@ -269,7 +270,7 @@ body::after {
 }
 .player-card .player-name {
   font-family: var(--font-display);
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -281,7 +282,7 @@ body::after {
 }
 .player-card .player-position {
   font-family: var(--font-display);
-  font-size: 8px;
+  font-size: 10px;
   color: var(--accent);
   letter-spacing: 0.08em;
 }
@@ -684,4 +685,13 @@ body::after {
 @media (max-width: 480px) {
   .player-card-grid { grid-template-columns: 1fr !important; }
   .pitch { max-height: 350px; }
+}
+
+/* ─── Reduced Motion ──────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

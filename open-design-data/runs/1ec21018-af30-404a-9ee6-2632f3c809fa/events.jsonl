@@ -1,0 +1,649 @@
+{"id":1,"event":"pipeline_stage_started","data":{"kind":"pipeline_stage_started","runId":"1ec21018-af30-404a-9ee6-2632f3c809fa","snapshotId":"d08765b3-7fc5-4a5d-a1b5-ba88d9d7b11e","stageId":"plan","iteration":0,"startedAt":1783751583413},"timestamp":1783751583413}
+{"id":2,"event":"pipeline_stage_completed","data":{"kind":"pipeline_stage_completed","runId":"1ec21018-af30-404a-9ee6-2632f3c809fa","snapshotId":"d08765b3-7fc5-4a5d-a1b5-ba88d9d7b11e","stageId":"plan","iteration":0,"completedAt":1783751583414,"converged":true},"timestamp":1783751583414}
+{"id":3,"event":"pipeline_stage_started","data":{"kind":"pipeline_stage_started","runId":"1ec21018-af30-404a-9ee6-2632f3c809fa","snapshotId":"d08765b3-7fc5-4a5d-a1b5-ba88d9d7b11e","stageId":"generate","iteration":0,"startedAt":1783751583414},"timestamp":1783751583414}
+{"id":4,"event":"pipeline_stage_completed","data":{"kind":"pipeline_stage_completed","runId":"1ec21018-af30-404a-9ee6-2632f3c809fa","snapshotId":"d08765b3-7fc5-4a5d-a1b5-ba88d9d7b11e","stageId":"generate","iteration":0,"completedAt":1783751583415,"converged":true},"timestamp":1783751583415}
+{"id":5,"event":"pipeline_stage_started","data":{"kind":"pipeline_stage_started","runId":"1ec21018-af30-404a-9ee6-2632f3c809fa","snapshotId":"d08765b3-7fc5-4a5d-a1b5-ba88d9d7b11e","stageId":"critique","iteration":0,"startedAt":1783751583415},"timestamp":1783751583415}
+{"id":6,"event":"pipeline_stage_completed","data":{"kind":"pipeline_stage_completed","runId":"1ec21018-af30-404a-9ee6-2632f3c809fa","snapshotId":"d08765b3-7fc5-4a5d-a1b5-ba88d9d7b11e","stageId":"critique","iteration":0,"completedAt":1783751583415,"converged":true},"timestamp":1783751583415}
+{"id":7,"event":"start","data":{"runId":"1ec21018-af30-404a-9ee6-2632f3c809fa","agentId":"hermes","bin":"hermes","streamFormat":"acp-json-rpc","projectId":"1936df94-eb34-4fa7-84a0-40928a83d495","cwd":"/home/hermes/games/squad/open-design-data/projects/1936df94-eb34-4fa7-84a0-40928a83d495","model":"opencode-go:mimo-v2.5-pro","reasoning":null,"toolTokenExpiresAt":"2026-07-11T06:48:03.458Z"},"timestamp":1783751584306}
+{"id":8,"event":"stderr","data":{"chunk":"2026-07-11 08:33:04 [INFO] acp_adapter.entry: Loaded env from /home/hermes/.hermes/profiles/game/.env\n2026-07-11 08:33:04 [INFO] acp_adapter.entry: Starting hermes-agent ACP adapter\n"},"timestamp":1783751584999}
+{"id":9,"event":"stderr","data":{"chunk":"2026-07-11 08:33:05 [INFO] acp_adapter.server: ACP client connected\n"},"timestamp":1783751585739}
+{"id":10,"event":"stderr","data":{"chunk":"2026-07-11 08:33:05 [INFO] acp_adapter.server: Initialize from open-design (protocol v1)\n"},"timestamp":1783751585904}
+{"id":11,"event":"stderr","data":{"chunk":"2026-07-11 08:33:05 [INFO] run_agent: Loaded environment variables from /home/hermes/.hermes/profiles/game/.env\n"},"timestamp":1783751585919}
+{"id":12,"event":"stderr","data":{"chunk":"2026-07-11 08:33:07 [INFO] run_agent: OpenAI client created (agent_init, shared=True) thread=MainThread:133807921243968 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=deepseek-v4-flash\n"},"timestamp":1783751587422}
+{"id":13,"event":"stderr","data":{"chunk":"2026-07-11 08:33:07 [WARNING] tools.registry: check_fn _browser_cdp_check returned False; dependent tools will be unavailable this turn\n"},"timestamp":1783751587424}
+{"id":14,"event":"stderr","data":{"chunk":"2026-07-11 08:33:07 [WARNING] tools.registry: check_fn _browser_dialog_check returned False; dependent tools will be unavailable this turn\n"},"timestamp":1783751587425}
+{"id":15,"event":"stderr","data":{"chunk":"2026-07-11 08:33:07 [INFO] acp_adapter.session: Created ACP session 2593c74e-1fc7-46d6-b037-15ac202636fc (cwd=/home/hermes/games/squad/open-design-data/projects/1936df94-eb34-4fa7-84a0-40928a83d495)\n"},"timestamp":1783751587950}
+{"id":16,"event":"stderr","data":{"chunk":"2026-07-11 08:33:08 [INFO] tools.mcp_tool: MCP server 'open-design-live-artifacts' (stdio): registered 6 tool(s): mcp_open_design_live_artifacts_live_artifacts_create, mcp_open_design_live_artifacts_live_artifacts_list, mcp_open_design_live_artifacts_live_artifacts_update, mcp_open_design_live_artifacts_live_artifacts_refresh, mcp_open_design_live_artifacts_connectors_list, mcp_open_design_live_artifacts_connectors_execute\n"},"timestamp":1783751588380}
+{"id":17,"event":"stderr","data":{"chunk":"2026-07-11 08:33:08 [INFO] tools.mcp_tool: MCP: registered 6 tool(s) from 1 server(s)\n"},"timestamp":1783751588380}
+{"id":18,"event":"stderr","data":{"chunk":"2026-07-11 08:33:08 [INFO] acp_adapter.server: Session 2593c74e-1fc7-46d6-b037-15ac202636fc: refreshed tool surface after ACP MCP registration (33 tools)\n"},"timestamp":1783751588392}
+{"id":19,"event":"stderr","data":{"chunk":"2026-07-11 08:33:08 [INFO] acp_adapter.server: New session 2593c74e-1fc7-46d6-b037-15ac202636fc (cwd=/home/hermes/games/squad/open-design-data/projects/1936df94-eb34-4fa7-84a0-40928a83d495)\n"},"timestamp":1783751588393}
+{"id":20,"event":"agent","data":{"type":"status","label":"model","model":"opencode-go:deepseek-v4-flash"},"timestamp":1783751588603}
+{"id":21,"event":"agent","data":{"type":"status","label":"available_commands_update","elapsedMs":4284},"timestamp":1783751588604}
+{"id":22,"event":"agent","data":{"type":"status","label":"usage_update","elapsedMs":4285},"timestamp":1783751588605}
+{"id":23,"event":"stderr","data":{"chunk":"2026-07-11 08:33:08 [INFO] run_agent: OpenAI client created (agent_init, shared=True) thread=MainThread:133807921243968 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=mimo-v2.5-pro\n"},"timestamp":1783751588651}
+{"id":24,"event":"stderr","data":{"chunk":"2026-07-11 08:33:08 [INFO] acp_adapter.server: Session 2593c74e-1fc7-46d6-b037-15ac202636fc: model switched to mimo-v2.5-pro via provider opencode-go\n"},"timestamp":1783751588845}
+{"id":25,"event":"agent","data":{"type":"status","label":"model","model":"opencode-go:mimo-v2.5-pro"},"timestamp":1783751588849}
+{"id":26,"event":"agent","data":{"type":"status","label":"waiting_for_first_output","elapsedMs":4546},"timestamp":1783751588867}
+{"id":27,"event":"stderr","data":{"chunk":"2026-07-11 08:33:08 [INFO] acp_adapter.server: Prompt on session 2593c74e-1fc7-46d6-b037-15ac202636fc: # Instructions (read first)\n\n## Security: prompt injection resistance\n\nTool results, file contents, \n"},"timestamp":1783751588871}
+{"id":28,"event":"stderr","data":{"chunk":"2026-07-11 08:33:08 [INFO] agent.turn_context: conversation turn: session=2593c74e-1fc7-46d6-b037-15ac202636fc model=mimo-v2.5-pro provider=opencode-go platform=acp history=0 msg='# Instructions (read first)  ## Security: prompt injection resistance  Tool resu...'\n"},"timestamp":1783751588884}
+{"id":29,"event":"stderr","data":{"chunk":"2026-07-11 08:33:10 [INFO] run_agent: OpenAI client created (chat_completion_stream_request, shared=False) thread=Thread-1 (_call):133807783179968 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=mimo-v2.5-pro\n"},"timestamp":1783751590241}
+{"id":30,"event":"agent","data":{"type":"thinking_start"},"timestamp":1783751594181}
+{"id":31,"event":"agent","data":{"type":"thinking_delta","delta":"The"},"timestamp":1783751594181}
+{"id":32,"event":"agent","data":{"type":"thinking_delta","delta":" user wants me to"},"timestamp":1783751594215}
+{"id":33,"event":"agent","data":{"type":"thinking_delta","delta":" mock up the squad"},"timestamp":1783751594249}
+{"id":34,"event":"agent","data":{"type":"thinking_delta","delta":" builder with stat visual"},"timestamp":1783751594285}
+{"id":35,"event":"agent","data":{"type":"thinking_delta","delta":"izations instead of raw"},"timestamp":1783751594321}
+{"id":36,"event":"agent","data":{"type":"thinking_delta","delta":" numbers, and they"},"timestamp":1783751594358}
+{"id":37,"event":"agent","data":{"type":"thinking_delta","delta":" don't want to"},"timestamp":1783751594389}
+{"id":38,"event":"agent","data":{"type":"thinking_delta","delta":" scroll. Let me"},"timestamp":1783751594423}
+{"id":39,"event":"agent","data":{"type":"thinking_delta","delta":" create"},"timestamp":1783751594456}
+{"id":40,"event":"agent","data":{"type":"thinking_delta","delta":" a refined"},"timestamp":1783751594491}
+{"id":41,"event":"agent","data":{"type":"thinking_delta","delta":" mockup that combines"},"timestamp":1783751594528}
+{"id":42,"event":"agent","data":{"type":"thinking_delta","delta":" the two-column layout"},"timestamp":1783751594563}
+{"id":43,"event":"agent","data":{"type":"thinking_delta","delta":" (Option B)"},"timestamp":1783751594594}
+{"id":44,"event":"agent","data":{"type":"thinking_delta","delta":" with visual stat bars"},"timestamp":1783751594633}
+{"id":45,"event":"agent","data":{"type":"thinking_delta","delta":" instead of raw numbers"},"timestamp":1783751595100}
+{"id":46,"event":"agent","data":{"type":"thinking_delta","delta":".\n\nLet me think"},"timestamp":1783751595102}
+{"id":47,"event":"agent","data":{"type":"thinking_delta","delta":" about what"},"timestamp":1783751595103}
+{"id":48,"event":"agent","data":{"type":"thinking_delta","delta":" would"},"timestamp":1783751595105}
+{"id":49,"event":"agent","data":{"type":"thinking_delta","delta":" work best"},"timestamp":1783751595105}
+{"id":50,"event":"agent","data":{"type":"thinking_delta","delta":":\n\n1. Two"},"timestamp":1783751595106}
+{"id":51,"event":"agent","data":{"type":"thinking_delta","delta":"-column layout:"},"timestamp":1783751595107}
+{"id":52,"event":"agent","data":{"type":"thinking_delta","delta":" left = player"},"timestamp":1783751595109}
+{"id":53,"event":"agent","data":{"type":"thinking_delta","delta":" table with"},"timestamp":1783751595110}
+{"id":54,"event":"agent","data":{"type":"thinking_delta","delta":" visual stat"},"timestamp":1783751595113}
+{"id":55,"event":"agent","data":{"type":"thinking_delta","delta":" bars, right ="},"timestamp":1783751595116}
+{"id":56,"event":"agent","data":{"type":"thinking_delta","delta":" squad pills"},"timestamp":1783751595117}
+{"id":57,"event":"agent","data":{"type":"thinking_delta","delta":"\n2. Stat"},"timestamp":1783751595117}
+{"id":58,"event":"agent","data":{"type":"thinking_delta","delta":" bars instead of numbers"},"timestamp":1783751595126}
+{"id":59,"event":"agent","data":{"type":"thinking_delta","delta":" -"},"timestamp":1783751595277}
+{"id":60,"event":"agent","data":{"type":"thinking_delta","delta":" color"},"timestamp":1783751595277}
+{"id":61,"event":"agent","data":{"type":"thinking_delta","delta":"-coded per"},"timestamp":1783751595278}
+{"id":62,"event":"agent","data":{"type":"thinking_delta","delta":" stat type"},"timestamp":1783751595278}
+{"id":63,"event":"agent","data":{"type":"thinking_delta","delta":"\n3. Everything"},"timestamp":1783751595295}
+{"id":64,"event":"agent","data":{"type":"thinking_delta","delta":" fits without"},"timestamp":1783751595456}
+{"id":65,"event":"agent","data":{"type":"thinking_delta","delta":" scrolling\n\n"},"timestamp":1783751595461}
+{"id":66,"event":"agent","data":{"type":"thinking_delta","delta":"Let me mock"},"timestamp":1783751595465}
+{"id":67,"event":"agent","data":{"type":"thinking_delta","delta":" this up properly"},"timestamp":1783751595467}
+{"id":68,"event":"agent","data":{"type":"thinking_delta","delta":"."},"timestamp":1783751595471}
+{"id":69,"event":"agent","data":{"type":"status","label":"streaming","ttftMs":11153},"timestamp":1783751595474}
+{"id":70,"event":"agent","data":{"type":"text_delta","delta":"Here's"},"timestamp":1783751595475}
+{"id":71,"event":"agent","data":{"type":"text_delta","delta":" the two"},"timestamp":1783751595631}
+{"id":72,"event":"agent","data":{"type":"text_delta","delta":"-column layout"},"timestamp":1783751595632}
+{"id":73,"event":"agent","data":{"type":"text_delta","delta":" with visual stat bars"},"timestamp":1783751595636}
+{"id":74,"event":"agent","data":{"type":"text_delta","delta":" — no raw"},"timestamp":1783751595639}
+{"id":75,"event":"agent","data":{"type":"text_delta","delta":" numbers, no scrolling"},"timestamp":1783751595640}
+{"id":76,"event":"agent","data":{"type":"text_delta","delta":":\n\n``"},"timestamp":1783751595804}
+{"id":77,"event":"agent","data":{"type":"text_delta","delta":"`\n┌────────────────"},"timestamp":1783751595805}
+{"id":78,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783751595806}
+{"id":79,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783751595806}
+{"id":80,"event":"agent","data":{"type":"text_delta","delta":"──"},"timestamp":1783751595816}
+{"id":81,"event":"agent","data":{"type":"text_delta","delta":"┐\n│ "},"timestamp":1783751595928}
+{"id":82,"event":"agent","data":{"type":"text_delta","delta":" SQUAD B"},"timestamp":1783751595933}
+{"id":83,"event":"agent","data":{"type":"text_delta","delta":"UILDER                                               "},"timestamp":1783751595934}
+{"id":84,"event":"agent","data":{"type":"text_delta","delta":" Budget: 2"},"timestamp":1783751595953}
+{"id":85,"event":"agent","data":{"type":"text_delta","delta":"87 /"},"timestamp":1783751596106}
+{"id":86,"event":"agent","data":{"type":"text_delta","delta":" 360"},"timestamp":1783751596107}
+{"id":87,"event":"agent","data":{"type":"text_delta","delta":"  │\n│"},"timestamp":1783751596109}
+{"id":88,"event":"agent","data":{"type":"text_delta","delta":"  █████████████"},"timestamp":1783751596110}
+{"id":89,"event":"agent","data":{"type":"text_delta","delta":"████████"},"timestamp":1783751596129}
+{"id":90,"event":"agent","data":{"type":"text_delta","delta":"███░░"},"timestamp":1783751596279}
+{"id":91,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783751596281}
+{"id":92,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783751596282}
+{"id":93,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783751596283}
+{"id":94,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783751596296}
+{"id":95,"event":"agent","data":{"type":"text_delta","delta":"░░                                   "},"timestamp":1783751596457}
+{"id":96,"event":"agent","data":{"type":"text_delta","delta":" │\n├────────"},"timestamp":1783751596458}
+{"id":97,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783751596459}
+{"id":98,"event":"agent","data":{"type":"text_delta","delta":"─"},"timestamp":1783751596461}
+{"id":99,"event":"agent","data":{"type":"text_delta","delta":"┬────────────────────────"},"timestamp":1783751596466}
+{"id":100,"event":"agent","data":{"type":"text_delta","delta":"────────────────┤\n"},"timestamp":1783751596639}
+{"id":101,"event":"agent","data":{"type":"text_delta","delta":"│                                        "},"timestamp":1783751596643}
+{"id":102,"event":"agent","data":{"type":"text_delta","delta":" │                                       "},"timestamp":1783751596643}
+{"id":103,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751596645}
+{"id":104,"event":"agent","data":{"type":"text_delta","delta":" [ALL] ["},"timestamp":1783751596653}
+{"id":105,"event":"agent","data":{"type":"text_delta","delta":"GK] ["},"timestamp":1783751596825}
+{"id":106,"event":"agent","data":{"type":"text_delta","delta":"DEF] [M"},"timestamp":1783751596829}
+{"id":107,"event":"agent","data":{"type":"text_delta","delta":"ID] [ATT"},"timestamp":1783751596833}
+{"id":108,"event":"agent","data":{"type":"text_delta","delta":"]          │"},"timestamp":1783751596841}
+{"id":109,"event":"agent","data":{"type":"text_delta","delta":"  YOUR SQU"},"timestamp":1783751596841}
+{"id":110,"event":"agent","data":{"type":"text_delta","delta":"AD (10"},"timestamp":1783751596985}
+{"id":111,"event":"agent","data":{"type":"text_delta","delta":" / 12"},"timestamp":1783751596987}
+{"id":112,"event":"agent","data":{"type":"text_delta","delta":")                 │\n"},"timestamp":1783751596987}
+{"id":113,"event":"agent","data":{"type":"text_delta","delta":"│                                         │                                       "},"timestamp":1783751596989}
+{"id":114,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751596997}
+{"id":115,"event":"agent","data":{"type":"text_delta","delta":" ┌────────────────"},"timestamp":1783751597158}
+{"id":116,"event":"agent","data":{"type":"text_delta","delta":"─────────────────"},"timestamp":1783751597159}
+{"id":117,"event":"agent","data":{"type":"text_delta","delta":"┐  "},"timestamp":1783751597161}
+{"id":118,"event":"agent","data":{"type":"text_delta","delta":" │  GK"},"timestamp":1783751597162}
+{"id":119,"event":"agent","data":{"type":"text_delta","delta":"                                  "},"timestamp":1783751597173}
+{"id":120,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751597334}
+{"id":121,"event":"agent","data":{"type":"text_delta","delta":" │ ✓ CB"},"timestamp":1783751597340}
+{"id":122,"event":"agent","data":{"type":"text_delta","delta":"  Van"},"timestamp":1783751597343}
+{"id":123,"event":"agent","data":{"type":"text_delta","delta":" Aura         "},"timestamp":1783751597345}
+{"id":124,"event":"agent","data":{"type":"text_delta","delta":" 51    "},"timestamp":1783751597353}
+{"id":125,"event":"agent","data":{"type":"text_delta","delta":" │   │ "},"timestamp":1783751597509}
+{"id":126,"event":"agent","data":{"type":"text_delta","delta":" ┌────────────────"},"timestamp":1783751597510}
+{"id":127,"event":"agent","data":{"type":"text_delta","delta":"────────┐"},"timestamp":1783751597511}
+{"id":128,"event":"agent","data":{"type":"text_delta","delta":"           │\n│"},"timestamp":1783751597514}
+{"id":129,"event":"agent","data":{"type":"text_delta","delta":"  │                                 │"},"timestamp":1783751597531}
+{"id":130,"event":"agent","data":{"type":"text_delta","delta":"   │  │"},"timestamp":1783751597687}
+{"id":131,"event":"agent","data":{"type":"text_delta","delta":" Gigi The Wall"},"timestamp":1783751597688}
+{"id":132,"event":"agent","data":{"type":"text_delta","delta":"    "},"timestamp":1783751597690}
+{"id":133,"event":"agent","data":{"type":"text_delta","delta":" 32  "},"timestamp":1783751597693}
+{"id":134,"event":"agent","data":{"type":"text_delta","delta":" │          "},"timestamp":1783751597700}
+{"id":135,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751597741}
+{"id":136,"event":"agent","data":{"type":"text_delta","delta":" │  ATK █████"},"timestamp":1783751597769}
+{"id":137,"event":"agent","data":{"type":"text_delta","delta":"█"},"timestamp":1783751597802}
+{"id":138,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783751597839}
+{"id":139,"event":"agent","data":{"type":"text_delta","delta":"░"},"timestamp":1783751597874}
+{"id":140,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783751597908}
+{"id":141,"event":"agent","data":{"type":"text_delta","delta":"6            "},"timestamp":1783751597944}
+{"id":142,"event":"agent","data":{"type":"text_delta","delta":" │   │ "},"timestamp":1783751597980}
+{"id":143,"event":"agent","data":{"type":"text_delta","delta":" └────────────────"},"timestamp":1783751598013}
+{"id":144,"event":"agent","data":{"type":"text_delta","delta":"────────┘           │"},"timestamp":1783751598047}
+{"id":145,"event":"agent","data":{"type":"text_delta","delta":"\n│  │"},"timestamp":1783751598084}
+{"id":146,"event":"agent","data":{"type":"text_delta","delta":"  PAC ███████"},"timestamp":1783751598116}
+{"id":147,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783751598152}
+{"id":148,"event":"agent","data":{"type":"text_delta","delta":" 7             │"},"timestamp":1783751598187}
+{"id":149,"event":"agent","data":{"type":"text_delta","delta":"   │                                        │"},"timestamp":1783751598222}
+{"id":150,"event":"agent","data":{"type":"text_delta","delta":"\n│  │"},"timestamp":1783751598256}
+{"id":151,"event":"agent","data":{"type":"text_delta","delta":"  PAS ███████"},"timestamp":1783751598291}
+{"id":152,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783751598327}
+{"id":153,"event":"agent","data":{"type":"text_delta","delta":" 7             │"},"timestamp":1783751598360}
+{"id":154,"event":"agent","data":{"type":"text_delta","delta":"   │  DEF"},"timestamp":1783751598397}
+{"id":155,"event":"agent","data":{"type":"text_delta","delta":"                                 "},"timestamp":1783751598432}
+{"id":156,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751598467}
+{"id":157,"event":"agent","data":{"type":"text_delta","delta":" │  DEF █████"},"timestamp":1783751598501}
+{"id":158,"event":"agent","data":{"type":"text_delta","delta":"████░░░"},"timestamp":1783751598537}
+{"id":159,"event":"agent","data":{"type":"text_delta","delta":" 9           "},"timestamp":1783751598572}
+{"id":160,"event":"agent","data":{"type":"text_delta","delta":" │   │ "},"timestamp":1783751598605}
+{"id":161,"event":"agent","data":{"type":"text_delta","delta":" ┌────────────────"},"timestamp":1783751598656}
+{"id":162,"event":"agent","data":{"type":"text_delta","delta":"────────┐          "},"timestamp":1783751598677}
+{"id":163,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751598719}
+{"id":164,"event":"agent","data":{"type":"text_delta","delta":" │  SPC"},"timestamp":1783751598745}
+{"id":165,"event":"agent","data":{"type":"text_delta","delta":" █████░░░"},"timestamp":1783751598793}
+{"id":166,"event":"agent","data":{"type":"text_delta","delta":"░░░ "},"timestamp":1783751598821}
+{"id":167,"event":"agent","data":{"type":"text_delta","delta":"5             │  "},"timestamp":1783751598855}
+{"id":168,"event":"agent","data":{"type":"text_delta","delta":" │  │ Van"},"timestamp":1783751598884}
+{"id":169,"event":"agent","data":{"type":"text_delta","delta":" Aura          5"},"timestamp":1783751598932}
+{"id":170,"event":"agent","data":{"type":"text_delta","delta":"1   │          "},"timestamp":1783751598955}
+{"id":171,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751598992}
+{"id":172,"event":"agent","data":{"type":"text_delta","delta":" │                                 │  "},"timestamp":1783751599030}
+{"id":173,"event":"agent","data":{"type":"text_delta","delta":" │  ├"},"timestamp":1783751599088}
+{"id":174,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────┤"},"timestamp":1783751599094}
+{"id":175,"event":"agent","data":{"type":"text_delta","delta":"           │\n│"},"timestamp":1783751599131}
+{"id":176,"event":"agent","data":{"type":"text_delta","delta":"  │  ["},"timestamp":1783751599163}
+{"id":177,"event":"agent","data":{"type":"text_delta","delta":"composed] [e"},"timestamp":1783751599200}
+{"id":178,"event":"agent","data":{"type":"text_delta","delta":"legant]           │"},"timestamp":1783751599234}
+{"id":179,"event":"agent","data":{"type":"text_delta","delta":"   │  │"},"timestamp":1783751599283}
+{"id":180,"event":"agent","data":{"type":"text_delta","delta":" Big Phil          "},"timestamp":1783751599319}
+{"id":181,"event":"agent","data":{"type":"text_delta","delta":"43   │"},"timestamp":1783751599356}
+{"id":182,"event":"agent","data":{"type":"text_delta","delta":"           │\n│"},"timestamp":1783751599390}
+{"id":183,"event":"agent","data":{"type":"text_delta","delta":"  └────────"},"timestamp":1783751599436}
+{"id":184,"event":"agent","data":{"type":"text_delta","delta":"─────────────────────────"},"timestamp":1783751599468}
+{"id":185,"event":"agent","data":{"type":"text_delta","delta":"┘   │ "},"timestamp":1783751599493}
+{"id":186,"event":"agent","data":{"type":"text_delta","delta":" ├────────────────────────"},"timestamp":1783751599529}
+{"id":187,"event":"agent","data":{"type":"text_delta","delta":"┤           │\n"},"timestamp":1783751599568}
+{"id":188,"event":"agent","data":{"type":"text_delta","delta":"│                                         │ "},"timestamp":1783751599795}
+{"id":189,"event":"agent","data":{"type":"text_delta","delta":" │ Danny Pace       "},"timestamp":1783751599795}
+{"id":190,"event":"agent","data":{"type":"text_delta","delta":" 38  "},"timestamp":1783751599797}
+{"id":191,"event":"agent","data":{"type":"text_delta","delta":" │           │\n"},"timestamp":1783751600048}
+{"id":192,"event":"agent","data":{"type":"text_delta","delta":"│  ┌"},"timestamp":1783751600052}
+{"id":193,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783751600054}
+{"id":194,"event":"agent","data":{"type":"text_delta","delta":"─┐   │"},"timestamp":1783751600055}
+{"id":195,"event":"agent","data":{"type":"text_delta","delta":"  ├────────────────"},"timestamp":1783751600056}
+{"id":196,"event":"agent","data":{"type":"text_delta","delta":"────────┤           │"},"timestamp":1783751600059}
+{"id":197,"event":"agent","data":{"type":"text_delta","delta":"\n│  │"},"timestamp":1783751600063}
+{"id":198,"event":"agent","data":{"type":"text_delta","delta":" ✓ CB  Big"},"timestamp":1783751600063}
+{"id":199,"event":"agent","data":{"type":"text_delta","delta":" Phil         "},"timestamp":1783751600065}
+{"id":200,"event":"agent","data":{"type":"text_delta","delta":" 43    "},"timestamp":1783751600067}
+{"id":201,"event":"agent","data":{"type":"text_delta","delta":" │   │ "},"timestamp":1783751600070}
+{"id":202,"event":"agent","data":{"type":"text_delta","delta":" │ Turbo Trent      "},"timestamp":1783751600126}
+{"id":203,"event":"agent","data":{"type":"text_delta","delta":" 35  "},"timestamp":1783751600130}
+{"id":204,"event":"agent","data":{"type":"text_delta","delta":" │           │\n"},"timestamp":1783751600178}
+{"id":205,"event":"agent","data":{"type":"text_delta","delta":"│  │                                "},"timestamp":1783751600201}
+{"id":206,"event":"agent","data":{"type":"text_delta","delta":" │   │ "},"timestamp":1783751600239}
+{"id":207,"event":"agent","data":{"type":"text_delta","delta":" └────────────────"},"timestamp":1783751600276}
+{"id":208,"event":"agent","data":{"type":"text_delta","delta":"────────┘  ✓"},"timestamp":1783751600305}
+{"id":209,"event":"agent","data":{"type":"text_delta","delta":"×4    "},"timestamp":1783751600357}
+{"id":210,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751600383}
+{"id":211,"event":"agent","data":{"type":"text_delta","delta":" │  ATK █"},"timestamp":1783751600409}
+{"id":212,"event":"agent","data":{"type":"text_delta","delta":"██░░░"},"timestamp":1783751600443}
+{"id":213,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783751600479}
+{"id":214,"event":"agent","data":{"type":"text_delta","delta":"░"},"timestamp":1783751600515}
+{"id":215,"event":"agent","data":{"type":"text_delta","delta":"░"},"timestamp":1783751600550}
+{"id":216,"event":"agent","data":{"type":"text_delta","delta":" 3           "},"timestamp":1783751600585}
+{"id":217,"event":"agent","data":{"type":"text_delta","delta":" │   │                                       "},"timestamp":1783751600619}
+{"id":218,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751600654}
+{"id":219,"event":"agent","data":{"type":"text_delta","delta":" │  PAC █████"},"timestamp":1783751600689}
+{"id":220,"event":"agent","data":{"type":"text_delta","delta":"█░░░"},"timestamp":1783751600725}
+{"id":221,"event":"agent","data":{"type":"text_delta","delta":"░░░ "},"timestamp":1783751600764}
+{"id":222,"event":"agent","data":{"type":"text_delta","delta":"6            │  "},"timestamp":1783751600798}
+{"id":223,"event":"agent","data":{"type":"text_delta","delta":" │  MID                                 "},"timestamp":1783751600831}
+{"id":224,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751600866}
+{"id":225,"event":"agent","data":{"type":"text_delta","delta":" │  PAS █"},"timestamp":1783751600911}
+{"id":226,"event":"agent","data":{"type":"text_delta","delta":"███░░"},"timestamp":1783751600943}
+{"id":227,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783751600980}
+{"id":228,"event":"agent","data":{"type":"text_delta","delta":"░░ 4"},"timestamp":1783751601018}
+{"id":229,"event":"agent","data":{"type":"text_delta","delta":"            │   │"},"timestamp":1783751601045}
+{"id":230,"event":"agent","data":{"type":"text_delta","delta":"  ┌────────"},"timestamp":1783751601083}
+{"id":231,"event":"agent","data":{"type":"text_delta","delta":"────────────────┐          "},"timestamp":1783751601120}
+{"id":232,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751601152}
+{"id":233,"event":"agent","data":{"type":"text_delta","delta":" │  DEF █████"},"timestamp":1783751601185}
+{"id":234,"event":"agent","data":{"type":"text_delta","delta":"████░░░"},"timestamp":1783751601223}
+{"id":235,"event":"agent","data":{"type":"text_delta","delta":"░ 9          "},"timestamp":1783751601273}
+{"id":236,"event":"agent","data":{"type":"text_delta","delta":" │   │ "},"timestamp":1783751601289}
+{"id":237,"event":"agent","data":{"type":"text_delta","delta":" │ Sergio Busq"},"timestamp":1783751601324}
+{"id":238,"event":"agent","data":{"type":"text_delta","delta":"       48"},"timestamp":1783751601357}
+{"id":239,"event":"agent","data":{"type":"text_delta","delta":"   │           │"},"timestamp":1783751601398}
+{"id":240,"event":"agent","data":{"type":"text_delta","delta":"\n│  │"},"timestamp":1783751601428}
+{"id":241,"event":"agent","data":{"type":"text_delta","delta":"  SPC █"},"timestamp":1783751601458}
+{"id":242,"event":"agent","data":{"type":"text_delta","delta":"██░░░"},"timestamp":1783751601494}
+{"id":243,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783751601538}
+{"id":244,"event":"agent","data":{"type":"text_delta","delta":"░░ 3"},"timestamp":1783751601566}
+{"id":245,"event":"agent","data":{"type":"text_delta","delta":"            │   │"},"timestamp":1783751601595}
+{"id":246,"event":"agent","data":{"type":"text_delta","delta":"  ├────────────────"},"timestamp":1783751601629}
+{"id":247,"event":"agent","data":{"type":"text_delta","delta":"────────┤           │"},"timestamp":1783751601717}
+{"id":248,"event":"agent","data":{"type":"text_delta","delta":"\n│  │"},"timestamp":1783751601723}
+{"id":249,"event":"agent","data":{"type":"text_delta","delta":"                                 │   │"},"timestamp":1783751601742}
+{"id":250,"event":"agent","data":{"type":"text_delta","delta":"  │ Luka"},"timestamp":1783751601771}
+{"id":251,"event":"agent","data":{"type":"text_delta","delta":" Modric       "},"timestamp":1783751601811}
+{"id":252,"event":"agent","data":{"type":"text_delta","delta":"50   │"},"timestamp":1783751601866}
+{"id":253,"event":"agent","data":{"type":"text_delta","delta":"           │\n│"},"timestamp":1783751601908}
+{"id":254,"event":"agent","data":{"type":"text_delta","delta":"  │  ["},"timestamp":1783751601944}
+{"id":255,"event":"agent","data":{"type":"text_delta","delta":"aerial] ["},"timestamp":1783751601970}
+{"id":256,"event":"agent","data":{"type":"text_delta","delta":"no-nonsense]"},"timestamp":1783751602003}
+{"id":257,"event":"agent","data":{"type":"text_delta","delta":"         │   │"},"timestamp":1783751602038}
+{"id":258,"event":"agent","data":{"type":"text_delta","delta":"  ├────────────────"},"timestamp":1783751602078}
+{"id":259,"event":"agent","data":{"type":"text_delta","delta":"────────┤           │"},"timestamp":1783751602117}
+{"id":260,"event":"agent","data":{"type":"text_delta","delta":"\n│  "},"timestamp":1783751602144}
+{"id":261,"event":"agent","data":{"type":"text_delta","delta":"└────────────────────────"},"timestamp":1783751602179}
+{"id":262,"event":"agent","data":{"type":"text_delta","delta":"─────────┘  "},"timestamp":1783751602215}
+{"id":263,"event":"agent","data":{"type":"text_delta","delta":" │  │ Kevin"},"timestamp":1783751602247}
+{"id":264,"event":"agent","data":{"type":"text_delta","delta":" De B        "},"timestamp":1783751602283}
+{"id":265,"event":"agent","data":{"type":"text_delta","delta":"55   │"},"timestamp":1783751602316}
+{"id":266,"event":"agent","data":{"type":"text_delta","delta":"           │\n│"},"timestamp":1783751602349}
+{"id":267,"event":"agent","data":{"type":"text_delta","delta":"                                         │  "},"timestamp":1783751602385}
+{"id":268,"event":"agent","data":{"type":"text_delta","delta":"└────────────────────────"},"timestamp":1783751602426}
+{"id":269,"event":"agent","data":{"type":"text_delta","delta":"┘  ✓"},"timestamp":1783751602660}
+{"id":270,"event":"agent","data":{"type":"text_delta","delta":"×3     │"},"timestamp":1783751602663}
+{"id":271,"event":"agent","data":{"type":"text_delta","delta":"\n│  "},"timestamp":1783751602664}
+{"id":272,"event":"agent","data":{"type":"text_delta","delta":"┌────────────────────────"},"timestamp":1783751602665}
+{"id":273,"event":"agent","data":{"type":"text_delta","delta":"─────────┐  "},"timestamp":1783751602674}
+{"id":274,"event":"agent","data":{"type":"text_delta","delta":" │                                        │\n"},"timestamp":1783751602677}
+{"id":275,"event":"agent","data":{"type":"text_delta","delta":"│  │ ✓"},"timestamp":1783751602681}
+{"id":276,"event":"agent","data":{"type":"text_delta","delta":" FB  Danny"},"timestamp":1783751602685}
+{"id":277,"event":"agent","data":{"type":"text_delta","delta":" Pace        3"},"timestamp":1783751602722}
+{"id":278,"event":"agent","data":{"type":"text_delta","delta":"8     │  "},"timestamp":1783751602763}
+{"id":279,"event":"agent","data":{"type":"text_delta","delta":" │  ATT                                 "},"timestamp":1783751602787}
+{"id":280,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751602817}
+{"id":281,"event":"agent","data":{"type":"text_delta","delta":" │                                 │  "},"timestamp":1783751602856}
+{"id":282,"event":"agent","data":{"type":"text_delta","delta":" │  ┌"},"timestamp":1783751602886}
+{"id":283,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────┐"},"timestamp":1783751602921}
+{"id":284,"event":"agent","data":{"type":"text_delta","delta":"           │\n│"},"timestamp":1783751602955}
+{"id":285,"event":"agent","data":{"type":"text_delta","delta":"  │  ATK"},"timestamp":1783751602985}
+{"id":286,"event":"agent","data":{"type":"text_delta","delta":" ████░"},"timestamp":1783751603019}
+{"id":287,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783751603054}
+{"id":288,"event":"agent","data":{"type":"text_delta","delta":"░░░ "},"timestamp":1783751603087}
+{"id":289,"event":"agent","data":{"type":"text_delta","delta":"4            │  "},"timestamp":1783751603126}
+{"id":290,"event":"agent","data":{"type":"text_delta","delta":" │  │ Terry"},"timestamp":1783751603161}
+{"id":291,"event":"agent","data":{"type":"text_delta","delta":" Henri       5"},"timestamp":1783751603193}
+{"id":292,"event":"agent","data":{"type":"text_delta","delta":"3   │          "},"timestamp":1783751603225}
+{"id":293,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751603255}
+{"id":294,"event":"agent","data":{"type":"text_delta","delta":" │  PAC █████"},"timestamp":1783751603287}
+{"id":295,"event":"agent","data":{"type":"text_delta","delta":"████░░░"},"timestamp":1783751603322}
+{"id":296,"event":"agent","data":{"type":"text_delta","delta":"░ 9          "},"timestamp":1783751603353}
+{"id":297,"event":"agent","data":{"type":"text_delta","delta":" │   │ "},"timestamp":1783751603388}
+{"id":298,"event":"agent","data":{"type":"text_delta","delta":" ├────────────────────────"},"timestamp":1783751603422}
+{"id":299,"event":"agent","data":{"type":"text_delta","delta":"┤           │\n"},"timestamp":1783751603458}
+{"id":300,"event":"agent","data":{"type":"text_delta","delta":"│  │ "},"timestamp":1783751603488}
+{"id":301,"event":"agent","data":{"type":"text_delta","delta":" PAS ███████░"},"timestamp":1783751603523}
+{"id":302,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783751603556}
+{"id":303,"event":"agent","data":{"type":"text_delta","delta":" 7            │"},"timestamp":1783751603614}
+{"id":304,"event":"agent","data":{"type":"text_delta","delta":"   │  │"},"timestamp":1783751603625}
+{"id":305,"event":"agent","data":{"type":"text_delta","delta":" Big Zlat         "},"timestamp":1783751603659}
+{"id":306,"event":"agent","data":{"type":"text_delta","delta":" 44  "},"timestamp":1783751603691}
+{"id":307,"event":"agent","data":{"type":"text_delta","delta":" │           │\n"},"timestamp":1783751603724}
+{"id":308,"event":"agent","data":{"type":"text_delta","delta":"│  │ "},"timestamp":1783751603759}
+{"id":309,"event":"agent","data":{"type":"text_delta","delta":" DEF ██████░"},"timestamp":1783751603791}
+{"id":310,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783751603823}
+{"id":311,"event":"agent","data":{"type":"text_delta","delta":"░ 6           "},"timestamp":1783751603870}
+{"id":312,"event":"agent","data":{"type":"text_delta","delta":" │   │ "},"timestamp":1783751603891}
+{"id":313,"event":"agent","data":{"type":"text_delta","delta":" ├╌"},"timestamp":1783751603932}
+{"id":314,"event":"agent","data":{"type":"text_delta","delta":"╌╌╌╌"},"timestamp":1783751603961}
+{"id":315,"event":"agent","data":{"type":"text_delta","delta":"╌╌╌╌"},"timestamp":1783751603989}
+{"id":316,"event":"agent","data":{"type":"text_delta","delta":"╌╌╌╌"},"timestamp":1783751604023}
+{"id":317,"event":"agent","data":{"type":"text_delta","delta":"╌╌╌╌"},"timestamp":1783751604055}
+{"id":318,"event":"agent","data":{"type":"text_delta","delta":"╌╌╌╌"},"timestamp":1783751604089}
+{"id":319,"event":"agent","data":{"type":"text_delta","delta":"╌╌┤          "},"timestamp":1783751604121}
+{"id":320,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751604166}
+{"id":321,"event":"agent","data":{"type":"text_delta","delta":" │  SPC"},"timestamp":1783751604199}
+{"id":322,"event":"agent","data":{"type":"text_delta","delta":" ███░░"},"timestamp":1783751604230}
+{"id":323,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783751604301}
+{"id":324,"event":"agent","data":{"type":"text_delta","delta":"░░░ "},"timestamp":1783751604323}
+{"id":325,"event":"agent","data":{"type":"text_delta","delta":"3            │  "},"timestamp":1783751604359}
+{"id":326,"event":"agent","data":{"type":"text_delta","delta":" │  ┊"},"timestamp":1783751604390}
+{"id":327,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783751604424}
+{"id":328,"event":"agent","data":{"type":"text_delta","delta":" + "},"timestamp":1783751604458}
+{"id":329,"event":"agent","data":{"type":"text_delta","delta":" OPEN              ┊"},"timestamp":1783751604489}
+{"id":330,"event":"agent","data":{"type":"text_delta","delta":"           │\n│"},"timestamp":1783751604526}
+{"id":331,"event":"agent","data":{"type":"text_delta","delta":"  │                                 │"},"timestamp":1783751604559}
+{"id":332,"event":"agent","data":{"type":"text_delta","delta":"   │  ├"},"timestamp":1783751604592}
+{"id":333,"event":"agent","data":{"type":"text_delta","delta":"╌╌╌╌"},"timestamp":1783751604629}
+{"id":334,"event":"agent","data":{"type":"text_delta","delta":"╌╌╌╌"},"timestamp":1783751604660}
+{"id":335,"event":"agent","data":{"type":"text_delta","delta":"╌╌╌╌"},"timestamp":1783751604692}
+{"id":336,"event":"agent","data":{"type":"text_delta","delta":"╌╌╌╌"},"timestamp":1783751604727}
+{"id":337,"event":"agent","data":{"type":"text_delta","delta":"╌╌╌╌"},"timestamp":1783751604761}
+{"id":338,"event":"agent","data":{"type":"text_delta","delta":"╌╌╌┤"},"timestamp":1783751604801}
+{"id":339,"event":"agent","data":{"type":"text_delta","delta":"           │\n│"},"timestamp":1783751604830}
+{"id":340,"event":"agent","data":{"type":"text_delta","delta":"  │  ["},"timestamp":1783751604868}
+{"id":341,"event":"agent","data":{"type":"text_delta","delta":"overlapping]                 "},"timestamp":1783751604902}
+{"id":342,"event":"agent","data":{"type":"text_delta","delta":" │   │ "},"timestamp":1783751604931}
+{"id":343,"event":"agent","data":{"type":"text_delta","delta":" ┊  +"},"timestamp":1783751604969}
+{"id":344,"event":"agent","data":{"type":"text_delta","delta":"  OPEN              "},"timestamp":1783751605007}
+{"id":345,"event":"agent","data":{"type":"text_delta","delta":"┊          "},"timestamp":1783751605034}
+{"id":346,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751605067}
+{"id":347,"event":"agent","data":{"type":"text_delta","delta":" └────────────────"},"timestamp":1783751605101}
+{"id":348,"event":"agent","data":{"type":"text_delta","delta":"─────────────────┘"},"timestamp":1783751605138}
+{"id":349,"event":"agent","data":{"type":"text_delta","delta":"   │  "},"timestamp":1783751605171}
+{"id":350,"event":"agent","data":{"type":"text_delta","delta":"└╌"},"timestamp":1783751605204}
+{"id":351,"event":"agent","data":{"type":"text_delta","delta":"╌╌╌╌"},"timestamp":1783751605251}
+{"id":352,"event":"agent","data":{"type":"text_delta","delta":"╌╌╌╌"},"timestamp":1783751605279}
+{"id":353,"event":"agent","data":{"type":"text_delta","delta":"╌╌╌╌"},"timestamp":1783751605307}
+{"id":354,"event":"agent","data":{"type":"text_delta","delta":"╌╌╌╌"},"timestamp":1783751605344}
+{"id":355,"event":"agent","data":{"type":"text_delta","delta":"╌╌╌╌"},"timestamp":1783751605376}
+{"id":356,"event":"agent","data":{"type":"text_delta","delta":"╌╌┘ "},"timestamp":1783751605418}
+{"id":357,"event":"agent","data":{"type":"text_delta","delta":" ✗ need "},"timestamp":1783751605445}
+{"id":358,"event":"agent","data":{"type":"text_delta","delta":"2│\n│"},"timestamp":1783751605479}
+{"id":359,"event":"agent","data":{"type":"text_delta","delta":"                                         │                                        │"},"timestamp":1783751605512}
+{"id":360,"event":"agent","data":{"type":"text_delta","delta":"\n│  "},"timestamp":1783751605557}
+{"id":361,"event":"agent","data":{"type":"text_delta","delta":"┌────────────────────────"},"timestamp":1783751605593}
+{"id":362,"event":"agent","data":{"type":"text_delta","delta":"─────────┐  "},"timestamp":1783751605640}
+{"id":363,"event":"agent","data":{"type":"text_delta","delta":" │  ─"},"timestamp":1783751605684}
+{"id":364,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────"},"timestamp":1783751605715}
+{"id":365,"event":"agent","data":{"type":"text_delta","delta":"       "},"timestamp":1783751605748}
+{"id":366,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751605783}
+{"id":367,"event":"agent","data":{"type":"text_delta","delta":" │ ✓ FB"},"timestamp":1783751605818}
+{"id":368,"event":"agent","data":{"type":"text_delta","delta":"  Turbo Trent"},"timestamp":1783751605859}
+{"id":369,"event":"agent","data":{"type":"text_delta","delta":"       35"},"timestamp":1783751605887}
+{"id":370,"event":"agent","data":{"type":"text_delta","delta":"     │   │"},"timestamp":1783751605923}
+{"id":371,"event":"agent","data":{"type":"text_delta","delta":"  ✓ GK ·"},"timestamp":1783751605972}
+{"id":372,"event":"agent","data":{"type":"text_delta","delta":" ✓ DEF · ✓"},"timestamp":1783751606001}
+{"id":373,"event":"agent","data":{"type":"text_delta","delta":" MID · ✗"},"timestamp":1783751606034}
+{"id":374,"event":"agent","data":{"type":"text_delta","delta":" ATT      "},"timestamp":1783751606067}
+{"id":375,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751606103}
+{"id":376,"event":"agent","data":{"type":"text_delta","delta":" │                                 │  "},"timestamp":1783751606138}
+{"id":377,"event":"agent","data":{"type":"text_delta","delta":" │  ✓ Total"},"timestamp":1783751606346}
+{"id":378,"event":"agent","data":{"type":"text_delta","delta":" ≥ 10"},"timestamp":1783751606347}
+{"id":379,"event":"agent","data":{"type":"text_delta","delta":" · ✓ Budget ≤"},"timestamp":1783751606349}
+{"id":380,"event":"agent","data":{"type":"text_delta","delta":" 360"},"timestamp":1783751606350}
+{"id":381,"event":"agent","data":{"type":"text_delta","delta":"      "},"timestamp":1783751606352}
+{"id":382,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751606352}
+{"id":383,"event":"agent","data":{"type":"text_delta","delta":" │  ATK █"},"timestamp":1783751606389}
+{"id":384,"event":"agent","data":{"type":"text_delta","delta":"██░░░"},"timestamp":1783751606699}
+{"id":385,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783751606701}
+{"id":386,"event":"agent","data":{"type":"text_delta","delta":"░░ 3"},"timestamp":1783751606702}
+{"id":387,"event":"agent","data":{"type":"text_delta","delta":"            │   │"},"timestamp":1783751606711}
+{"id":388,"event":"agent","data":{"type":"text_delta","delta":"                                        │\n│"},"timestamp":1783751606712}
+{"id":389,"event":"agent","data":{"type":"text_delta","delta":"  │  PAC"},"timestamp":1783751606714}
+{"id":390,"event":"agent","data":{"type":"text_delta","delta":" ████████░"},"timestamp":1783751606714}
+{"id":391,"event":"agent","data":{"type":"text_delta","delta":"░░░ "},"timestamp":1783751606715}
+{"id":392,"event":"agent","data":{"type":"text_delta","delta":"8            │  "},"timestamp":1783751606721}
+{"id":393,"event":"agent","data":{"type":"text_delta","delta":" │                                       "},"timestamp":1783751606768}
+{"id":394,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751606804}
+{"id":395,"event":"agent","data":{"type":"text_delta","delta":" │  PAS █████"},"timestamp":1783751606842}
+{"id":396,"event":"agent","data":{"type":"text_delta","delta":"███░░"},"timestamp":1783751606876}
+{"id":397,"event":"agent","data":{"type":"text_delta","delta":"░░ 8"},"timestamp":1783751606911}
+{"id":398,"event":"agent","data":{"type":"text_delta","delta":"            │   │"},"timestamp":1783751606952}
+{"id":399,"event":"agent","data":{"type":"text_delta","delta":"                                        │\n│"},"timestamp":1783751606988}
+{"id":400,"event":"agent","data":{"type":"text_delta","delta":"  │  DEF"},"timestamp":1783751607032}
+{"id":401,"event":"agent","data":{"type":"text_delta","delta":" █████░░░"},"timestamp":1783751607062}
+{"id":402,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783751607103}
+{"id":403,"event":"agent","data":{"type":"text_delta","delta":" 5            │"},"timestamp":1783751607138}
+{"id":404,"event":"agent","data":{"type":"text_delta","delta":"   │                                        │"},"timestamp":1783751607173}
+{"id":405,"event":"agent","data":{"type":"text_delta","delta":"\n│  │"},"timestamp":1783751607207}
+{"id":406,"event":"agent","data":{"type":"text_delta","delta":"  SPC █"},"timestamp":1783751607242}
+{"id":407,"event":"agent","data":{"type":"text_delta","delta":"██░░░"},"timestamp":1783751607279}
+{"id":408,"event":"agent","data":{"type":"text_delta","delta":"░░░░"},"timestamp":1783751607316}
+{"id":409,"event":"agent","data":{"type":"text_delta","delta":"░░ 3"},"timestamp":1783751607347}
+{"id":410,"event":"agent","data":{"type":"text_delta","delta":"            │   │"},"timestamp":1783751607381}
+{"id":411,"event":"agent","data":{"type":"text_delta","delta":"                                        │\n│"},"timestamp":1783751607417}
+{"id":412,"event":"agent","data":{"type":"text_delta","delta":"  │                                "},"timestamp":1783751607452}
+{"id":413,"event":"agent","data":{"type":"text_delta","delta":" │   │                                       "},"timestamp":1783751607486}
+{"id":414,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751607521}
+{"id":415,"event":"agent","data":{"type":"text_delta","delta":" │  [wh"},"timestamp":1783751607556}
+{"id":416,"event":"agent","data":{"type":"text_delta","delta":"ipped crosses]             "},"timestamp":1783751607592}
+{"id":417,"event":"agent","data":{"type":"text_delta","delta":" │   │                                       "},"timestamp":1783751607628}
+{"id":418,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751607661}
+{"id":419,"event":"agent","data":{"type":"text_delta","delta":" └────────────────"},"timestamp":1783751607700}
+{"id":420,"event":"agent","data":{"type":"text_delta","delta":"─────────────────┘"},"timestamp":1783751607735}
+{"id":421,"event":"agent","data":{"type":"text_delta","delta":"   │                                        │"},"timestamp":1783751607770}
+{"id":422,"event":"agent","data":{"type":"text_delta","delta":"\n│                                         │"},"timestamp":1783751607806}
+{"id":423,"event":"agent","data":{"type":"text_delta","delta":"                                        │\n│"},"timestamp":1783751607850}
+{"id":424,"event":"agent","data":{"type":"text_delta","delta":"  ...more player"},"timestamp":1783751607880}
+{"id":425,"event":"agent","data":{"type":"text_delta","delta":" cards below"},"timestamp":1783751607977}
+{"id":426,"event":"agent","data":{"type":"text_delta","delta":"...          │                                       "},"timestamp":1783751607982}
+{"id":427,"event":"agent","data":{"type":"text_delta","delta":" │\n│ "},"timestamp":1783751607993}
+{"id":428,"event":"agent","data":{"type":"text_delta","delta":" (scrollable area"},"timestamp":1783751608025}
+{"id":429,"event":"agent","data":{"type":"text_delta","delta":", ~"},"timestamp":1783751608264}
+{"id":430,"event":"agent","data":{"type":"text_delta","delta":"6"},"timestamp":1783751608264}
+{"id":431,"event":"agent","data":{"type":"text_delta","delta":"-8 visible)"},"timestamp":1783751608265}
+{"id":432,"event":"agent","data":{"type":"text_delta","delta":"        │                                        │"},"timestamp":1783751608266}
+{"id":433,"event":"agent","data":{"type":"text_delta","delta":"\n│                                         │"},"timestamp":1783751608268}
+{"id":434,"event":"agent","data":{"type":"text_delta","delta":"                                        │\n├"},"timestamp":1783751608269}
+{"id":435,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783751608271}
+{"id":436,"event":"agent","data":{"type":"text_delta","delta":"─────────┴────────"},"timestamp":1783751608301}
+{"id":437,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783751608344}
+{"id":438,"event":"agent","data":{"type":"text_delta","delta":"┤\n│                             "},"timestamp":1783751608376}
+{"id":439,"event":"agent","data":{"type":"text_delta","delta":" [ ✓ CONFIRM"},"timestamp":1783751608434}
+{"id":440,"event":"agent","data":{"type":"text_delta","delta":" SQUAD ]"},"timestamp":1783751608449}
+{"id":441,"event":"agent","data":{"type":"text_delta","delta":"                                "},"timestamp":1783751608495}
+{"id":442,"event":"agent","data":{"type":"text_delta","delta":" │\n└────────"},"timestamp":1783751608534}
+{"id":443,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783751608563}
+{"id":444,"event":"agent","data":{"type":"text_delta","delta":"────────────────────────────────"},"timestamp":1783751608596}
+{"id":445,"event":"agent","data":{"type":"text_delta","delta":"──────────┘\n\n"},"timestamp":1783751608634}
+{"id":446,"event":"agent","data":{"type":"text_delta","delta":"STAT BAR COLORS:\n"},"timestamp":1783751608672}
+{"id":447,"event":"agent","data":{"type":"text_delta","delta":"  ATK = #"},"timestamp":1783751608700}
+{"id":448,"event":"agent","data":{"type":"text_delta","delta":"EF444"},"timestamp":1783751608734}
+{"id":449,"event":"agent","data":{"type":"text_delta","delta":"4 ("},"timestamp":1783751608767}
+{"id":450,"event":"agent","data":{"type":"text_delta","delta":"red)     "},"timestamp":1783751608803}
+{"id":451,"event":"agent","data":{"type":"text_delta","delta":" PAC = #"},"timestamp":1783751608843}
+{"id":452,"event":"agent","data":{"type":"text_delta","delta":"F59E"},"timestamp":1783751608873}
+{"id":453,"event":"agent","data":{"type":"text_delta","delta":"0B (gold"},"timestamp":1783751608907}
+{"id":454,"event":"agent","data":{"type":"text_delta","delta":")\n  PAS ="},"timestamp":1783751608943}
+{"id":455,"event":"agent","data":{"type":"text_delta","delta":" #3B8"},"timestamp":1783751608978}
+{"id":456,"event":"agent","data":{"type":"text_delta","delta":"2F6 ("},"timestamp":1783751609445}
+{"id":457,"event":"agent","data":{"type":"text_delta","delta":"blue)    "},"timestamp":1783751609446}
+{"id":458,"event":"agent","data":{"type":"text_delta","delta":" DEF = #2"},"timestamp":1783751609447}
+{"id":459,"event":"agent","data":{"type":"text_delta","delta":"2C55"},"timestamp":1783751609448}
+{"id":460,"event":"agent","data":{"type":"text_delta","delta":"E (green)\n"},"timestamp":1783751609449}
+{"id":461,"event":"agent","data":{"type":"text_delta","delta":"  SPC ="},"timestamp":1783751609449}
+{"id":462,"event":"agent","data":{"type":"text_delta","delta":" #A85"},"timestamp":1783751609451}
+{"id":463,"event":"agent","data":{"type":"text_delta","delta":"5F7 ("},"timestamp":1783751609452}
+{"id":464,"event":"agent","data":{"type":"text_delta","delta":"purple)\n\n"},"timestamp":1783751609453}
+{"id":465,"event":"agent","data":{"type":"text_delta","delta":"BAR"},"timestamp":1783751609454}
+{"id":466,"event":"agent","data":{"type":"text_delta","delta":" F"},"timestamp":1783751609455}
+{"id":467,"event":"agent","data":{"type":"text_delta","delta":"ILL:  █"},"timestamp":1783751609455}
+{"id":468,"event":"agent","data":{"type":"text_delta","delta":" ="},"timestamp":1783751609456}
+{"id":469,"event":"agent","data":{"type":"text_delta","delta":" filled segment"},"timestamp":1783751609466}
+{"id":470,"event":"agent","data":{"type":"text_delta","delta":"   "},"timestamp":1783751609628}
+{"id":471,"event":"agent","data":{"type":"text_delta","delta":" ░ = empty segment"},"timestamp":1783751609629}
+{"id":472,"event":"agent","data":{"type":"text_delta","delta":"\n  Scale"},"timestamp":1783751609631}
+{"id":473,"event":"agent","data":{"type":"text_delta","delta":": 10"},"timestamp":1783751609632}
+{"id":474,"event":"agent","data":{"type":"text_delta","delta":" segments"},"timestamp":1783751609644}
+{"id":475,"event":"agent","data":{"type":"text_delta","delta":" total"},"timestamp":1783751609803}
+{"id":476,"event":"agent","data":{"type":"text_delta","delta":","},"timestamp":1783751609805}
+{"id":477,"event":"agent","data":{"type":"text_delta","delta":" each"},"timestamp":1783751609806}
+{"id":478,"event":"agent","data":{"type":"text_delta","delta":" "},"timestamp":1783751609807}
+{"id":479,"event":"agent","data":{"type":"text_delta","delta":"≈ 1 stat"},"timestamp":1783751609817}
+{"id":480,"event":"agent","data":{"type":"text_delta","delta":" point\n  Example"},"timestamp":1783751609979}
+{"id":481,"event":"agent","data":{"type":"text_delta","delta":": ATK"},"timestamp":1783751609980}
+{"id":482,"event":"agent","data":{"type":"text_delta","delta":" 6"},"timestamp":1783751609982}
+{"id":483,"event":"agent","data":{"type":"text_delta","delta":" = █████"},"timestamp":1783751609990}
+{"id":484,"event":"agent","data":{"type":"text_delta","delta":"█░░░"},"timestamp":1783751609994}
+{"id":485,"event":"agent","data":{"type":"text_delta","delta":"░░"},"timestamp":1783751610155}
+{"id":486,"event":"agent","data":{"type":"text_delta","delta":"\n\nPOSITION"},"timestamp":1783751610158}
+{"id":487,"event":"agent","data":{"type":"text_delta","delta":" BAD"},"timestamp":1783751610163}
+{"id":488,"event":"agent","data":{"type":"text_delta","delta":"GE COLORS:\n "},"timestamp":1783751610164}
+{"id":489,"event":"agent","data":{"type":"text_delta","delta":" GK = gold"},"timestamp":1783751610165}
+{"id":490,"event":"agent","data":{"type":"text_delta","delta":" border (#"},"timestamp":1783751610189}
+{"id":491,"event":"agent","data":{"type":"text_delta","delta":"FFD70"},"timestamp":1783751610262}
+{"id":492,"event":"agent","data":{"type":"text_delta","delta":"0)\n"},"timestamp":1783751610264}
+{"id":493,"event":"agent","data":{"type":"text_delta","delta":"  DEF = blue"},"timestamp":1783751610294}
+{"id":494,"event":"agent","data":{"type":"text_delta","delta":" border (#3B"},"timestamp":1783751610440}
+{"id":495,"event":"agent","data":{"type":"text_delta","delta":"82F6"},"timestamp":1783751610441}
+{"id":496,"event":"agent","data":{"type":"text_delta","delta":")\n  MID ="},"timestamp":1783751610442}
+{"id":497,"event":"agent","data":{"type":"text_delta","delta":" green border (#2"},"timestamp":1783751610458}
+{"id":498,"event":"agent","data":{"type":"text_delta","delta":"2C55"},"timestamp":1783751610615}
+{"id":499,"event":"agent","data":{"type":"text_delta","delta":"E)\n  ATT"},"timestamp":1783751610616}
+{"id":500,"event":"agent","data":{"type":"text_delta","delta":" = red border (#"},"timestamp":1783751610619}
+{"id":501,"event":"agent","data":{"type":"text_delta","delta":"EF444"},"timestamp":1783751610620}
+{"id":502,"event":"agent","data":{"type":"text_delta","delta":"4)\n\nSQU"},"timestamp":1783751610639}
+{"id":503,"event":"agent","data":{"type":"text_delta","delta":"AD PILL ST"},"timestamp":1783751610790}
+{"id":504,"event":"agent","data":{"type":"text_delta","delta":"YLES"},"timestamp":1783751610791}
+{"id":505,"event":"agent","data":{"type":"text_delta","delta":":\n  F"},"timestamp":1783751610792}
+{"id":506,"event":"agent","data":{"type":"text_delta","delta":"illed = solid"},"timestamp":1783751610793}
+{"id":507,"event":"agent","data":{"type":"text_delta","delta":" dark"},"timestamp":1783751610809}
+{"id":508,"event":"agent","data":{"type":"text_delta","delta":" bg +"},"timestamp":1783751610968}
+{"id":509,"event":"agent","data":{"type":"text_delta","delta":" position color"},"timestamp":1783751610969}
+{"id":510,"event":"agent","data":{"type":"text_delta","delta":" border +"},"timestamp":1783751610973}
+{"id":511,"event":"agent","data":{"type":"text_delta","delta":" name"},"timestamp":1783751610975}
+{"id":512,"event":"agent","data":{"type":"text_delta","delta":" + cost\n "},"timestamp":1783751610996}
+{"id":513,"event":"agent","data":{"type":"text_delta","delta":" Open = dashed border"},"timestamp":1783751611145}
+{"id":514,"event":"agent","data":{"type":"text_delta","delta":" + \"OPEN\""},"timestamp":1783751611325}
+{"id":515,"event":"agent","data":{"type":"text_delta","delta":" text +"},"timestamp":1783751611326}
+{"id":516,"event":"agent","data":{"type":"text_delta","delta":" position"},"timestamp":1783751611327}
+{"id":517,"event":"agent","data":{"type":"text_delta","delta":" color\n\n"},"timestamp":1783751611327}
+{"id":518,"event":"agent","data":{"type":"text_delta","delta":"LAYOUT NOTES"},"timestamp":1783751611328}
+{"id":519,"event":"agent","data":{"type":"text_delta","delta":":\n  Left column"},"timestamp":1783751611331}
+{"id":520,"event":"agent","data":{"type":"text_delta","delta":": ~"},"timestamp":1783751611332}
+{"id":521,"event":"agent","data":{"type":"text_delta","delta":"55"},"timestamp":1783751611333}
+{"id":522,"event":"agent","data":{"type":"text_delta","delta":"% width, player"},"timestamp":1783751611488}
+{"id":523,"event":"agent","data":{"type":"text_delta","delta":" cards scroll"},"timestamp":1783751611493}
+{"id":524,"event":"agent","data":{"type":"text_delta","delta":" vertically"},"timestamp":1783751611666}
+{"id":525,"event":"agent","data":{"type":"text_delta","delta":"\n  Right column"},"timestamp":1783751611667}
+{"id":526,"event":"agent","data":{"type":"text_delta","delta":": ~45"},"timestamp":1783751611669}
+{"id":527,"event":"agent","data":{"type":"text_delta","delta":"% width, squad"},"timestamp":1783751611670}
+{"id":528,"event":"agent","data":{"type":"text_delta","delta":" pills stacked"},"timestamp":1783751611670}
+{"id":529,"event":"agent","data":{"type":"text_delta","delta":" by"},"timestamp":1783751611672}
+{"id":530,"event":"agent","data":{"type":"text_delta","delta":" line (G"},"timestamp":1783751611673}
+{"id":531,"event":"agent","data":{"type":"text_delta","delta":"K/DEF/M"},"timestamp":1783751611689}
+{"id":532,"event":"agent","data":{"type":"text_delta","delta":"ID/ATT)\n"},"timestamp":1783751611849}
+{"id":533,"event":"agent","data":{"type":"text_delta","delta":"  Both"},"timestamp":1783751611850}
+{"id":534,"event":"agent","data":{"type":"text_delta","delta":" columns are independently"},"timestamp":1783751611853}
+{"id":535,"event":"agent","data":{"type":"text_delta","delta":" scroll"},"timestamp":1783751611856}
+{"id":536,"event":"agent","data":{"type":"text_delta","delta":"able if needed"},"timestamp":1783751612022}
+{"id":537,"event":"agent","data":{"type":"text_delta","delta":"\n  Player"},"timestamp":1783751612023}
+{"id":538,"event":"agent","data":{"type":"text_delta","delta":" cards: ~"},"timestamp":1783751612024}
+{"id":539,"event":"agent","data":{"type":"text_delta","delta":"12"},"timestamp":1783751612024}
+{"id":540,"event":"agent","data":{"type":"text_delta","delta":"0px tall each"},"timestamp":1783751612025}
+{"id":541,"event":"agent","data":{"type":"text_delta","delta":","},"timestamp":1783751612032}
+{"id":542,"event":"agent","data":{"type":"text_delta","delta":" 4"},"timestamp":1783751612065}
+{"id":543,"event":"agent","data":{"type":"text_delta","delta":"px"},"timestamp":1783751612101}
+{"id":544,"event":"agent","data":{"type":"text_delta","delta":" gap between cards\n"},"timestamp":1783751612134}
+{"id":545,"event":"agent","data":{"type":"text_delta","delta":"  Squad"},"timestamp":1783751612171}
+{"id":546,"event":"agent","data":{"type":"text_delta","delta":" pills: ~3"},"timestamp":1783751612206}
+{"id":547,"event":"agent","data":{"type":"text_delta","delta":"6px tall each"},"timestamp":1783751612238}
+{"id":548,"event":"agent","data":{"type":"text_delta","delta":", 2"},"timestamp":1783751612282}
+{"id":549,"event":"agent","data":{"type":"text_delta","delta":"px gap between pills"},"timestamp":1783751612310}
+{"id":550,"event":"agent","data":{"type":"text_delta","delta":"\n  Max"},"timestamp":1783751612344}
+{"id":551,"event":"agent","data":{"type":"text_delta","delta":" viewport"},"timestamp":1783751612381}
+{"id":552,"event":"agent","data":{"type":"text_delta","delta":": fits"},"timestamp":1783751612413}
+{"id":553,"event":"agent","data":{"type":"text_delta","delta":" in 10"},"timestamp":1783751612449}
+{"id":554,"event":"agent","data":{"type":"text_delta","delta":"0vh without page"},"timestamp":1783751612479}
+{"id":555,"event":"agent","data":{"type":"text_delta","delta":" scroll"},"timestamp":1783751612518}
+{"id":556,"event":"agent","data":{"type":"text_delta","delta":"\n```\n\n**"},"timestamp":1783751612549}
+{"id":557,"event":"agent","data":{"type":"text_delta","delta":"Key design"},"timestamp":1783751612923}
+{"id":558,"event":"agent","data":{"type":"text_delta","delta":" decisions:**\n\n1"},"timestamp":1783751612924}
+{"id":559,"event":"agent","data":{"type":"text_delta","delta":". **Stat bars"},"timestamp":1783751612929}
+{"id":560,"event":"agent","data":{"type":"text_delta","delta":" are the"},"timestamp":1783751612934}
+{"id":561,"event":"agent","data":{"type":"text_delta","delta":" primary visual** —"},"timestamp":1783751612937}
+{"id":562,"event":"agent","data":{"type":"text_delta","delta":" 10-se"},"timestamp":1783751612939}
+{"id":563,"event":"agent","data":{"type":"text_delta","delta":"gment colored"},"timestamp":1783751612941}
+{"id":564,"event":"agent","data":{"type":"text_delta","delta":" bars replace"},"timestamp":1783751612943}
+{"id":565,"event":"agent","data":{"type":"text_delta","delta":" all"},"timestamp":1783751612944}
+{"id":566,"event":"agent","data":{"type":"text_delta","delta":" raw"},"timestamp":1783751612944}
+{"id":567,"event":"agent","data":{"type":"text_delta","delta":" numbers. ATK"},"timestamp":1783751612945}
+{"id":568,"event":"agent","data":{"type":"text_delta","delta":" is always"},"timestamp":1783751613140}
+{"id":569,"event":"agent","data":{"type":"text_delta","delta":" red, PAC always"},"timestamp":1783751613141}
+{"id":570,"event":"agent","data":{"type":"text_delta","delta":" gold, etc"},"timestamp":1783751613142}
+{"id":571,"event":"agent","data":{"type":"text_delta","delta":". You"},"timestamp":1783751613525}
+{"id":572,"event":"agent","data":{"type":"text_delta","delta":" scan"},"timestamp":1783751613526}
+{"id":573,"event":"agent","data":{"type":"text_delta","delta":" colors"},"timestamp":1783751613527}
+{"id":574,"event":"agent","data":{"type":"text_delta","delta":", not numbers.\n\n"},"timestamp":1783751613528}
+{"id":575,"event":"agent","data":{"type":"text_delta","delta":"2. **Cost"},"timestamp":1783751613529}
+{"id":576,"event":"agent","data":{"type":"text_delta","delta":" stays"},"timestamp":1783751613530}
+{"id":577,"event":"agent","data":{"type":"text_delta","delta":" as a number**"},"timestamp":1783751613666}
+{"id":578,"event":"agent","data":{"type":"text_delta","delta":" — the"},"timestamp":1783751613667}
+{"id":579,"event":"agent","data":{"type":"text_delta","delta":" only"},"timestamp":1783751613672}
+{"id":580,"event":"agent","data":{"type":"text_delta","delta":" raw"},"timestamp":1783751613673}
+{"id":581,"event":"agent","data":{"type":"text_delta","delta":" digit"},"timestamp":1783751613675}
+{"id":582,"event":"agent","data":{"type":"text_delta","delta":" on"},"timestamp":1783751613676}
+{"id":583,"event":"agent","data":{"type":"text_delta","delta":" each"},"timestamp":1783751613677}
+{"id":584,"event":"agent","data":{"type":"text_delta","delta":" card,"},"timestamp":1783751613679}
+{"id":585,"event":"agent","data":{"type":"text_delta","delta":" positioned"},"timestamp":1783751613680}
+{"id":586,"event":"agent","data":{"type":"text_delta","delta":" top-right next"},"timestamp":1783751613681}
+{"id":587,"event":"agent","data":{"type":"text_delta","delta":" to the position"},"timestamp":1783751613682}
+{"id":588,"event":"agent","data":{"type":"text_delta","delta":" badge. Budget"},"timestamp":1783751613848}
+{"id":589,"event":"agent","data":{"type":"text_delta","delta":" math"},"timestamp":1783751613850}
+{"id":590,"event":"agent","data":{"type":"text_delta","delta":" needs"},"timestamp":1783751613851}
+{"id":591,"event":"agent","data":{"type":"text_delta","delta":" exact"},"timestamp":1783751613853}
+{"id":592,"event":"agent","data":{"type":"text_delta","delta":" numbers.\n\n3."},"timestamp":1783751613853}
+{"id":593,"event":"agent","data":{"type":"text_delta","delta":" **Left"},"timestamp":1783751613882}
+{"id":594,"event":"agent","data":{"type":"text_delta","delta":" panel"},"timestamp":1783751613947}
+{"id":595,"event":"agent","data":{"type":"text_delta","delta":" scrolls"},"timestamp":1783751613954}
+{"id":596,"event":"agent","data":{"type":"text_delta","delta":" independently"},"timestamp":1783751614125}
+{"id":597,"event":"agent","data":{"type":"text_delta","delta":"** — player"},"timestamp":1783751614129}
+{"id":598,"event":"agent","data":{"type":"text_delta","delta":" cards are in"},"timestamp":1783751614130}
+{"id":599,"event":"agent","data":{"type":"text_delta","delta":" a scrollable container"},"timestamp":1783751614131}
+{"id":600,"event":"agent","data":{"type":"text_delta","delta":". Right"},"timestamp":1783751614132}
+{"id":601,"event":"agent","data":{"type":"text_delta","delta":" panel ("},"timestamp":1783751614297}
+{"id":602,"event":"agent","data":{"type":"text_delta","delta":"your"},"timestamp":1783751614304}
+{"id":603,"event":"agent","data":{"type":"text_delta","delta":" squad) is"},"timestamp":1783751614305}
+{"id":604,"event":"agent","data":{"type":"text_delta","delta":" fixed"},"timestamp":1783751614306}
+{"id":605,"event":"agent","data":{"type":"text_delta","delta":" and"},"timestamp":1783751614311}
+{"id":606,"event":"agent","data":{"type":"text_delta","delta":" always visible. No"},"timestamp":1783751614479}
+{"id":607,"event":"agent","data":{"type":"text_delta","delta":" page-level"},"timestamp":1783751614479}
+{"id":608,"event":"agent","data":{"type":"text_delta","delta":" scrolling"},"timestamp":1783751614481}
+{"id":609,"event":"agent","data":{"type":"text_delta","delta":".\n\n4. **"},"timestamp":1783751614481}
+{"id":610,"event":"agent","data":{"type":"text_delta","delta":"Squad pills use"},"timestamp":1783751614485}
+{"id":611,"event":"agent","data":{"type":"text_delta","delta":" position"},"timestamp":1783751614655}
+{"id":612,"event":"agent","data":{"type":"text_delta","delta":" color coding"},"timestamp":1783751614656}
+{"id":613,"event":"agent","data":{"type":"text_delta","delta":"** — DEF"},"timestamp":1783751614659}
+{"id":614,"event":"agent","data":{"type":"text_delta","delta":" pills have"},"timestamp":1783751614660}
+{"id":615,"event":"agent","data":{"type":"text_delta","delta":" blue"},"timestamp":1783751614661}
+{"id":616,"event":"agent","data":{"type":"text_delta","delta":" border, MID pills"},"timestamp":1783751614835}
+{"id":617,"event":"agent","data":{"type":"text_delta","delta":" green"},"timestamp":1783751614836}
+{"id":618,"event":"agent","data":{"type":"text_delta","delta":", ATT pills"},"timestamp":1783751614837}
+{"id":619,"event":"agent","data":{"type":"text_delta","delta":" red. Open"},"timestamp":1783751614838}
+{"id":620,"event":"agent","data":{"type":"text_delta","delta":" slots"},"timestamp":1783751614842}
+{"id":621,"event":"agent","data":{"type":"text_delta","delta":" are dashed. The"},"timestamp":1783751615007}
+{"id":622,"event":"agent","data":{"type":"text_delta","delta":" `"},"timestamp":1783751615008}
+{"id":623,"event":"agent","data":{"type":"text_delta","delta":"✓×4`"},"timestamp":1783751615009}
+{"id":624,"event":"agent","data":{"type":"text_delta","delta":" / `✗ need"},"timestamp":1783751615010}
+{"id":625,"event":"agent","data":{"type":"text_delta","delta":" 2` status"},"timestamp":1783751615012}
+{"id":626,"event":"agent","data":{"type":"text_delta","delta":" is inline per"},"timestamp":1783751615179}
+{"id":627,"event":"agent","data":{"type":"text_delta","delta":" group.\n\n5."},"timestamp":1783751615180}
+{"id":628,"event":"agent","data":{"type":"text_delta","delta":" **Selected players"},"timestamp":1783751615182}
+{"id":629,"event":"agent","data":{"type":"text_delta","delta":" get a ✓"},"timestamp":1783751615182}
+{"id":630,"event":"agent","data":{"type":"text_delta","delta":" mark"},"timestamp":1783751615191}
+{"id":631,"event":"agent","data":{"type":"text_delta","delta":"** — the check"},"timestamp":1783751615356}
+{"id":632,"event":"agent","data":{"type":"text_delta","delta":"mark appears"},"timestamp":1783751615357}
+{"id":633,"event":"agent","data":{"type":"text_delta","delta":" on both"},"timestamp":1783751615357}
+{"id":634,"event":"agent","data":{"type":"text_delta","delta":" the player card ("},"timestamp":1783751615358}
+{"id":635,"event":"agent","data":{"type":"text_delta","delta":"left"},"timestamp":1783751615374}
+{"id":636,"event":"agent","data":{"type":"text_delta","delta":")"},"timestamp":1783751615532}
+{"id":637,"event":"agent","data":{"type":"text_delta","delta":" and the squad pill"},"timestamp":1783751615532}
+{"id":638,"event":"agent","data":{"type":"text_delta","delta":" (right), creating"},"timestamp":1783751615533}
+{"id":639,"event":"agent","data":{"type":"text_delta","delta":" a visual connection.\n\n"},"timestamp":1783751615534}
+{"id":640,"event":"agent","data":{"type":"text_delta","delta":"Want"},"timestamp":1783751615537}
+{"id":641,"event":"agent","data":{"type":"text_delta","delta":" me to build this"},"timestamp":1783751615707}
+{"id":642,"event":"agent","data":{"type":"text_delta","delta":"?"},"timestamp":1783751615708}
+{"id":643,"event":"stderr","data":{"chunk":"2026-07-11 08:33:35 [INFO] run_agent: OpenAI client closed (stream_request_complete, shared=False, tcp_force_closed=0) thread=Thread-1 (_call):133807783179968 provider=opencode-go base_url=https://opencode.ai/zen/go/v1 model=mimo-v2.5-pro\n"},"timestamp":1783751615710}
+{"id":644,"event":"stderr","data":{"chunk":"2026-07-11 08:33:35 [INFO] agent.conversation_loop: API call #1: model=mimo-v2.5-pro provider=opencode-go in=93558 out=2032 total=95590 latency=25.5s cache=90880/93558 (97%)\n"},"timestamp":1783751615710}
+{"id":645,"event":"stderr","data":{"chunk":"2026-07-11 08:33:35 [INFO] agent.conversation_loop: Turn ended: reason=text_response(finish_reason=stop) model=mimo-v2.5-pro api_calls=1/90 budget=1/90 tool_turns=0 last_msg_role=assistant response_len=6932 session=2593c74e-1fc7-46d6-b037-15ac202636fc\n"},"timestamp":1783751615898}
+{"id":646,"event":"agent","data":{"type":"status","label":"usage_update","elapsedMs":31679},"timestamp":1783751616000}
+{"id":647,"event":"agent","data":{"type":"usage","usage":{"input_tokens":93558,"output_tokens":2032,"cached_read_tokens":90880,"thought_tokens":0,"total_tokens":95590},"durationMs":31680},"timestamp":1783751616000}
+{"id":648,"event":"diagnostic","data":{"type":"runtime_close","rpc_close_reason":"signal","status":"succeeded","signal":"SIGTERM"},"timestamp":1783751616519}
+{"id":649,"event":"end","data":{"code":null,"signal":"SIGTERM","status":"succeeded","resumable":false},"timestamp":1783751616520}
