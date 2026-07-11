@@ -332,29 +332,29 @@ const SYNERGIES = [
     description:"DEF≥8 + SPC≥7 (diff players): +35 global chips" },
   // Squad-persistent synergies
   { id:"pace_in_behind", name:"Pace in Behind", rarity:"uncommon", persistent:true,
-    triggerType:"squad_trait_count", trigger:{trait:"pacey",min_count:4},
-    effectType:"persistent_multiply", effect:{multiply:1.1,target_trait:"pacey"},
-    description:"4+ pacey players: all pacey get ×1.1 mult each phase" },
+    triggerType:"squad_trait_count", trigger:{trait:"pacey",min_count:5},
+    effectType:"persistent_multiply", effect:{multiply:1.15,target_trait:"pacey"},
+    description:"5+ pacey players: all pacey get ×1.15 mult each phase" },
   { id:"iron_wall", name:"Iron Wall", rarity:"uncommon", persistent:true,
     triggerType:"squad_trait_count", trigger:{trait:"physical",min_count:3},
-    effectType:"persistent_fatigue", effect:{fatigue_penalty:0.8},
-    description:"3+ physical players: fatigue reduced (×0.8 instead of ×0.7)" },
+    effectType:"persistent_multiply", effect:{multiply:1.2,target_trait:"physical",fatigue_penalty:0.6},
+    description:"3+ physical: physical get ×1.2 mult + fatigue ×0.6" },
   { id:"leadership_council", name:"Leadership Council", rarity:"common", persistent:true,
     triggerType:"squad_trait_count", trigger:{trait:"leader",min_count:3},
-    effectType:"persistent_add", effect:{add_chips:3,target:"all"},
-    description:"3+ leaders: all players get +3 chips per phase" },
+    effectType:"persistent_add", effect:{add_chips:15,target:"all"},
+    description:"3+ leaders: all players get +15 chips per phase" },
   { id:"tiki_taka_persistent", name:"Tiki-Taka", rarity:"uncommon", persistent:true,
     triggerType:"squad_trait_count", trigger:{trait:"technical",min_count:3},
-    effectType:"persistent_add", effect:{add_chips:5,target_position:["CM","CDM","CAM"]},
-    description:"3+ technical players: midfielders get +5 chips per phase" },
+    effectType:"persistent_multiply", effect:{multiply:1.15,target_position:["CM","CDM","CAM"]},
+    description:"3+ technical: midfielders get ×1.15 mult each phase" },
   { id:"clinical_edge", name:"Clinical Edge", rarity:"common", persistent:true,
     triggerType:"squad_trait_count", trigger:{trait:"clinical",min_count:2},
-    effectType:"persistent_add", effect:{add_chips:5,target_position:["LW","RW","ST"]},
-    description:"2+ clinical players: attackers get +5 chips per phase" },
+    effectType:"persistent_add", effect:{add_chips:15,target_position:["LW","RW","ST"]},
+    description:"2+ clinical: attackers get +15 chips per phase" },
   { id:"double_destroyer", name:"Double Destroyer", rarity:"common", persistent:true,
     triggerType:"squad_trait_count", trigger:{trait:"destroyer",min_count:2},
-    effectType:"persistent_add", effect:{add_chips:5,target_position:["CB","FB","CDM"]},
-    description:"2+ destroyers: defenders get +5 chips per phase" },
+    effectType:"persistent_multiply", effect:{multiply:1.2,target_position:["CB","FB","CDM"]},
+    description:"2+ destroyers: defenders get ×1.2 mult each phase" },
   { id:"two_up_top", name:"Two Up Top", rarity:"rare", persistent:true,
     triggerType:"squad_trait_count", trigger:{trait:"poacher",min_count:2},
     effectType:"persistent_multiply", effect:{multiply:1.3,target_position:["ST"]},
@@ -369,16 +369,16 @@ const SYNERGIES = [
     description:"2+ pacey+physical: those players get ×1.3 mult" },
   { id:"silent_killers", name:"Silent Killers", rarity:"uncommon", persistent:true,
     triggerType:"squad_trait_combo", trigger:{traits:["clinical","pacey"],min_count:2},
-    effectType:"persistent_add", effect:{add_chips:5,target_trait_combo:["clinical","pacey"]},
-    description:"2+ clinical+pacey: those players get +5 chips per phase" },
+    effectType:"persistent_multiply", effect:{multiply:1.25,target_trait_combo:["clinical","pacey"]},
+    description:"2+ clinical+pacey: those players get ×1.25 mult each phase" },
   { id:"aerial_fortress", name:"Aerial Fortress", rarity:"uncommon", persistent:true,
     triggerType:"squad_trait_count", trigger:{trait:"aerial",min_count:3},
-    effectType:"persistent_add", effect:{add_chips:7,target_position:["ST","CB","GK"]},
-    description:"3+ aerial: STs, CBs, GKs get +7 chips per phase" },
+    effectType:"persistent_multiply", effect:{multiply:1.2,target_position:["ST","CB","GK"]},
+    description:"3+ aerial: STs, CBs, GKs get ×1.2 mult each phase" },
   { id:"playmaker_network", name:"Playmaker Network", rarity:"common", persistent:true,
     triggerType:"squad_trait_count", trigger:{trait:"playmaker",min_count:3},
-    effectType:"persistent_multiply", effect:{multiply:1.1,target_position:["CM","CAM","CDM"]},
-    description:"3+ playmakers: midfielders get ×1.1 mult each phase" },
+    effectType:"persistent_multiply", effect:{multiply:1.15,target_position:["CM","CAM","CDM"]},
+    description:"3+ playmakers: midfielders get ×1.15 mult each phase" },
 ];
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -732,9 +732,7 @@ function _applyPersistentEffect(buffs, syn, eff, matchingPlayers, squad) {
   buffs.fired_synergies.push(syn.name);
   const etype = syn.effectType;
 
-  if (etype === 'persistent_fatigue') {
-    if (eff.fatigue_penalty !== undefined) buffs.fatigue_penalty = eff.fatigue_penalty;
-  } else if (etype === 'persistent_multiply') {
+  if (etype === 'persistent_multiply') {
     const mult = eff.multiply || 1.0;
     if (eff.target_trait) {
       for (const p of squad) {
@@ -755,6 +753,8 @@ function _applyPersistentEffect(buffs, syn, eff, matchingPlayers, squad) {
         buffs.position_mult[pos] = (buffs.position_mult[pos] || 1.0) * mult;
       }
     }
+    // Iron Wall also reduces fatigue penalty
+    if (eff.fatigue_penalty !== undefined) buffs.fatigue_penalty = eff.fatigue_penalty;
   } else if (etype === 'persistent_add') {
     const chips = eff.add_chips || 0;
     if (eff.target === 'all') {

@@ -489,6 +489,11 @@ def _apply_persistent_effect(buffs: dict, syn, eff: dict,
                 current = buffs["position_mult"].get(pos, 1.0)
                 buffs["position_mult"][pos] = current * mult
 
+        # Also check for fatigue penalty bonus (e.g. Iron Wall)
+        fatigue = eff.get("fatigue_penalty")
+        if fatigue is not None:
+            buffs["fatigue_penalty"] = fatigue
+
     # ── Per-player add_chips (targeted by position or all) ──
     elif etype == "persistent_add":
         chips = eff.get("add_chips", 0)

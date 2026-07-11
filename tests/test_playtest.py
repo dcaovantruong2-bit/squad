@@ -327,11 +327,15 @@ class TestDetectSquadSynergiesEdgeCases:
         assert result["journeyman_available"] is True
 
     def test_fatigue_penalty_override(self, captain_stevie, jt_rock, bale_out, the_waz, big_zlat):
-        """Iron Wall should reduce fatigue penalty to 0.8."""
+        """Iron Wall should reduce fatigue penalty to 0.6 and give ×1.2 to physical players."""
         squad = [captain_stevie, jt_rock, bale_out, the_waz, big_zlat]
         result = detect_squad_synergies(squad, load_synergies())
         assert "Iron Wall" in result["fired_synergies"]
-        assert result["fatigue_penalty"] == 0.8
+        assert result["fatigue_penalty"] == 0.6
+        # physical players should have ×1.2 multiplier
+        for p in squad:
+            if "physical" in p.traits:
+                assert result["player_mult"].get(p.id, 1.0) == 1.2
 
     def test_multiple_persistent_synergy_stacking(self, terry_henri, bale_out, el_tren, cafu_express, kylian_express):
         """Multiple persistent synergies can fire simultaneously."""

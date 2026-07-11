@@ -375,32 +375,36 @@ class TestSquadPersistent:
     def test_pace_in_behind(self, pacey_squad, all_persistent_synergies):
         buffs = detect_squad_synergies(pacey_squad, all_persistent_synergies)
         assert "Pace in Behind" in buffs["fired_synergies"]
-        assert buffs["player_mult"].get("terry_henri", 1.0) == 1.1
+        # Terry gets ×1.15 from Pace and ×1.25 from Silent Killers = 1.4375
+        assert buffs["player_mult"].get("terry_henri", 1.0) == 1.4375
 
     def test_iron_wall(self, physical_squad, all_persistent_synergies):
         buffs = detect_squad_synergies(physical_squad, all_persistent_synergies)
         assert "Iron Wall" in buffs["fired_synergies"]
-        assert buffs["fatigue_penalty"] == 0.8
+        assert buffs["fatigue_penalty"] == 0.6
+        for p in physical_squad:
+            if "physical" in p.traits:
+                assert buffs["player_mult"].get(p.id, 1.0) == 1.2
 
     def test_leadership_council(self, leader_squad, all_persistent_synergies):
         buffs = detect_squad_synergies(leader_squad, all_persistent_synergies)
         assert "Leadership Council" in buffs["fired_synergies"]
-        assert buffs["global_add"] == 3
+        assert buffs["global_add"] == 15
 
     def test_tiki_taka(self, technical_squad, all_persistent_synergies):
         buffs = detect_squad_synergies(technical_squad, all_persistent_synergies)
         assert "Tiki-Taka" in buffs["fired_synergies"]
-        assert buffs["position_add"].get("CM", 0) == 5
+        assert buffs["position_mult"].get("CM", 1.0) == 1.15
 
     def test_clinical_edge(self, clinical_squad, all_persistent_synergies):
         buffs = detect_squad_synergies(clinical_squad, all_persistent_synergies)
         assert "Clinical Edge" in buffs["fired_synergies"]
-        assert buffs["position_add"].get("ST", 0) == 5
+        assert buffs["position_add"].get("ST", 0) == 15
 
     def test_double_destroyer(self, destroyer_squad, all_persistent_synergies):
         buffs = detect_squad_synergies(destroyer_squad, all_persistent_synergies)
         assert "Double Destroyer" in buffs["fired_synergies"]
-        assert buffs["position_add"].get("CB", 0) == 5
+        assert buffs["position_mult"].get("CB", 1.0) == 1.2
 
     def test_two_up_top(self, poacher_squad, all_persistent_synergies):
         buffs = detect_squad_synergies(poacher_squad, all_persistent_synergies)
@@ -415,12 +419,13 @@ class TestSquadPersistent:
     def test_pace_and_power(self, pace_power_squad, all_persistent_synergies):
         buffs = detect_squad_synergies(pace_power_squad, all_persistent_synergies)
         assert "Pace & Power" in buffs["fired_synergies"]
-        assert buffs["player_mult"].get("bale_out", 1.0) == 1.3
+        # Bale gets ×1.2 from Iron Wall + ×1.3 from Pace & Power = 1.56
+        assert buffs["player_mult"].get("bale_out", 1.0) == 1.56
 
     def test_silent_killers(self, silent_killers_squad, all_persistent_synergies):
         buffs = detect_squad_synergies(silent_killers_squad, all_persistent_synergies)
         assert "Silent Killers" in buffs["fired_synergies"]
-        assert buffs["player_add"].get("terry_henri", 0) == 5
+        assert buffs["player_mult"].get("terry_henri", 1.0) == 1.25
 
     def test_threshold_not_met(self, all_persistent_synergies):
         from src.cards import PlayerCard

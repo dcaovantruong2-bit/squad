@@ -220,10 +220,10 @@ name = "Pace in Behind"
 persistent = true
 rarity = "uncommon"
 trigger_type = "squad_trait_count"
-trigger = { trait = "pacey", min_count = 4 }
+trigger = { trait = "pacey", min_count = 5 }
 effect_type = "persistent_multiply"
-effect = { multiply = 1.1, target_trait = "pacey" }
-description = "4+ pacey players in squad: all pacey get ×1.1 mult each phase"
+effect = { multiply = 1.15, target_trait = "pacey" }
+description = "5+ pacey players in squad: all pacey get ×1.15 mult each phase"
 
 [[synergies]]
 id = "iron_wall"
@@ -232,9 +232,9 @@ persistent = true
 rarity = "uncommon"
 trigger_type = "squad_trait_count"
 trigger = { trait = "physical", min_count = 3 }
-effect_type = "persistent_fatigue"
-effect = { fatigue_penalty = 0.8 }
-description = "3+ physical players: fatigue penalty reduced (×0.8 instead of ×0.7)"
+effect_type = "persistent_multiply"
+effect = { multiply = 1.2, target_trait = "physical", fatigue_penalty = 0.6 }
+description = "3+ physical players: physical get ×1.2 mult + fatigue penalty reduced (×0.6 instead of ×0.7)"
 
 [[synergies]]
 id = "leadership_council"
@@ -244,8 +244,8 @@ rarity = "common"
 trigger_type = "squad_trait_count"
 trigger = { trait = "leader", min_count = 3 }
 effect_type = "persistent_add"
-effect = { add_chips = 3, target = "all" }
-description = "3+ leaders in squad: all players get +3 chips per phase"
+effect = { add_chips = 15, target = "all" }
+description = "3+ leaders in squad: all players get +15 chips per phase"
 
 [[synergies]]
 id = "tiki_taka_persistent"
@@ -254,9 +254,9 @@ persistent = true
 rarity = "uncommon"
 trigger_type = "squad_trait_count"
 trigger = { trait = "technical", min_count = 3 }
-effect_type = "persistent_add"
-effect = { add_chips = 5, target_position = ["CM", "CDM", "CAM"] }
-description = "3+ technical players: midfielders get +5 chips per phase"
+effect_type = "persistent_multiply"
+effect = { multiply = 1.15, target_position = ["CM", "CDM", "CAM"] }
+description = "3+ technical players: midfielders get ×1.15 mult each phase"
 
 [[synergies]]
 id = "clinical_edge"
@@ -266,8 +266,8 @@ rarity = "common"
 trigger_type = "squad_trait_count"
 trigger = { trait = "clinical", min_count = 2 }
 effect_type = "persistent_add"
-effect = { add_chips = 5, target_position = ["LW", "RW", "ST"] }
-description = "2+ clinical players: attackers get +5 chips per phase"
+effect = { add_chips = 15, target_position = ["LW", "RW", "ST"] }
+description = "2+ clinical players: attackers get +15 chips per phase"
 
 [[synergies]]
 id = "double_destroyer"
@@ -276,9 +276,9 @@ persistent = true
 rarity = "common"
 trigger_type = "squad_trait_count"
 trigger = { trait = "destroyer", min_count = 2 }
-effect_type = "persistent_add"
-effect = { add_chips = 5, target_position = ["CB", "FB", "CDM"] }
-description = "2+ destroyers: defenders get +5 chips per phase"
+effect_type = "persistent_multiply"
+effect = { multiply = 1.2, target_position = ["CB", "FB", "CDM"] }
+description = "2+ destroyers: defenders get ×1.2 mult each phase"
 
 [[synergies]]
 id = "two_up_top"
@@ -320,9 +320,9 @@ persistent = true
 rarity = "uncommon"
 trigger_type = "squad_trait_combo"
 trigger = { traits = ["clinical", "pacey"], min_count = 2 }
-effect_type = "persistent_add"
-effect = { add_chips = 5, target_trait_combo = ["clinical", "pacey"] }
-description = "2+ players with clinical+pacey: those players get +5 chips per phase"
+effect_type = "persistent_multiply"
+effect = { multiply = 1.25, target_trait_combo = ["clinical", "pacey"] }
+description = "2+ players with clinical+pacey: those players get ×1.25 mult each phase"
 
 # ── New: Aerial Fortress — 3+ aerial players ──────────────────────────────
 [[synergies]]
@@ -332,9 +332,9 @@ persistent = true
 rarity = "uncommon"
 trigger_type = "squad_trait_count"
 trigger = { trait = "aerial", min_count = 3 }
-effect_type = "persistent_add"
-effect = { add_chips = 7, target_position = ["ST", "CB", "GK"] }
-description = "3+ aerial players in squad: STs, CBs, GKs get +7 chips per phase"
+effect_type = "persistent_multiply"
+effect = { multiply = 1.2, target_position = ["ST", "CB", "GK"] }
+description = "3+ aerial players in squad: STs, CBs, GKs get ×1.2 mult each phase"
 
 # ── New: Playmaker Network — 3+ playmaker players ──────────────────────────
 [[synergies]]
@@ -345,5 +345,5 @@ rarity = "common"
 trigger_type = "squad_trait_count"
 trigger = { trait = "playmaker", min_count = 3 }
 effect_type = "persistent_multiply"
-effect = { multiply = 1.1, target_position = ["CM", "CAM", "CDM"] }
-description = "3+ playmakers in squad: midfielders get ×1.1 mult each phase"
+effect = { multiply = 1.15, target_position = ["CM", "CAM", "CDM"] }
+description = "3+ playmakers in squad: midfielders get ×1.15 mult each phase"
