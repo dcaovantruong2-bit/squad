@@ -939,6 +939,91 @@ function pickRandomPhases(count) {
   return shuffled.slice(0, Math.min(count, shuffled.length));
 }
 
+function dealPhases(handSize) {
+  const shuffled = shuffleArray(ALL_PHASES);
+  return shuffled.slice(0, Math.min(handSize || 6, shuffled.length));
+}
+
+function getAvailableSynergies(squad, allSynergies) {
+  const available = [];
+  for (const s of allSynergies) {
+    if (s.persistent) continue;
+    const tr = s.trigger;
+    let canFire = false;
+    let involved = [];
+
+    if (s.triggerType === 'clean_sheet') {
+      const gks = squad.filter(p => p.position === 'GK');
+      const cbs = squad.filter(p => p.position === 'CB');
+      for (const gk of gks) {
+        for (const cb of cbs) {
+          if (gk.def_ + cb.def_ >= tr.threshold) {
+            canFire = true;
+            involved = [gk.name + ' (DEF' + gk.def_ + ')', cb.name + ' (DEF' + cb.def_ + ')'];
+            break;
+          }
+        } if (canFire) break;
+      }
+    } else if (s.triggerType === 'stretch_backline') {
+      const fbs = squad.filter(p => p.position === 'FB');
+      const lws = squad.filter(p => p.position === 'LW');
+      for (const fb of fbs) {
+        for (const lw of lws) {
+          if (fb.pac + lw.pac >= tr.threshold) {
+            canFire = true;
+            involved = [fb.name + ' (PAC' + fb.pac + ')', lw.name + ' (PAC' + lw.pac + ')'];
+            break;
+          }
+        } if (canFire) break;
+      }
+    } else if (s.triggerType === 'one_two') {
+      const cms = squad.filter(p => p.position === 'CM');
+      const sts = squad.filter(p => p.position === 'ST');
+      for (const cm of cms) {
+        for (const st of sts) {
+          if (cm.pas + st.pac >= tr.threshold) {
+            canFire = true;
+            involved = [cm.name + ' (PAS' + cm.pas + ')', st.name + ' (PAC' + st.pac + ')'];
+            break;
+          }
+        } if (canFire) break;
+      }
+    }
+    // More synergies checked similarly but condensed for brevity
+    else if (s.triggerType === 'route_one') {
+      const cbs = squad.filter(p => p.position === 'CB');
+      const sts = squad.filter(p => p.position === 'ST');
+      for (const cb of cbs) { for (const st of sts) { if (cb.pas + st.pac >= tr.threshold) { canFire = true; involved = [cb.name + '(PAS' + cb.pas + ')', st.name + '(PAC' + st.pac + ')']; break; } } if (canFire) break; }
+    } else if (s.triggerType === 'battering_ram') {
+      const cbs = squad.filter(p => p.position === 'CB');
+      const sts = squad.filter(p => p.position === 'ST');
+      for (const cb of cbs) { for (const st of sts) { if (cb.def_ + st.atk >= tr.threshold) { canFire = true; involved = [cb.name + '(DEF' + cb.def_ + ')', st.name + '(ATK' + st.atk + ')']; break; } } if (canFire) break; }
+    } else if (s.triggerType === 'target_man_release') {
+      const sts = squad.filter(p => p.position === 'ST');
+      const wingers = squad.filter(p => p.position === 'LW' || p.position === 'RW');
+      for (const st of sts) { for (const w of wingers) { if (st.atk + w.pac >= tr.threshold) { canFire = true; involved = [st.name + '(ATK' + st.atk + ')', w.name + '(PAC' + w.pac + ')']; break; } } if (canFire) break; }
+    } else if (s.triggerType === 'set_piece_threat') {
+      const defHigh = squad.filter(p => p.def_ >= tr.threshold_a);
+      const spcHigh = squad.filter(p => p.spc >= tr.threshold_b);
+      for (const dp of defHigh) { for (const sp of spcHigh) { if (dp.id !== sp.id) { canFire = true; involved = [dp.name + '(DEF' + dp.def_ + ')', sp.name + '(SPC' + sp.spc + ')']; break; } } if (canFire) break; }
+    } else if (s.triggerType === 'defensive_duo') {
+      const sorted = [...squad].sort((a, b) => b.def_ - a.def_);
+      if (sorted.length >= 2 && sorted[0].def_ + sorted[1].def_ >= tr.threshold) { canFire = true; involved = [sorted[0].name + '(DEF' + sorted[0].def_ + ')', sorted[1].name + '(DEF' + sorted[1].def_ + ')']; }
+    } else if (s.triggerType === 'trio') {
+      const cms = squad.filter(p => p.position === 'CM' && p.pas >= (tr.threshold||7));
+      if (cms.length >= 3) { canFire = true; involved = cms.slice(0,3).map(p => p.name + '(PAS' + p.pas + ')'); }
+    } else if (s.triggerType === 'double_pivot') {
+      const cms = squad.filter(p => p.position === 'CM');
+      for (let i = 0; i < cms.length; i++) { for (let j = i+1; j < cms.length; j++) { if (cms[i].pas + cms[j].pas >= tr.threshold) { canFire = true; involved = [cms[i].name + '(PAS' + cms[i].pas + ')', cms[j].name + '(PAS' + cms[j].pas + ')']; break; } } if (canFire) break; }
+    }
+
+    if (canFire) {
+      available.push({ name: s.name, desc: s.description, players: involved });
+    }
+  }
+  return available;
+}
+
 // Squad-builder role groups
 const ROLE_GROUPS = {
   GK:        { positions: ["GK"], min: 1, label: "Goalkeeper" },

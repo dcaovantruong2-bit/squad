@@ -1138,6 +1138,35 @@ body::after {
   </section>
 
   <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- SCREEN: PHASE SELECTION - pick 3 of 6 -->
+  <section class="game-screen" id="screen-phase-select" data-od-id="phase-select-screen">
+    <div class="ps-header">
+      <h1 class="form-title">Pick Your Phases</h1>
+      <p class="form-subtitle">Dealt 6 phase cards. Pick 3 to play. Order matters for carryover!</p>
+    </div>
+    <div id="ps-round-info" style="font-family:var(--font-body);font-size:var(--text-lg);color:var(--fg-dim);text-align:center;margin-bottom:var(--space-4)"></div>
+    <div id="ps-available-syns" style="font-family:var(--font-body);font-size:var(--text-sm);color:var(--accent);text-align:center;margin-bottom:var(--space-4)"></div>
+    <div class="ps-cards" id="ps-cards"></div>
+    <div class="ps-picks" id="ps-picks"></div>
+    <div class="squad-actions" id="ps-actions">
+      <button class="btn btn-primary btn-lg" id="confirm-phases-btn" disabled>Confirm Phase Order ▸</button>
+    </div>
+    <style>
+      .ps-cards { display:grid; grid-template-columns: repeat(3, 1fr); gap:var(--space-3); max-width:900px; margin:0 auto; }
+      .ps-card { background:var(--surface); border:2px solid var(--border); border-radius:var(--radius-md); padding:var(--space-3); cursor:pointer; transition:all var(--motion-fast) ease; position:relative; }
+      .ps-card:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:0 0 12px var(--accent-glow); }
+      .ps-card.selected { border-color:var(--gold); box-shadow:0 0 16px var(--gold-glow); }
+      .ps-card.picked { opacity:0.5; border-color:var(--border); cursor:default; transform:none; box-shadow:none; }
+      .ps-card .pc-icon { font-size:28px; margin-bottom:var(--space-2); }
+      .ps-card .pc-name { font-family:var(--font-display); font-size:7px; color:var(--fg); margin-bottom:var(--space-1); text-transform:uppercase; letter-spacing:0.06em; }
+      .ps-card .pc-desc { font-family:var(--font-body); font-size:var(--text-sm); color:var(--muted); margin-bottom:var(--space-2); }
+      .ps-card .pc-slots { font-family:var(--font-mono); font-size:12px; color:var(--fg-dim); }
+      .ps-card .pc-syn { font-family:var(--font-body); font-size:var(--text-sm); color:var(--accent); margin-top:var(--space-1); }
+      .ps-card .pc-order { position:absolute; top:var(--space-2); right:var(--space-2); font-family:var(--font-display); font-size:10px; color:var(--gold); }
+      .ps-picks { text-align:center; font-family:var(--font-body); font-size:var(--text-lg); color:var(--gold); margin:var(--space-4) 0; min-height:2em; }
+    </style>
+  </section>
+
   <!-- SCREEN: MATCH                                                 -->
   <!-- ═══════════════════════════════════════════════════════════════ -->
   <section class="game-screen" id="screen-match" data-od-id="match-screen">
@@ -1158,7 +1187,7 @@ body::after {
         <div class="progress-dots" id="round-dots"></div>
       </div>
       <div class="progress-group">
-        <div class="progress-label">Phase <span id="phase-num">1</span> / 6</div>
+        <div class="progress-label">Phase <span id="phase-num">1</span> / 3</div>
         <div class="progress-dots" id="phase-dots"></div>
       </div>
     </div>
@@ -2222,6 +2251,91 @@ function pickRandomPhases(count) {
   return shuffled.slice(0, Math.min(count, shuffled.length));
 }
 
+function dealPhases(handSize) {
+  const shuffled = shuffleArray(ALL_PHASES);
+  return shuffled.slice(0, Math.min(handSize || 6, shuffled.length));
+}
+
+function getAvailableSynergies(squad, allSynergies) {
+  const available = [];
+  for (const s of allSynergies) {
+    if (s.persistent) continue;
+    const tr = s.trigger;
+    let canFire = false;
+    let involved = [];
+
+    if (s.triggerType === 'clean_sheet') {
+      const gks = squad.filter(p => p.position === 'GK');
+      const cbs = squad.filter(p => p.position === 'CB');
+      for (const gk of gks) {
+        for (const cb of cbs) {
+          if (gk.def_ + cb.def_ >= tr.threshold) {
+            canFire = true;
+            involved = [gk.name + ' (DEF' + gk.def_ + ')', cb.name + ' (DEF' + cb.def_ + ')'];
+            break;
+          }
+        } if (canFire) break;
+      }
+    } else if (s.triggerType === 'stretch_backline') {
+      const fbs = squad.filter(p => p.position === 'FB');
+      const lws = squad.filter(p => p.position === 'LW');
+      for (const fb of fbs) {
+        for (const lw of lws) {
+          if (fb.pac + lw.pac >= tr.threshold) {
+            canFire = true;
+            involved = [fb.name + ' (PAC' + fb.pac + ')', lw.name + ' (PAC' + lw.pac + ')'];
+            break;
+          }
+        } if (canFire) break;
+      }
+    } else if (s.triggerType === 'one_two') {
+      const cms = squad.filter(p => p.position === 'CM');
+      const sts = squad.filter(p => p.position === 'ST');
+      for (const cm of cms) {
+        for (const st of sts) {
+          if (cm.pas + st.pac >= tr.threshold) {
+            canFire = true;
+            involved = [cm.name + ' (PAS' + cm.pas + ')', st.name + ' (PAC' + st.pac + ')'];
+            break;
+          }
+        } if (canFire) break;
+      }
+    }
+    // More synergies checked similarly but condensed for brevity
+    else if (s.triggerType === 'route_one') {
+      const cbs = squad.filter(p => p.position === 'CB');
+      const sts = squad.filter(p => p.position === 'ST');
+      for (const cb of cbs) { for (const st of sts) { if (cb.pas + st.pac >= tr.threshold) { canFire = true; involved = [cb.name + '(PAS' + cb.pas + ')', st.name + '(PAC' + st.pac + ')']; break; } } if (canFire) break; }
+    } else if (s.triggerType === 'battering_ram') {
+      const cbs = squad.filter(p => p.position === 'CB');
+      const sts = squad.filter(p => p.position === 'ST');
+      for (const cb of cbs) { for (const st of sts) { if (cb.def_ + st.atk >= tr.threshold) { canFire = true; involved = [cb.name + '(DEF' + cb.def_ + ')', st.name + '(ATK' + st.atk + ')']; break; } } if (canFire) break; }
+    } else if (s.triggerType === 'target_man_release') {
+      const sts = squad.filter(p => p.position === 'ST');
+      const wingers = squad.filter(p => p.position === 'LW' || p.position === 'RW');
+      for (const st of sts) { for (const w of wingers) { if (st.atk + w.pac >= tr.threshold) { canFire = true; involved = [st.name + '(ATK' + st.atk + ')', w.name + '(PAC' + w.pac + ')']; break; } } if (canFire) break; }
+    } else if (s.triggerType === 'set_piece_threat') {
+      const defHigh = squad.filter(p => p.def_ >= tr.threshold_a);
+      const spcHigh = squad.filter(p => p.spc >= tr.threshold_b);
+      for (const dp of defHigh) { for (const sp of spcHigh) { if (dp.id !== sp.id) { canFire = true; involved = [dp.name + '(DEF' + dp.def_ + ')', sp.name + '(SPC' + sp.spc + ')']; break; } } if (canFire) break; }
+    } else if (s.triggerType === 'defensive_duo') {
+      const sorted = [...squad].sort((a, b) => b.def_ - a.def_);
+      if (sorted.length >= 2 && sorted[0].def_ + sorted[1].def_ >= tr.threshold) { canFire = true; involved = [sorted[0].name + '(DEF' + sorted[0].def_ + ')', sorted[1].name + '(DEF' + sorted[1].def_ + ')']; }
+    } else if (s.triggerType === 'trio') {
+      const cms = squad.filter(p => p.position === 'CM' && p.pas >= (tr.threshold||7));
+      if (cms.length >= 3) { canFire = true; involved = cms.slice(0,3).map(p => p.name + '(PAS' + p.pas + ')'); }
+    } else if (s.triggerType === 'double_pivot') {
+      const cms = squad.filter(p => p.position === 'CM');
+      for (let i = 0; i < cms.length; i++) { for (let j = i+1; j < cms.length; j++) { if (cms[i].pas + cms[j].pas >= tr.threshold) { canFire = true; involved = [cms[i].name + '(PAS' + cms[i].pas + ')', cms[j].name + '(PAS' + cms[j].pas + ')']; break; } } if (canFire) break; }
+    }
+
+    if (canFire) {
+      available.push({ name: s.name, desc: s.description, players: involved });
+    }
+  }
+  return available;
+}
+
 // Squad-builder role groups
 const ROLE_GROUPS = {
   GK:        { positions: ["GK"], min: 1, label: "Goalkeeper" },
@@ -2601,10 +2715,120 @@ function checkMinimums(squad) {
     G.journeymanUsed = false;
     G.roundScore = 0;
     G.phaseIdx = 0;
-    G.roundPhases = pickRandomPhases(6);
     G.phasePlacement = {};
     G.activeSlot = null;
+    G.phaseHand = dealPhases(6);
+    G.selectedPhases = [];
+    startPhaseSelection();
+  });
+
+  // ═══════════════════════════════════════════════════════════════════
+  // PHASE SELECTION — pick 3 of 6 dealt cards
+  // ═══════════════════════════════════════════════════════════════════
+
+  const WEIGHT_ICONS = { DEF:'🛡️', PAS:'🔄', PAC:'⚡', ATK:'🎯', SPC:'✨' };
+  let _psPicked = [];
+  let _psHand = [];
+
+  function startPhaseSelection() {
+    _psHand = G.phaseHand || dealPhases(6);
+    _psPicked = [];
+    G.selectedPhases = [];
+
+    const roundInfo = document.getElementById('ps-round-info');
+    roundInfo.textContent = 'Round ' + (G.round + 1) + '/3 - Target: ' + (CAMPAIGN_MATCHES[G.matchIdx] ? CAMPAIGN_MATCHES[G.matchIdx].targets[G.round] : 400);
+
+    // Show available synergies
+    const synDiv = document.getElementById('ps-available-syns');
+    const av = getAvailableSynergies(G.squad, SYNERGIES);
+    if (av.length > 0) {
+      const lines = av.slice(0, 5).map(s =>
+        '<span style="color:var(--accent);margin-right:var(--space-2)">' + s.name + '</span>'
+      );
+      synDiv.innerHTML = 'Synergies available: ' + lines.join('');
+      if (av.length > 5) synDiv.innerHTML += ' <span style="color:var(--muted)">(+' + (av.length - 5) + ' more)</span>';
+    }
+
+    renderPhaseCards();
+    showScreen('phase-select');
+  }
+
+  function renderPhaseCards() {
+    const container = document.getElementById('ps-cards');
+    const html = _psHand.map((phase, i) => {
+      const isPicked = _psPicked.includes(i);
+      const pickOrder = _psPicked.indexOf(i) + 1;
+      const icon = WEIGHT_ICONS[phase.weight] || '⚽';
+      const slotsStr = phase.slots.map(s => typeof s === 'string' ? s : (s.as || '?')).join(' → ');
+
+      // Calculate best fit players
+      const bestFit = [];
+      for (const slot of phase.slots) {
+        const pos = typeof slot === 'string' ? slot : (slot.as || '?');
+        let elig;
+        if (typeof slot === 'string') {
+          elig = G.squad.filter(p => p.position === slot);
+        } else if (typeof slot === 'object' && slot.as) {
+          elig = G.squad.filter(p => {
+            if (slot.min_atk && p.atk < slot.min_atk) return false;
+            if (slot.min_pac && p.pac < slot.min_pac) return false;
+            if (slot.min_pas && p.pas < slot.min_pas) return false;
+            if (slot.min_def && p.def_ < slot.min_def) return false;
+            if (slot.min_spc && p.spc < slot.min_spc) return false;
+            if (slot.trait && !p.traits.includes(slot.trait)) return false;
+            return true;
+          });
+        } else {
+          elig = G.squad.filter(p => slot.includes(p.position));
+        }
+        if (elig.length) {
+          const best = elig.reduce((a, b) => calculateChips(a, pos) > calculateChips(b, pos) ? a : b);
+          bestFit.push(best.name + '(' + pos + ')');
+        }
+      }
+
+      const synPotential = getAvailableSynergies(G.squad, SYNERGIES);
+      const synNames = synPotential.slice(0, 2).map(s => s.name).join(', ');
+
+      return '<div class="ps-card ' + (isPicked ? 'picked' : '') + '" onclick="selectPhaseCard(' + i + ')" data-idx="' + i + '">' +
+        (pickOrder ? '<div class="pc-order">#' + pickOrder + '</div>' : '') +
+        '<div class="pc-icon">' + icon + '</div>' +
+        '<div class="pc-name">' + phase.name + '</div>' +
+        '<div class="pc-desc">' + (phase.description || '') + '</div>' +
+        '<div class="pc-slots">' + slotsStr + '</div>' +
+        (bestFit.length ? '<div style="font-size:11px;color:var(--fg-dim);margin-top:var(--space-1)">Best: ' + bestFit.join(', ') + '</div>' : '') +
+        (synNames ? '<div class="pc-syn">⚡ ' + synNames + '</div>' : '') +
+        '</div>';
+    }).join('');
+    container.innerHTML = html;
+
+    // Update picks display
+    const picksDiv = document.getElementById('ps-picks');
+    if (_psPicked.length === 0) {
+      picksDiv.textContent = 'Click a phase card to select it. Pick 3 in order.';
+    } else {
+      const pickedNames = _psPicked.map(i => _psHand[i].name).join(' → ');
+      picksDiv.textContent = 'Selected order: ' + pickedNames;
+    }
+
+    document.getElementById('confirm-phases-btn').disabled = (_psPicked.length < 3);
+  }
+
+  function selectPhaseCard(index) {
+    if (_psPicked.includes(index)) return; // already picked
+    if (_psPicked.length >= 3) return; // already picked 3
+    _psPicked.push(index);
+    renderPhaseCards();
+  }
+
+  document.getElementById('confirm-phases-btn').addEventListener('click', () => {
+    if (_psPicked.length !== 3) return;
+    G.selectedPhases = _psPicked.map(i => _psHand[i]);
+    G.roundPhases = G.selectedPhases;
+    G.phaseIdx = 0;
+    G.phasePlacement = {};
     showScreen('match');
+    setTimeout(renderMatchPhase, 100);
   });
 
   // ═══════════════════════════════════════════════════════════════════
@@ -2673,7 +2897,7 @@ function checkMinimums(squad) {
     document.getElementById('rounds-won').textContent = G.roundsWon;
     document.getElementById('rounds-lost').textContent = G.roundsLost;
     document.getElementById('round-num').textContent = G.round + 1;
-    document.getElementById('phase-num').textContent = G.phaseIdx + 1;
+    document.getElementById('phase-num').textContent = G.phaseIdx + 1; document.getElementById('phase-dots').innerHTML = Array(3).fill().map((_,i) => `<span class="${i <= G.phaseIdx ? 'dot-filled' : 'dot-empty'}"></span>`).join('');
 
     const target = matchData.targets[G.round] || 999;
     document.getElementById('target-num').textContent = target;
@@ -3184,7 +3408,7 @@ function checkMinimums(squad) {
   document.getElementById('pr-continue-btn').addEventListener('click', () => {
     G.phaseIdx++;
 
-    if (G.phaseIdx >= 6) {
+    if (G.phaseIdx >= 3) {
       // Round complete — check if won
       const target = CAMPAIGN_MATCHES[G.matchIdx].targets[G.round];
       const won = G.roundScore >= target;
@@ -3274,13 +3498,14 @@ function checkMinimums(squad) {
         G.roundWins = [false, false, false];
         G.roundScore = 0;
         G.phaseIdx = 0;
-        G.roundPhases = pickRandomPhases(6);
         G.phasePlacement = {};
         G.activeSlot = null;
         G.fatigue = {};
         G.carryover = null;
         G.journeymanUsed = false;
-        showScreen('match');
+        G.phaseHand = dealPhases(6);
+        G.selectedPhases = [];
+        startPhaseSelection();
       }
     } else {
       // Next round
