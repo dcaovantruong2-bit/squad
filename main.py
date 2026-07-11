@@ -694,7 +694,212 @@ def select_formation(squad) -> object:
         return formations[0]
 
 
-# ─── Phase Selection (Balatro-Like) ───────────────────────────────────────
+# ─── Available Synergy Detection ────────────────────────────────────────
+
+def get_available_synergies(squad, all_synergies, persistent_buffs=None):
+    """Return only synergies that can potentially fire given the squad.
+    For each, also list the key players involved.
+    Returns list of (synergy_name, description, [player_names_with_roles])"""
+    from collections import defaultdict
+    
+    available = []
+    
+    for s in all_synergies:
+        if s.persistent:
+            continue  # Persistent are always active, shown elsewhere
+        
+        tr = s.trigger
+        can_fire = False
+        involved = []
+        
+        if s.trigger_type == 'clean_sheet':
+            gks = [p for p in squad if p.position == 'GK']
+            cbs = [p for p in squad if p.position == 'CB']
+            for gk in gks:
+                for cb in cbs:
+                    if gk.def_ + cb.def_ >= tr['threshold']:
+                        can_fire = True
+                        involved = [f'{gk.name} (DEF{gk.def_})', f'{cb.name} (DEF{cb.def_})']
+                        break
+                if can_fire: break
+        
+        elif s.trigger_type == 'organised_defence':
+            cbs = [p for p in squad if p.position == 'CB']
+            for i, cb1 in enumerate(cbs):
+                for cb2 in cbs[i+1:]:
+                    if cb1.def_ + cb2.def_ >= tr['threshold']:
+                        can_fire = True
+                        involved = [f'{cb1.name} (DEF{cb1.def_})', f'{cb2.name} (DEF{cb2.def_})']
+                        break
+                if can_fire: break
+        
+        elif s.trigger_type == 'wingback_overlap':
+            fbs = [p for p in squad if p.position == 'FB']
+            cms = [p for p in squad if p.position == 'CM']
+            for fb in fbs:
+                for cm in cms:
+                    if fb.pac + cm.pas >= tr['threshold']:
+                        can_fire = True
+                        involved = [f'{fb.name} (PAC{fb.pac})', f'{cm.name} (PAS{cm.pas})']
+                        break
+                if can_fire: break
+        
+        elif s.trigger_type == 'overload':
+            pos_counts = defaultdict(int)
+            pos_players = defaultdict(list)
+            for p in squad:
+                pos_counts[p.position] += 1
+                pos_players[p.position].append(p.name)
+            for pos, count in pos_counts.items():
+                if count >= tr.get('min_duplicates', 2):
+                    can_fire = True
+                    involved = pos_players[pos][:3]
+                    break
+        
+        elif s.trigger_type == 'stretch_backline':
+            fbs = [p for p in squad if p.position == 'FB']
+            lws = [p for p in squad if p.position == 'LW']
+            for fb in fbs:
+                for lw in lws:
+                    if fb.pac + lw.pac >= tr['threshold']:
+                        can_fire = True
+                        involved = [f'{fb.name} (PAC{fb.pac})', f'{lw.name} (PAC{lw.pac})']
+                        break
+                if can_fire: break
+        
+        elif s.trigger_type == 'route_one':
+            cbs = [p for p in squad if p.position == 'CB']
+            sts = [p for p in squad if p.position == 'ST']
+            for cb in cbs:
+                for st in sts:
+                    if cb.pas + st.pac >= tr['threshold']:
+                        can_fire = True
+                        involved = [f'{cb.name} (PAS{cb.pas})', f'{st.name} (PAC{st.pac})']
+                        break
+                if can_fire: break
+        
+        elif s.trigger_type == 'battering_ram':
+            cbs = [p for p in squad if p.position == 'CB']
+            sts = [p for p in squad if p.position == 'ST']
+            for cb in cbs:
+                for st in sts:
+                    if cb.def_ + st.atk >= tr['threshold']:
+                        can_fire = True
+                        involved = [f'{cb.name} (DEF{cb.def_})', f'{st.name} (ATK{st.atk})']
+                        break
+                if can_fire: break
+        
+        elif s.trigger_type == 'defensive_duo':
+            high = sorted(squad, key=lambda p: p.def_, reverse=True)
+            if len(high) >= 2 and high[0].def_ + high[1].def_ >= tr['threshold']:
+                can_fire = True
+                involved = [f'{high[0].name} (DEF{high[0].def_})', f'{high[1].name} (DEF{high[1].def_})']
+        
+        elif s.trigger_type == 'back_three':
+            top3 = sorted(squad, key=lambda p: p.def_, reverse=True)[:3]
+            if len(top3) >= 3 and all(p.def_ >= tr['threshold'] for p in top3):
+                can_fire = True
+                involved = [f'{p.name} (DEF{p.def_})' for p in top3]
+        
+        elif s.trigger_type == 'midfield_engine':
+            cms = [p for p in squad if p.position == 'CM']
+            for cm1 in cms:
+                for cm2 in cms:
+                    if cm1.id != cm2.id and cm1.pas + cm2.def_ >= tr['threshold']:
+                        can_fire = True
+                        involved = [f'{cm1.name} (PAS{cm1.pas})', f'{cm2.name} (DEF{cm2.def_})']
+                        break
+                if can_fire: break
+        
+        elif s.trigger_type == 'double_pivot':
+            cms = [p for p in squad if p.position == 'CM']
+            for i, cm1 in enumerate(cms):
+                for cm2 in cms[i+1:]:
+                    if cm1.pas + cm2.pas >= tr['threshold']:
+                        can_fire = True
+                        involved = [f'{cm1.name} (PAS{cm1.pas})', f'{cm2.name} (PAS{cm2.pas})']
+                        break
+                if can_fire: break
+        
+        elif s.trigger_type == 'trio':
+            cms = [p for p in squad if p.position == 'CM']
+            good = [p for p in cms if p.pas >= tr.get('threshold', 7)]
+            if len(good) >= 3:
+                can_fire = True
+                involved = [f'{p.name} (PAS{p.pas})' for p in good[:3]]
+        
+        elif s.trigger_type == 'covering_defender':
+            cbs = [p for p in squad if p.position == 'CB']
+            fast = [p for p in cbs if p.pac >= tr['threshold_a']]
+            strong = [p for p in cbs if p.def_ >= tr['threshold_b']]
+            for f in fast:
+                for st in strong:
+                    if f.id != st.id:
+                        can_fire = True
+                        involved = [f'{f.name} (PAC{f.pac})', f'{st.name} (DEF{st.def_})']
+                        break
+                if can_fire: break
+        
+        elif s.trigger_type == 'target_man_release':
+            sts = [p for p in squad if p.position == 'ST']
+            wingers = [p for p in squad if p.position in ('LW', 'RW')]
+            for st in sts:
+                for w in wingers:
+                    if st.atk + w.pac >= tr['threshold']:
+                        can_fire = True
+                        involved = [f'{st.name} (ATK{st.atk})', f'{w.name} (PAC{w.pac})']
+                        break
+                if can_fire: break
+        
+        elif s.trigger_type == 'near_post_flick':
+            cams = [p for p in squad if p.position == 'CAM']
+            sts = [p for p in squad if p.position == 'ST']
+            for cam in cams:
+                for st in sts:
+                    if cam.spc + st.atk >= tr['threshold']:
+                        can_fire = True
+                        involved = [f'{cam.name} (SPC{cam.spc})', f'{st.name} (ATK{st.atk})']
+                        break
+                if can_fire: break
+        
+        elif s.trigger_type == 'one_two':
+            cms = [p for p in squad if p.position == 'CM']
+            sts = [p for p in squad if p.position == 'ST']
+            for cm in cms:
+                for st in sts:
+                    if cm.pas + st.pac >= tr['threshold']:
+                        can_fire = True
+                        involved = [f'{cm.name} (PAS{cm.pas})', f'{st.name} (PAC{st.pac})']
+                        break
+                if can_fire: break
+        
+        elif s.trigger_type == 'overlap':
+            fbs = [p for p in squad if p.position == 'FB']
+            lws = [p for p in squad if p.position == 'LW']
+            for fb in fbs:
+                for lw in lws:
+                    if fb.pac + lw.pas >= tr['threshold']:
+                        can_fire = True
+                        involved = [f'{fb.name} (PAC{fb.pac})', f'{lw.name} (PAS{lw.pas})']
+                        break
+                if can_fire: break
+        
+        elif s.trigger_type == 'set_piece_threat':
+            def_high = [p for p in squad if p.def_ >= tr['threshold_a']]
+            spc_high = [p for p in squad if p.spc >= tr['threshold_b']]
+            for dp in def_high:
+                for sp in spc_high:
+                    if dp.id != sp.id:
+                        can_fire = True
+                        involved = [f'{dp.name} (DEF{dp.def_})', f'{sp.name} (SPC{sp.spc})']
+                        break
+                if can_fire: break
+        
+        if can_fire:
+            available.append((s.name, s.description, involved))
+    
+    return available
+
 
 def run_phase_selection(match: MatchState) -> None:
     """Show 6 dealt phase cards, let player pick 3 in order."""
@@ -720,12 +925,14 @@ def run_phase_selection(match: MatchState) -> None:
             else:
                 cprint(f"  [dim]Pick your first phase. Order matters for carryover![/dim]", style="dim")
             
-            # Show round synergies (all 18 available)
+            # Show available synergies (squad-relevant only)
             if match.synergies:
-                cprint("  [bold]📋 All 18 Phase Synergies Available (check ⚡ Potential per phase):[/bold]", style="bold yellow")
-                for s in match.synergies:
-                    color = rarity_styles.get(s.rarity, "dim")
-                    cprint(f"    ✦ [bold]{s.name:22s}[/bold]  [{color}]{s.description}[/{color}]", style="yellow")
+                syns = get_available_synergies(match.squad, match.synergies)
+                if syns:
+                    cprint("  [bold]📋 Squad synergies available:[/bold]", style="bold yellow")
+                    for name, desc, players_involved in syns:
+                        plyr = " — " + ", ".join(players_involved[:2])
+                        cprint(f"    ✦ [bold]{name:22s}[/bold] [dim]{desc[:50]}[/dim]{plyr}", style="yellow")
             
             cprint(f"\n  [bold]Available Phases:[/bold]", style="bold")
             
@@ -834,15 +1041,23 @@ def play_match(match: MatchState) -> bool:
         match.current_round = round_num
         start_round(match)
 
-        # Show this round's 5 random phase synergies as a tactical briefing
+        # Show available synergies based on squad
         if match.synergies:
             clear_screen()
             cprint(f"  [bold]📋 ROUND {round_num+1} / 3[/bold]", style="bold yellow")
             cprint(f"  Target: {match.current_target}  —  Score: {match.round_score}", style="bold")
             cprint("  " + "─" * 55, style="dim")
-            cprint(f"  [dim]All {len(match.synergies)} phase synergies available this round.[/dim]", style="dim")
-            cprint(f"  [dim]Check ⚡ Potential next to each phase card when picking.[/dim]", style="dim")
-            cprint(f"  [dim]Build your phase selections around them![/dim]", style="dim")
+            av = get_available_synergies(match.squad, match.synergies)
+            if av:
+                cprint(f"  [bold]⚡ {len(av)} synergies match your squad:[/bold]", style="bold yellow")
+                for name, desc, players_involved in av[:8]:
+                    plyr = " — " + ", ".join(players_involved[:2])
+                    cprint(f"    ✦ [bold]{name:22s}[/bold] [dim]{desc[:45]}[/dim]{plyr}", style="yellow")
+                if len(av) > 8:
+                    cprint(f"    [dim]...and {len(av)-8} more (see phase selection)[/dim]", style="dim")
+            else:
+                cprint(f"  [dim]No phase synergies match your current squad.[/dim]", style="dim")
+            cprint(f"  [dim]Build your phase selections around these![/dim]", style="dim")
             input("  Press Enter to begin Round...")
 
         # Phase selection: deal 6, pick 3 in order
