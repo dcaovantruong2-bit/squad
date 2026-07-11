@@ -187,10 +187,33 @@ PHASE_DEFS = {
         slots=[
             {"as": "CAM", "min_spc": 7},         # Specialist kick taker
             {"as": "ST", "min_atk": 7, "trait": "physical"},  # Big target
+            {"as": "CB", "min_def": 7},          # Extra aerial threat
+        ],
+        weight="SPC",
+        max_cards=3,
+        description="Corner or free kick — specialist delivery meets a physical target with CB support",
+    ),
+    "flair_moment": Phase(
+        id="flair_moment",
+        name="Flair Moment",
+        slots=[
+            {"as": "CAM", "min_spc": 7},         # Creative spark
+            {"as": "ST", "min_atk": 6},           # Finisher
         ],
         weight="SPC",
         max_cards=2,
-        description="Corner or free kick — specialist delivery meets a physical target",
+        description="Individual brilliance — your most creative player makes something from nothing",
+    ),
+    "second_ball": Phase(
+        id="second_ball",
+        name="Second Ball",
+        slots=[
+            {"as": "CM", "min_atk": 6},           # Box-crashing midfielder
+            {"as": "ST", "min_atk": 7},           # Target man
+        ],
+        weight="ATK",
+        max_cards=2,
+        description="Keeper parries — your midfielder attacks the loose ball before defenders react",
     ),
     "high_press": Phase(
         id="high_press",
@@ -230,7 +253,7 @@ PHASE_DEFS = {
 
 
 def get_all_phases() -> list[Phase]:
-    """Return all phase definitions (11 total)."""
+    """Return all phase definitions (13 total)."""
     return list(PHASE_DEFS.values())
 
 
@@ -243,6 +266,6 @@ def shuffle_phases() -> list[Phase]:
 
 
 def deal_phases(hand_size: int = 6) -> list[Phase]:
-    """Deal `hand_size` random phase cards (no duplicates). Player picks which to play."""
+    """Deal `hand_size` random phase cards (no duplicates) from the 13-phase pool. Player picks which to play."""
     phases = get_all_phases()
     return random.sample(phases, min(hand_size, len(phases)))

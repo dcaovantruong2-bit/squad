@@ -13,7 +13,7 @@ class TestPhaseDefinitions:
 
     def test_eleven_phases(self):
         phases = get_all_phases()
-        assert len(phases) == 11
+        assert len(phases) == 13
 
     def test_each_phase_has_slots(self):
         for phase in get_all_phases():
@@ -138,8 +138,9 @@ class TestFatigue:
         state = MatchState(squad=[terry_henri], synergies=[])
         state.apply_fatigue(terry_henri.id)
         assert state.get_fatigue(terry_henri.id) < 1.0
-        start_round(state)  # Reset for new round
-        assert state.get_fatigue(terry_henri.id) == 1.0
+        start_round(state)  # 50% recovery
+        # After 50% recovery: 0.7 → 1.0 - (1.0 - 0.7) * 0.5 = 1.0 - 0.15 = 0.85
+        assert state.get_fatigue(terry_henri.id) == 0.85
 
 
 class TestPhaseFlow:

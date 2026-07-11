@@ -15,8 +15,9 @@ from src.match import (MatchState, create_match, start_round, start_phase,
                        advance_phase, check_round, set_selected_phases,
                        CAMPAIGN_MATCHES)
 from src.phases import (slot_positions, slot_label, is_player_eligible)
-from src.scoring import (detect_squad_synergies, calculate_chips,
-                         compute_synergy_preview, calculate_round_score)
+from src.scoring import (detect_squad_synergies, detect_synergies, calculate_chips,
+                         compute_synergy_preview, calculate_round_score,
+                         get_fired_synergy_names)
 
 
 from src.ui.console import cprint, clear_screen
@@ -684,13 +685,13 @@ def run_phase_selection(match: MatchState) -> None:
             
             if selected:
                 picked_names = " → ".join(p.name for p in selected)
-                cprint(f"\n  [bold]Selected order:[/bold] {picked_names}  [dim](next pick will go after)[/dim]", style="bold yellow")
+                cprint(f"  [bold]Selected order:[/bold] {picked_names}  [dim](next pick goes after)[/dim]", style="bold yellow")
             else:
-                cprint(f"\n  [dim]Pick your first phase. Order matters for carryover![/dim]", style="dim")
+                cprint(f"  [dim]Pick your first phase. Order matters for carryover![/dim]", style="dim")
             
             # Show synergy context for this round
             if match.synergies:
-                cprint(f"\n  [bold]📋 Round Synergies (pick phases that match your squad):[/bold]", style="bold yellow")
+                cprint("  [bold]📋 Round Synergies (pick phases that match your squad):[/bold]", style="bold yellow")
                 for s in match.synergies:
                     color = rarity_styles.get(s.rarity, "dim")
                     cprint(f"    ✦ [bold]{s.name:22s}[/bold]  [{color}]{s.description}[/{color}]", style="yellow")
@@ -709,19 +710,58 @@ def run_phase_selection(match: MatchState) -> None:
                 # Show which squad players would excel in this phase
                 eligible_by_slot = []
                 for slot_def in phase.slots:
-                    qualifying = [p for p in match.squad
-                                  if is_player_eligible(p, slot_def)
-                                  and p.id not in {pp.id for pp, _ in match.field}]
+                    if isinstance(slot_def, str):
+                        pos = slot_def
+                        qualifying = [p for p in match.squad if p.position == pos]
+                    elif isinstance(slot_def, list):
+                        pos = slot_def[0]
+                        qualifying = [p for p in match.squad if p.position in slot_def]
+                    elif isinstance(slot_def, dict):
+                        pos = slot_def["as"]
+                        # For stat-based slots, any player meeting the threshold
+                        qualifying = [p for p in match.squad
+                                      if is_player_eligible(p, slot_def)]
+                    else:
+                        continue
+                    
                     if qualifying:
-                        best = max(qualifying, key=lambda p: calculate_chips(p, 
-                            slot_def if isinstance(slot_def, str) else 
-                            (slot_def["as"] if isinstance(slot_def, dict) else slot_def[0])))
-                        pos = slot_def if isinstance(slot_def, str) else (
-                            slot_def["as"] if isinstance(slot_def, dict) else slot_def[0])
+                        best = max(qualifying, key=lambda p: calculate_chips(p, pos))
                         eligible_by_slot.append(f"{best.name} ({best.position}→{pos})")
                 
                 if eligible_by_slot:
                     cprint(f"      [green]Best fit:[/green] {', '.join(eligible_by_slot)}", style="green")
+                
+                # Preview which round synergies would fire for this phase
+                if match.synergies:
+                    # Simulate fielding the best available for each slot
+                    sim_field = []
+                    sim_used = set()
+                    for slot_def in phase.slots:
+                        if isinstance(slot_def, str):
+                            pos = slot_def
+                            pool = [p for p in match.squad if p.id not in sim_used and p.position == pos]
+                        elif isinstance(slot_def, list):
+                            pos = slot_def[0]
+                            pool = [p for p in match.squad if p.id not in sim_used and p.position in slot_def]
+                        elif isinstance(slot_def, dict):
+                            pos = slot_def["as"]
+                            pool = [p for p in match.squad if p.id not in sim_used
+                                    and is_player_eligible(p, slot_def)]
+                        else:
+                            continue
+                        if pool:
+                            best = max(pool, key=lambda p: calculate_chips(p, pos))
+                            sim_field.append((best, pos))
+                            sim_used.add(best.id)
+                    
+                    if sim_field:
+                        sim_result = detect_synergies(sim_field, match.synergies)
+                        fired = get_fired_synergy_names(sim_result)
+                        if fired:
+                            cprint(f"      [yellow]⚡ Potential: {', '.join(sorted(fired)[:3])}[/yellow]",
+                                   style="yellow")
+                            if len(fired) > 3:
+                                cprint(f"      [dim]        +{len(fired)-3} more[/dim]", style="dim")
             
             cprint(f"\n  [dim]Pick 0-{len(available) - 1}: [/dim]", style="dim", end="")
             

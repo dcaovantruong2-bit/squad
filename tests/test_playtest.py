@@ -492,7 +492,7 @@ class TestMatchStateTransitions:
         squad = [_mk_player("a", "A", "ST")]
         ms = create_match(squad, [])
         assert ms.squad == squad
-        assert ms.round_targets == [500, 650, 850]
+        assert ms.round_targets == [400, 650, 900]
         assert ms.current_round == 0
         assert ms.rounds_won == 0
         assert ms.rounds_lost == 0
@@ -510,7 +510,8 @@ class TestMatchStateTransitions:
         assert len(ms.phase_hand) == 6  # dealt 6 phases
         assert len(ms.phases) == 0      # none selected yet
         assert ms.current_phase_idx == 0
-        assert ms.fatigue == {}
+        # Fatigue recovers 50%: 0.49 → 1.0 - (1.0 - 0.49) * 0.5 = 0.745
+        assert ms.fatigue.get(terry_henri.id) == pytest.approx(0.745, rel=0.01)
         assert ms.round_score == 0
         assert ms.carryover is None
 
@@ -776,7 +777,7 @@ class TestCampaignMatches:
 class TestPhaseEdgeCases:
 
     def test_phase_definitions_exist(self):
-        assert len(PHASE_DEFS) == 11
+        assert len(PHASE_DEFS) == 13
 
     def test_phase_weights_valid(self):
         valid_weights = {"DEF", "PAS", "PAC", "ATK", "SPC"}

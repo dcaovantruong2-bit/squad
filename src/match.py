@@ -115,15 +115,16 @@ def create_match(
 
 
 def _generate_targets() -> list[int]:
-    """Generate 3 round targets.
-
-    Baseline full-strength 6-phase score is ~900.
-    Fatigue drags this to ~700-800.
+    """Generate 3 round targets for 3-phase rounds.
+    
+    Baseline per-phase score: ~200-400 with decent squad.
+    Best-case per-phase: ~400-600 with optimal picks + persistent buffs.
+    3-phase round total: ~600-1200 for good play, ~400-700 for weak play.
     """
     return [
-        500,   # Round 1: beatable with smart rotation
-        650,   # Round 2: needs good rotation + synergy use
-        850,   # Round 3: demands near-perfect phase management
+        400,   # Round 1: beatable with good phase picks
+        650,   # Round 2: needs synergy stacking + rotation  
+        900,   # Round 3: demands near-perfect phase management
     ]
 
 
@@ -135,7 +136,10 @@ def start_round(match: MatchState) -> None:
     match.selected_phases = []
     match.phases = []  # populated when player selects phases
     match.current_phase_idx = 0
-    match.fatigue = {}
+    # Recover 50% of lost fatigue between rounds (tension carries over)
+    for pid in list(match.fatigue.keys()):
+        current = match.fatigue[pid]
+        match.fatigue[pid] = 1.0 - (1.0 - current) * 0.5
     match.phase_results = []
     match.round_score = 0
     match.field = []
@@ -231,22 +235,22 @@ def check_round(match: MatchState) -> bool:
 
 OPPONENTS = {
     "easy": [
-        {"name": "FC Relegation", "targets": [350, 450, 600]},
-        {"name": "Athletico Average", "targets": [380, 480, 630]},
+        {"name": "FC Relegation", "targets": [300, 400, 550]},
+        {"name": "Athletico Average", "targets": [350, 450, 600]},
         {"name": "Real Socie-dad Jokes", "targets": [400, 500, 650]},
     ],
     "normal": [
-        {"name": "Inter Your-Nan", "targets": [500, 650, 850]},
-        {"name": "Borussia Mönchen-flapjack", "targets": [520, 670, 880]},
-        {"name": "AC Eezy", "targets": [540, 690, 900]},
+        {"name": "Inter Your-Nan", "targets": [400, 550, 750]},
+        {"name": "Borussia Mönchen-flapjack", "targets": [450, 600, 800]},
+        {"name": "AC Eezy", "targets": [500, 650, 850]},
     ],
     "elite": [
         {"name": "Bayern Never-losing", "targets": [600, 750, 1000]},
-        {"name": "Man City Oilers", "targets": [650, 800, 1050]},
+        {"name": "Man City Oilers", "targets": [700, 850, 1100]},
     ],
     "boss": [
-        {"name": "Real Madrid Galácticos", "targets": [750, 900, 1200]},
-        {"name": "Final Boss FC", "targets": [850, 1000, 1400]},
+        {"name": "Real Madrid Galácticos", "targets": [800, 950, 1250]},
+        {"name": "Final Boss FC", "targets": [900, 1050, 1400]},
     ],
 }
 
@@ -281,13 +285,13 @@ CAMPAIGN_MATCHES = [
     {
         "name": "Semi Final",
         "opponent": "Man City Oilers",
-        "targets": [650, 800, 1050],
+        "targets": [700, 850, 1050],
         "tier": "Match 4/5 — Elite",
     },
     {
         "name": "THE FINAL",
         "opponent": "Galácticos FC",
-        "targets": [800, 950, 1200],
+        "targets": [850, 1000, 1200],
         "tier": "Match 5/5 — Final Boss",
     },
 ]
