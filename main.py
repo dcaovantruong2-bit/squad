@@ -325,6 +325,74 @@ def show_round_result(score: int, target: int, won: bool,
     if match_state:
         cprint(f"\n  Match: [bold]{match_state.rounds_won}-{match_state.rounds_lost}[/bold] "
                f"(need 2 to win)", style="bold")
+    
+    # Morale
+    if match_state:
+        cprint(f"\n  💰 [bold]Morale:[/bold] [yellow]{match_state.morale}[/yellow]", style="bold")
+
+
+def show_shop(match_state) -> None:
+    """Display the between-rounds shop and handle purchases."""
+    from src.shop import SHOP_ITEMS, get_shop_inventory, apply_shop_item
+
+    # Generate shop inventory (4 items)
+    inventory = get_shop_inventory()
+
+    while True:
+        clear_screen()
+        cprint("\n  ╔═══════════════════════════════════════════════════╗", style="bold cyan")
+        cprint(f"  ║            🏪  BETWEEN ROUNDS SHOP              ║", style="bold cyan")
+        cprint("  ╚═══════════════════════════════════════════════════╝", style="bold cyan")
+        cprint(f"\n  💰 [bold]Your Morale:[/bold] [yellow]{match_state.morale}[/yellow]\n", style="bold")
+
+        cprint("  [bold]Available Items:[/bold]", style="bold")
+        for idx, item in enumerate(inventory):
+            can_afford = match_state.morale >= item.cost
+            cost_color = "green" if can_afford else "red"
+            cprint(f"\n  [{idx+1}] [bold]{item.name}[/bold]  "
+                   f"([{cost_color}]{item.cost} Morale[/{cost_color}])  "
+                   f"[dim]{item.rarity}[/dim]", style="bold")
+            cprint(f"      {item.description}", style="dim")
+
+        cprint(f"\n  [0] [dim]Skip shop — continue[/dim]", style="dim")
+        cprint(f"  [R] [dim]Reroll shop (free)[/dim]", style="dim")
+
+        choice = input("\n  Your choice: ").strip().upper()
+
+        if choice == "0" or choice == "":
+            break
+        elif choice == "R":
+            inventory = get_shop_inventory()
+            continue
+
+        try:
+            idx = int(choice) - 1
+            if idx < 0 or idx >= len(inventory):
+                continue
+            item = inventory[idx]
+        except (ValueError, IndexError):
+            continue
+
+        if match_state.morale < item.cost:
+            cprint("  [red]Not enough Morale![/red]", style="red")
+            input("  Press Enter...")
+            continue
+
+        # Apply the item
+        result = apply_shop_item(item, match_state, match_state.squad)
+
+        if result.endswith("_pending"):
+            # Item requires additional selection (player pick, etc.)
+            cprint(f"  [yellow]{result}[/yellow]", style="yellow")
+            input("  [dim]Selection not yet implemented — item refunded.[/dim]")
+            # For now, skip items that need selection
+            continue
+
+        # Deduct Morale
+        match_state.morale -= item.cost
+        cprint(f"  [green]✅ {result}[/green]", style="green")
+        input("  Press Enter...")
+        break  # One purchase per shop visit (for now)
 
 
 # ─── Phase Placement UI ───────────────────────────────────────────────
@@ -1151,9 +1219,25 @@ def play_match(match: MatchState) -> bool:
                           phase_results=match.phase_results,
                           match_state=match)
 
+        # Calculate Morale earnings
+        from src.shop import calculate_morale_earnings
+        morale_earned = calculate_morale_earnings(
+            phases_won=sum(1 for pr in match.phase_results if pr.get("total", 0) >= match.current_target * 0.7),
+            phases_total=len(match.phase_results),
+            round_won=won,
+            round_target=match.current_target,
+            round_score=match.round_score,
+        )
+        match.morale += morale_earned["total"]
+        if morale_earned["total"] > 0:
+            cprint(f"\n  💰 [yellow]+{morale_earned['total']} Morale earned![/yellow] "
+                   f"(Total: {match.morale})", style="yellow")
+
         if not match.is_match_over:
             cprint(f"\n  Match: {match.rounds_won}-{match.rounds_lost}", style="bold")
             input("\n  Press Enter for next round...")
+            # Shop between rounds
+            show_shop(match)
 
         round_num += 1
 

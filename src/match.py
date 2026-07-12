@@ -57,6 +57,12 @@ class MatchState:
     # Momentum: chain multiplier that grows across phases (1.0, 1.2, 1.5)
     momentum: float = 1.0
 
+    # Morale currency — earned from phase/round wins, spent in shop
+    morale: int = 0
+
+    # Shop buffs active for the current round
+    shop_buffs: dict | None = None  # will be an ActiveBuffs instance
+
     @property
     def rounds_needed(self) -> int:
         """Win 2 out of 3 rounds."""
@@ -207,6 +213,7 @@ def resolve_phase(match: MatchState) -> dict:
         carryover=match.carryover,
         persistent_buffs=match.persistent_buffs,
         momentum=match.momentum,
+        shop_buffs=vars(match.shop_buffs) if match.shop_buffs else None,
     )
 
     # Apply fatigue to every player used this phase

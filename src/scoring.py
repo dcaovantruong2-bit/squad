@@ -558,6 +558,7 @@ def calculate_round_score(
     carryover: dict | None = None,
     persistent_buffs: dict | None = None,
     momentum: float = 1.0,
+    shop_buffs: dict | None = None,
 ) -> dict:
     """Calculate the phase score using Balatro-style chips × mult formula.
 
@@ -663,9 +664,16 @@ def calculate_round_score(
     persistent_chips = pb.get("global_add", 0)
     persistent_x_mult = pb.get("global_mult", 1.0)
 
+    # ── Step 4b: Apply shop buffs ──
+    shop_chips = 0
+    shop_add_mult = 0
+    if shop_buffs:
+        shop_chips = shop_buffs.get("extra_chips", 0)
+        shop_add_mult = shop_buffs.get("extra_add_mult", 0)
+
     # ── Step 5: Bask in glory — Balatro-style formula ──
-    total_chips = player_chip_sum + synergy_chips + carryover_chips + persistent_chips
-    add_mult = 1 + synergy_add_mult
+    total_chips = player_chip_sum + synergy_chips + carryover_chips + persistent_chips + shop_chips
+    add_mult = 1 + synergy_add_mult + shop_add_mult
     x_mult = synergy_x_mult * persistent_x_mult
     formation_mult = formation.global_mult if formation else 1.0
 
@@ -720,4 +728,6 @@ def calculate_round_score(
         "synergy_contributors": synergy_contributors,
         "synergy_descriptions": synergy_descriptions,
         "momentum": momentum,
+        "shop_chips": shop_chips,
+        "shop_add_mult": shop_add_mult,
     }
