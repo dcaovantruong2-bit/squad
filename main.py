@@ -170,9 +170,9 @@ def show_phase_result(result: dict) -> None:
             parts.append(f"×{pers_mult:.2f}pm")
         if fatigue_mult != 1.0:
             parts.append(f"×{fatigue_mult:.2f}f")
-        suffix = "  ×".join(parts) if parts else ""
+        suffix = "".join(parts) if parts else ""
         if suffix:
-            line += f"  [dim]×{suffix}[/dim]"
+            line += f"  [dim]{suffix}[/dim]"
         line += f"  = [bold cyan]{eff:>3d}[/bold cyan]"
         cprint(line, style="bold" if fatigue_mult < 1.0 else "dim")
     
