@@ -249,6 +249,8 @@ def show_phase_result(result: dict) -> None:
     
     if formation_mult != 1.0:
         cprint(f"  [cyan]× {result.get('formation_name', 'Formation')}:[/cyan]         ×{formation_mult:.2f}", style="cyan")
+    if result.get("momentum", 1.0) != 1.0:
+        cprint(f"  [yellow]× Momentum:[/yellow]          ×{result['momentum']:.1f}", style="yellow")
     
     # ── PHASE TOTAL — big number ──
     cprint("")

@@ -26,7 +26,7 @@ class MatchState:
     synergy_pool: list[SynergyCard] = field(default_factory=list)  # all phase-specific synergies to re-sample from
     formation: FormationCard | None = None
     opponent_name: str = "FC Rivals"
-    round_targets: list[int] = field(default_factory=lambda: [500, 650, 850])
+    round_targets: list[int] = field(default_factory=lambda: [700, 1000, 1400])
     current_round: int = 0           # 0-indexed (0, 1, 2)
     rounds_won: int = 0
     rounds_lost: int = 0
@@ -53,6 +53,9 @@ class MatchState:
 
     # Journeyman: once-per-match fatigue reset
     journeyman_used: bool = False
+
+    # Momentum: chain multiplier that grows across phases (1.0, 1.2, 1.5)
+    momentum: float = 1.0
 
     @property
     def rounds_needed(self) -> int:
@@ -144,6 +147,7 @@ def start_round(match: MatchState) -> None:
     match.round_score = 0
     match.field = []
     match.carryover = None
+    match.momentum = 1.0  # Reset momentum for new round
     # All 18 phase-specific synergies available every round (no RNG)
     if match.synergy_pool:
         match.synergies = list(match.synergy_pool)
@@ -185,17 +189,24 @@ def resolve_phase(match: MatchState) -> dict:
     Also consumes any carryover bonus (e.g. Double Pivot) and captures
     the next phase's carryover from this phase's synergies.
 
+    Momentum grows across phases: Phase 1 = ×1.0, Phase 2 = ×1.2, Phase 3 = ×1.5
+
     Returns the scoring result dict.
     """
     phase = match.current_phase
     if phase is None:
         return {"total": 0, "breakdown": [], "fired_synergies": []}
 
+    # Calculate momentum based on phase index (0, 1, 2)
+    momentum_mult = {0: 1.0, 1: 1.2, 2: 1.5}.get(match.current_phase_idx, 1.5)
+    match.momentum = momentum_mult
+
     result = calculate_round_score(
         match.field, match.synergies, match.formation,
         fatigue=match.fatigue,
         carryover=match.carryover,
         persistent_buffs=match.persistent_buffs,
+        momentum=match.momentum,
     )
 
     # Apply fatigue to every player used this phase
@@ -265,31 +276,31 @@ CAMPAIGN_MATCHES = [
     {
         "name": "Group Stage",
         "opponent": "Wolves FC",
-        "targets": [350, 450, 600],
+        "targets": [700, 900, 1200],
         "tier": "Match 1/5 — Easy",
     },
     {
         "name": "Round of 16",
         "opponent": "Inter Your-Nan",
-        "targets": [450, 580, 750],
+        "targets": [900, 1100, 1500],
         "tier": "Match 2/5 — Moderate",
     },
     {
         "name": "Quarter Final",
         "opponent": "Borussia Mönchen-flapjack",
-        "targets": [550, 700, 880],
+        "targets": [1100, 1400, 1700],
         "tier": "Match 3/5 — Challenging",
     },
     {
         "name": "Semi Final",
         "opponent": "Man City Oilers",
-        "targets": [700, 850, 1050],
+        "targets": [1400, 1700, 2100],
         "tier": "Match 4/5 — Elite",
     },
     {
         "name": "THE FINAL",
         "opponent": "Galácticos FC",
-        "targets": [850, 1000, 1200],
+        "targets": [1700, 2100, 2500],
         "tier": "Match 5/5 — Final Boss",
     },
 ]

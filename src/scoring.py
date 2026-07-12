@@ -557,6 +557,7 @@ def calculate_round_score(
     fatigue: dict[str, float] | None = None,
     carryover: dict | None = None,
     persistent_buffs: dict | None = None,
+    momentum: float = 1.0,
 ) -> dict:
     """Calculate the phase score using Balatro-style chips × mult formula.
 
@@ -670,7 +671,7 @@ def calculate_round_score(
 
     # Subtotal for display
     subtotal_before_formation = int(total_chips * add_mult * x_mult)
-    final_total = int(total_chips * add_mult * x_mult * formation_mult)
+    final_total = int(total_chips * add_mult * x_mult * formation_mult * momentum)
 
     # ── Step 6: Build synergy tracking ──
     # Collect all fired synergy names for the summary
@@ -718,4 +719,5 @@ def calculate_round_score(
         "next_carryover": next_carryover,
         "synergy_contributors": synergy_contributors,
         "synergy_descriptions": synergy_descriptions,
+        "momentum": momentum,
     }
