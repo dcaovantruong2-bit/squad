@@ -44,34 +44,56 @@ def sample_fatigue():
 
 @pytest.fixture
 def sample_phase_result(sample_player):
-    """A realistic scoring result dict matching calculate_round_score output."""
+    """A realistic scoring result dict matching calculate_round_score output (new Balatro format)."""
     return {
-        "total": 120,
+        "total": 240,
         "breakdown": [
             {
                 "player": sample_player.name,
                 "position": "ST",
                 "base_chips": 53,
-                "add_chips": 10,
-                "multiply": 1.5,
+                "pos_bonus": 0,
+                "persistent_add": 0,
+                "persistent_mult": 1.0,
                 "fatigue": 1.0,
-                "subtotal": 94,
+                "effective_chips": 53,
             },
         ],
-        "subtotal_before_globals": 94,
+        "player_chip_sum": 53,
+        "synergy_chips": 20,
+        "carryover_chips": 0,
+        "persistent_chips": 0,
+        "total_chips": 73,
+        "add_mult": 1,
+        "x_mult": 1.5,
         "formation_mult": 1.0,
         "formation_name": "4-4-2",
-        "global_mult": 1.0,
-        "global_add": 0,
+        "subtotal_before_formation": 109,
         "fired_synergies": ["Clean Sheet", "Stretch the Backline"],
+        "fired_details": [
+            {
+                "name": "Clean Sheet",
+                "description": "GK DEF + CB DEF ≥ 18: +20 chips",
+                "effect_type": "chips",
+                "value": 20,
+                "contributors": ["Gigi The Wall [GK]", "El Capitán [CB]"],
+            },
+            {
+                "name": "Stretch the Backline",
+                "description": "FB PAC + LW PAC ≥ 17: ×1.5 mult",
+                "effect_type": "x_mult",
+                "value": 1.5,
+                "contributors": ["Dani Elvis [FB]", "Bale Out [LW]"],
+            },
+        ],
         "next_carryover": None,
         "synergy_contributors": {
             "Clean Sheet": ["Gigi The Wall [GK]", "El Capitán [CB]"],
             "Stretch the Backline": ["Dani Elvis [FB]", "Bale Out [LW]"],
         },
         "synergy_descriptions": {
-            "Clean Sheet": "GK DEF + CB DEF ≥ 18: +20 chips to both",
-            "Stretch the Backline": "FB PAC + LW PAC ≥ 17: ×1.5 mult to both",
+            "Clean Sheet": "GK DEF + CB DEF ≥ 18: +20 chips",
+            "Stretch the Backline": "FB PAC + LW PAC ≥ 17: ×1.5 mult",
         },
         "phase_name": "Goal Kick",
         "phase_weight": "DEF",

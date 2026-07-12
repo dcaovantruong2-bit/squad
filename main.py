@@ -136,82 +136,136 @@ def show_field(field: list[tuple], fatigue: dict) -> None:
 # ─── Phase Score Display ──────────────────────────────────────────────
 
 def show_phase_result(result: dict) -> None:
-    """Show scoring result like Balatro — chips × mult for each player with clear math."""
+    """Show scoring result like Balatro — chips × mult × x_mult with clear math."""
     clear_screen()
     
-    # ── Header — Phase name + context ──
+    # ── Header ──
     cprint("", style="")
     cprint("  ╔═══════════════════════════════════════════════════╗", style="bold yellow")
     cprint(f"  ║            [bold]{result['phase_name']:>12s}[/bold]            ║", style="bold yellow")
     cprint("  ╚═══════════════════════════════════════════════════╝", style="bold yellow")
     cprint("")
     
-    all_fired = set()
-    
-    # ── Per-player scoring breakdown (Balatro-style) ──
+    # ── Player Chip Contributions ──
+    cprint("  [bold underline]FIELD PLAYERS (chip contributions):[/bold underline]", style="bold")
     for entry in result["breakdown"]:
         p = entry["player"]
         pos = entry["position"]
         base = entry["base_chips"]
-        add = entry["add_chips"]
-        mult = entry["multiply"]
+        bonus = entry["pos_bonus"]
+        pers_add = entry["persistent_add"]
+        pers_mult = entry["persistent_mult"]
         fatigue_mult = entry.get("fatigue", 1.0)
-        subtotal = entry["subtotal"]
-        
-        chips_total = base + add
-        
-        # Build display line: Player (Pos) base + add = subtotal  [×mult ×fat]
-        line = f"  [bold]{p:20s}[/bold] ({pos:3s})  [green]{base:3d}[/green]"
-        if add > 0:
-            line += f" +[yellow]{add:3d}[/yellow]"
-        elif add < 0:
-            line += f" -[red]{-add:3d}[/red]"
-        line += f" = [bold]{chips_total:3d}[/bold]"
-        
-        # Show multipliers if any
-        mult_label = ""
-        if mult != 1.0:
-            mult_label += f" ×{mult:.2f}"
+        eff = entry["effective_chips"]
+
+        # Show: Player (Pos)  base +bonus +pers_add = X  ×pers_mult ×fatigue = effective
+        line = f"  [bold]{p:20s}[/bold] ({pos:3s})  [green]{base:2d}[/green]"
+        if bonus:
+            line += f" +[cyan]{bonus:2d}b[/cyan]"
+        if pers_add:
+            line += f" +[magenta]{pers_add:2d}p[/magenta]"
+        # Show multipliers
+        parts = []
+        if pers_mult != 1.0:
+            parts.append(f"×{pers_mult:.2f}pm")
         if fatigue_mult != 1.0:
-            mult_label += f" ×{fatigue_mult:.2f}f"
-        if mult_label:
-            line += f" [dim]{mult_label}[/dim]"
-        
-        line += f"  = [bold cyan]{subtotal:>4d}[/bold cyan]"
-        
-        cprint(line, style="bold" if mult != 1.0 or fatigue_mult != 1.0 else "dim")
-        
-        # Track fired synergies for display below
-        for syn in entry.get("fired_synergies", []):
-            all_fired.add(syn.split(" (")[0])
+            parts.append(f"×{fatigue_mult:.2f}f")
+        suffix = "  ×".join(parts) if parts else ""
+        if suffix:
+            line += f"  [dim]×{suffix}[/dim]"
+        line += f"  = [bold cyan]{eff:>3d}[/bold cyan]"
+        cprint(line, style="bold" if fatigue_mult < 1.0 else "dim")
     
-    # ── Running Total + Global Effects ──
+    # ── Phase Synergy Effects ──
+    cprint("")
+    cprint("  [bold underline]SYNERGY EFFECTS:[/bold underline]", style="bold")
+    fired_details = result.get("fired_details", [])
+    synergy_chips = 0
+    add_mult_parts = []
+    x_mult_parts = []
+    
+    for detail in fired_details:
+        name = detail["name"]
+        etype = detail["effect_type"]
+        value = detail["value"]
+        contribs = ", ".join(detail.get("contributors", []))
+        
+        if etype == "chips":
+            synergy_chips += value
+            cprint(f"  [green]+{value} chips[/green]  {name}  [dim]({contribs})[/dim]", style="green")
+        elif etype == "add_mult":
+            add_mult_parts.append(value)
+            cprint(f"  [yellow]+{value} mult[/yellow]  {name}  [dim]({contribs})[/dim]", style="yellow")
+        elif etype == "x_mult":
+            x_mult_parts.append(value)
+            cprint(f"  [red]×{value}[/red]  {name}  [dim]({contribs})[/dim]", style="red")
+        elif etype == "carryover":
+            cprint(f"  [cyan]⇢  carryover: +{value} chips next phase[/cyan]  {name}  [dim]({contribs})[/dim]", style="cyan")
+    
+    # Carryover from previous phase
+    carryover_chips = result.get("carryover_chips", 0)
+    if carryover_chips > 0:
+        cprint(f"  [cyan]+{carryover_chips} chips (carryover from previous phase)[/cyan]", style="cyan")
+    
+    # Persistent chips
+    persistent_chips = result.get("persistent_chips", 0)
+    if persistent_chips:
+        cprint(f"  [magenta]+{persistent_chips} persistent chips[/magenta]", style="magenta")
+    
+    # ── Balatro-style Formula Display ──
     cprint("")
     cprint("  " + "─" * 55, style="dim")
     
-    subtotal = result.get("subtotal_before_globals", 0)
-    cprint(f"  [bold]Subtotal:[/bold]  {subtotal:>6d}", style="bold")
+    player_chip_sum = result.get("player_chip_sum", 0)
+    total_chips = result.get("total_chips", 0)
+    add_mult = result.get("add_mult", 1)
+    x_mult = result.get("x_mult", 1.0)
+    formation_mult = result.get("formation_mult", 1.0)
+    subtotal = result.get("subtotal_before_formation", 0)
     
-    if result.get("global_add", 0) != 0:
-        cprint(f"  [magenta]+ Global bonus:[/magenta]      +{result['global_add']:>3d}", style="magenta")
-    if result.get("global_mult", 1.0) != 1.0:
-        cprint(f"  [magenta]× Global mult:[/magenta]        ×{result['global_mult']:.3f}", style="magenta")
-    if result.get("formation_mult", 1.0) != 1.0:
-        cprint(f"  [cyan]× {result.get('formation_name', 'Formation')}:[/cyan]       ×{result['formation_mult']:.2f}", style="cyan")
+    # Chips line
+    chips_display = f"{player_chip_sum}"
+    if synergy_chips:
+        chips_display += f" +{synergy_chips}syn"
+    if carryover_chips:
+        chips_display += f" +{carryover_chips}carry"
+    if persistent_chips:
+        chips_display += f" +{persistent_chips}pers"
+    cprint(f"  🃏 [bold]CHIPS:[/bold]  {player_chip_sum}", style="bold")
+    if synergy_chips or carryover_chips or persistent_chips:
+        cprint(f"          + bonuses → [bold cyan]{total_chips}[/bold cyan]", style="cyan")
     
-    # ── PHASE TOTAL — big number like Balatro ──
+    # Add Mult line
+    am_str = "1" if not add_mult_parts else f"1 + {' + '.join(str(v) for v in add_mult_parts)}"
+    cprint(f"  ➕ [bold]ADD MULT:[/bold]  {am_str} = [bold yellow]{add_mult}[/bold yellow]", style="bold")
+    
+    # X Mult line
+    xm_str = " × ".join(str(v) for v in x_mult_parts) if x_mult_parts else "1"
+    cprint(f"  ✖ [bold]× MULT:[/bold]    {' × '.join(str(v) for v in x_mult_parts) if x_mult_parts else '1'} = [bold red]{x_mult:.3f}[/bold red]", style="bold")
+    
+    # Formula
+    cprint(f"")
+    cprint(f"  [bold]FORMULA:[/bold]  {total_chips} × {add_mult} × {x_mult:.3f} = [bold cyan]{subtotal}[/bold cyan]", style="bold")
+    
+    if formation_mult != 1.0:
+        cprint(f"  [cyan]× {result.get('formation_name', 'Formation')}:[/cyan]         ×{formation_mult:.2f}", style="cyan")
+    
+    # ── PHASE TOTAL — big number ──
     cprint("")
     cprint("  " + "═" * 55, style="bold yellow")
     cprint(f"  [bold]PHASE TOTAL:[/bold]     [bold green]{result['total']:>7d}[/bold green]", style="bold yellow")
     cprint("  " + "═" * 55, style="bold yellow")
     
-    # ── Synergies fired in this phase ──
-    phase_syns = [s for s in all_fired if "(persistent)" not in s]
-    if phase_syns:
+    # ── Synergies fired ──
+    phase_syns = [d["name"] for d in fired_details if "(persistent)" not in d["name"] and "(carryover)" not in d["name"]]
+    persistent_names = [s for s in result.get("fired_synergies", []) if "persistent" in str(s).lower() or s.endswith(")")]
+    all_fired_names = set(phase_syns) | set(persistent_names)
+    if all_fired_names:
         cprint("")
-        cprint(f"  [yellow]⚡ Synergies: {', '.join(sorted(phase_syns)[:5])}[/yellow]", style="yellow")
-        if len(phase_syns) > 5:
-            cprint(f"  [dim]           +{len(phase_syns)-5} more[/dim]", style="dim")
+        cprint(f"  [yellow]⚡ {', '.join(sorted(all_fired_names)[:5])}[/yellow]", style="yellow")
+        if len(all_fired_names) > 5:
+            cprint(f"  [dim]           +{len(all_fired_names)-5} more[/dim]", style="dim")
+
 
 
 def show_round_result(score: int, target: int, won: bool,

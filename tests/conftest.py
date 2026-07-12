@@ -322,8 +322,8 @@ def overload_synergy():
         id="overload", name="Overload", rarity="common",
         trigger_type="overload",
         trigger={"min_duplicates": 2},
-        effect_type="add_chips",
-        effect={"add_chips": 15}
+        effect_type="add_mult",
+        effect={"add_mult": 3}
     )
 
 
@@ -366,8 +366,8 @@ def defensive_duo_synergy():
         id="defensive_duo", name="Defensive Duo", rarity="uncommon",
         trigger_type="defensive_duo",
         trigger={"stat": "def_", "threshold": 18},
-        effect_type="add_chips",
-        effect={"add_chips": 25}
+        effect_type="add_mult",
+        effect={"add_mult": 5}
     )
 
 
@@ -388,8 +388,8 @@ def midfield_engine_synergy():
         id="midfield_engine", name="Midfield Engine", rarity="common",
         trigger_type="midfield_engine",
         trigger={"positions": ["CM", "CM"], "stat_a": "pas", "stat_b": "def_", "threshold": 15},
-        effect_type="add_chips",
-        effect={"add_chips": 25}
+        effect_type="add_mult",
+        effect={"add_mult": 4}
     )
 
 

@@ -1,4 +1,12 @@
-"""Tests for the new stat-based, 2+ player phase-specific synergies."""
+"""Tests for the new Balatro-style phase-level synergy accumulators.
+
+Each synergy now contributes to phase-level accumulators instead of per-player dicts:
+  - chips    → flat chips added to total chips pool
+  - add_mult → flat mult added to additive mult pool
+  - x_mult   → multiplied against mult pool
+
+Detect returns {"chips": N, "add_mult": N, "x_mult": N, "carryover": ..., "fired_details": [...]}
+"""
 
 import pytest
 from src.scoring import detect_synergies, calculate_round_score, detect_squad_synergies
@@ -14,17 +22,19 @@ class TestCleanSheet:
         field = [(gigi_wall, "GK"), (il_capitano, "CB")]
         result = detect_synergies(field, [clean_sheet_synergy])
 
-        assert result[gigi_wall.id]["add_chips"] == 20
-        assert result[il_capitano.id]["add_chips"] == 20
-        assert "Clean Sheet" in result[gigi_wall.id]["fired_synergies"]
+        assert result["chips"] == 20
+        assert result["add_mult"] == 0
+        assert result["x_mult"] == 1.0
+        names = [d["name"] for d in result["fired_details"]]
+        assert "Clean Sheet" in names
 
     def test_no_fire_with_budget_gk(self, sweaty_keeper, jt_rock, clean_sheet_synergy):
         """Claudio DEF 6 + JT Rock DEF 10 = 16 < 18."""
         field = [(sweaty_keeper, "GK"), (jt_rock, "CB")]
         result = detect_synergies(field, [clean_sheet_synergy])
 
-        assert result[sweaty_keeper.id]["add_chips"] == 0
-        assert result[jt_rock.id]["add_chips"] == 0
+        assert result["chips"] == 0
+        assert len(result["fired_details"]) == 0
 
 
 # ── Organised Defence (CB DEF + CB DEF ≥ 18) ────────────────────────────
@@ -37,16 +47,16 @@ class TestOrganisedDefence:
         field = [(il_capitano, "CB"), (jt_rock, "CB")]
         result = detect_synergies(field, [organised_defence_synergy])
 
-        assert result[il_capitano.id]["add_chips"] == 20
-        assert result[jt_rock.id]["add_chips"] == 20
+        assert result["chips"] == 20
+        assert "Organised Defence" in [d["name"] for d in result["fired_details"]]
 
     def test_no_fire_with_budget_cb(self, old_man_dan, jt_rock, organised_defence_synergy):
         """Per DEF 7 + JT Rock DEF 10 = 17 < 18."""
         field = [(old_man_dan, "CB"), (jt_rock, "CB")]
         result = detect_synergies(field, [organised_defence_synergy])
 
-        assert result[old_man_dan.id]["add_chips"] == 0
-        assert result[jt_rock.id]["add_chips"] == 0
+        assert result["chips"] == 0
+        assert len(result["fired_details"]) == 0
 
 
 # ── Wingback Overlap (FB PAC + CM PAS ≥ 15) ─────────────────────────────
@@ -59,44 +69,44 @@ class TestWingbackOverlap:
         field = [(el_tren, "FB"), (maestro_xav, "CM")]
         result = detect_synergies(field, [wingback_overlap_synergy])
 
-        assert result[el_tren.id]["add_chips"] == 25
-        assert result[maestro_xav.id]["add_chips"] == 25
+        assert result["chips"] == 25
+        assert "Wingback Overlap" in [d["name"] for d in result["fired_details"]]
 
     def test_budget_fb_misses(self, the_crab, maestro_xav, wingback_overlap_synergy):
-        """Kola PAC 5 + Maestro PAS 10 = 15 ≥ 15. Kola just makes it."""
+        """Kola PAC 5 + Maestro PAS 10 = 15 ≥ 15. Just makes it."""
         field = [(the_crab, "FB"), (maestro_xav, "CM")]
         result = detect_synergies(field, [wingback_overlap_synergy])
 
-        assert result[the_crab.id]["add_chips"] == 25
+        assert result["chips"] == 25
 
     def test_no_cm_no_fire(self, el_tren, wingback_overlap_synergy):
         """No CM on field = no trigger."""
         field = [(el_tren, "FB")]
         result = detect_synergies(field, [wingback_overlap_synergy])
 
-        assert el_tren.id in result
-        assert result[el_tren.id]["add_chips"] == 0
+        assert result["chips"] == 0
+        assert len(result["fired_details"]) == 0
 
 
 # ── Overload (2+ same position) ─────────────────────────────────────────
 
 class TestOverload:
-    """Duplicate positions on field."""
+    """Duplicate positions on field → add_mult."""
 
     def test_fires_with_two_cbs(self, il_capitano, jt_rock, overload_synergy):
         field = [(il_capitano, "CB"), (jt_rock, "CB")]
         result = detect_synergies(field, [overload_synergy])
 
-        assert result[il_capitano.id]["add_chips"] == 15
-        assert result[jt_rock.id]["add_chips"] == 15
+        assert result["add_mult"] == 3
+        assert "Overload" in [d["name"] for d in result["fired_details"]]
 
     def test_no_fire_no_duplicates(self, il_capitano, el_tren, overload_synergy):
         """Different positions = no trigger."""
         field = [(il_capitano, "CB"), (el_tren, "FB")]
         result = detect_synergies(field, [overload_synergy])
 
-        assert result[il_capitano.id]["add_chips"] == 0
-        assert result[el_tren.id]["add_chips"] == 0
+        assert result["add_mult"] == 0
+        assert len(result["fired_details"]) == 0
 
 
 # ── Stretch the Backline (FB PAC + LW PAC ≥ 17) ─────────────────────────
@@ -109,40 +119,40 @@ class TestStretchBackline:
         field = [(el_tren, "FB"), (bale_out, "LW")]
         result = detect_synergies(field, [stretch_backline_synergy])
 
-        assert result[el_tren.id]["multiply"] == 1.5
-        assert result[bale_out.id]["multiply"] == 1.5
+        assert result["x_mult"] == 1.5
+        assert "Stretch the Backline" in [d["name"] for d in result["fired_details"]]
 
     def test_no_fire_slow_pair(self, the_crab, cult_carl, stretch_backline_synergy):
         """Kola PAC 5 + Za-ha PAC 6 = 11 < 17."""
         field = [(the_crab, "FB"), (cult_carl, "LW")]
         result = detect_synergies(field, [stretch_backline_synergy])
 
-        assert result[the_crab.id]["multiply"] == 1.0
+        assert result["x_mult"] == 1.0
+        assert len(result["fired_details"]) == 0
 
 
-# ── Route One (CB PAS + ST PAC ≥ 14 → ST gets chips) ────────────────────
+# ── Route One (CB PAS + ST PAC ≥ 14 → chips) ────────────────────────────
 
 class TestRouteOne:
     """Passing CB + fast ST."""
 
-    def test_fires_and_boosts_st_only(self, il_capitano, terry_henri, route_one_synergy):
-        """Van Aura PAS 7 + Terry PAC 9 = 16 ≥ 14. Only ST gets chips."""
+    def test_fires_and_boosts_chips(self, il_capitano, terry_henri, route_one_synergy):
+        """Van Aura PAS 7 + Terry PAC 9 = 16 ≥ 14."""
         field = [(il_capitano, "CB"), (terry_henri, "ST")]
         result = detect_synergies(field, [route_one_synergy])
 
-        # ST gets the chips
-        assert result[terry_henri.id]["add_chips"] == 30
-        assert "Route One" in result[terry_henri.id]["fired_synergies"]
-        # CB doesn't get chips, but is listed as participating
-        assert result[il_capitano.id]["add_chips"] == 0
-        assert "Route One" in result[il_capitano.id]["fired_synergies"]
+        assert result["chips"] == 30
+        assert "Route One" in [d["name"] for d in result["fired_details"]]
+        # Contributors should include both CB and ST
+        detail = [d for d in result["fired_details"] if d["name"] == "Route One"][0]
+        assert len(detail["contributors"]) == 2
 
     def test_no_fire_low_stats(self, old_man_dan, flash_forward, route_one_synergy):
         """Per PAS 4 + Theo PAC 7 = 11 < 14."""
         field = [(old_man_dan, "CB"), (flash_forward, "ST")]
         result = detect_synergies(field, [route_one_synergy])
 
-        assert result[flash_forward.id]["add_chips"] == 0
+        assert result["chips"] == 0
 
 
 # ── Battering Ram (CB DEF + ST ATK ≥ 17) ────────────────────────────────
@@ -155,36 +165,38 @@ class TestBatteringRam:
         field = [(il_capitano, "CB"), (big_zlat, "ST")]
         result = detect_synergies(field, [battering_ram_synergy])
 
-        assert result[il_capitano.id]["add_chips"] == 20
-        assert result[big_zlat.id]["add_chips"] == 20
+        assert result["chips"] == 20
+        assert "Battering Ram" in [d["name"] for d in result["fired_details"]]
 
     def test_no_fire_weak_st(self, il_capitano, flash_forward, battering_ram_synergy):
         """Van Aura DEF 10 + Theo ATK 4 = 14 < 17."""
         field = [(il_capitano, "CB"), (flash_forward, "ST")]
         result = detect_synergies(field, [battering_ram_synergy])
 
-        assert result[flash_forward.id]["add_chips"] == 0
+        assert result["chips"] == 0
 
 
-# ── Defensive Duo (2 highest DEF sum ≥ 18 → all get chips) ──────────────
+# ── Defensive Duo (2 highest DEF sum ≥ 18) ──────────────────────────────
 
 class TestDefensiveDuo:
-    """Two best defenders combined DEF ≥ 18."""
+    """Two best defenders combined DEF ≥ 18 → add_mult."""
 
     def test_fires_with_elite_trio(self, il_capitano, jt_rock, wall_claude, defensive_duo_synergy):
-        """Van Aura 10 + JT 10 = 20 ≥ 18. All 3 get +25."""
+        """Van Aura 10 + JT 10 = 20 ≥ 18."""
         field = [(il_capitano, "CB"), (jt_rock, "CB"), (wall_claude, "CDM")]
         result = detect_synergies(field, [defensive_duo_synergy])
 
-        for p in (il_capitano, jt_rock, wall_claude):
-            assert result[p.id]["add_chips"] == 25
+        assert result["add_mult"] == 5
+        assert "Defensive Duo" in [d["name"] for d in result["fired_details"]]
 
     def test_no_fire_one_weak_link(self, wall_claude, rolls_royce, bog_bob, defensive_duo_synergy):
-        """Rolls DEF 9 + Bog Bob DEF 6 = 15 < 18 — no fire."""
-        field = [(rolls_royce, "CB"), (bog_bob, "CDM"), (wall_claude, "CB")]
-        result = detect_synergies(field, [defensive_duo_synergy])
-        # Top 2 DEF: Wall Claude 10 + Rolls 9 = 19 ≥ 18 — actually fires with elite defenders
-        pass
+        """Rolls DEF 9 + Bog Bob DEF 6 = 15 < 18 — but Wall 10 + Rolls 9 = 19."""
+        # Field has Wall (CDM), Rolls (CB), Bog Bob (CDM)
+        # Top 2 DEF: Wall 10 + Rolls 9 = 19 ≥ 18 — fires
+        result = detect_synergies([(wall_claude, "CDM"), (rolls_royce, "CB"), (bog_bob, "CDM")],
+                                   [defensive_duo_synergy])
+        # It fires because Wall + Rolls are the top 2
+        assert result["add_mult"] == 5
 
 
 # ── Back Three (all 3 DEF ≥ 7) ─────────────────────────────────────────
@@ -193,20 +205,20 @@ class TestBackThree:
     """All 3 fielded players have DEF ≥ 7."""
 
     def test_fires_all_elite(self, il_capitano, jt_rock, wall_claude, back_three_synergy):
-        """All DEF ≥ 7 → all get ×1.3 mult."""
+        """All DEF ≥ 7 → ×1.3 mult."""
         field = [(il_capitano, "CB"), (jt_rock, "CB"), (wall_claude, "CDM")]
         result = detect_synergies(field, [back_three_synergy])
 
-        for p in (il_capitano, jt_rock, wall_claude):
-            assert result[p.id]["multiply"] == 1.3
+        assert result["x_mult"] == 1.3
+        assert "Back Three" in [d["name"] for d in result["fired_details"]]
 
     def test_no_fire_low_def(self, il_capitano, jt_rock, bog_bob, back_three_synergy):
         """Nigel de Wrong DEF 6 < 7 → no fire."""
         field = [(il_capitano, "CB"), (jt_rock, "CB"), (bog_bob, "CDM")]
         result = detect_synergies(field, [back_three_synergy])
 
-        for p in (il_capitano, jt_rock, bog_bob):
-            assert result[p.id]["multiply"] == 1.0
+        assert result["x_mult"] == 1.0
+        assert len(result["fired_details"]) == 0
 
 
 # ── Midfield Engine (CM PAS + CM DEF ≥ 15) ──────────────────────────────
@@ -219,16 +231,15 @@ class TestMidfieldEngine:
         field = [(maestro_xav, "CM"), (captain_stevie, "CM")]
         result = detect_synergies(field, [midfield_engine_synergy])
 
-        assert result[maestro_xav.id]["add_chips"] == 25
-        assert result[captain_stevie.id]["add_chips"] == 25
+        assert result["add_mult"] == 4
+        assert "Midfield Engine" in [d["name"] for d in result["fired_details"]]
 
     def test_two_playmakers_no_fire(self, maestro_xav, don_andres, midfield_engine_synergy):
         """Maestro PAS 10 + Don DEF 3 = 13 < 15."""
         field = [(maestro_xav, "CM"), (don_andres, "CM")]
         result = detect_synergies(field, [midfield_engine_synergy])
 
-        assert result[maestro_xav.id]["add_chips"] == 0
-        assert result[don_andres.id]["add_chips"] == 0
+        assert result["add_mult"] == 0
 
 
 # ── Double Pivot (2 CMs PAS ≥ 17 → carryover to next phase) ────────────
@@ -241,16 +252,16 @@ class TestDoublePivot:
         field = [(maestro_xav, "CM"), (captain_stevie, "CM")]
         result = detect_synergies(field, [double_pivot_synergy])
 
-        carryover = result.get("__carryover__")
+        carryover = result.get("carryover")
         assert carryover is not None
-        assert carryover["add_chips"] == 40
+        assert carryover["chips"] == 40
         assert carryover["target_role"] == "attacker"
+        assert "Double Pivot" in [d["name"] for d in result["fired_details"]]
 
     def test_carryover_applied_to_first_attacker(self, maestro_xav, captain_stevie,
                                                   terry_henri, il_capitano,
                                                   double_pivot_synergy):
-        """Full round score with carryover: first attacker (ST) gets +40."""
-        # Phase 1: Tiki-Taka with 2 CMs that fire Double Pivot
+        """Full round score with carryover: first attacker (ST) gets +40 chips."""
         field1 = [(maestro_xav, "CM"), (captain_stevie, "CM")]
         phase1 = calculate_round_score(field1, [double_pivot_synergy])
         carryover = phase1.get("next_carryover")
@@ -259,43 +270,43 @@ class TestDoublePivot:
         # Phase 2: Long Ball with CB + ST — ST should get +40 from carryover
         field2 = [(il_capitano, "CB"), (terry_henri, "ST")]
         phase2 = calculate_round_score(field2, [double_pivot_synergy], carryover=carryover)
+        no_carry = calculate_round_score(field2, [double_pivot_synergy])
 
         assert "Double Pivot (carryover)" in phase2["fired_synergies"]
-        no_carry = calculate_round_score(field2, [double_pivot_synergy])
-        assert phase2["total"] > no_carry["total"]
+        assert phase2["total_chips"] > no_carry["total_chips"]
 
 
-# ── Trio (3 CMs PAS ≥ 7, chain multipliers) ────────────────────────────
+# ── Trio (3 CMs PAS ≥ 7) ──────────────────────────────────────────────
 
 class TestTrio:
-    """Three passing CMs with escalating multipliers."""
+    """Three passing CMs with combined ×mult."""
 
     def test_three_elite_cms(self, maestro_xav, captain_stevie, don_andres, trio_synergy):
-        """Maestro PAS 10, Don PAS 9, Stevie PAS 8 — all ≥ 7."""
+        """Maestro PAS 10, Don PAS 9, Stevie PAS 8 — all ≥ 7. Combined ×mult = 1.3*1.5*1.3."""
         field = [(maestro_xav, "CM"), (captain_stevie, "CM"), (don_andres, "CM")]
         result = detect_synergies(field, [trio_synergy])
 
-        # Sorted by PAS: Maestro 10 → ×1.3, Don 9 → ×1.5, Stevie 8 → ×1.3
-        assert result[maestro_xav.id]["multiply"] == 1.3
-        assert result[don_andres.id]["multiply"] == 1.5
-        assert result[captain_stevie.id]["multiply"] == 1.3
+        assert abs(result["x_mult"] - 2.535) < 0.01  # 1.3*1.5*1.3 = 2.535
+        assert "Trio" in [d["name"] for d in result["fired_details"]]
 
     def test_too_few_cms(self, maestro_xav, captain_stevie, trio_synergy):
         """Only 2 CMs — Trio needs 3."""
         field = [(maestro_xav, "CM"), (captain_stevie, "CM")]
         result = detect_synergies(field, [trio_synergy])
 
-        assert result[maestro_xav.id]["multiply"] == 1.0
+        assert result["x_mult"] == 1.0
+        assert len(result["fired_details"]) == 0
 
     def test_budget_cm_blocks(self, maestro_xav, captain_stevie, jimmy_journey, trio_synergy):
         """Park PAS 5 < 7 — blocks the trio."""
         field = [(maestro_xav, "CM"), (captain_stevie, "CM"), (jimmy_journey, "CM")]
         result = detect_synergies(field, [trio_synergy])
 
-        assert result[maestro_xav.id]["multiply"] == 1.0
+        assert result["x_mult"] == 1.0
+        assert len(result["fired_details"]) == 0
 
 
-# ── Set Piece Threat (DEF≥9 + SPC≥8, different players) ─────────────────
+# ── Set Piece Threat (DEF≥8 + SPC≥7, different players) ─────────────────
 
 class TestSetPieceThreat:
     """One strong defender + one flair player."""
@@ -305,15 +316,16 @@ class TestSetPieceThreat:
         field = [(il_capitano, "CB"), (terry_henri, "ST")]
         result = detect_synergies(field, [set_piece_synergy])
 
-        assert result["__global__"]["global_add"] == 50
+        assert result["chips"] == 50
+        assert "Set Piece Threat" in [d["name"] for d in result["fired_details"]]
 
     def test_same_player_both_stats_no_fire(self, gigi_wall, set_piece_synergy):
         """Gigi has DEF 10 AND SPC 8 — same player, so won't fire."""
-        # We need a different player, but Gigi alone on field can't trigger
         field = [(gigi_wall, "GK")]
         result = detect_synergies(field, [set_piece_synergy])
 
-        assert result["__global__"]["global_add"] == 0
+        assert result["chips"] == 0
+        assert len(result["fired_details"]) == 0
 
 
 # ── Full Round Score Integration ─────────────────────────────────────────
@@ -330,6 +342,9 @@ class TestRoundScore:
         assert result["total"] > 0
         assert result["fired_synergies"] == []
         assert result["formation_mult"] == 1.0
+        # New format: check chips/mult components
+        assert result["add_mult"] == 1  # base mult = 1
+        assert result["x_mult"] == 1.0
 
     def test_clean_sheet_in_goal_kick(self, gigi_wall, il_capitano, jt_rock,
                                        clean_sheet_synergy, organised_defence_synergy,
@@ -341,10 +356,7 @@ class TestRoundScore:
 
         assert "Clean Sheet" in result["fired_synergies"]
         assert "Organised Defence" in result["fired_synergies"]
-        # Clean Sheet: GK+CB1=20 chips, Organised Defence: CB1+CB2=20 chips
-        # Van Aura gets +40 total (+20 from each)
-        # JT Rock gets +20 from Organised Defence
-        # Gigi gets +20 from Clean Sheet
+        assert result["synergy_chips"] == 40  # 20 + 20
         assert result["total"] > 0
 
     def test_carryover_chain_in_match(self, maestro_xav, captain_stevie,
@@ -357,13 +369,12 @@ class TestRoundScore:
         carryover = phase1.get("next_carryover")
         assert carryover is not None
 
-        # Phase 2: Long Ball — carryover applies to first attacker
+        # Phase 2: Long Ball — carryover applies
         field2 = [(il_capitano, "CB"), (terry_henri, "ST")]
         phase2 = calculate_round_score(field2, [double_pivot_synergy], formation_442,
                                         carryover=carryover)
-        assert "Double Pivot (carryover)" in phase2["fired_synergies"]
-        # ST Terry should have significantly more chips than baseline
         baseline = calculate_round_score(field2, [double_pivot_synergy], formation_442)
+        assert "Double Pivot (carryover)" in phase2["fired_synergies"]
         assert phase2["total"] > baseline["total"]
 
 

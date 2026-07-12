@@ -95,11 +95,12 @@ class TestCalculateChipsAllPositions:
 class TestDetectSynergiesEdgeCases:
 
     def test_empty_field(self):
-        """Empty field should return empty results, not crash."""
+        """Empty field should return empty accumulators, not crash."""
         result = detect_synergies([], [])
-        assert "__global__" in result
-        assert result["__global__"]["global_mult"] == 1.0
-        assert result["__global__"]["global_add"] == 0
+        assert result["chips"] == 0
+        assert result["add_mult"] == 0
+        assert result["x_mult"] == 1.0
+        assert result["fired_details"] == []
 
     def test_none_field_crashes(self):
         """None field should raise an error."""
@@ -110,8 +111,10 @@ class TestDetectSynergiesEdgeCases:
         """Field with players but no synergies."""
         field = [(terry_henri, "ST"), (il_capitano, "CB")]
         result = detect_synergies(field, [])
-        assert result[terry_henri.id]["add_chips"] == 0
-        assert result[il_capitano.id]["multiply"] == 1.0
+        assert result["chips"] == 0
+        assert result["add_mult"] == 0
+        assert result["x_mult"] == 1.0
+        assert result["fired_details"] == []
 
     def test_none_synergy_list_crashes(self, terry_henri):
         with pytest.raises(TypeError):
@@ -123,23 +126,22 @@ class TestDetectSynergiesEdgeCases:
         result = detect_synergies(field, [
             SynergyCard("cs", "Clean Sheet", "common", "clean_sheet",
                         {"pos_a": "GK", "pos_b": "CB", "stat": "def_", "threshold": 18},
-                        effect={"add_chips": 20})
+                        effect={"chips": 20})
         ])
-        assert terry_henri.id in result
-        assert result[terry_henri.id]["add_chips"] == 0  # No GK/CB pair
+        assert result["chips"] == 0
+        assert len(result["fired_details"]) == 0
 
-    def test_carryover_key_present_or_not(self, maestro_xav, captain_stevie, terry_henri):
-        """If no carryover synergy fires, __carryover__ should NOT be in result."""
-        field = [(maestro_xav, "CM"), (terry_henri, "ST")]  # Only 1 CM, no double pivot
+    def test_carryover_key_present_or_not(self, maestro_xav, terry_henri):
+        """If no carryover synergy fires, carryover should be None."""
+        field = [(maestro_xav, "CM"), (terry_henri, "ST")]
         result = detect_synergies(field, [])
-        assert "__carryover__" not in result
+        assert result["carryover"] is None
 
     def test_duplicate_player_ids_handled(self, terry_henri):
-        """If a player appears twice (shouldn't happen), both entries are tracked."""
-        field = [(terry_henri, "ST"), (terry_henri, "LW")]  # Same player twice
+        """If a player appears twice (shouldn't happen), still works."""
+        field = [(terry_henri, "ST"), (terry_henri, "LW")]
         result = detect_synergies(field, [])
-        # The player_map creates one entry per unique id, result dict keys by id
-        assert terry_henri.id in result
+        assert result["chips"] == 0
 
     def test_defensive_duo_one_player(self, terry_henri):
         """Defensive Duo requires 2+ players — single player field should not fire."""
@@ -147,13 +149,10 @@ class TestDetectSynergiesEdgeCases:
         result = detect_synergies(field, [
             SynergyCard("dd", "Defensive Duo", "uncommon", "defensive_duo",
                         {"stat": "def_", "threshold": 18},
-                        effect={"add_chips": 25})
+                        effect={"add_mult": 5})
         ])
-        # Defensive Duo with one player: truth is the top 2 DEF sum must be >= 18.
-        # With only one player, "two highest" is that one player's DEF (1).
-        # The trigger checks `if total >= tr["threshold"]`, so terry_henri DEF=1, 1+1? No, len(players)>=2 is checked
-        # Actually looking at the code: `if len(players) >= 2:` — so it doesn't fire with < 2 players
-        assert result[terry_henri.id]["add_chips"] == 0
+        assert result["add_mult"] == 0
+        assert len(result["fired_details"]) == 0
 
     def test_trio_no_cms(self, terry_henri, il_capitano):
         """Trio needs 3 CMs."""
@@ -163,7 +162,7 @@ class TestDetectSynergiesEdgeCases:
                         {"position": "CM", "stat": "pas", "threshold": 7},
                         effect={"multipliers": [1.3, 1.5, 1.3]})
         ])
-        assert result[terry_henri.id]["multiply"] == 1.0
+        assert result["x_mult"] == 1.0
 
     def test_set_piece_threat_same_player_both(self, gigi_wall):
         """Set Piece Threat — one player with both stats: if 'different_players' is True, won't fire."""
@@ -173,43 +172,43 @@ class TestDetectSynergiesEdgeCases:
                         {"stat_a": "def_", "threshold_a": 8,
                          "stat_b": "spc", "threshold_b": 7,
                          "different_players": True},
-                        effect={"add_chips": 35, "global": True})
+                        effect={"chips": 35})
         ])
-        assert result["__global__"]["global_add"] == 0
+        assert result["chips"] == 0
 
     def test_set_piece_threat_two_players(self, il_capitano, terry_henri):
         """Set Piece Threat with two different qualifying players."""
-        # Van Aura: def_=10 (≥8), Terry: spc=8 (≥7), different players → fires
         field = [(il_capitano, "CB"), (terry_henri, "ST")]
         result = detect_synergies(field, [
             SynergyCard("sp", "Set Piece Threat", "uncommon", "set_piece_threat",
                         {"stat_a": "def_", "threshold_a": 8,
                          "stat_b": "spc", "threshold_b": 7,
                          "different_players": True},
-                        effect={"add_chips": 35, "global": True})
+                        effect={"chips": 35})
         ])
-        assert result["__global__"]["global_add"] == 35
+        assert result["chips"] == 35
+        assert "Set Piece Threat" in [d["name"] for d in result["fired_details"]]
 
     def test_overload_min_duplicates_default(self, terry_henri, big_zlat):
-        """Overload with min_duplicates=2, exactly 2 matching."""
+        """Overload with min_duplicates=2, exactly 2 matching → add_mult."""
         field = [(terry_henri, "ST"), (big_zlat, "ST")]
         result = detect_synergies(field, [
             SynergyCard("ol", "Overload", "common", "overload",
                         {"min_duplicates": 2},
-                        effect={"add_chips": 15})
+                        effect={"add_mult": 3})
         ])
-        assert result[terry_henri.id]["add_chips"] == 15
-        assert result[big_zlat.id]["add_chips"] == 15
+        assert result["add_mult"] == 3
+        assert "Overload" in [d["name"] for d in result["fired_details"]]
 
     def test_overload_three_duplicates(self, terry_henri, big_zlat, kun_kun):
-        """Overload with 3 STs."""
+        """Overload with 3 STs — still adds mult once."""
         field = [(terry_henri, "ST"), (big_zlat, "ST"), (kun_kun, "ST")]
         result = detect_synergies(field, [
             SynergyCard("ol", "Overload", "common", "overload",
                         {"min_duplicates": 2},
-                        effect={"add_chips": 15})
+                        effect={"add_mult": 3})
         ])
-        assert result[terry_henri.id]["add_chips"] == 15
+        assert result["add_mult"] == 3
 
     def test_covering_defender(self, il_capitano, jt_rock, rolls_royce):
         """Covering Defender: one fast CB (PAC≥7) + one strong CB (DEF≥8)."""
@@ -218,61 +217,59 @@ class TestDetectSynergiesEdgeCases:
             SynergyCard("cd", "Covering Defender", "uncommon", "covering_defender",
                          {"position": "CB", "stat_a": "pac", "threshold_a": 7,
                           "stat_b": "def_", "threshold_b": 8},
-                         effect={"add_chips": 30})
+                         effect={"add_mult": 5})
         ])
         # Rolls (PAC 8) + il_capitano (DEF 10) should fire
-        assert result[rolls_royce.id]["add_chips"] == 30
-        assert result[il_capitano.id]["add_chips"] == 30
+        assert result["add_mult"] == 5
+        assert "Covering Defender" in [d["name"] for d in result["fired_details"]]
 
     def test_target_man_release_no_wingers(self, terry_henri, il_capitano):
-        """Target Man Release with ST but no wingers."""
+        """Target Man Release with ST but no wingers — no x_mult."""
         field = [(terry_henri, "ST"), (il_capitano, "CB")]
         result = detect_synergies(field, [
             SynergyCard("tm", "Target Man Release", "uncommon", "target_man_release",
                          {"pos_a": "ST", "stat_a": "atk",
                           "winger_positions": ["LW", "RW"],
                           "stat_b": "pac", "threshold": 14},
-                         effect={"multiply": 1.4})
+                         effect={"x_mult": 1.4})
         ])
-        assert result[terry_henri.id]["multiply"] == 1.0  # No winger
+        assert result["x_mult"] == 1.0  # No winger
 
     def test_near_post_flick(self, el_mago, terry_henri):
-        """Near Post Flick: CAM SPC + ST ATK ≥ threshold."""
+        """Near Post Flick: CAM SPC + ST ATK → x_mult."""
         field = [(el_mago, "CAM"), (terry_henri, "ST")]
-        # el_mago: spc=9, terry: atk=9, total=18 ≥ 14
         result = detect_synergies(field, [
             SynergyCard("np", "Near Post Flick", "uncommon", "near_post_flick",
                          {"pos_a": "CAM", "stat_a": "spc",
                           "pos_b": "ST", "stat_b": "atk", "threshold": 14},
-                         effect={"multiply": 1.5})
+                         effect={"x_mult": 1.5})
         ])
-        assert result[terry_henri.id]["multiply"] == 1.5
+        assert result["x_mult"] == 1.5
+        assert "Near Post Flick" in [d["name"] for d in result["fired_details"]]
 
     def test_one_two(self, captain_stevie, terry_henri):
-        """One-Two: CM PAS + ST PAC ≥ threshold."""
+        """One-Two: CM PAS + ST PAC → x_mult."""
         field = [(captain_stevie, "CM"), (terry_henri, "ST")]
-        # captain: pas=8, terry: pac=9, total=17 ≥ 15
         result = detect_synergies(field, [
             SynergyCard("ot", "One-Two", "uncommon", "one_two",
                          {"pos_a": "CM", "stat_a": "pas",
                           "pos_b": "ST", "stat_b": "pac", "threshold": 15},
-                         effect={"multiply": 1.4})
+                         effect={"x_mult": 1.4})
         ])
-        assert result[terry_henri.id]["multiply"] == 1.4
-        assert result[captain_stevie.id]["multiply"] == 1.4
+        assert result["x_mult"] == 1.4
+        assert "One-Two" in [d["name"] for d in result["fired_details"]]
 
     def test_overlap(self, el_tren, bale_out):
-        """Overlap: FB PAC + LW PAS ≥ threshold → FB gets mult."""
+        """Overlap: FB PAC + LW PAS → x_mult."""
         field = [(el_tren, "FB"), (bale_out, "LW")]
-        # el_tren: pac=9, bale_out: pas=6, total=15 ≥ 12
         result = detect_synergies(field, [
             SynergyCard("ol2", "Overlap", "common", "overlap",
                          {"pos_a": "FB", "stat_a": "pac",
                           "pos_b": "LW", "stat_b": "pas", "threshold": 12},
-                         effect={"multiply": 1.3})
+                         effect={"x_mult": 1.3})
         ])
-        assert result[el_tren.id]["multiply"] == 1.3  # FB gets mult
-        assert result[bale_out.id]["multiply"] == 1.0  # LW doesn't
+        assert result["x_mult"] == 1.3
+        assert "Overlap" in [d["name"] for d in result["fired_details"]]
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -462,13 +459,13 @@ class TestCalculateRoundScoreEdgeCases:
         field = [(maestro_xav, "CM"), (captain_stevie, "CM")]
         dp = SynergyCard("dp", "Double Pivot", "uncommon", "double_pivot",
                          {"positions": ["CM", "CM"], "stat": "pas", "threshold": 17},
-                         effect={"add_chips": 40, "target_role": "attacker"})
+                         effect={"chips": 40, "target_role": "attacker"})
         result = calculate_round_score(field, [dp])
         assert result.get("next_carryover") is not None
-        assert result["next_carryover"]["add_chips"] == 40
+        assert result["next_carryover"]["chips"] == 40
 
     def test_global_add_in_calculate_round_score(self):
-        """Set Piece Threat adds global_add which flows through calculate_round_score."""
+        """Set Piece Threat adds synergy_chips which flows through calculate_round_score."""
         p1 = _mk_player("a", "A", "CB", atk=3, pac=6, pas=7, def_=10, spc=5)
         p2 = _mk_player("b", "B", "ST", atk=9, pac=9, pas=6, def_=1, spc=8)
         field = [(p1, "CB"), (p2, "ST")]
@@ -476,10 +473,10 @@ class TestCalculateRoundScoreEdgeCases:
                          {"stat_a": "def_", "threshold_a": 8,
                           "stat_b": "spc", "threshold_b": 7,
                           "different_players": True},
-                         effect={"add_chips": 35, "global": True})
+                         effect={"chips": 35})
         result = calculate_round_score(field, [sp])
         assert "Set Piece Threat" in result["fired_synergies"]
-        assert result["global_add"] >= 35
+        assert result["synergy_chips"] >= 35
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -610,7 +607,7 @@ class TestMatchStateTransitions:
         """End-to-end carryover: phase 1 produces carryover, phase 2 consumes it."""
         dp = SynergyCard("dp", "Double Pivot", "uncommon", "double_pivot",
                          {"positions": ["CM", "CM"], "stat": "pas", "threshold": 17},
-                         effect={"add_chips": 40, "target_role": "attacker"})
+                         effect={"chips": 40, "target_role": "attacker"})
 
         ms = MatchState(squad=[maestro_xav, captain_stevie, terry_henri],
                         synergies=[dp])
@@ -624,7 +621,7 @@ class TestMatchStateTransitions:
         ms.field = [(maestro_xav, "CM"), (captain_stevie, "CM")]
         resolve_phase(ms)
         assert ms.carryover is not None
-        assert ms.carryover["add_chips"] == 40
+        assert ms.carryover["chips"] == 40
 
         # Phase 2: attacker gets carryover
         ms.current_phase_idx = 1
@@ -641,15 +638,17 @@ class TestSynergyPreviewUtilities:
 
     def test_get_fired_synergy_names_clean(self):
         result = {
-            "p1": {"fired_synergies": ["Clean Sheet", "Pace in Behind (persistent)"]},
-            "p2": {"fired_synergies": ["Clean Sheet", "Trio (×1.5)"]},
-            "__global__": {},
+            "fired_details": [
+                {"name": "Clean Sheet"},
+                {"name": "Pace in Behind (persistent)"},
+                {"name": "Trio"},
+            ],
         }
         names = get_fired_synergy_names(result)
         assert names == {"Clean Sheet", "Pace in Behind", "Trio"}
 
     def test_get_fired_synergy_names_empty(self):
-        result = {"p1": {"fired_synergies": []}, "__global__": {}}
+        result = {"fired_details": []}
         assert get_fired_synergy_names(result) == set()
 
     def test_compute_synergy_preview_empty_field(self, terry_henri):
@@ -670,7 +669,7 @@ class TestSynergyPreviewUtilities:
         squad = [terry_henri, il_capitano]
         cs = SynergyCard("cs", "Clean Sheet", "common", "clean_sheet",
                          {"pos_a": "GK", "pos_b": "CB", "stat": "def_", "threshold": 18},
-                         effect={"add_chips": 20})
+                         effect={"chips": 20})
         result = compute_synergy_potential(il_capitano, squad, [cs])
         assert result == []  # No GK means Clean Sheet doesn't fire
 
