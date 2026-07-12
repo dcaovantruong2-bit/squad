@@ -251,6 +251,10 @@ def show_phase_result(result: dict) -> None:
         cprint(f"  [cyan]× {result.get('formation_name', 'Formation')}:[/cyan]         ×{formation_mult:.2f}", style="cyan")
     if result.get("momentum", 1.0) != 1.0:
         cprint(f"  [yellow]× Momentum:[/yellow]          ×{result['momentum']:.1f}", style="yellow")
+    if result.get("phase_mult", 1.0) != 1.0:
+        pm = result["phase_mult"]
+        parts = []
+        cprint(f"  [magenta]× Phase adj:[/magenta]        ×{pm:.2f}[/magenta]", style="magenta")
     
     # ── PHASE TOTAL — big number ──
     cprint("")
@@ -1245,6 +1249,20 @@ def run_phase_selection(match: MatchState) -> None:
                 
                 if eligible_by_slot:
                     cprint(f"      [green]Best fit:[/green] {', '.join(eligible_by_slot)}", style="green")
+                
+                # Phase adjustment tags
+                phase_id = phase.id
+                fatigue_val = match.phase_fatigue.get(phase_id, 1.0)
+                opp_val = match.opponent_adjustments.get(phase_id, 1.0)
+                tags = []
+                if fatigue_val < 1.0:
+                    tags.append(f"[yellow]fatigue ×{fatigue_val:.2f}[/yellow]")
+                if opp_val != 1.0:
+                    style = "green" if opp_val > 1.0 else "red"
+                    label = "weakness" if opp_val > 1.0 else "strong"
+                    tags.append(f"[{style}]opp. {label} ×{opp_val:.2f}[/{style}]")
+                if tags:
+                    cprint(f"      {' '.join(tags)}", style="dim")
                 
                 # Preview which round synergies would fire for this phase
                 if match.synergies:

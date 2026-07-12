@@ -16,6 +16,7 @@ from src.scoring import calculate_round_score
 
 
 FATIGUE_PENALTY = 0.7  # Each use multiplies stats by 0.7
+PHASE_FATIGUE_DECAY = 0.85  # Phase multiplier decay per use within a match
 
 
 @dataclass
@@ -41,6 +42,12 @@ class MatchState:
 
     # Fatigue: player_id → multiplier (starts at 1.0, ×0.7 each use)
     fatigue: dict[str, float] = field(default_factory=dict)
+
+    # Phase fatigue — each phase decays ×0.85 per use within a match
+    phase_fatigue: dict[str, float] = field(default_factory=dict)
+
+    # Opponent adjustments — buff/nerf per round from scouting
+    opponent_adjustments: dict[str, float] = field(default_factory=dict)
 
     # Current phase placement
     field: list[tuple[PlayerCard, str]] = field(default_factory=list)
@@ -122,6 +129,11 @@ def create_match(
         formation=formation,
         persistent_buffs=persistent_buffs,
     )
+    
+    # Initialize phase fatigue — all phases start at ×1.0
+    from src.phases import get_all_phases
+    ms.phase_fatigue = {p.id: 1.0 for p in get_all_phases()}
+    
     return ms
 
 
@@ -147,6 +159,8 @@ def start_round(match: MatchState) -> None:
     match.selected_phases = []
     match.phases = []  # populated when player selects phases
     match.current_phase_idx = 0
+    # Generate opponent scouting adjustments for this round
+    match.opponent_adjustments = generate_opponent_adjustments()
     # Recover 50% of lost fatigue between rounds (tension carries over)
     for pid in list(match.fatigue.keys()):
         current = match.fatigue[pid]
@@ -159,6 +173,37 @@ def start_round(match: MatchState) -> None:
     # All 18 phase-specific synergies available every round (no RNG)
     if match.synergy_pool:
         match.synergies = list(match.synergy_pool)
+
+
+# ─── Opponent Adjustment Generation ────────────────────────────────────
+
+def generate_opponent_adjustments() -> dict[str, float]:
+    """Generate opponent scouting adjustments for a round.
+    
+    Returns dict mapping phase_id → multiplier:
+    - One phase buffed (×1.3) — opponent is weak against this
+    - One phase nerfed (×0.7) — opponent is strong against this
+    - Optionally one minor adjustment (×1.15 or ×0.85)
+    """
+    from src.phases import get_all_phases
+    import random
+    
+    phases = get_all_phases()
+    shuffled = list(phases)
+    random.shuffle(shuffled)
+    
+    adjustments = {}
+    if not shuffled:
+        return adjustments
+    
+    adjustments[shuffled[0].id] = 1.3  # Buff — exploit weakness
+    if len(shuffled) > 1:
+        adjustments[shuffled[1].id] = 0.7  # Nerf — they're strong
+    if len(shuffled) > 2 and random.random() < 0.5:
+        minor_val = 1.15 if random.random() < 0.5 else 0.85
+        adjustments[shuffled[2].id] = minor_val
+    
+    return adjustments
 
 
 def start_phase(match: MatchState) -> None:
@@ -207,10 +252,15 @@ def resolve_phase(match: MatchState) -> dict:
 
     # Calculate momentum based on phase index (0, 1, 2)
     momentum_mult = {0: 1.0, 1: 1.2, 2: 1.5}.get(match.current_phase_idx, 1.5)
-    # Momentum Injector shop item overrides phase 1 to ×1.5
     if match.shop_buffs and hasattr(match.shop_buffs, 'momentum_override') and match.shop_buffs.momentum_override is not None:
         momentum_mult = match.shop_buffs.momentum_override
     match.momentum = momentum_mult
+
+    # Calculate phase multiplier: fatigue decay × opponent adjustment
+    phase_id = phase.id
+    fatigue_mult = match.phase_fatigue.get(phase_id, 1.0)
+    opp_mult = match.opponent_adjustments.get(phase_id, 1.0)
+    effective_phase_mult = fatigue_mult * opp_mult
 
     result = calculate_round_score(
         match.field, match.synergies, match.formation,
@@ -219,7 +269,11 @@ def resolve_phase(match: MatchState) -> dict:
         persistent_buffs=match.persistent_buffs,
         momentum=match.momentum,
         shop_buffs=vars(match.shop_buffs) if match.shop_buffs else None,
+        phase_mult=effective_phase_mult,
     )
+
+    # Apply phase fatigue decay for next time this phase is used
+    match.phase_fatigue[phase_id] = match.phase_fatigue.get(phase_id, 1.0) * PHASE_FATIGUE_DECAY
 
     # Apply fatigue to every player used this phase
     for player, _ in match.field:

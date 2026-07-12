@@ -560,6 +560,7 @@ def calculate_round_score(
     persistent_buffs: dict | None = None,
     momentum: float = 1.0,
     shop_buffs: dict | None = None,
+    phase_mult: float = 1.0,
 ) -> dict:
     """Calculate the phase score using Balatro-style chips × mult formula.
 
@@ -689,7 +690,7 @@ def calculate_round_score(
 
     # Subtotal for display
     subtotal_before_formation = int(total_chips * add_mult * x_mult)
-    final_total = int(total_chips * add_mult * x_mult * formation_mult * momentum)
+    final_total = int(total_chips * add_mult * x_mult * formation_mult * momentum * phase_mult)
 
     # ── Step 6: Build synergy tracking ──
     # Collect all fired synergy names for the summary
@@ -740,4 +741,5 @@ def calculate_round_score(
         "momentum": momentum,
         "shop_chips": shop_chips,
         "shop_add_mult": shop_add_mult,
+        "phase_mult": phase_mult,
     }
