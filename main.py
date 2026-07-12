@@ -253,8 +253,7 @@ def show_phase_result(result: dict) -> None:
         cprint(f"  [yellow]× Momentum:[/yellow]          ×{result['momentum']:.1f}", style="yellow")
     if result.get("phase_mult", 1.0) != 1.0:
         pm = result["phase_mult"]
-        parts = []
-        cprint(f"  [magenta]× Phase adj:[/magenta]        ×{pm:.2f}[/magenta]", style="magenta")
+        cprint(f"  [magenta]× Phase adj:[/magenta]        ×{pm:.2f}", style="magenta")
     
     # ── PHASE TOTAL — big number ──
     cprint("")
