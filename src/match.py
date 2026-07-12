@@ -61,7 +61,7 @@ class MatchState:
     morale: int = 0
 
     # Shop buffs active for the current round
-    shop_buffs: dict | None = None  # will be an ActiveBuffs instance
+    shop_buffs: object | None = None  # ActiveBuffs instance or None
 
     @property
     def rounds_needed(self) -> int:
@@ -94,6 +94,8 @@ class MatchState:
         penalty = FATIGUE_PENALTY
         if self.persistent_buffs:
             penalty = self.persistent_buffs.get("fatigue_penalty", FATIGUE_PENALTY)
+        if self.shop_buffs and hasattr(self.shop_buffs, 'fatigue_penalty'):
+            penalty = self.shop_buffs.fatigue_penalty
         current = self.fatigue.get(player_id, 1.0)
         self.fatigue[player_id] = current * penalty
 
@@ -205,6 +207,9 @@ def resolve_phase(match: MatchState) -> dict:
 
     # Calculate momentum based on phase index (0, 1, 2)
     momentum_mult = {0: 1.0, 1: 1.2, 2: 1.5}.get(match.current_phase_idx, 1.5)
+    # Momentum Injector shop item overrides phase 1 to ×1.5
+    if match.shop_buffs and hasattr(match.shop_buffs, 'momentum_override') and match.shop_buffs.momentum_override is not None:
+        momentum_mult = match.shop_buffs.momentum_override
     match.momentum = momentum_mult
 
     result = calculate_round_score(

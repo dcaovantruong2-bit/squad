@@ -332,8 +332,11 @@ def show_round_result(score: int, target: int, won: bool,
 
 
 def show_shop(match_state) -> None:
-    """Display the between-rounds shop and handle purchases."""
-    from src.shop import SHOP_ITEMS, get_shop_inventory, apply_shop_item
+    """Display the between-rounds shop and handle purchases with selection UIs."""
+    from src.shop import SHOP_ITEMS, get_shop_inventory, apply_shop_item, ActiveBuffs
+    from src.formations import get_all_formations
+    from src.cards import PlayerCard
+    import random
 
     # Generate shop inventory (4 items)
     inventory = get_shop_inventory()
@@ -378,21 +381,143 @@ def show_shop(match_state) -> None:
             input("  Press Enter...")
             continue
 
-        # Apply the item
-        result = apply_shop_item(item, match_state, match_state.squad)
+        # ── Handle each item type with its selection UI ──
+        purchased = False
 
-        if result.endswith("_pending"):
-            # Item requires additional selection (player pick, etc.)
-            cprint(f"  [yellow]{result}[/yellow]", style="yellow")
-            input("  [dim]Selection not yet implemented — item refunded.[/dim]")
-            # For now, skip items that need selection
+        if item.id == "inspired_sub":
+            # Pick a tired player, reset their fatigue
+            tired_players = [(p, fm) for p in match_state.squad
+                             for pid, fm in match_state.fatigue.items()
+                             if p.id == pid and fm < 1.0]
+            if not tired_players:
+                cprint("  [yellow]No tired players! Everyone is fresh.[/yellow]", style="yellow")
+                input("  Press Enter...")
+                continue
+            cprint("\n  [bold]Pick a player to restore:[/bold]", style="bold")
+            for i, (p, fm) in enumerate(tired_players):
+                cprint(f"  [{i+1}] {p.name:20s} ({p.position})  [{int(fm*100)}%]", style="yellow")
+            pick = input("  Pick: ").strip()
+            try:
+                pi = int(pick) - 1
+                if 0 <= pi < len(tired_players):
+                    p = tired_players[pi][0]
+                    match_state.fatigue[p.id] = 1.0
+                    cprint(f"  [green]✅ {p.name}'s fatigue restored to 100%![/green]", style="green")
+                    match_state.morale -= item.cost
+                    purchased = True
+                else:
+                    continue
+            except ValueError:
+                continue
+
+        elif item.id == "tactical_upgrade":
+            # Pick a player, then pick a stat
+            cprint("\n  [bold]Pick a player to upgrade:[/bold]", style="bold")
+            squad_list = list(match_state.squad)
+            for i, p in enumerate(squad_list):
+                cprint(f"  [{i+1}] {p.name:20s} ({p.position})  "
+                       f"ATK:{p.atk} PAC:{p.pac} PAS:{p.pas} DEF:{p.def_} SPC:{p.spc}", style="dim")
+            p_pick = input("  Pick: ").strip()
+            try:
+                pi = int(p_pick) - 1
+                if 0 <= pi < len(squad_list):
+                    player = squad_list[pi]
+                    STATS = {"ATK": "atk", "PAC": "pac", "PAS": "pas", "DEF": "def_", "SPC": "spc"}
+                    cprint(f"\n  [bold]Pick a stat for {player.name}:[/bold]", style="bold")
+                    for si, (label, attr) in enumerate(STATS.items()):
+                        cprint(f"  [{si+1}] {label} ({getattr(player, attr)} → {getattr(player, attr)+1})", style="dim")
+                    s_pick = input("  Stat: ").strip()
+                    try:
+                        si = int(s_pick) - 1
+                        if 0 <= si < len(STATS):
+                            attr = list(STATS.values())[si]
+                            setattr(player, attr, getattr(player, attr) + 1)
+                            cprint(f"  [green]✅ {player.name}'s {list(STATS.keys())[si]} boosted to {getattr(player, attr)}![/green]", style="green")
+                            match_state.morale -= item.cost
+                            purchased = True
+                        else:
+                            continue
+                    except ValueError:
+                        continue
+                else:
+                    continue
+            except ValueError:
+                continue
+
+        elif item.id == "veterans_wisdom":
+            # Pick a player, grant random trait
+            POSITIVE_TRAITS = ["pacey", "clinical", "technical", "physical", "leader",
+                               "aerial", "playmaker", "poacher", "destroyer", "journeyman"]
+            cprint("\n  [bold]Pick a player to mentor:[/bold]", style="bold")
+            squad_list = list(match_state.squad)
+            for i, p in enumerate(squad_list):
+                traits_str = ", ".join(p.traits) if p.traits else "none"
+                cprint(f"  [{i+1}] {p.name:20s} ({p.position})  traits: {traits_str}", style="dim")
+            pick = input("  Pick: ").strip()
+            try:
+                pi = int(pick) - 1
+                if 0 <= pi < len(squad_list):
+                    player = squad_list[pi]
+                    available = [t for t in POSITIVE_TRAITS if t not in player.traits]
+                    if not available:
+                        cprint(f"  [yellow]{player.name} already has all traits![/yellow]", style="yellow")
+                        input("  Press Enter...")
+                        continue
+                    new_trait = random.choice(available)
+                    player.traits.append(new_trait)
+                    cprint(f"  [green]✅ {player.name} gained trait: {new_trait}![/green]", style="green")
+                    match_state.morale -= item.cost
+                    purchased = True
+                else:
+                    continue
+            except ValueError:
+                continue
+
+        elif item.id == "formation_tweak":
+            # Pick a different formation
+            from src.formations import get_all_formations
+            formations = get_all_formations()
+            current_id = match_state.formation.id if match_state.formation else ""
+            others = [f for f in formations if f.id != current_id]
+            if not others:
+                cprint("  [yellow]No other formations available![/yellow]", style="yellow")
+                input("  Press Enter...")
+                continue
+            cprint("\n  [bold]Pick a new formation:[/bold]", style="bold")
+            for i, f in enumerate(others):
+                cprint(f"  [{i+1}] [bold]{f.name}[/bold]  (×{f.global_mult})  {f.description}", style="dim")
+            pick = input("  Pick: ").strip()
+            try:
+                fi = int(pick) - 1
+                if 0 <= fi < len(others):
+                    match_state.formation = others[fi]
+                    cprint(f"  [green]✅ Switched to {others[fi].name}![/green]", style="green")
+                    match_state.morale -= item.cost
+                    purchased = True
+                else:
+                    continue
+            except ValueError:
+                continue
+
+        elif item.id in ("set_piece_drill", "momentum_injector", "scout_report",
+                         "double_session", "tactical_shift", "super_sub"):
+            # Non-interactive items — just apply
+            result = apply_shop_item(item, match_state, match_state.squad)
+            match_state.morale -= item.cost
+            cprint(f"  [green]✅ {result}[/green]", style="green")
+            purchased = True
+
+        else:
+            cprint(f"  [yellow]Unknown item: {item.id}[/yellow]", style="yellow")
+            input("  Press Enter...")
             continue
 
-        # Deduct Morale
-        match_state.morale -= item.cost
-        cprint(f"  [green]✅ {result}[/green]", style="green")
-        input("  Press Enter...")
-        break  # One purchase per shop visit (for now)
+        if purchased:
+            # Remove purchased item from inventory
+            inventory.remove(item)
+            input("  Press Enter...")
+            # One purchase per visit
+            break
 
 
 # ─── Phase Placement UI ───────────────────────────────────────────────

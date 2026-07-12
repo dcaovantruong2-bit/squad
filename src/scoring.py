@@ -607,9 +607,13 @@ def calculate_round_score(
         pos_mult = pb.get("position_mult", {}).get(pos, 1.0)
         pos_add = pb.get("position_add", {}).get(pos, 0)
 
+        # Super Sub: fresh (100%) players get ×1.3 from shop item
+        super_sub_mult = 1.0
+        if shop_buffs and shop_buffs.get("super_sub_active") and fatigue_mult >= 1.0:
+            super_sub_mult = 1.3
+
         # Player's effective chip contribution (fatigue, per-player buffs)
-        # In Balatro: this is the "hand value" — each card's contribution
-        effective_chips = (base_chips + pos_bonus + pos_add + pp_add) * fatigue_mult * pp_mult * pos_mult
+        effective_chips = (base_chips + pos_bonus + pos_add + pp_add) * fatigue_mult * pp_mult * pos_mult * super_sub_mult
 
         player_chip_sum += int(effective_chips)
 

@@ -206,60 +206,42 @@ class ActiveBuffs:
 
 # ─── Apply Shop Item Effects ────────────────────────────────────────────
 
-def apply_shop_item(item: ShopItem, match_state, players, formations=None) -> str:
-    """Apply a shop item's effect. Returns a result message string."""
-    from src.cards import PlayerCard
+def apply_shop_item(item: ShopItem, match_state, players=None, formations=None) -> str:
+    """Apply a shop item's effect. Returns a result message string.
+    
+    Note: Interactive items (inspired_sub, tactical_upgrade, veterans_wisdom,
+    formation_tweak) are handled by the shop UI in main.py. This function
+    only handles auto-apply items.
+    """
+    # Auto-apply items: set a buff flag on match_state.shop_buffs
+    if not hasattr(match_state, "shop_buffs") or match_state.shop_buffs is None:
+        match_state.shop_buffs = ActiveBuffs()
 
-    if item.effect_type == "fatigue_reset":
-        # Called with a specific player selected
-        return "fatigue_reset_pending"  # Need to pick a player
-
-    elif item.effect_type == "stat_boost":
-        return "stat_boost_pending"  # Need to pick a player + stat
-
-    elif item.effect_type == "chips_buff":
+    if item.effect_type == "chips_buff":
         chips = item.params.get("chips", 40)
-        if not hasattr(match_state, "shop_buffs"):
-            match_state.shop_buffs = ActiveBuffs()
         match_state.shop_buffs.extra_chips += chips
         return f"All phases this round get +{chips} chips!"
 
     elif item.effect_type == "add_mult_buff":
         am = item.params.get("add_mult", 5)
-        if not hasattr(match_state, "shop_buffs"):
-            match_state.shop_buffs = ActiveBuffs()
         match_state.shop_buffs.extra_add_mult += am
         return f"All phases this round get +{am} add_mult!"
 
     elif item.effect_type == "super_sub":
-        if not hasattr(match_state, "shop_buffs"):
-            match_state.shop_buffs = ActiveBuffs()
         match_state.shop_buffs.super_sub_active = True
         return "Fresh players get ×1.3 this round!"
 
-    elif item.effect_type == "trait_grant":
-        return "trait_grant_pending"  # Need to pick a player
-
-    elif item.effect_type == "formation_swap":
-        return "formation_swap_pending"  # Need to pick a formation
-
     elif item.effect_type == "momentum_boost":
         mom = item.params.get("momentum", 1.5)
-        if not hasattr(match_state, "shop_buffs"):
-            match_state.shop_buffs = ActiveBuffs()
         match_state.shop_buffs.momentum_override = mom
         return f"Next phase starts at ×{mom} momentum!"
 
     elif item.effect_type == "scout":
-        if not hasattr(match_state, "shop_buffs"):
-            match_state.shop_buffs = ActiveBuffs()
         match_state.shop_buffs.scout_active = True
         return "You'll see all 6 phase cards this round!"
 
     elif item.effect_type == "fatigue_penalty_reduction":
         penalty = item.params.get("penalty", 0.8)
-        if not hasattr(match_state, "shop_buffs"):
-            match_state.shop_buffs = ActiveBuffs()
         match_state.shop_buffs.fatigue_penalty = penalty
         return f"Fatigue penalty reduced to ×{penalty} (was ×0.7)!"
 
