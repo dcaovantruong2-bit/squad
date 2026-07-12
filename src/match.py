@@ -11,7 +11,7 @@ CAMPAIGN_MATCHES. Same squad, harder targets each match. Lose one = game over.
 import random
 from dataclasses import dataclass, field
 from src.cards import PlayerCard, SynergyCard, FormationCard
-from src.phases import Phase, shuffle_phases, deal_phases
+from src.phases import Phase, shuffle_phases, deal_phases, get_all_phases
 from src.scoring import calculate_round_score
 
 
@@ -142,8 +142,8 @@ def _generate_targets() -> list[int]:
 # ─── Round Management ────────────────────────────────────────────────
 
 def start_round(match: MatchState) -> None:
-    """Set up a new round — deal 6 phase cards, reset fatigue, re-roll synergies, clear state."""
-    match.phase_hand = deal_phases(6)
+    """Set up a new round — all 8 phases available, pick 3, reset fatigue."""
+    match.phase_hand = get_all_phases()  # All 8 phases, no dealing
     match.selected_phases = []
     match.phases = []  # populated when player selects phases
     match.current_phase_idx = 0

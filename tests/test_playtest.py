@@ -504,7 +504,7 @@ class TestMatchStateTransitions:
         ms.round_score = 999
         ms.rounds_won = 3
         start_round(ms)
-        assert len(ms.phase_hand) == 6  # dealt 6 phases
+        assert len(ms.phase_hand) == 8  # all 8 phases
         assert len(ms.phases) == 0      # none selected yet
         assert ms.current_phase_idx == 0
         # Fatigue recovers 50%: 0.49 → 1.0 - (1.0 - 0.49) * 0.5 = 0.745
@@ -776,7 +776,7 @@ class TestCampaignMatches:
 class TestPhaseEdgeCases:
 
     def test_phase_definitions_exist(self):
-        assert len(PHASE_DEFS) == 13
+        assert len(PHASE_DEFS) == 8
 
     def test_phase_weights_valid(self):
         valid_weights = {"DEF", "PAS", "PAC", "ATK", "SPC"}
@@ -799,10 +799,12 @@ class TestPhaseEdgeCases:
         assert slot_positions({"as": "CB", "min_def": 7}) == ["CB"]
 
     def test_shuffle_phases_is_random(self):
-        """Over multiple shuffles, we should see different phase sets."""
+        """All 8 phases are always returned, just order changes."""
         sets = [frozenset(p.id for p in shuffle_phases()) for _ in range(10)]
-        unique_sets = len(set(sets))
-        assert unique_sets >= 2, "Expected phase randomness, all shuffles were identical"
+        for s in sets:
+            assert len(s) == 8  # Always all 8 phases
+        # All sets should be identical (all phases present)
+        assert len(set(sets)) == 1
 
     def test_player_eligible_stat_keys(self):
         """Test all stat keys in dict spec."""
@@ -813,7 +815,7 @@ class TestPhaseEdgeCases:
     def test_player_eligible_list_of_positions(self):
         p = _mk_player("t", "T", "ST")
         assert is_player_eligible(p, ["ST", "LW"]) is True
-        assert is_player_eligible(p, ["LW", "RW"]) is False
+        assert is_player_eligible(p, ["LW", "RW"]) is True  # Now allowed (OOP penalty applies)
 
 
 # ═══════════════════════════════════════════════════════════════════════════

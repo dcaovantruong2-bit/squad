@@ -11,26 +11,21 @@ from src.match import (MatchState, start_round, start_phase, place_player,
 class TestPhaseDefinitions:
     """Verify the phase definitions."""
 
-    def test_eleven_phases(self):
+    def test_eight_phases(self):
         phases = get_all_phases()
-        assert len(phases) == 13
+        assert len(phases) == 8
 
     def test_each_phase_has_slots(self):
         for phase in get_all_phases():
             assert len(phase.slots) >= 2
 
-    def test_shuffle_returns_six_random(self):
-        """Shuffle picks 6 random phases from the pool of 11."""
+    def test_shuffle_returns_all_available(self):
+        """Shuffle returns all 8 phases in random order."""
         phases = shuffle_phases()
-        assert len(phases) == 6
+        assert len(phases) == 8
         all_names = {p.name for p in get_all_phases()}
         chosen_names = {p.name for p in phases}
-        assert chosen_names.issubset(all_names)
-        # Ensure randomness — over 3 rounds we should see variety
-        rounds = [shuffle_phases() for _ in range(3)]
-        name_sets = [{p.name for p in r} for r in rounds]
-        # At least 2 rounds should have different phase sets
-        assert len(set(frozenset(s) for s in name_sets)) >= 2
+        assert chosen_names == all_names
 
     def test_slot_positions_single(self):
         assert slot_positions("CB") == ["CB"]
@@ -57,63 +52,40 @@ class TestPhaseDefinitions:
 
 
 class TestIsPlayerEligible:
-    """Verify the stat/trait-based eligibility system."""
+    """Verify the new OOP-based eligibility system."""
 
     def test_string_slot_by_position(self, terry_henri, il_capitano):
-        """String slots match by position."""
+        """String slots allow any non-GK player (OOP penalty applies instead)."""
         assert is_player_eligible(terry_henri, "ST") is True
-        assert is_player_eligible(il_capitano, "ST") is False
+        assert is_player_eligible(il_capitano, "ST") is True  # CB can play ST with OOP penalty
 
     def test_list_slot_by_position(self, bale_out, maestro_xav):
-        """List slots match by any listed position."""
+        """List slots allow any non-GK player (OOP penalty applies instead)."""
         assert is_player_eligible(bale_out, ["LW", "RW"]) is True
-        assert is_player_eligible(maestro_xav, ["LW", "RW"]) is False
+        assert is_player_eligible(maestro_xav, ["LW", "RW"]) is True  # CM can play wing with OOP penalty
+
+    def test_gk_blocked_from_nongk_slot(self, gigi_wall):
+        """GK cannot play non-GK slots."""
+        assert is_player_eligible(gigi_wall, "ST") is False
+        assert is_player_eligible(gigi_wall, ["LW", "RW"]) is False
+
+    def test_nongk_blocked_from_gk_slot(self, terry_henri):
+        """Non-GK cannot play GK."""
+        assert is_player_eligible(terry_henri, "GK") is False
+
+    def test_gk_allowed_gk_slot(self, gigi_wall):
+        """GK can play GK slot."""
+        assert is_player_eligible(gigi_wall, "GK") is True
 
     def test_dict_slot_stat_threshold(self, il_capitano, terry_henri):
-        """Dict slots check stat thresholds, not position."""
-        # il_capitano has DEF=10, should be eligible for CB DEF≥8
+        """Dict slots with stat thresholds still work as filters."""
         assert is_player_eligible(il_capitano, {"as": "CB", "min_def": 8}) is True
-        # terry_henri has DEF=1, should NOT be eligible
-        assert is_player_eligible(terry_henri, {"as": "CB", "min_def": 8}) is False
+        assert is_player_eligible(terry_henri, {"as": "CB", "min_def": 8}) is False  # DEF=1
 
-    def test_dict_slot_any_position_with_stat(self, terry_henri, gigi_wall):
-        """ST with high ATK can fill the slot, GK with low ATK cannot."""
-        # terry_henri has ATK=9, plays as ST
-        assert is_player_eligible(terry_henri, {"as": "ST", "min_atk": 7}) is True
-        # gigi_wall (GK) has ATK=1
-        assert is_player_eligible(gigi_wall, {"as": "ST", "min_atk": 7}) is False
-
-    def test_dict_slot_multi_stat(self, rolls_royce, the_crab):
-        """Player must meet ALL stat thresholds."""
-        # rolls_royce: DEF=9, PAC=8 → meets both
-        assert is_player_eligible(rolls_royce, {"as": "CB", "min_def": 6, "min_pac": 6}) is True
-        # the_crab (Kola): DEF=6, PAC=5 → meets DEF but not PAC
-        assert is_player_eligible(the_crab, {"as": "CB", "min_def": 6, "min_pac": 6}) is False
-
-    def test_dict_slot_trait(self, il_capitano, jt_rock):
-        """Trait requirement filters correctly."""
-        # il_capitano has leader
+    def test_dict_slot_stat_and_trait(self, il_capitano, jt_rock):
+        """Combined stat AND trait requirements."""
         assert is_player_eligible(il_capitano, {"as": "CB", "trait": "leader"}) is True
-        # jt_rock doesn't have leader
         assert is_player_eligible(jt_rock, {"as": "CB", "trait": "leader"}) is False
-
-    def test_dict_slot_stat_and_trait(self, il_capitano, gigi_wall):
-        """Combined stat AND trait must both pass."""
-        # il_capitano: DEF=10, leader ✓
-        assert is_player_eligible(il_capitano, {"as": "CB", "min_def": 8, "trait": "leader"}) is True
-        # gigi_wall: DEF=10 ✓ but no leader trait ✗ ... wait gigi has leader!
-        # gigi: DEF=10, leader → True
-        assert is_player_eligible(gigi_wall, {"as": "CB", "min_def": 9, "trait": "aerial"}) is True
-
-    def test_gk_eligible_for_stat_slot(self, gigi_wall):
-        """GK can fill non-GK slots if stats are high enough."""
-        # gigi: DEF=10 → eligible for CB DEF≥8
-        assert is_player_eligible(gigi_wall, {"as": "CDM", "min_def": 8}) is True
-
-    def test_st_eligible_for_defense_slot(self, terry_henri):
-        """ST with enough pace/def can play defensive role."""
-        # terry_henri: PAC=9, DEF=1 → NOT eligible for DEF≥6
-        assert is_player_eligible(terry_henri, {"as": "FB", "min_pac": 8, "min_def": 6}) is False
 
 
 class TestFatigue:
@@ -149,7 +121,7 @@ class TestPhaseFlow:
     def test_phases_shuffled_each_round(self, full_squad):
         state = MatchState(squad=full_squad, synergies=[])
         start_round(state)
-        assert len(state.phase_hand) == 6
+        assert len(state.phase_hand) == 8  # all 8 phases
         assert len(state.phases) == 0
         assert state.round_score == 0
 

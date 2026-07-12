@@ -17,6 +17,7 @@ Phase-specific synergies are all stats-based, requiring 2+ complementary players
 
 from collections import defaultdict
 from src.cards import PlayerCard, SynergyCard, FormationCard
+from src.phases import get_position_penalty
 
 
 # ─── Position → Chips Formula ───────────────────────────────────────────
@@ -612,19 +613,24 @@ def calculate_round_score(
         if shop_buffs and shop_buffs.get("super_sub_active") and fatigue_mult >= 1.0:
             super_sub_mult = 1.3
 
-        # Player's effective chip contribution (fatigue, per-player buffs)
-        effective_chips = (base_chips + pos_bonus + pos_add + pp_add) * fatigue_mult * pp_mult * pos_mult * super_sub_mult
+        # OOP penalty for playing out of position
+        oop_penalty = get_position_penalty(player.position, pos)
+
+        # Player's effective chip contribution (fatigue, per-player buffs, OOP)
+        effective_chips = (base_chips + pos_bonus + pos_add + pp_add) * fatigue_mult * pp_mult * pos_mult * super_sub_mult * oop_penalty
 
         player_chip_sum += int(effective_chips)
 
         breakdown.append({
             "player": player.name,
             "position": pos,
+            "natural_position": player.position,
             "base_chips": base_chips,
             "pos_bonus": pos_bonus,
             "persistent_add": pos_add + pp_add,
             "persistent_mult": round(pp_mult * pos_mult, 3),
             "fatigue": round(fatigue_mult, 2),
+            "oop_penalty": round(oop_penalty, 2),
             "effective_chips": int(effective_chips),
         })
 

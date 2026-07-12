@@ -14,10 +14,10 @@ from src.match import (MatchState, create_match, start_round, start_phase,
                        place_player, resolve_phase,
                        advance_phase, check_round, set_selected_phases,
                        CAMPAIGN_MATCHES)
-from src.phases import (slot_positions, slot_label, is_player_eligible)
+from src.phases import Phase, slot_positions, slot_label, is_player_eligible, get_position_penalty, get_position_penalty_label
 from src.scoring import (detect_squad_synergies, detect_synergies, calculate_chips,
-                         compute_synergy_preview, calculate_round_score,
-                         get_fired_synergy_names)
+                          compute_synergy_preview, calculate_round_score,
+                          get_fired_synergy_names, ATTACKER_POSITIONS)
 
 
 from src.ui.console import cprint, clear_screen
@@ -528,7 +528,8 @@ def select_slot_player(squad, fatigue, phase_slot, used_ids, current_field, syne
                         journeyman_used_ref: list = None) -> object | None:
     """Let user pick a player from squad to fill one phase slot.
 
-    Shows eligible players with chip preview and synergy tags for this slot.
+    Shows eligible players with OOP penalty, chip preview, and synergy tags.
+    Accepts 'auto' to auto-fill with best player.
     Uses a loop so invalid input loops back instead of crashing.
     """
     eligible = [p for p in squad
@@ -548,14 +549,28 @@ def select_slot_player(squad, fatigue, phase_slot, used_ids, current_field, syne
             # Determine field position for chip calculation
             slot_positions_list = slot_positions(phase_slot)
             if isinstance(phase_slot, dict):
-                # Stat-based slot: always play as the "as" position
                 slot_pos = phase_slot["as"]
             else:
-                # Position-based slot: use natural position if valid
                 slot_pos = p.position if p.position in slot_positions_list else slot_positions_list[0]
 
             chips = calculate_chips(p, slot_pos)
-            effective = int(chips * fm)  # After fatigue
+            oop = get_position_penalty(p.position, slot_pos)
+            oop_label = get_position_penalty_label(p.position, slot_pos)
+            effective = int(chips * fm * oop)
+
+            # OOP color/style
+            if oop_label == "natural":
+                oop_style = "green"
+                oop_display = ""
+            elif oop_label == "similar":
+                oop_style = "cyan"
+                oop_display = " [similar ×0.9]"
+            elif oop_label == "OOP":
+                oop_style = "yellow"
+                oop_display = f" [OOP ×{oop:.1f}]"
+            else:
+                oop_style = "red"
+                oop_display = " [BLOCKED]"
 
             # Check which synergies this player would unlock
             new_syns = compute_synergy_preview(p, slot_pos, current_field, synergies)
@@ -566,30 +581,45 @@ def select_slot_player(squad, fatigue, phase_slot, used_ids, current_field, syne
                 if len(new_syns) > 2:
                     syn_tag += f"+{len(new_syns)-2}"
 
-            # Carryover tag — show if this player would benefit from carryover bonus
+            # Carryover tag
             carry_tag = ""
-            if carryover and slot_pos in ("LW", "RW", "ST"):
-                bonus = carryover.get("add_chips", 0)
-                carry_tag = f" 📦+{bonus}"
+            if carryover and slot_pos in ATTACKER_POSITIONS:
+                bonus = carryover.get("chips", carryover.get("add_chips", 0))
+                if bonus:
+                    carry_tag = f" 📦+{bonus}"
 
-            cprint(f"    [{i}] {p.name:20s} [{p.position}]→{slot_pos:3s}  {status:5s}  "
-                   f"→ {effective:3d} chips{' (ø) ' if fm < 1.0 else '     '}"
-                   f"ATK:{p.atk} PAC:{p.pac} PAS:{p.pas} DEF:{p.def_} SPC:{p.spc}"
+            cprint(f"    [{i}] {p.name:20s} [{p.position}]→{slot_pos:3s}  "
+                   f"{status:5s}  → {effective:3d} chips{oop_display}"
                    f"{syn_tag}{carry_tag}",
-                   style=color_for_fatigue(fm))
+                   style=color_for_fatigue(fm) if oop >= 0.7 else "red")
 
         # Show journeyman availability hint
         if journeyman_available and journeyman_used_ref is not None and not journeyman_used_ref[0]:
             cprint("  (type 'reset <#>' to fully restore a tired player -- once per match)", style="dim")
 
+        cprint("  [dim](type 'auto' to auto-fill, 'skip' to pass)[/dim]", style="dim")
+
         try:
-            raw = input("  Pick # (or 'skip' to pass this slot): ").strip().lower()
+            raw = input("  Pick #: ").strip().lower()
         except (EOFError, KeyboardInterrupt):
             print()
             return None
 
         if raw == 'skip':
             return None
+        
+        if raw == 'auto':
+            # Auto-fill: pick highest effective-chips player
+            best = max(eligible, key=lambda p: (
+                calculate_chips(p, 
+                    p.position if p.position in slot_positions(phase_slot) or not isinstance(phase_slot, str) 
+                    else slot_positions(phase_slot)[0]) 
+                * fatigue.get(p.id, 1.0) 
+                * get_position_penalty(p.position, 
+                    p.position if p.position in slot_positions(phase_slot) or not isinstance(phase_slot, str) 
+                    else slot_positions(phase_slot)[0])
+            ))
+            return best
 
         # Journeyman: reset a player's fatigue
         if raw.startswith('reset '):
@@ -614,15 +644,13 @@ def select_slot_player(squad, fatigue, phase_slot, used_ids, current_field, syne
         try:
             idx = int(raw)
         except ValueError:
-            cprint(f"  Type a number (0-{len(eligible)-1}) or 'skip'. Got '{raw}'.",
-                   style="red")
+            cprint(f"  Type a number (0-{len(eligible)-1}), 'auto', or 'skip'.", style="red")
             continue
 
         if 0 <= idx < len(eligible):
             return eligible[idx]
         else:
             cprint(f"  Number out of range. Pick 0-{len(eligible)-1}.", style="red")
-            # Loop continues — user gets another try
 
 
 def run_phase_placement(match: MatchState) -> None:
