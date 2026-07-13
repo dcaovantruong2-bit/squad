@@ -1144,7 +1144,7 @@ body::after {
     <div class="title-tagline" data-od-id="title-tagline">Football Card Roguelike</div>
     <div class="title-info" data-od-id="title-info">
       Build your squad · Pick your formation · Dominate the pitch<br>
-      <span>5 matches</span> · <span>3 rounds each</span> · <span>6 phases per round</span>
+      <span>5 matches</span> · <span>3 rounds each</span> · <span>8 phases per round</span>
     </div>
     <button class="btn btn-primary btn-lg" id="start-btn" data-od-id="start-campaign">Start Campaign ▸</button>
   </section>
@@ -1443,6 +1443,20 @@ body::after {
   </section>
 
   <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SHOP SCREEN                                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="game-screen" id="screen-shop" data-od-id="shop-screen">
+    <div class="result-screen" style="padding:var(--space-6);text-align:center">
+      <div class="phase-title" style="color:var(--gold)"><span style="margin-right:var(--space-2)">💰</span>SHOP</div>
+      <div id="shop-morale" style="font-size:var(--text-lg);color:var(--accent);margin:var(--space-4) 0"></div>
+      <div id="shop-items" style="display:flex;flex-direction:column;gap:var(--space-3);max-width:400px;margin:0 auto;text-align:left"></div>
+      <div style="margin-top:var(--space-6)">
+        <button class="btn btn-secondary" onclick="skipShop()">[0] Skip Shop — Continue ▸</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
   <!-- GAME ENGINE (inline for SPA reliability)                      -->
   <!-- ═══════════════════════════════════════════════════════════════ -->
   <script>/**
@@ -1646,11 +1660,11 @@ const FORMATIONS = [
 // ═══════════════════════════════════════════════════════════════════════
 
 const CAMPAIGN_MATCHES = [
-  { name:"Group Stage", opponent:"Wolves FC", targets:[350,450,600], tier:"Match 1/5 — Easy" },
-  { name:"Round of 16", opponent:"Inter Your-Nan", targets:[450,580,750], tier:"Match 2/5 — Moderate" },
-  { name:"Quarter Final", opponent:"Borussia Mönchen-flapjack", targets:[550,700,880], tier:"Match 3/5 — Challenging" },
-  { name:"Semi Final", opponent:"Man City Oilers", targets:[650,800,1050], tier:"Match 4/5 — Elite" },
-  { name:"THE FINAL", opponent:"Galácticos FC", targets:[800,950,1200], tier:"Match 5/5 — Final Boss" },
+  { name:"Group Stage", opponent:"Wolves FC", targets:[2000,2700,3600], tier:"Match 1/5 — Easy" },
+  { name:"Round of 16", opponent:"Inter Your-Nan", targets:[2700,3300,4500], tier:"Match 2/5 — Moderate" },
+  { name:"Quarter Final", opponent:"Borussia Mönchen-flapjack", targets:[3300,4200,5100], tier:"Match 3/5 — Challenging" },
+  { name:"Semi Final", opponent:"Man City Oilers", targets:[4200,5100,6300], tier:"Match 4/5 — Elite" },
+  { name:"THE FINAL", opponent:"Galácticos FC", targets:[5100,6300,7500], tier:"Match 5/5 — Final Boss" },
 ];
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -2381,14 +2395,12 @@ function shuffleArray(arr) {
   return a;
 }
 
-function pickRandomPhases(count) {
-  const shuffled = shuffleArray(ALL_PHASES);
-  return shuffled.slice(0, Math.min(count, shuffled.length));
+function pickRandomPhases() {
+  return shuffleArray(ALL_PHASES);
 }
 
-function dealPhases(handSize) {
-  const shuffled = shuffleArray(ALL_PHASES);
-  return shuffled.slice(0, Math.min(handSize || 6, shuffled.length));
+function dealPhases() {
+  return shuffleArray(ALL_PHASES);
 }
 
 function getAvailableSynergies(squad, allSynergies) {
@@ -2591,13 +2603,17 @@ function checkMinimums(squad) {
     phasePlacement: {}, // slotIdx -> playerId
     activeSlot: null,
 
+    // Shop
+    morale: 0,
+    shopBuffs: {},      // active shop buffs for this round
+
+    // Persistent buffs (from traits)
+    persistentBuffs: null,
+
     // Fatigue
     fatigue: {},
     carryover: null,
     journeymanUsed: false,
-
-    // Persistent synergies
-    persistentBuffs: null,
   };
 
   // ═══════════════════════════════════════════════════════════════════
@@ -2618,6 +2634,7 @@ function checkMinimums(squad) {
       case 'match': renderMatch(); break;
       case 'phase-result': renderPhaseResult(); break;
       case 'round-result': renderRoundResult(); break;
+      case 'shop': renderShop(); break;
       case 'campaign': renderCampaignComplete(); break;
     }
   }
@@ -3728,7 +3745,7 @@ function checkMinimums(squad) {
       if (G.matchIdx >= CAMPAIGN_MATCHES.length) {
         showScreen('campaign');
       } else {
-        // Start next match
+        // Start next match — reset everything
         G.round = 0;
         G.roundsWon = 0;
         G.roundsLost = 0;
@@ -3745,18 +3762,74 @@ function checkMinimums(squad) {
         startPhaseSelection();
       }
     } else {
-      // Next round
-      G.round++;
-      G.roundScore = 0;
-      G.phaseIdx = 0;
-      G.roundPhases = pickRandomPhases(6);
-      G.phasePlacement = {};
-      G.activeSlot = null;
-      G.fatigue = {};
-      G.carryover = null;
-      showScreen('match');
+      // Round won — earn morale, show shop
+      const moraleEarned = 1 + (G.roundScore >= CAMPAIGN_MATCHES[G.matchIdx].targets[G.round] ? 3 : 0) + (G.roundScore >= CAMPAIGN_MATCHES[G.matchIdx].targets[G.round] * 1.5 ? 2 : 0);
+      G.morale += moraleEarned;
+      renderShop();
+      showScreen('shop');
     }
   });
+
+  // ═══════════════════════════════════════════════════════════════════
+  // SHOP — Between rounds
+  // ═══════════════════════════════════════════════════════════════════
+
+  const SHOP_ITEMS = [
+    { id:'scout_report', name:'Scout Report', cost:2, desc:'See all 8 phase cards next round', rarity:'common' },
+    { id:'inspired_sub', name:'Inspired Sub', cost:2, desc:'Restore one player\'s fatigue to 100%', rarity:'common' },
+    { id:'formation_tweak', name:'Formation Tweak', cost:3, desc:'Swap to a different formation', rarity:'common' },
+    { id:'set_piece_drill', name:'Set Piece Drill', cost:4, desc:'Next round: +40 chips on all phases', rarity:'uncommon', effect:{extra_chips:40} },
+    { id:'tactical_shift', name:'Tactical Shift', cost:5, desc:'Next round: +5 add_mult on all phases', rarity:'uncommon', effect:{extra_add_mult:5} },
+    { id:'vet_wisdom', name:'Veteran\'s Wisdom', cost:6, desc:'One player gains a random trait', rarity:'rare' },
+  ];
+
+  function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function renderShop() {
+    document.getElementById('shop-morale').textContent = '💰 ' + G.morale + ' Morale';
+    const available = shuffleArray([...SHOP_ITEMS]).slice(0, 4);
+    const itemsEl = document.getElementById('shop-items');
+    itemsEl.innerHTML = available.map(function(item, idx) {
+      var canAfford = G.morale >= item.cost;
+      var rarityColors = {common:'dim', uncommon:'var(--cyan)', rare:'var(--gold)'};
+      var rarityColor = rarityColors[item.rarity] || 'dim';
+      return '<div class="phase-card" onclick="buyShopItem(' + idx + ')" style="opacity:' + (canAfford ? 1 : 0.4) + ';cursor:' + (canAfford ? 'pointer' : 'default') + ';border-left:4px solid ' + rarityColor + ';padding:var(--space-3);margin:var(--space-2) 0">' +
+        '<div style="font-weight:bold;color:var(--fg)">[' + (idx+1) + '] ' + item.name + ' <span style="color:' + rarityColor + ';font-size:var(--text-sm)">(' + item.rarity + ')</span></div>' +
+        '<div style="font-size:var(--text-sm);color:var(--fg-dim)">' + item.desc + '</div>' +
+        '<div style="color:' + (canAfford ? 'var(--accent)' : 'var(--red)') + '">' + (canAfford ? '✔' : '✘') + ' ' + item.cost + ' Morale</div>' +
+        '</div>';
+    }).join('');
+    window._shopItems = available;
+  }
+
+  function buyShopItem(idx) {
+    var items = window._shopItems || [];
+    var item = items[idx];
+    if (!item || G.morale < item.cost) return;
+    G.morale -= item.cost;
+    if (item.effect) {
+      for (var k in item.effect) G.shopBuffs[k] = item.effect[k];
+    }
+    renderShop();
+    showToast('✅ Bought ' + item.name + '!');
+  }
+
+  function skipShop() {
+    G.round++;
+    G.roundScore = 0;
+    G.phaseIdx = 0;
+    G.roundPhases = pickRandomPhases();
+    G.phasePlacement = {};
+    G.activeSlot = null;
+    G.carryover = null;
+    showScreen('phase-select');
+  }
 
   // ═══════════════════════════════════════════════════════════════════
   // CAMPAIGN COMPLETE
