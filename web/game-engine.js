@@ -247,3 +247,156 @@ function getAvailableSynergies(squad, allSynergies) {
   }
   return available;
 }
+
+const SYNERGIES = [
+  { id:"clean_sheet", name:"Clean Sheet", rarity:"common", persistent:false,
+    triggerType:"clean_sheet", trigger:{pos_a:"GK",pos_b:"CB",stat:"def_",threshold:18},
+    effectType:"add_chips", effect:{chips:20},
+    description:"GK DEF + CB DEF ≥ 18: +20 chips" },
+  { id:"organised_defence", name:"Organised Defence", rarity:"common", persistent:false,
+    triggerType:"organised_defence", trigger:{positions:["CB","CB"],stat:"def_",threshold:18},
+    effectType:"add_chips", effect:{chips:20},
+    description:"2 CBs DEF ≥ 18: +20 chips" },
+  { id:"wingback_overlap", name:"Wingback Overlap", rarity:"common", persistent:false,
+    triggerType:"wingback_overlap", trigger:{pos_a:"FB",stat_a:"pac",pos_b:"CM",stat_b:"pas",threshold:15},
+    effectType:"add_chips", effect:{chips:25},
+    description:"FB PAC + CM PAS ≥ 15: +25 chips" },
+  { id:"overload", name:"Overload", rarity:"common", persistent:false,
+    triggerType:"overload", trigger:{min_duplicates:2},
+    effectType:"add_chips", effect:{chips:15},
+    description:"2+ same position: +15 chips each" },
+  { id:"stretch_backline", name:"Stretch the Backline", rarity:"common", persistent:false,
+    triggerType:"stretch_backline", trigger:{pos_a:"FB",stat_a:"pac",pos_b:"LW",stat_b:"pac",threshold:17},
+    effectType:"multiply", effect:{x_mult:1.5},
+    description:"FB PAC + LW PAC ≥ 17: ×1.5 mult" },
+  { id:"route_one", name:"Route One", rarity:"uncommon", persistent:false,
+    triggerType:"route_one", trigger:{pos_a:"CB",stat_a:"pas",pos_b:"ST",stat_b:"pac",threshold:14},
+    effectType:"add_chips", effect:{chips:30},
+    description:"CB PAS + ST PAC ≥ 14: +30 chips" },
+  { id:"battering_ram", name:"Battering Ram", rarity:"common", persistent:false,
+    triggerType:"battering_ram", trigger:{pos_a:"CB",stat_a:"def_",pos_b:"ST",stat_b:"atk",threshold:17},
+    effectType:"add_chips", effect:{chips:20},
+    description:"CB DEF + ST ATK ≥ 17: +20 chips" },
+  { id:"defensive_duo", name:"Defensive Duo", rarity:"uncommon", persistent:false,
+    triggerType:"defensive_duo", trigger:{stat:"def_",threshold:18},
+    effectType:"add_chips", effect:{chips:25},
+    description:"2 highest DEF ≥ 18: +25 chips" },
+  { id:"back_three", name:"Back Three", rarity:"rare", persistent:false,
+    triggerType:"back_three", trigger:{stat:"def_",threshold:7},
+    effectType:"multiply", effect:{x_mult:1.3},
+    description:"All 3 DEF ≥ 7: ×1.3 mult" },
+  { id:"midfield_engine", name:"Midfield Engine", rarity:"common", persistent:false,
+    triggerType:"midfield_engine", trigger:{positions:["CM","CM"],stat_a:"pas",stat_b:"def_",threshold:15},
+    effectType:"add_chips", effect:{chips:25},
+    description:"CM PAS + CM DEF ≥ 15: +25 chips" },
+  { id:"double_pivot", name:"Double Pivot", rarity:"uncommon", persistent:false,
+    triggerType:"double_pivot", trigger:{positions:["CM","CM"],stat:"pas",threshold:17},
+    effectType:"carryover", effect:{carryover_chips:40,target_role:"attacker"},
+    description:"2 CMs PAS ≥ 17: carryover +40 chips next phase" },
+  { id:"trio", name:"Trio", rarity:"rare", persistent:false,
+    triggerType:"trio", trigger:{position:"CM",stat:"pas",threshold:7},
+    effectType:"chain_multiply", effect:{multipliers:[1.3,1.5,1.3]},
+    description:"All 3 CMs PAS ≥ 7: ×1.3/×1.5/×1.3 chain" },
+  { id:"covering_defender", name:"Covering Defender", rarity:"uncommon", persistent:false,
+    triggerType:"covering_defender", trigger:{position:"CB",stat_a:"pac",threshold_a:7,stat_b:"def_",threshold_b:9},
+    effectType:"add_chips", effect:{chips:25},
+    description:"CB PAC≥7 + CB DEF≥9: +25 chips" },
+  { id:"target_man_release", name:"Target Man Release", rarity:"uncommon", persistent:false,
+    triggerType:"target_man_release", trigger:{pos_a:"ST",stat_a:"atk",winger_positions:["LW","RW"],stat_b:"pac",threshold:17},
+    effectType:"multiply", effect:{x_mult:1.5},
+    description:"ST ATK + winger PAC ≥ 17: ×1.5 mult" },
+  { id:"near_post_flick", name:"Near Post Flick", rarity:"common", persistent:false,
+    triggerType:"near_post_flick", trigger:{pos_a:"CAM",stat_a:"spc",pos_b:"ST",stat_b:"atk",threshold:16},
+    effectType:"multiply", effect:{x_mult:1.5},
+    description:"CAM SPC + ST ATK ≥ 16: ×1.5 mult" },
+  { id:"one_two", name:"One-Two", rarity:"common", persistent:false,
+    triggerType:"one_two", trigger:{pos_a:"CM",stat_a:"pas",pos_b:"ST",stat_b:"pac",threshold:15},
+    effectType:"multiply", effect:{x_mult:1.5},
+    description:"CM PAS + ST PAC ≥ 15: ×1.5 mult" },
+  { id:"overlap", name:"Overlap", rarity:"common", persistent:false,
+    triggerType:"overlap", trigger:{pos_a:"FB",stat_a:"pac",pos_b:"LW",stat_b:"pas",threshold:15},
+    effectType:"multiply", effect:{x_mult:1.5},
+    description:"FB PAC + LW PAS ≥ 15: ×1.5 mult" },
+  { id:"set_piece_threat", name:"Set Piece Threat", rarity:"uncommon", persistent:false,
+    triggerType:"set_piece_threat", trigger:{stat_a:"def_",threshold_a:8,stat_b:"spc",threshold_b:7},
+    effectType:"add_chips", effect:{chips:35},
+    description:"DEF≥8 + SPC≥7: +35 chips" },
+  // Persistent synergies
+  { id:"pace_in_behind", name:"Pace in Behind", rarity:"uncommon", persistent:true,
+    triggerType:"squad_trait_count", trigger:{trait:"pacey",min_count:5},
+    effectType:"persistent_multiply", effect:{multiply:1.15,target_trait:"pacey"},
+    description:"5+ pacey: all pacey ×1.15 each phase" },
+  { id:"iron_wall", name:"Iron Wall", rarity:"uncommon", persistent:true,
+    triggerType:"squad_trait_count", trigger:{trait:"physical",min_count:3},
+    effectType:"persistent_multiply", effect:{multiply:1.2,target_trait:"physical",fatigue_penalty:0.6},
+    description:"3+ physical: ×1.2 + fatigue ×0.6" },
+  { id:"leadership_council", name:"Leadership Council", rarity:"common", persistent:true,
+    triggerType:"squad_trait_count", trigger:{trait:"leader",min_count:3},
+    effectType:"persistent_add", effect:{chips:15,target:"all"},
+    description:"3+ leaders: all get +15 chips per phase" },
+  { id:"tiki_taka_persistent", name:"Tiki-Taka", rarity:"uncommon", persistent:true,
+    triggerType:"squad_trait_count", trigger:{trait:"technical",min_count:3},
+    effectType:"persistent_multiply", effect:{multiply:1.15,target_position:["CM","CDM","CAM"]},
+    description:"3+ technical: midfielders ×1.15" },
+  { id:"clinical_edge", name:"Clinical Edge", rarity:"common", persistent:true,
+    triggerType:"squad_trait_count", trigger:{trait:"clinical",min_count:2},
+    effectType:"persistent_add", effect:{chips:15,target_position:["LW","RW","ST"]},
+    description:"2+ clinical: attackers +15 chips" },
+  { id:"double_destroyer", name:"Double Destroyer", rarity:"common", persistent:true,
+    triggerType:"squad_trait_count", trigger:{trait:"destroyer",min_count:2},
+    effectType:"persistent_multiply", effect:{multiply:1.2,target_position:["CB","FB","CDM"]},
+    description:"2+ destroyers: defenders ×1.2" },
+  { id:"two_up_top", name:"Two Up Top", rarity:"rare", persistent:true,
+    triggerType:"squad_trait_count", trigger:{trait:"poacher",min_count:2},
+    effectType:"persistent_multiply", effect:{multiply:1.3,target_position:["ST"]},
+    description:"2+ poachers: STs ×1.3" },
+  { id:"journeyman", name:"Journeyman", rarity:"rare", persistent:true,
+    triggerType:"squad_trait_present", trigger:{trait:"journeyman"},
+    effectType:"persistent_special", effect:{special:"fatigue_reset"},
+    description:"Journeyman: once per match fatigue reset" },
+  { id:"pace_and_power", name:"Pace & Power", rarity:"rare", persistent:true,
+    triggerType:"squad_trait_combo", trigger:{traits:["pacey","physical"],min_count:2},
+    effectType:"persistent_multiply", effect:{multiply:1.3,target_trait_combo:["pacey","physical"]},
+    description:"2+ pacey+physical: ×1.3" },
+  { id:"silent_killers", name:"Silent Killers", rarity:"uncommon", persistent:true,
+    triggerType:"squad_trait_combo", trigger:{traits:["clinical","pacey"],min_count:2},
+    effectType:"persistent_multiply", effect:{multiply:1.25,target_trait_combo:["clinical","pacey"]},
+    description:"2+ clinical+pacey: ×1.25" },
+  { id:"aerial_fortress", name:"Aerial Fortress", rarity:"uncommon", persistent:true,
+    triggerType:"squad_trait_count", trigger:{trait:"aerial",min_count:3},
+    effectType:"persistent_multiply", effect:{multiply:1.2,target_position:["ST","CB","GK"]},
+    description:"3+ aerial: ST/CB/GK ×1.2" },
+  { id:"playmaker_network", name:"Playmaker Network", rarity:"common", persistent:true,
+    triggerType:"squad_trait_count", trigger:{trait:"playmaker",min_count:3},
+    effectType:"persistent_multiply", effect:{multiply:1.15,target_position:["CM","CAM","CDM"]},
+    description:"3+ playmakers: midfield ×1.15" },
+];
+
+function detectSquadSynergies(squad, synergyCards) {
+  var buffs = { fatigue_penalty:0.7, player_mult:{}, player_add:{}, position_mult:{}, position_add:{}, global_mult:1.0, global_add:0, journeyman_available:false, fired_synergies:[] };
+  var traitToPlayers = {};
+  for (var pi=0; pi<squad.length; pi++) { var p=squad[pi]; for (var ti=0; ti<p.traits.length; ti++) { var t=p.traits[ti]; if (!traitToPlayers[t]) traitToPlayers[t]=[]; traitToPlayers[t].push(p); } }
+  for (var si=0; si<synergyCards.length; si++) { var syn=synergyCards[si]; if (!syn.persistent) continue; var tr=syn.trigger, eff=syn.effect, triggered=false;
+    if (syn.triggerType==='squad_trait_count') { var m=traitToPlayers[tr.trait]||[]; if (m.length>=(tr.min_count||1)) { triggered=true; applyPersistentEffect(buffs,syn,eff,m,squad); } }
+    else if (syn.triggerType==='squad_trait_present') { var m=traitToPlayers[tr.trait]||[]; if (m.length>0) { triggered=true; applyPersistentEffect(buffs,syn,eff,m,squad); } }
+    else if (syn.triggerType==='squad_trait_combo') { var m=squad.filter(function(p){return tr.traits.every(function(t){return p.traits.indexOf(t)>=0})}); if (m.length>=(tr.min_count||1)) { triggered=true; applyPersistentEffect(buffs,syn,eff,m,squad); } }
+  }
+  return buffs;
+}
+
+function applyPersistentEffect(buffs, syn, eff, matching, squad) {
+  buffs.fired_synergies.push(syn.name);
+  if (syn.effectType==='persistent_multiply') {
+    var mult=eff.multiply||1.0;
+    if (eff.target_trait) { for (var i=0;i<squad.length;i++) { var p=squad[i]; if (p.traits.indexOf(eff.target_trait)>=0) buffs.player_mult[p.id]=(buffs.player_mult[p.id]||1.0)*mult; } }
+    if (eff.target_trait_combo) { for (var i=0;i<squad.length;i++) { var p=squad[i]; if (eff.target_trait_combo.every(function(t){return p.traits.indexOf(t)>=0})) buffs.player_mult[p.id]=(buffs.player_mult[p.id]||1.0)*mult; } }
+    if (eff.target_position) { for (var i=0;i<eff.target_position.length;i++) { var pos=eff.target_position[i]; buffs.position_mult[pos]=(buffs.position_mult[pos]||1.0)*mult; } }
+    if (eff.fatigue_penalty!==undefined) buffs.fatigue_penalty=eff.fatigue_penalty;
+  } else if (syn.effectType==='persistent_add') {
+    var chips=eff.chips||0;
+    if (eff.target==='all') buffs.global_add+=chips;
+    if (eff.target_position) { for (var i=0;i<eff.target_position.length;i++) { var pos=eff.target_position[i]; buffs.position_add[pos]=(buffs.position_add[pos]||0)+chips; } }
+  } else if (syn.effectType==='persistent_special') {
+    if (eff.special==='fatigue_reset') buffs.journeyman_available=true;
+  }
+}
