@@ -2815,7 +2815,7 @@ function checkMinimums(squad) {
     G.phaseIdx = 0;
     G.phasePlacement = {};
     G.activeSlot = null;
-    G.phaseHand = dealPhases(6);
+    G.phaseHand = dealPhases();
     G.selectedPhases = [];
     startPhaseSelection();
   });
@@ -2829,7 +2829,7 @@ function checkMinimums(squad) {
   let _psHand = [];
 
   function startPhaseSelection() {
-    _psHand = G.phaseHand || dealPhases(6);
+    _psHand = G.phaseHand || dealPhases();
     _psPicked = [];
     G.selectedPhases = [];
 
@@ -3407,6 +3407,11 @@ function checkMinimums(squad) {
       for (const v of Object.values(synResult)) {
         if ((v.fired_synergies || []).includes(syn.name)) { fired = true; break; }
       }
+      if (!fired) {
+        for (const fd of (synResult.fired_details || [])) {
+          if (fd.name.split(' (')[0] === syn.name) { fired = true; break; }
+        }
+      }
       const tr = syn.trigger;
       const relevant = (tr.pos_a === fp || tr.pos_b === fp || (tr.positions && tr.positions.includes(fp)));
       if (relevant || fired) {
@@ -3699,7 +3704,7 @@ function checkMinimums(squad) {
         G.fatigue = {};
         G.carryover = null;
         G.journeymanUsed = false;
-        G.phaseHand = dealPhases(6);
+        G.phaseHand = dealPhases();
         G.selectedPhases = [];
         startPhaseSelection();
       }
