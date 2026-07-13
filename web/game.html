@@ -601,6 +601,7 @@
       <p class="form-subtitle">Dealt 6 phase cards. Pick 3 to play. Order matters for carryover!</p>
     </div>
     <div id="ps-round-info" style="font-family:var(--font-body);font-size:var(--text-lg);color:var(--fg-dim);text-align:center;margin-bottom:var(--space-4)"></div>
+    <div id="ps-scouting" style="font-family:var(--font-body);font-size:var(--text-sm);color:var(--accent);text-align:center;margin-bottom:var(--space-2);padding:4px 8px;background:rgba(57,255,20,0.05);border-radius:4px;display:none"></div>
     <div id="ps-available-syns" style="font-family:var(--font-body);font-size:var(--text-sm);color:var(--accent);text-align:center;margin-bottom:var(--space-4)"></div>
     <div class="ps-cards" id="ps-cards"></div>
     <div class="ps-picks" id="ps-picks"></div>
@@ -755,6 +756,7 @@
 
     <div class="submit-section">
       <button class="btn btn-primary btn-lg" id="submit-phase-btn">Submit Phase ▸</button>
+      <button class="btn btn-secondary btn-lg" onclick="autoFillPhase()" style="margin-left:var(--space-2);background:var(--surface);color:var(--accent);border:1px solid var(--accent);padding:8px 16px;font-family:var(--font-body)">🤖 Auto-fill</button>
     </div>
   </section>
 
@@ -1405,6 +1407,15 @@
     const roundInfo = document.getElementById('ps-round-info');
     roundInfo.textContent = 'Round ' + (G.round + 1) + '/3 - Target: ' + (CAMPAIGN_MATCHES[G.matchIdx] ? CAMPAIGN_MATCHES[G.matchIdx].targets[G.round] : 400);
 
+    // Show scouting report for the first round of each match
+    var scoutingEl = document.getElementById('ps-scouting');
+    if (G.round === 0 && CAMPAIGN_MATCHES[G.matchIdx] && CAMPAIGN_MATCHES[G.matchIdx].intro) {
+      scoutingEl.textContent = '🔍 ' + CAMPAIGN_MATCHES[G.matchIdx].intro;
+      scoutingEl.style.display = 'block';
+    } else if (scoutingEl) {
+      scoutingEl.style.display = 'none';
+    }
+
     // Show available synergies
     const synDiv = document.getElementById('ps-available-syns');
     const av = getAvailableSynergies(G.squad, SYNERGIES);
@@ -1427,32 +1438,29 @@
       const pickClass = isPicked ? 'picked' : (_psPicked.length > 0 && _psPicked[_psPicked.length-1] === i ? 'just-picked' : '');
       const pickOrder = _psPicked.indexOf(i) + 1;
       const icon = WEIGHT_LABELS[phase.weight] || '?';
-      const slotsStr = phase.slots.map(s => typeof s === 'string' ? s : (s.as || '?')).join(' → ');
+      const slotsStr = phase.slots.map(s => typeof s === 'string' ? s : (Array.isArray(s) ? s.join('/') : (s.as || '?'))).join(' → ');
 
       // Calculate best fit players
       const bestFit = [];
       for (const slot of phase.slots) {
-        const pos = typeof slot === 'string' ? slot : (slot.as || '?');
-        let elig;
-        if (typeof slot === 'string') {
-          elig = G.squad.filter(p => p.position === slot);
-        } else if (typeof slot === 'object' && slot.as) {
-          elig = G.squad.filter(p => {
-            if (slot.min_atk && p.atk < slot.min_atk) return false;
-            if (slot.min_pac && p.pac < slot.min_pac) return false;
-            if (slot.min_pas && p.pas < slot.min_pas) return false;
-            if (slot.min_def && p.def_ < slot.min_def) return false;
-            if (slot.min_spc && p.spc < slot.min_spc) return false;
-            if (slot.trait && !p.traits.includes(slot.trait)) return false;
-            return true;
-          });
-        } else {
-          elig = G.squad.filter(p => slot.includes(p.position));
-        }
+        const pos = typeof slot === 'string' ? slot : (Array.isArray(slot) ? slot[0] : (slot.as || '?'));
+        var elig = G.squad.filter(p => isPlayerEligible(p, slot));
         if (elig.length) {
           const best = elig.reduce((a, b) => calculateChips(a, pos) > calculateChips(b, pos) ? a : b);
           bestFit.push(best.name + '(' + pos + ')');
         }
+      }
+
+      // Phase adjustment tags
+      const phaseId = phase.id;
+      const fatigueVal = G.phaseFatigue[phaseId] !== undefined ? G.phaseFatigue[phaseId] : 1.0;
+      const oppVal = G.opponentAdjustments[phaseId] || 1.0;
+      var tagsHtml = '';
+      if (fatigueVal < 1.0) tagsHtml += '<span style="color:var(--gold);font-size:10px;margin-left:var(--space-1)">fatigue ×' + fatigueVal.toFixed(2) + '</span>';
+      if (oppVal !== 1.0) {
+        var opColor = oppVal > 1.0 ? 'var(--accent)' : 'var(--danger)';
+        var opLabel = oppVal > 1.0 ? 'opp. weakness' : 'opp. strong';
+        tagsHtml += '<span style="color:' + opColor + ';font-size:10px;margin-left:var(--space-1)">' + opLabel + ' ×' + oppVal.toFixed(2) + '</span>';
       }
 
       const synPotential = getAvailableSynergies(G.squad, SYNERGIES);
@@ -1465,6 +1473,7 @@
         '<div class="pc-desc">' + (phase.description || '') + '</div>' +
         '<div class="pc-slots">' + slotsStr + '</div>' +
         (bestFit.length ? '<div style="font-size:11px;color:var(--fg-dim);margin-top:var(--space-1)">Best: ' + bestFit.join(', ') + '</div>' : '') +
+        (tagsHtml ? '<div style="margin-top:var(--space-1)">' + tagsHtml + '</div>' : '') +
         (synNames ? '<div class="pc-syn">◈ ' + synNames + '</div>' : '') +
         '</div>';
     }).join('');
@@ -2146,10 +2155,29 @@
       }
     }
 
-    // Calculate real score
-    const result = calculateRoundScore(field, SYNERGIES, G.formation, G.fatigue, G.carryover, G.persistentBuffs);
+    // Calculate momentum for this phase
+    var momentumMult = {0: 1.0, 1: 1.2, 2: 1.5}[G.phaseIdx] || 1.5;
+    G.momentum = momentumMult;
+
+    // Calculate phase multiplier: fatigue × opponent adjustment
+    var phaseId = phase.id;
+    var fatiguePhase = G.phaseFatigue[phaseId] !== undefined ? G.phaseFatigue[phaseId] : 1.0;
+    var oppAdj = G.opponentAdjustments[phaseId] || 1.0;
+    var effectivePhaseMult = fatiguePhase * oppAdj;
+
+    // Calculate real score with all parameters
+    const result = calculateRoundScore(field, SYNERGIES, G.formation, G.fatigue, G.carryover, G.persistentBuffs, G.shopBuffs, momentumMult);
+    result.phase_mult = effectivePhaseMult;
+    result.total = Math.round(result.total * effectivePhaseMult);
+    result.subtotal_before_formation = Math.round((result.subtotal_before_formation || result.total) * effectivePhaseMult);
+    
     G.carryover = result.next_carryover || null;
     G.roundScore += result.total;
+
+    // Apply phase fatigue decay
+    if (G.phaseFatigue[phaseId] !== undefined) {
+      G.phaseFatigue[phaseId] = G.phaseFatigue[phaseId] * 0.85;
+    }
 
     // Store result for phase-result screen
     G._lastPhaseResult = {
@@ -2179,7 +2207,22 @@
     // Hero score cascade
     document.getElementById('pr-score').textContent = '0';
     setTimeout(function() { animateScoreCascade(result.total, 800); }, 100);
-    document.getElementById('pr-target').textContent = `Target: ${target} · Running: ${running}`;
+    document.getElementById('pr-target').textContent = 'Target: ' + target + ' · Running: ' + running;
+
+    // Balatro formula display
+    var balatroHtml = '<div style="margin-bottom:var(--space-4);padding:var(--space-3);background:rgba(0,0,0,0.3);border-radius:var(--radius-md);border:1px solid var(--border)">';
+    balatroHtml += '<div style="color:var(--accent);font-weight:bold;font-size:var(--text-lg)">🃏 CHIPS: ' + (result.player_chips || 0) + (result.synergy_chips > 0 ? ' +' + result.synergy_chips + 'syn' : '') + (result.carryover_chips > 0 ? ' +' + result.carryover_chips + 'carry' : '') + (result.shop_chips > 0 ? ' +' + result.shop_chips + 'shop' : '') + ' = ' + (result.total_chips || result.total) + '</div>';
+    var addMultDisp = (result.add_mult || 1);
+    balatroHtml += '<div style="color:var(--gold);font-weight:bold">➕ ADD MULT: ' + addMultDisp + '</div>';
+    var xMultDisp = (result.x_mult || 1);
+    balatroHtml += '<div style="color:var(--info);font-weight:bold">✖ × MULT: ' + xMultDisp.toFixed(3) + '</div>';
+    balatroHtml += '<div style="border-top:1px solid var(--border);padding-top:var(--space-2);margin-top:var(--space-2);">FORMULA: <span style="color:var(--accent)">' + (result.total_chips || 0) + '</span> × <span style="color:var(--gold)">' + addMultDisp + '</span> × <span style="color:var(--info)">' + xMultDisp.toFixed(2) + '</span>';
+    if (result.formation_mult && result.formation_mult !== 1.0) balatroHtml += ' × <span style="color:var(--muted)">' + result.formation_mult.toFixed(2) + '</span>';
+    if (result.momentum && result.momentum !== 1.0) balatroHtml += ' × <span style="color:var(--gold)">Momentum ×' + result.momentum + '</span>';
+    if (result.phase_mult && result.phase_mult !== 1.0) balatroHtml += ' × <span style="color:var(--magenta)">Phase ×' + result.phase_mult.toFixed(2) + '</span>';
+    balatroHtml += ' = <span style="color:var(--gold);font-size:var(--text-xl);font-weight:bold">' + result.total + '</span></div>';
+    balatroHtml += '</div>';
+    document.getElementById('pr-breakdown-rows').innerHTML = balatroHtml;
 
     // Player Contributions Table
     const formation = G.formation || {};
@@ -2423,16 +2466,12 @@
         startPhaseSelection();
       }
     } else {
-      // Next round
-      G.round++;
-      G.roundScore = 0;
-      G.phaseIdx = 0;
-      G.roundPhases = pickRandomPhases(6);
-      G.phasePlacement = {};
-      G.activeSlot = null;
-      G.fatigue = {};
-      G.carryover = null;
-      showScreen('match');
+      // Round won — earn morale, show shop
+      var targetVal = CAMPAIGN_MATCHES[G.matchIdx].targets[G.round];
+      var moraleEarned = 1 + (G.roundScore >= targetVal ? 3 : 0) + (G.roundScore >= targetVal * 1.5 ? 2 : 0);
+      G.morale += moraleEarned;
+      renderShop();
+      showScreen('shop');
     }
   });
 
