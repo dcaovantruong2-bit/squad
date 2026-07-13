@@ -1182,30 +1182,27 @@ def get_available_synergies(squad, all_synergies, persistent_buffs=None):
 
 
 def run_phase_selection(match: MatchState) -> None:
-    """Show 6 dealt phase cards, let player pick 3 in order."""
-    hand = match.phase_hand
+    """Show all 8 phases with stable indices, let player pick 3 in order."""
+    hand = match.phase_hand  # All 8 phases, stable order
     selected = []
-    
+
     weight_icons = {"DEF": "🛡️", "PAS": "🔄", "PAC": "⚡", "ATK": "🎯", "SPC": "✨"}
-    rarity_styles = {"common": "dim", "uncommon": "cyan", "rare": "yellow"}
-    
+
     for pick_num in range(3):
-        available = [p for p in hand if p not in selected]
-        
         while True:
             clear_screen()
             cprint("  ╔═══════════════════════════════════════════════════╗", style="bold cyan")
             cprint(f"  ║        🃏  PICK PHASE {pick_num + 1} / 3                    ║", style="bold cyan")
             cprint("  ╚═══════════════════════════════════════════════════╝", style="bold cyan")
             cprint(f"  Round {match.current_round + 1}/3 — Target: {match.current_target}", style="bold")
-            
+
             if selected:
                 picked_names = " → ".join(p.name for p in selected)
                 cprint(f"  [bold]Selected order:[/bold] {picked_names}  [dim](next pick goes after)[/dim]", style="bold yellow")
             else:
                 cprint(f"  [dim]Pick your first phase. Order matters for carryover![/dim]", style="dim")
-            
-            # Show available synergies (squad-relevant only)
+
+            # Show available synergies
             if match.synergies:
                 syns = get_available_synergies(match.squad, match.synergies)
                 if syns:
@@ -1213,110 +1210,109 @@ def run_phase_selection(match: MatchState) -> None:
                     for name, desc, players_involved in syns:
                         plyr = " — " + ", ".join(players_involved[:2])
                         cprint(f"    ✦ [bold]{name:22s}[/bold] [dim]{desc[:50]}[/dim]{plyr}", style="yellow")
-            
+
             cprint(f"\n  [bold]Available Phases:[/bold]", style="bold")
-            
-            for i, phase in enumerate(available):
+
+            for i, phase in enumerate(hand):
                 icon = weight_icons.get(phase.weight, "⚽")
                 slots_str = " → ".join(slot_label(s) for s in phase.slots)
-                
-                cprint(f"")
-                cprint(f"  [{i}] {icon} [bold]{phase.name}[/bold]", style="bold")
-                cprint(f"      [dim]{phase.description}[/dim]", style="dim")
-                cprint(f"      Slots: {slots_str}  |  Cards: {len(phase.slots)}", style="dim")
-                
-                # Show which squad players would excel in this phase
-                eligible_by_slot = []
-                for slot_def in phase.slots:
-                    if isinstance(slot_def, str):
-                        pos = slot_def
-                        qualifying = [p for p in match.squad if p.position == pos]
-                    elif isinstance(slot_def, list):
-                        pos = slot_def[0]
-                        qualifying = [p for p in match.squad if p.position in slot_def]
-                    elif isinstance(slot_def, dict):
-                        pos = slot_def["as"]
-                        # For stat-based slots, any player meeting the threshold
-                        qualifying = [p for p in match.squad
-                                      if is_player_eligible(p, slot_def)]
-                    else:
-                        continue
-                    
-                    if qualifying:
-                        best = max(qualifying, key=lambda p: calculate_chips(p, pos))
-                        eligible_by_slot.append(f"{best.name} ({best.position}→{pos})")
-                
-                if eligible_by_slot:
-                    cprint(f"      [green]Best fit:[/green] {', '.join(eligible_by_slot)}", style="green")
-                
-                # Phase adjustment tags
-                phase_id = phase.id
-                fatigue_val = match.phase_fatigue.get(phase_id, 1.0)
-                opp_val = match.opponent_adjustments.get(phase_id, 1.0)
-                tags = []
-                if fatigue_val < 1.0:
-                    tags.append(f"[yellow]fatigue ×{fatigue_val:.2f}[/yellow]")
-                if opp_val != 1.0:
-                    style = "green" if opp_val > 1.0 else "red"
-                    label = "weakness" if opp_val > 1.0 else "strong"
-                    tags.append(f"[{style}]opp. {label} ×{opp_val:.2f}[/{style}]")
-                if tags:
-                    cprint(f"      {' '.join(tags)}", style="dim")
-                
-                # Preview which round synergies would fire for this phase
-                if match.synergies:
-                    # Simulate fielding the best available for each slot
-                    sim_field = []
-                    sim_used = set()
+                is_selected = phase in selected
+
+                if is_selected:
+                    cprint(f"\n  [{i}] {icon} [bold]{phase.name}[/bold]  [dim]✓ selected (pick {selected.index(phase)+1})[/dim]", style="dim")
+                else:
+                    cprint(f"\n  [{i}] {icon} [bold]{phase.name}[/bold]", style="bold")
+                    cprint(f"      [dim]{phase.description}[/dim]", style="dim")
+                    cprint(f"      Slots: {slots_str}  |  Cards: {len(phase.slots)}", style="dim")
+
+                    # Show best fit
+                    eligible_by_slot = []
                     for slot_def in phase.slots:
-                        if isinstance(slot_def, str):
-                            pos = slot_def
-                            pool = [p for p in match.squad if p.id not in sim_used and p.position == pos]
-                        elif isinstance(slot_def, list):
-                            pos = slot_def[0]
-                            pool = [p for p in match.squad if p.id not in sim_used and p.position in slot_def]
-                        elif isinstance(slot_def, dict):
+                        poss = slot_positions(slot_def)
+                        if isinstance(slot_def, dict):
                             pos = slot_def["as"]
-                            pool = [p for p in match.squad if p.id not in sim_used
-                                    and is_player_eligible(p, slot_def)]
                         else:
-                            continue
-                        if pool:
-                            best = max(pool, key=lambda p: calculate_chips(p, pos))
-                            sim_field.append((best, pos))
-                            sim_used.add(best.id)
-                    
-                    if sim_field:
-                        sim_result = detect_synergies(sim_field, match.synergies)
-                        fired = get_fired_synergy_names(sim_result)
-                        if fired:
-                            cprint(f"      [yellow]⚡ Potential: {', '.join(sorted(fired)[:3])}[/yellow]",
-                                   style="yellow")
-                            if len(fired) > 3:
-                                cprint(f"      [dim]        +{len(fired)-3} more[/dim]", style="dim")
-            
-            cprint(f"\n  [dim]Pick 0-{len(available) - 1}: [/dim]", style="dim", end="")
-            
+                            pos = poss[0]
+                        qualifying = [p for p in match.squad if is_player_eligible(p, slot_def)]
+                        if qualifying:
+                            best = max(qualifying, key=lambda p: calculate_chips(p, pos))
+                            eligible_by_slot.append(f"{best.name} ({best.position}→{pos})")
+
+                    if eligible_by_slot:
+                        cprint(f"      [green]Best fit:[/green] {', '.join(eligible_by_slot)}", style="green")
+
+                    # Phase adjustment tags
+                    phase_id = phase.id
+                    fatigue_val = match.phase_fatigue.get(phase_id, 1.0)
+                    opp_val = match.opponent_adjustments.get(phase_id, 1.0)
+                    tags = []
+                    if fatigue_val < 1.0:
+                        tags.append(f"[yellow]fatigue ×{fatigue_val:.2f}[/yellow]")
+                    if opp_val != 1.0:
+                        style = "green" if opp_val > 1.0 else "red"
+                        label = "weakness" if opp_val > 1.0 else "strong"
+                        tags.append(f"[{style}]opp. {label} ×{opp_val:.2f}[/{style}]")
+                    if tags:
+                        cprint(f"      {' '.join(tags)}", style="dim")
+
+                    # Preview which synergies would fire
+                    if match.synergies:
+                        sim_field = []
+                        sim_used = set()
+                        for slot_def in phase.slots:
+                            if isinstance(slot_def, str):
+                                pos = slot_def
+                                pool = [p for p in match.squad if p.id not in sim_used and is_player_eligible(p, slot_def)]
+                            elif isinstance(slot_def, list):
+                                pos = slot_def[0]
+                                pool = [p for p in match.squad if p.id not in sim_used and is_player_eligible(p, slot_def)]
+                            elif isinstance(slot_def, dict):
+                                pos = slot_def["as"]
+                                pool = [p for p in match.squad if p.id not in sim_used and is_player_eligible(p, slot_def)]
+                            else:
+                                continue
+                            if pool:
+                                best = max(pool, key=lambda p: calculate_chips(p, pos))
+                                sim_field.append((best, pos))
+                                sim_used.add(best.id)
+
+                        if sim_field:
+                            sim_result = detect_synergies(sim_field, match.synergies)
+                            fired = get_fired_synergy_names(sim_result)
+                            if fired:
+                                cprint(f"      [yellow]⚡ Potential: {', '.join(sorted(fired)[:3])}[/yellow]", style="yellow")
+                                if len(fired) > 3:
+                                    cprint(f"      [dim]        +{len(fired)-3} more[/dim]", style="dim")
+
+            already_picked = len(selected)
+            remaining = 3 - already_picked
+            cprint(f"\n  [dim]Pick 0-7 (stable numbers — ✓ phases are taken). Need {remaining} more.[/dim]", style="dim")
+
             try:
                 raw = input().strip()
             except (EOFError, KeyboardInterrupt):
                 return
-            
+
             if raw == "":
                 continue
-            
+
             try:
                 idx = int(raw)
-                if 0 <= idx < len(available):
-                    selected.append(available[idx])
+                if 0 <= idx < len(hand):
+                    phase = hand[idx]
+                    if phase in selected:
+                        cprint(f"  [yellow]'{phase.name}' already selected (pick {selected.index(phase)+1}).[/yellow]", style="yellow")
+                        input("  Press Enter...")
+                        continue
+                    selected.append(phase)
                     break
                 else:
-                    cprint(f"  Number out of range. Pick 0-{len(available) - 1}.", style="red")
+                    cprint(f"  Number out of range. Pick 0-{len(hand)-1}.", style="red")
                     input("  Press Enter...")
             except ValueError:
-                cprint(f"  Enter a number 0-{len(available) - 1}.", style="red")
+                cprint(f"  Enter a number 0-{len(hand)-1}.", style="red")
                 input("  Press Enter...")
-    
+
     # Show final selected order
     set_selected_phases(match, selected)
     clear_screen()

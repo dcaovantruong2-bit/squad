@@ -140,8 +140,11 @@ def build_squad(all_players: list[PlayerCard]) -> list[PlayerCard]:
             
             cprint(f"    [{i:2d}] {p.name:22s}  [{p.position:3s}]  cost:[bold]{p.cost:2d}[/bold]{syn_str}", style="bold")
 
+    # Build original-index mapping for stable player numbers
+    original_index = {p.id: i for i, p in enumerate(all_players)}
+    
     def render_available_players():
-        """Show available players grouped by position."""
+        """Show available players grouped by position with stable indices."""
         cprint("\n  [bold underline]AVAILABLE PLAYERS[/bold underline]", style="bold cyan")
         
         selected_ids = {p.id for p in selected}
@@ -150,14 +153,11 @@ def build_squad(all_players: list[PlayerCard]) -> list[PlayerCard]:
         # Pre-compute synergy potential for each player
         syn_cache = {}
         if selected:
-            for players in by_pos.values():
-                for player in players:
-                    if player.id not in selected_ids:
-                        syns = compute_synergy_potential(player, selected + [player], _ALL_SYNERGIES)
-                        syn_cache[player.id] = len(syns)
+            for p in all_players:
+                if p.id not in selected_ids:
+                    syns = compute_synergy_potential(p, selected + [p], _ALL_SYNERGIES)
+                    syn_cache[p.id] = len(syns)
         
-        # Flat index for picking
-        idx = 0
         for pos in POSITION_ORDER:
             players = by_pos.get(pos, [])
             avail = [p for p in players if p.id not in selected_ids]
@@ -168,6 +168,7 @@ def build_squad(all_players: list[PlayerCard]) -> list[PlayerCard]:
             cprint(f"\n  {cfg['icon']} [bold underline]{pos}[/bold underline] ({len(avail)} available)", style=cfg['color'])
             
             for p in avail:
+                stable_idx = original_index[p.id]
                 can_afford = remaining >= p.cost
                 cost_style = "bold green" if can_afford else "bold red"
                 cost_label = "CAN AFFORD" if can_afford else "TOO EXPENSIVE"
@@ -178,21 +179,19 @@ def build_squad(all_players: list[PlayerCard]) -> list[PlayerCard]:
                     if sc > 0:
                         syn_tag = f"  [yellow]⚡{sc}[/yellow]"
                 
-                cprint(f"    [{idx:2d}] {p.name:22s}  cost:[{cost_style}]{p.cost:2d}[/{cost_style}]  {cost_label:12s}"
+                cprint(f"    [{stable_idx:2d}] {p.name:22s}  cost:[{cost_style}]{p.cost:2d}[/{cost_style}]  {cost_label:12s}"
                        f"  ATK:{p.atk} PAC:{p.pac} PAS:{p.pas} DEF:{p.def_} SPC:{p.spc}{syn_tag}",
                        style="dim" if not can_afford else "")
-                idx += 1
         
-        return idx
+        return len(all_players) - len(selected_ids)
 
-    # Build flat index → player mapping
+    # Build flat index → player mapping using stable indices
     def build_available_list():
         selected_ids = {p.id for p in selected}
-        result = []
-        for pos in POSITION_ORDER:
-            for p in by_pos.get(pos, []):
-                if p.id not in selected_ids:
-                    result.append(p)
+        result = {}
+        for i, p in enumerate(all_players):
+            if p.id not in selected_ids:
+                result[i] = p
         return result
 
     # ── Main loop ──
@@ -277,7 +276,7 @@ def build_squad(all_players: list[PlayerCard]) -> list[PlayerCard]:
             continue
 
         available = build_available_list()
-        if 0 <= pick_idx < len(available):
+        if pick_idx in available:
             player = available[pick_idx]
             remaining = BUDGET - spent
             if remaining < player.cost:
