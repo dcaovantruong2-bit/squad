@@ -891,6 +891,7 @@ body::after {
     .picker-row.used { opacity:0.3; cursor:default; }
     .picker-row.inel { opacity:0.3; cursor:default; }
     .picker-row .pr-name { font-family:var(--font-body); font-size:14px; color:var(--fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .picker-row .pr-pos { font-family:var(--font-display); font-size:7px; color:var(--fg-dim); text-align:center; min-width:16px; overflow:hidden; }
     .picker-row .pr-st { font-family:var(--font-mono, monospace); font-size:13px; text-align:center; }
     .picker-row .pr-st.atk { color:#ff3344; }
     .picker-row .pr-st.pac { color:var(--gold); }
@@ -1369,6 +1370,7 @@ body::after {
 
     <div class="submit-section">
       <button class="btn btn-primary btn-lg" id="submit-phase-btn">Submit Phase ▸</button>
+      <button class="btn btn-secondary btn-lg" onclick="autoFillPhase()" style="margin-left:var(--space-2);background:var(--bg-dark);color:var(--accent);border:1px solid var(--accent);padding:8px 16px;font-family:var(--font-body);font-size:var(--text-lg);cursor:pointer">🤖 Auto-fill</button>
     </div>
   </section>
 
@@ -3233,6 +3235,37 @@ function checkMinimums(squad) {
     } else {
       container.innerHTML = lines.join('');
     }
+  }
+
+  function autoFillPhase() {
+    var phase = G.roundPhases[G.phaseIdx];
+    var usedIds = new Set(Object.values(G.phasePlacement));
+    for (var si = 0; si < phase.slots.length; si++) {
+      if (G.phasePlacement[si] !== undefined) continue;
+      var slot = phase.slots[si];
+      var fp = slotFieldPosition(slot);
+      var best = null;
+      var bestChips = -1;
+      for (var pi = 0; pi < G.squad.length; pi++) {
+        var p = G.squad[pi];
+        if (usedIds.has(p.id)) continue;
+        if (!isPlayerEligible(p, slot)) continue;
+        var fat = G.fatigue[p.id] !== undefined ? G.fatigue[p.id] : 1.0;
+        var oop = getPositionPenalty(p.position, fp);
+        var chips = Math.round(calculateChips(p, fp) * fat * oop);
+        if (chips > bestChips) { bestChips = chips; best = p; }
+      }
+      if (best) {
+        G.phasePlacement[si] = best.id;
+        usedIds.add(best.id);
+      }
+    }
+    G._pickerSlot = null;
+    renderSlotCards();
+    renderEligiblePlayers(null);
+    renderSynergyPreview();
+    closePicker();
+    showToast('🤖 Auto-filled!');
   }
 
   // ═══════════════════════════════════════════════════════════════════
