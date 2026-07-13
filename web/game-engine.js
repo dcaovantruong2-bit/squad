@@ -1,5 +1,4 @@
-/** SQUAD — Game Engine. Complete port of Python game logic to JavaScript. */
-
+/** SQUAD — Game Engine (clean rebuild) */
 // PLAYER DATA
 const PLAYERS = [
   { id:"terry_henri", name:"Terry Henri", position:"ST", atk:9, pac:9, pas:6, def_:1, spc:8, traits:["pacey","clinical"], description:"The clinical speedster." },
@@ -39,10 +38,11 @@ const PLAYERS = [
   { id:"rocket_raya", name:"Rocket Raya", position:"GK", atk:1, pac:5, pas:8, def_:6, spc:8, traits:["playmaker","technical"], description:"Sweeper keeper." },
   { id:"claudio_bravoops", name:"Claudio Bra-voops", position:"GK", atk:1, pac:5, pas:4, def_:7, spc:3, traits:["leader","technical"], description:"Solid shot-stopper." },
 ];
-
 function calcCost(p) { return p.atk + p.pac + p.pas + p.def_ + p.spc; }
+var BUDGET = 360, MIN_TOTAL = 11;
 
-const CHIPS_FORMULA = {
+// CHIPS FORMULA
+var CHIPS_FORMULA = {
   GK: function(p) { return Math.round(p.def_ * 3 + p.spc * 2); },
   CB: function(p) { return Math.round(p.def_ * 5); },
   FB: function(p) { return Math.round(p.def_ * 3 + p.pac * 1.5); },
@@ -53,24 +53,24 @@ const CHIPS_FORMULA = {
   RW: function(p) { return Math.round(p.pac * 3 + p.atk * 2); },
   ST: function(p) { return Math.round(p.atk * 4 + p.pac * 1.5); },
 };
-
 function calculateChips(player, fieldPosition) {
   var fn = CHIPS_FORMULA[fieldPosition];
   return fn ? fn(player) : (player.atk + player.pac + player.pas + player.def_ + player.spc) * 4;
 }
 
-// 8 tactical focuses
+// 8 TACTICAL FOCUSES
 var ALL_PHASES = [
-  { id:"goal_kick", name:"Goal Kick", weight:"DEF", maxCards:3, desc:"Keeper launches long — defenders win the header", slots:["GK","CB","CB"] },
-  { id:"build_up", name:"Build-Up", weight:"PAS", maxCards:3, desc:"Play out from the back — fullbacks push up", slots:["FB","FB","CM"] },
-  { id:"wide_attack", name:"Wide Attack", weight:"PAC", maxCards:3, desc:"Overload the flanks — pacey wingers stretch defence", slots:["FB","LW","RW"] },
-  { id:"direct_play", name:"Direct Play", weight:"ATK", maxCards:3, desc:"Quick transition — bypass midfield", slots:[["LW","RW"],"ST","CM"] },
-  { id:"defensive_block", name:"Defensive Block", weight:"DEF", maxCards:3, desc:"Compact defensive shape", slots:["CB","CB","CDM"] },
-  { id:"tiki_taka", name:"Tiki-Taka", weight:"PAS", maxCards:3, desc:"Pass, move, repeat — creative midfielders", slots:["CM","CM","CAM"] },
-  { id:"counter", name:"Counter", weight:"PAC", maxCards:3, desc:"Explosive break — pacey attackers in behind", slots:["LW","ST","RW"] },
-  { id:"set_piece", name:"Set Piece", weight:"SPC", maxCards:3, desc:"Dead ball specialist meets aerial threat", slots:["CAM","CB","ST"] },
+  { id:"goal_kick", name:"Goal Kick", weight:"DEF", icon:"GK", maxCards:3, desc:"Keeper launches long — defenders win the header", slots:["GK","CB","CB"] },
+  { id:"build_up", name:"Build-Up", weight:"PAS", icon:"BLD", maxCards:3, desc:"Play out from the back — fullbacks push up", slots:["FB","FB","CM"] },
+  { id:"wide_attack", name:"Wide Attack", weight:"PAC", icon:"WNG", maxCards:3, desc:"Overload the flanks — pacey wingers stretch defence", slots:["FB","LW","RW"] },
+  { id:"direct_play", name:"Direct Play", weight:"ATK", icon:"DIR", maxCards:3, desc:"Quick transition — bypass midfield", slots:[["LW","RW"],"ST","CM"] },
+  { id:"defensive_block", name:"Defensive Block", weight:"DEF", icon:"BLK", maxCards:3, desc:"Compact defensive shape", slots:["CB","CB","CDM"] },
+  { id:"tiki_taka", name:"Tiki-Taka", weight:"PAS", icon:"TIK", maxCards:3, desc:"Pass, move, repeat — creative midfielders", slots:["CM","CM","CAM"] },
+  { id:"counter", name:"Counter", weight:"PAC", icon:"CNT", maxCards:3, desc:"Explosive break — pacey attackers in behind", slots:["LW","ST","RW"] },
+  { id:"set_piece", name:"Set Piece", weight:"SPC", icon:"SET", maxCards:3, desc:"Dead ball specialist meets aerial threat", slots:["CAM","CB","ST"] },
 ];
 
+// FORMATIONS (with pitchPositions for carousel)
 var FORMATIONS = [
   { id:"4-4-2", name:"4-4-2", handSize:11, globalMult:1.0,
     slots:["CB","CB","FB","FB","CM","CM","ST","ST"],
@@ -103,6 +103,7 @@ var FORMATIONS = [
     pitchPositions:[{pos:"GK",x:50,y:92},{pos:"CB",x:28,y:75},{pos:"CB",x:72,y:75},{pos:"FB",x:5,y:58},{pos:"FB",x:95,y:58},{pos:"CDM",x:50,y:50},{pos:"CM",x:30,y:34},{pos:"CM",x:70,y:34},{pos:"LW",x:12,y:17},{pos:"ST",x:50,y:12},{pos:"RW",x:88,y:17}] },
 ];
 
+// CAMPAIGN
 var CAMPAIGN_MATCHES = [
   { name:"Group Stage", opponent:"Wolves FC", targets:[2000,2700,3600], tier:"Match 1/5", intro:"Relegation battlers. Forwards can't finish — exploit set pieces." },
   { name:"Round of 16", opponent:"Inter Your-Nan", targets:[2700,3300,4500], tier:"Match 2/5", intro:"Mid-table side. Solid defence but slow at the back." },
@@ -111,24 +112,22 @@ var CAMPAIGN_MATCHES = [
   { name:"THE FINAL", opponent:"Galácticos FC", targets:[5100,6300,7500], tier:"Match 5/5", intro:"The best in the world. Leave nothing on the pitch." },
 ];
 
+// ELIGIBILITY + OOP
 function isPlayerEligible(player, slotSpec) {
   if (player.position === 'GK' && slotSpec !== 'GK') return false;
   if (slotSpec === 'GK') return player.position === 'GK';
   return true;
 }
-
 function slotFieldPosition(slot) {
   if (typeof slot === 'string') return slot;
   if (Array.isArray(slot)) return slot[0];
   return (slot && slot.as) ? slot.as : 'ST';
 }
-
 function slotLabel(slot) {
   if (typeof slot === 'string') return slot;
   if (Array.isArray(slot)) return slot.join('/');
   return '?';
 }
-
 var POSITION_GROUPS = { 'GK':['GK'],'CB':['CB','FB','CDM'],'FB':['FB','CB','CDM'],'CDM':['CDM','CB','CM'],'CM':['CM','CAM','CDM'],'CAM':['CAM','CM','ST'],'LW':['LW','RW','ST'],'RW':['RW','LW','ST'],'ST':['ST','LW','RW'] };
 function getPositionPenalty(playerPos, fieldPos) {
   if (playerPos === fieldPos) return 1.0;
@@ -137,289 +136,137 @@ function getPositionPenalty(playerPos, fieldPos) {
   if (group.indexOf(fieldPos) >= 0) return 0.9;
   return 0.7;
 }
-
 var ATTACKER_POSITIONS = new Set(["LW","RW","ST"]);
-function _playersAt(field, position) { return field.filter(function(f){return f[1]===position}).map(function(f){return f[0]}); }
-function _bestAt(field, position, stat) { var c = _playersAt(field, position); return c.length ? c.reduce(function(a,b){return a[stat]>b[stat]?a:b}) : null; }
 
+// SYNERGY HELPERS
+function _playersAt(field, pos) { return field.filter(function(f){return f[1]===pos}).map(function(f){return f[0]}); }
+function _bestAt(field, pos, stat) { var c = _playersAt(field, pos); return c.length ? c.reduce(function(a,b){return a[stat]>b[stat]?a:b}) : null; }
+
+// DETECT SYNERGIES (phase-level accumulators)
 function detectSynergies(field, synergyCards) {
-  var result = { chips: 0, add_mult: 0, x_mult: 1.0, nextCarryover: null, fired_details: [] };
+  var result = { chips:0, add_mult:0, x_mult:1.0, nextCarryover:null, fired_details:[] };
   for (var si = 0; si < synergyCards.length; si++) {
     var syn = synergyCards[si];
     if (syn.persistent) continue;
-    var tr = syn.trigger, eff = syn.effect, firedName = syn.name, contribs = [];
-    function addC(p) { if (contribs.indexOf(p.name) < 0) contribs.push(p.name); }
-    var fieldsAll = field.map(function(f){return f[0]});
+    var tr = syn.trigger, eff = syn.effect, name = syn.name, contribs = [];
+    function addC(p) { if (contribs.indexOf(p.name)<0) contribs.push(p.name); }
+    var all = field.map(function(f){return f[0]});
     switch (syn.triggerType) {
-      case 'clean_sheet': { var gk = _bestAt(field, tr.pos_a, tr.stat), cb = _bestAt(field, tr.pos_b, tr.stat); if (gk && cb && gk[tr.stat] + cb[tr.stat] >= tr.threshold) { addC(gk); addC(cb); var v = eff.chips || eff.add_chips || 0; result.chips += v; result.fired_details.push({name:firedName, effect_type:'chips', value:v, contributors:contribs.slice()}); } break; }
-      case 'organised_defence': { var cbs = _playersAt(field, tr.positions[0]); if (cbs.length >= 2) { cbs.sort(function(a,b){return b[tr.stat]-a[tr.stat]}); if (cbs[0][tr.stat] + cbs[1][tr.stat] >= tr.threshold) { addC(cbs[0]); addC(cbs[1]); var v = eff.chips || eff.add_chips || 0; result.chips += v; result.fired_details.push({name:firedName, effect_type:'chips', value:v, contributors:contribs.slice()}); } } break; }
-      case 'defensive_duo':
-      case 'midfield_engine':
-      case 'covering_defender':
-      case 'wingback_overlap': { var v = eff.add_mult || eff.add_chips || 0; if (v > 0) { fieldsAll.forEach(function(p){addC(p)}); result.add_mult += v; result.fired_details.push({name:firedName, effect_type:'add_mult', value:v, contributors:contribs.slice()}); } break; }
-      case 'overload': { var pc = {}; for (var fi = 0; fi < field.length; fi++) { var p = field[fi][1]; if (!pc[p]) pc[p] = []; pc[p].push(field[fi][0]); } for (var pk in pc) { if (pc[pk].length >= (tr.min_duplicates || 2)) { pc[pk].forEach(function(p){addC(p)}); var v = eff.add_mult || eff.add_chips || 0; result.add_mult += v; result.fired_details.push({name:firedName+' ('+pk+')', effect_type:'add_mult', value:v, contributors:contribs.slice()}); } } break; }
-      case 'stretch_backline':
-      case 'back_three':
-      case 'target_man_release':
-      case 'near_post_flick':
-      case 'one_two':
-      case 'overlap': { var v = eff.x_mult || eff.multiply || 1.0; if (v > 1.0) { fieldsAll.forEach(function(p){addC(p)}); result.x_mult *= v; result.fired_details.push({name:firedName, effect_type:'x_mult', value:v, contributors:contribs.slice()}); } break; }
-      case 'route_one':
-      case 'battering_ram': { var v = eff.chips || eff.add_chips || 0; if (v > 0) { fieldsAll.forEach(function(p){addC(p)}); result.chips += v; result.fired_details.push({name:firedName, effect_type:'chips', value:v, contributors:contribs.slice()}); } break; }
-      case 'double_pivot': { var cms = _playersAt(field, tr.positions[0]); if (cms.length >= 2) { var srt = cms.slice().sort(function(a,b){return b[tr.stat]-a[tr.stat]}); if (srt[0][tr.stat] + srt[1][tr.stat] >= tr.threshold) { srt.forEach(function(p){addC(p)}); result.nextCarryover = { type:'double_pivot', source_synergy:syn.name, chips:eff.chips || eff.add_chips || 40, target_role:eff.target_role || 'attacker' }; result.fired_details.push({name:firedName+' (carryover)', effect_type:'carryover', value:eff.chips || eff.add_chips || 40, contributors:contribs.slice()}); } } break; }
-      case 'set_piece_threat': { var v = eff.chips || eff.add_chips || 0; result.chips += v; result.fired_details.push({name:firedName, effect_type:'chips', value:v, contributors:contribs.slice()}); break; }
+      case 'clean_sheet': { var gk=_bestAt(field,tr.pos_a,tr.stat),cb=_bestAt(field,tr.pos_b,tr.stat); if(gk&&cb&&gk[tr.stat]+cb[tr.stat]>=tr.threshold){addC(gk);addC(cb);var v=eff.chips||eff.add_chips||0;result.chips+=v;result.fired_details.push({name:name,effect_type:'chips',value:v,contributors:contribs.slice()});} break; }
+      case 'organised_defence': { var cbs=_playersAt(field,tr.positions[0]); if(cbs.length>=2){cbs.sort(function(a,b){return b[tr.stat]-a[tr.stat]});if(cbs[0][tr.stat]+cbs[1][tr.stat]>=tr.threshold){addC(cbs[0]);addC(cbs[1]);var v=eff.chips||eff.add_chips||0;result.chips+=v;result.fired_details.push({name:name,effect_type:'chips',value:v,contributors:contribs.slice()});}} break; }
+      case 'defensive_duo': case 'midfield_engine': case 'covering_defender': case 'wingback_overlap': { var v=eff.add_mult||eff.chips||0; if(v>0){all.forEach(function(p){addC(p)});result.add_mult+=v;result.fired_details.push({name:name,effect_type:'add_mult',value:v,contributors:contribs.slice()});} break; }
+      case 'overload': { var pc={}; for(var fi=0;fi<field.length;fi++){var p=field[fi][1];if(!pc[p])pc[p]=[];pc[p].push(field[fi][0]);} for(var pk in pc){if(pc[pk].length>=(tr.min_duplicates||2)){pc[pk].forEach(function(p){addC(p)});var v=eff.add_mult||eff.chips||0;result.add_mult+=v;result.fired_details.push({name:name+' ('+pk+')',effect_type:'add_mult',value:v,contributors:contribs.slice()});}} break; }
+      case 'stretch_backline': case 'back_three': case 'target_man_release': case 'near_post_flick': case 'one_two': case 'overlap': { var v=eff.x_mult||eff.multiply||1.0; if(v>1.0){all.forEach(function(p){addC(p)});result.x_mult*=v;result.fired_details.push({name:name,effect_type:'x_mult',value:v,contributors:contribs.slice()});} break; }
+      case 'route_one': case 'battering_ram': { var v=eff.chips||eff.add_chips||0; if(v>0){all.forEach(function(p){addC(p)});result.chips+=v;result.fired_details.push({name:name,effect_type:'chips',value:v,contributors:contribs.slice()});} break; }
+      case 'double_pivot': { var cms=_playersAt(field,tr.positions[0]); if(cms.length>=2){var srt=cms.slice().sort(function(a,b){return b[tr.stat]-a[tr.stat]});if(srt[0][tr.stat]+srt[1][tr.stat]>=tr.threshold){srt.forEach(function(p){addC(p)});result.nextCarryover={type:'double_pivot',source_synergy:syn.name,chips:eff.chips||eff.add_chips||40,target_role:eff.target_role||'attacker'};result.fired_details.push({name:name+' (carryover)',effect_type:'carryover',value:eff.chips||eff.add_chips||40,contributors:contribs.slice()});}} break; }
+      case 'set_piece_threat': { var v=eff.chips||eff.add_chips||0;result.chips+=v;result.fired_details.push({name:name,effect_type:'chips',value:v,contributors:contribs.slice()}); break; }
     }
   }
   return result;
 }
 
+// CALCULATE ROUND SCORE (Balatro formula)
 function calculateRoundScore(field, synergyCards, formation, fatigue, carryover, persistentBuffs, shopBuffs, momentum) {
-  if (!fatigue) fatigue = {};
-  if (!persistentBuffs) persistentBuffs = { player_mult:{}, player_add:{}, position_mult:{}, position_add:{}, global_mult:1.0, global_add:0, fired_synergies:[] };
-  if (!shopBuffs) shopBuffs = {};
-  if (!momentum) momentum = 1.0;
-  var synResult = detectSynergies(field, synergyCards);
-  var synChips = synResult.chips || 0, addMult = synResult.add_mult || 0, xMult = synResult.x_mult || 1.0;
-  var nextCarryover = synResult.nextCarryover || null, firedDetails = synResult.fired_details || [];
-  if (persistentBuffs.fired_synergies) {
-    for (var pi = 0; pi < persistentBuffs.fired_synergies.length; pi++) firedDetails.push({ name: persistentBuffs.fired_synergies[pi] + ' (persistent)', effect_type:'persistent', value:0, contributors:[] });
-  }
-  var playerChips = 0, breakdown = [];
-  for (var fi = 0; fi < field.length; fi++) {
-    var player = field[fi][0], pos = field[fi][1], baseChips = calculateChips(player, pos);
-    var fatigueMult = fatigue[player.id] !== undefined ? fatigue[player.id] : 1.0;
-    var oopPenalty = getPositionPenalty(player.position, pos);
-    var ppMult = (persistentBuffs.player_mult && persistentBuffs.player_mult[player.id]) || 1.0;
-    var ppAdd = (persistentBuffs.player_add && persistentBuffs.player_add[player.id]) || 0;
-    var posMult = (persistentBuffs.position_mult && persistentBuffs.position_mult[pos]) || 1.0;
-    var posAdd = (persistentBuffs.position_add && persistentBuffs.position_add[pos]) || 0;
-    var fBonus = (formation && formation.positionBonus && formation.positionBonus[pos]) || 0;
-    var effChips = Math.round((baseChips + fBonus + posAdd + ppAdd) * fatigueMult * oopPenalty * ppMult * posMult);
-    playerChips += effChips;
-    breakdown.push({ player: player.name, position: pos, base_chips: baseChips, add_chips:0, multiply:1.0, fatigue: fatigueMult, oop_penalty: oopPenalty, subtotal: effChips });
-  }
-  var carryoverChips = 0;
-  if (carryover) {
-    var bonusChips = carryover.chips || carryover.add_chips || 0;
-    for (var ai = 0; ai < field.length; ai++) {
-      if (ATTACKER_POSITIONS.has(field[ai][1])) { carryoverChips += bonusChips; firedDetails.push({ name: (carryover.source_synergy||'Carryover')+' (carryover)', effect_type:'carryover', value:bonusChips, contributors:[] }); break; }
-    }
-  }
-  var shopChips = shopBuffs.extra_chips || 0, shopAddMult = shopBuffs.extra_add_mult || 0;
-  var formationMult = formation ? (formation.globalMult || 1.0) : 1.0;
-  var totalChips = playerChips + synChips + carryoverChips + shopChips;
-  var totalAddMult = 1 + addMult + shopAddMult;
-  var totalXMult = xMult * formationMult * momentum;
-  var total = Math.round(totalChips * totalAddMult * totalXMult);
-  var firedSynergies = [], synergyContributors = {}, synergyDescriptions = {};
-  for (var di = 0; di < firedDetails.length; di++) {
-    var fd = firedDetails[di];
-    firedSynergies.push(fd.name);
-    synergyContributors[fd.name] = fd.contributors || [];
-    synergyDescriptions[fd.name] = fd.effect_type === 'chips' ? '+'+fd.value+' chips' : fd.effect_type === 'add_mult' ? '+'+fd.value+' mult' : fd.effect_type === 'x_mult' ? '×'+fd.value : '';
-  }
-  return { total:total, breakdown:breakdown, player_chips:playerChips, synergy_chips:synChips, carryover_chips:carryoverChips, shop_chips:shopChips, total_chips:totalChips, add_mult:totalAddMult, x_mult:totalXMult, formation_mult:formationMult, momentum:momentum, phase_mult:1.0, subtotal_before_formation:Math.round(totalChips*totalAddMult*xMult), fired_synergies:firedSynergies, fired_details:firedDetails, next_carryover:nextCarryover, synergy_contributors:synergyContributors, synergy_descriptions:synergyDescriptions };
+  if(!fatigue)fatigue={};if(!persistentBuffs)persistentBuffs={player_mult:{},player_add:{},position_mult:{},position_add:{},global_mult:1.0,global_add:0,fired_synergies:[]};if(!shopBuffs)shopBuffs={};if(!momentum)momentum=1.0;
+  var syn=detectSynergies(field,synergyCards),synChips=syn.chips||0,addMult=syn.add_mult||0,xMult=syn.x_mult||1.0,nextCarry=syn.nextCarryover||null,fired=syn.fired_details||[];
+  if(persistentBuffs.fired_synergies){for(var pi=0;pi<persistentBuffs.fired_synergies.length;pi++)fired.push({name:persistentBuffs.fired_synergies[pi]+' (persistent)',effect_type:'persistent',value:0,contributors:[]});}
+  var pChips=0,breakdown=[];
+  for(var fi=0;fi<field.length;fi++){var player=field[fi][0],pos=field[fi][1],base=calculateChips(player,pos),fat=fatigue[player.id]!==undefined?fatigue[player.id]:1.0,oop=getPositionPenalty(player.position,pos);
+  var ppM=(persistentBuffs.player_mult&&persistentBuffs.player_mult[player.id])||1.0,ppA=(persistentBuffs.player_add&&persistentBuffs.player_add[player.id])||0;
+  var posM=(persistentBuffs.position_mult&&persistentBuffs.position_mult[pos])||1.0,posA=(persistentBuffs.position_add&&persistentBuffs.position_add[pos])||0;
+  var fB=(formation&&formation.positionBonus&&formation.positionBonus[pos])||0;
+  var eff=Math.round((base+fB+posA+ppA)*fat*oop*ppM*posM);pChips+=eff;
+  breakdown.push({player:player.name,position:pos,base_chips:base,add_chips:0,multiply:1.0,fatigue:fat,oop_penalty:oop,subtotal:eff});}
+  var carryC=0;if(carryOver){var bc=carryOver.chips||carryOver.add_chips||0;for(var ai=0;ai<field.length;ai++){if(ATTACKER_POSITIONS.has(field[ai][1])){carryC+=bc;fired.push({name:(carryOver.source_synergy||'Carryover')+' (carryover)',effect_type:'carryover',value:bc,contributors:[]});break;}}}
+  var shopC=shopBuffs.extra_chips||0,shopAM=shopBuffs.extra_add_mult||0,fM=formation?(formation.globalMult||1.0):1.0;
+  var tC=pChips+synChips+carryC+shopC,tAM=1+addMult+shopAM,tXM=xMult*fM*momentum,total=Math.round(tC*tAM*tXM);
+  var fS=[],sC={},sD={};for(var di=0;di<fired.length;di++){var fd=fired[di];fS.push(fd.name);sC[fd.name]=fd.contributors||[];sD[fd.name]=fd.effect_type==='chips'?'+'+fd.value+' chips':fd.effect_type==='add_mult'?'+'+fd.value+' mult':fd.effect_type==='x_mult'?'×'+fd.value:'';}
+  return{total:total,breakdown:breakdown,player_chips:pChips,synergy_chips:synChips,carryover_chips:carryC,shop_chips:shopC,total_chips:tC,add_mult:tAM,x_mult:tXM,formation_mult:fM,momentum:momentum,phase_mult:1.0,subtotal_before_formation:Math.round(tC*tAM*xMult),fired_synergies:fS,fired_details:fired,next_carryover:nextCarry,synergy_contributors:sC,synergy_descriptions:sD};
 }
 
-function shuffleArray(arr) { var a = arr.slice(); for (var i = a.length-1; i > 0; i--) { var j = Math.floor(Math.random()*(i+1)); var tmp = a[i]; a[i] = a[j]; a[j] = tmp; } return a; }
-function dealPhases() { return shuffleArray(ALL_PHASES); }
-function pickRandomPhases() { return shuffleArray(ALL_PHASES); }
+function shuffleArray(arr){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=a[i];a[i]=a[j];a[j]=tmp;}return a;}
+function dealPhases(){return shuffleArray(ALL_PHASES);}
+function pickRandomPhases(){return shuffleArray(ALL_PHASES);}
 
-// SYNERGIES — loaded directly by game.html's inline JS
-// The SYNERGIES constant is defined in game.html, not here.
-
-var ROLE_GROUPS = { GK: { positions:["GK"], min:1, label:"Goalkeeper" }, Defenders: { positions:["CB","FB"], min:3, label:"Defenders (CB/FB)" }, Midfielders: { positions:["CM","CDM","CAM"], min:3, label:"Midfielders (CM/CDM/CAM)" }, Attackers: { positions:["ST","LW","RW"], min:2, label:"Attackers (ST/LW/RW)" } };
-var MIN_TOTAL = 11, BUDGET = 360;
-
-function checkMinimums(squad) {
-  var missing = [], posCounts = {};
-  for (var i = 0; i < squad.length; i++) { var pos = squad[i].position; posCounts[pos] = (posCounts[pos] || 0) + 1; }
-  for (var groupName in ROLE_GROUPS) { var cfg = ROLE_GROUPS[groupName]; var total = cfg.positions.reduce(function(s,p){ return s + (posCounts[p] || 0); }, 0); if (total < cfg.min) missing.push(cfg.label + ' (have ' + total + ')'); }
-  if (squad.length < MIN_TOTAL) missing.push('11 players minimum (have ' + squad.length + ')');
-  return missing;
-}
-
-function getAvailableSynergies(squad, allSynergies) {
-  var available = [];
-  for (var si = 0; si < allSynergies.length; si++) {
-    var s = allSynergies[si]; if (s.persistent) continue;
-    var tr = s.trigger, canFire = false, involved = [];
-    if (s.triggerType === 'clean_sheet') {
-      var gks = squad.filter(function(p){return p.position==='GK'}), cbs = squad.filter(function(p){return p.position==='CB'});
-      for (var gi=0;gi<gks.length;gi++) { for (var ci=0;ci<cbs.length;ci++) { if (gks[gi].def_ + cbs[ci].def_ >= tr.threshold) { canFire=true; involved=[gks[gi].name+' (DEF'+gks[gi].def_+')',cbs[ci].name+' (DEF'+cbs[ci].def_+')']; break; } } if(canFire)break; }
-    } else if (s.triggerType === 'stretch_backline') {
-      var fbs = squad.filter(function(p){return p.position==='FB'}), lws = squad.filter(function(p){return p.position==='LW'});
-      for (var fi=0;fi<fbs.length;fi++) { for (var li=0;li<lws.length;li++) { if (fbs[fi].pac + lws[li].pac >= tr.threshold) { canFire=true; involved=[fbs[fi].name,lws[li].name]; break; } } if(canFire)break; }
-    } else if (s.triggerType === 'route_one') {
-      var cbs2 = squad.filter(function(p){return p.position==='CB'}), sts = squad.filter(function(p){return p.position==='ST'});
-      for (var ci=0;ci<cbs2.length;ci++) { for (var mi=0;mi<sts.length;mi++) { if (cbs2[ci].pas + sts[mi].pac >= tr.threshold) { canFire=true; involved=[cbs2[ci].name,sts[mi].name]; break; } } if(canFire)break; }
-    } else if (s.triggerType === 'battering_ram') {
-      var cbs3 = squad.filter(function(p){return p.position==='CB'}), sts2 = squad.filter(function(p){return p.position==='ST'});
-      for (var ci2=0;ci2<cbs3.length;ci2++) { for (var mi2=0;mi2<sts2.length;mi2++) { if (cbs3[ci2].def_ + sts2[mi2].atk >= tr.threshold) { canFire=true; involved=[cbs3[ci2].name,sts2[mi2].name]; break; } } if(canFire)break; }
-    } else if (s.triggerType === 'target_man_release') {
-      var sts3 = squad.filter(function(p){return p.position==='ST'}), wingers = squad.filter(function(p){return p.position==='LW'||p.position==='RW'});
-      for (var si2=0;si2<sts3.length;si2++) { for (var wi=0;wi<wingers.length;wi++) { if (sts3[si2].atk + wingers[wi].pac >= tr.threshold) { canFire=true; involved=[sts3[si2].name,wingers[wi].name]; break; } } if(canFire)break; }
-    } else if (s.triggerType === 'set_piece_threat') {
-      var defHigh = squad.filter(function(p){return p.def_ >= tr.threshold_a}), spcHigh = squad.filter(function(p){return p.spc >= tr.threshold_b});
-      for (var di=0;di<defHigh.length;di++) { for (var spi=0;spi<spcHigh.length;spi++) { if (defHigh[di].id !== spcHigh[spi].id) { canFire=true; involved=[defHigh[di].name,spcHigh[spi].name]; break; } } if(canFire)break; }
-    } else if (s.triggerType === 'defensive_duo') {
-      var sorted = squad.slice().sort(function(a,b){return b.def_-a.def_});
-      if (sorted.length>=2 && sorted[0].def_+sorted[1].def_ >= tr.threshold) { canFire=true; involved=[sorted[0].name,sorted[1].name]; }
-    }
-    if (canFire) available.push({ name:s.name, desc:s.description, players:involved });
-  }
-  return available;
-}
-
-const SYNERGIES = [
-  { id:"clean_sheet", name:"Clean Sheet", rarity:"common", persistent:false,
-    triggerType:"clean_sheet", trigger:{pos_a:"GK",pos_b:"CB",stat:"def_",threshold:18},
-    effectType:"add_chips", effect:{chips:20},
-    description:"GK DEF + CB DEF ≥ 18: +20 chips" },
-  { id:"organised_defence", name:"Organised Defence", rarity:"common", persistent:false,
-    triggerType:"organised_defence", trigger:{positions:["CB","CB"],stat:"def_",threshold:18},
-    effectType:"add_chips", effect:{chips:20},
-    description:"2 CBs DEF ≥ 18: +20 chips" },
-  { id:"wingback_overlap", name:"Wingback Overlap", rarity:"common", persistent:false,
-    triggerType:"wingback_overlap", trigger:{pos_a:"FB",stat_a:"pac",pos_b:"CM",stat_b:"pas",threshold:15},
-    effectType:"add_chips", effect:{chips:25},
-    description:"FB PAC + CM PAS ≥ 15: +25 chips" },
-  { id:"overload", name:"Overload", rarity:"common", persistent:false,
-    triggerType:"overload", trigger:{min_duplicates:2},
-    effectType:"add_chips", effect:{chips:15},
-    description:"2+ same position: +15 chips each" },
-  { id:"stretch_backline", name:"Stretch the Backline", rarity:"common", persistent:false,
-    triggerType:"stretch_backline", trigger:{pos_a:"FB",stat_a:"pac",pos_b:"LW",stat_b:"pac",threshold:17},
-    effectType:"multiply", effect:{x_mult:1.5},
-    description:"FB PAC + LW PAC ≥ 17: ×1.5 mult" },
-  { id:"route_one", name:"Route One", rarity:"uncommon", persistent:false,
-    triggerType:"route_one", trigger:{pos_a:"CB",stat_a:"pas",pos_b:"ST",stat_b:"pac",threshold:14},
-    effectType:"add_chips", effect:{chips:30},
-    description:"CB PAS + ST PAC ≥ 14: +30 chips" },
-  { id:"battering_ram", name:"Battering Ram", rarity:"common", persistent:false,
-    triggerType:"battering_ram", trigger:{pos_a:"CB",stat_a:"def_",pos_b:"ST",stat_b:"atk",threshold:17},
-    effectType:"add_chips", effect:{chips:20},
-    description:"CB DEF + ST ATK ≥ 17: +20 chips" },
-  { id:"defensive_duo", name:"Defensive Duo", rarity:"uncommon", persistent:false,
-    triggerType:"defensive_duo", trigger:{stat:"def_",threshold:18},
-    effectType:"add_chips", effect:{chips:25},
-    description:"2 highest DEF ≥ 18: +25 chips" },
-  { id:"back_three", name:"Back Three", rarity:"rare", persistent:false,
-    triggerType:"back_three", trigger:{stat:"def_",threshold:7},
-    effectType:"multiply", effect:{x_mult:1.3},
-    description:"All 3 DEF ≥ 7: ×1.3 mult" },
-  { id:"midfield_engine", name:"Midfield Engine", rarity:"common", persistent:false,
-    triggerType:"midfield_engine", trigger:{positions:["CM","CM"],stat_a:"pas",stat_b:"def_",threshold:15},
-    effectType:"add_chips", effect:{chips:25},
-    description:"CM PAS + CM DEF ≥ 15: +25 chips" },
-  { id:"double_pivot", name:"Double Pivot", rarity:"uncommon", persistent:false,
-    triggerType:"double_pivot", trigger:{positions:["CM","CM"],stat:"pas",threshold:17},
-    effectType:"carryover", effect:{carryover_chips:40,target_role:"attacker"},
-    description:"2 CMs PAS ≥ 17: carryover +40 chips next phase" },
-  { id:"trio", name:"Trio", rarity:"rare", persistent:false,
-    triggerType:"trio", trigger:{position:"CM",stat:"pas",threshold:7},
-    effectType:"chain_multiply", effect:{multipliers:[1.3,1.5,1.3]},
-    description:"All 3 CMs PAS ≥ 7: ×1.3/×1.5/×1.3 chain" },
-  { id:"covering_defender", name:"Covering Defender", rarity:"uncommon", persistent:false,
-    triggerType:"covering_defender", trigger:{position:"CB",stat_a:"pac",threshold_a:7,stat_b:"def_",threshold_b:9},
-    effectType:"add_chips", effect:{chips:25},
-    description:"CB PAC≥7 + CB DEF≥9: +25 chips" },
-  { id:"target_man_release", name:"Target Man Release", rarity:"uncommon", persistent:false,
-    triggerType:"target_man_release", trigger:{pos_a:"ST",stat_a:"atk",winger_positions:["LW","RW"],stat_b:"pac",threshold:17},
-    effectType:"multiply", effect:{x_mult:1.5},
-    description:"ST ATK + winger PAC ≥ 17: ×1.5 mult" },
-  { id:"near_post_flick", name:"Near Post Flick", rarity:"common", persistent:false,
-    triggerType:"near_post_flick", trigger:{pos_a:"CAM",stat_a:"spc",pos_b:"ST",stat_b:"atk",threshold:16},
-    effectType:"multiply", effect:{x_mult:1.5},
-    description:"CAM SPC + ST ATK ≥ 16: ×1.5 mult" },
-  { id:"one_two", name:"One-Two", rarity:"common", persistent:false,
-    triggerType:"one_two", trigger:{pos_a:"CM",stat_a:"pas",pos_b:"ST",stat_b:"pac",threshold:15},
-    effectType:"multiply", effect:{x_mult:1.5},
-    description:"CM PAS + ST PAC ≥ 15: ×1.5 mult" },
-  { id:"overlap", name:"Overlap", rarity:"common", persistent:false,
-    triggerType:"overlap", trigger:{pos_a:"FB",stat_a:"pac",pos_b:"LW",stat_b:"pas",threshold:15},
-    effectType:"multiply", effect:{x_mult:1.5},
-    description:"FB PAC + LW PAS ≥ 15: ×1.5 mult" },
-  { id:"set_piece_threat", name:"Set Piece Threat", rarity:"uncommon", persistent:false,
-    triggerType:"set_piece_threat", trigger:{stat_a:"def_",threshold_a:8,stat_b:"spc",threshold_b:7},
-    effectType:"add_chips", effect:{chips:35},
-    description:"DEF≥8 + SPC≥7: +35 chips" },
+// SYNERGIES
+var SYNERGIES=[
+  {id:"clean_sheet",name:"Clean Sheet",rarity:"common",persistent:false,triggerType:"clean_sheet",trigger:{pos_a:"GK",pos_b:"CB",stat:"def_",threshold:18},effectType:"add_chips",effect:{chips:20},description:"GK DEF + CB DEF ≥ 18: +20 chips"},
+  {id:"organised_defence",name:"Organised Defence",rarity:"common",persistent:false,triggerType:"organised_defence",trigger:{positions:["CB","CB"],stat:"def_",threshold:18},effectType:"add_chips",effect:{chips:20},description:"2 CBs DEF ≥ 18: +20 chips"},
+  {id:"wingback_overlap",name:"Wingback Overlap",rarity:"common",persistent:false,triggerType:"wingback_overlap",trigger:{pos_a:"FB",stat_a:"pac",pos_b:"CM",stat_b:"pas",threshold:15},effectType:"add_chips",effect:{chips:25},description:"FB PAC + CM PAS ≥ 15: +25 chips"},
+  {id:"overload",name:"Overload",rarity:"common",persistent:false,triggerType:"overload",trigger:{min_duplicates:2},effectType:"add_chips",effect:{chips:15},description:"2+ same position: +15 chips each"},
+  {id:"stretch_backline",name:"Stretch the Backline",rarity:"common",persistent:false,triggerType:"stretch_backline",trigger:{pos_a:"FB",stat_a:"pac",pos_b:"LW",stat_b:"pac",threshold:17},effectType:"multiply",effect:{x_mult:1.5},description:"FB PAC + LW PAC ≥ 17: ×1.5 mult"},
+  {id:"route_one",name:"Route One",rarity:"uncommon",persistent:false,triggerType:"route_one",trigger:{pos_a:"CB",stat_a:"pas",pos_b:"ST",stat_b:"pac",threshold:14},effectType:"add_chips",effect:{chips:30},description:"CB PAS + ST PAC ≥ 14: +30 chips"},
+  {id:"battering_ram",name:"Battering Ram",rarity:"common",persistent:false,triggerType:"battering_ram",trigger:{pos_a:"CB",stat_a:"def_",pos_b:"ST",stat_b:"atk",threshold:17},effectType:"add_chips",effect:{chips:20},description:"CB DEF + ST ATK ≥ 17: +20 chips"},
+  {id:"defensive_duo",name:"Defensive Duo",rarity:"uncommon",persistent:false,triggerType:"defensive_duo",trigger:{stat:"def_",threshold:18},effectType:"add_chips",effect:{chips:25},description:"2 highest DEF ≥ 18: +25 chips"},
+  {id:"back_three",name:"Back Three",rarity:"rare",persistent:false,triggerType:"back_three",trigger:{stat:"def_",threshold:7},effectType:"multiply",effect:{x_mult:1.3},description:"All 3 DEF ≥ 7: ×1.3 mult"},
+  {id:"midfield_engine",name:"Midfield Engine",rarity:"common",persistent:false,triggerType:"midfield_engine",trigger:{positions:["CM","CM"],stat_a:"pas",stat_b:"def_",threshold:15},effectType:"add_chips",effect:{chips:25},description:"CM PAS + CM DEF ≥ 15: +25 chips"},
+  {id:"double_pivot",name:"Double Pivot",rarity:"uncommon",persistent:false,triggerType:"double_pivot",trigger:{positions:["CM","CM"],stat:"pas",threshold:17},effectType:"carryover",effect:{chips:40,target_role:"attacker"},description:"2 CMs PAS ≥ 17: carryover +40 chips next phase"},
+  {id:"trio",name:"Trio",rarity:"rare",persistent:false,triggerType:"trio",trigger:{position:"CM",stat:"pas",threshold:7},effectType:"chain_multiply",effect:{multipliers:[1.3,1.5,1.3]},description:"All 3 CMs PAS ≥ 7: ×1.3/×1.5/×1.3 chain"},
+  {id:"covering_defender",name:"Covering Defender",rarity:"uncommon",persistent:false,triggerType:"covering_defender",trigger:{position:"CB",stat_a:"pac",threshold_a:7,stat_b:"def_",threshold_b:9},effectType:"add_chips",effect:{chips:25},description:"CB PAC≥7 + CB DEF≥9: +25 chips"},
+  {id:"target_man_release",name:"Target Man Release",rarity:"uncommon",persistent:false,triggerType:"target_man_release",trigger:{pos_a:"ST",stat_a:"atk",winger_positions:["LW","RW"],stat_b:"pac",threshold:17},effectType:"multiply",effect:{x_mult:1.5},description:"ST ATK + winger PAC ≥ 17: ×1.5 mult"},
+  {id:"near_post_flick",name:"Near Post Flick",rarity:"common",persistent:false,triggerType:"near_post_flick",trigger:{pos_a:"CAM",stat_a:"spc",pos_b:"ST",stat_b:"atk",threshold:16},effectType:"multiply",effect:{x_mult:1.5},description:"CAM SPC + ST ATK ≥ 16: ×1.5 mult"},
+  {id:"one_two",name:"One-Two",rarity:"common",persistent:false,triggerType:"one_two",trigger:{pos_a:"CM",stat_a:"pas",pos_b:"ST",stat_b:"pac",threshold:15},effectType:"multiply",effect:{x_mult:1.5},description:"CM PAS + ST PAC ≥ 15: ×1.5 mult"},
+  {id:"overlap",name:"Overlap",rarity:"common",persistent:false,triggerType:"overlap",trigger:{pos_a:"FB",stat_a:"pac",pos_b:"LW",stat_b:"pas",threshold:15},effectType:"multiply",effect:{x_mult:1.5},description:"FB PAC + LW PAS ≥ 15: ×1.5 mult"},
+  {id:"set_piece_threat",name:"Set Piece Threat",rarity:"uncommon",persistent:false,triggerType:"set_piece_threat",trigger:{stat_a:"def_",threshold_a:8,stat_b:"spc",threshold_b:7},effectType:"add_chips",effect:{chips:35},description:"DEF≥8 + SPC≥7: +35 chips"},
   // Persistent synergies
-  { id:"pace_in_behind", name:"Pace in Behind", rarity:"uncommon", persistent:true,
-    triggerType:"squad_trait_count", trigger:{trait:"pacey",min_count:5},
-    effectType:"persistent_multiply", effect:{multiply:1.15,target_trait:"pacey"},
-    description:"5+ pacey: all pacey ×1.15 each phase" },
-  { id:"iron_wall", name:"Iron Wall", rarity:"uncommon", persistent:true,
-    triggerType:"squad_trait_count", trigger:{trait:"physical",min_count:3},
-    effectType:"persistent_multiply", effect:{multiply:1.2,target_trait:"physical",fatigue_penalty:0.6},
-    description:"3+ physical: ×1.2 + fatigue ×0.6" },
-  { id:"leadership_council", name:"Leadership Council", rarity:"common", persistent:true,
-    triggerType:"squad_trait_count", trigger:{trait:"leader",min_count:3},
-    effectType:"persistent_add", effect:{chips:15,target:"all"},
-    description:"3+ leaders: all get +15 chips per phase" },
-  { id:"tiki_taka_persistent", name:"Tiki-Taka", rarity:"uncommon", persistent:true,
-    triggerType:"squad_trait_count", trigger:{trait:"technical",min_count:3},
-    effectType:"persistent_multiply", effect:{multiply:1.15,target_position:["CM","CDM","CAM"]},
-    description:"3+ technical: midfielders ×1.15" },
-  { id:"clinical_edge", name:"Clinical Edge", rarity:"common", persistent:true,
-    triggerType:"squad_trait_count", trigger:{trait:"clinical",min_count:2},
-    effectType:"persistent_add", effect:{chips:15,target_position:["LW","RW","ST"]},
-    description:"2+ clinical: attackers +15 chips" },
-  { id:"double_destroyer", name:"Double Destroyer", rarity:"common", persistent:true,
-    triggerType:"squad_trait_count", trigger:{trait:"destroyer",min_count:2},
-    effectType:"persistent_multiply", effect:{multiply:1.2,target_position:["CB","FB","CDM"]},
-    description:"2+ destroyers: defenders ×1.2" },
-  { id:"two_up_top", name:"Two Up Top", rarity:"rare", persistent:true,
-    triggerType:"squad_trait_count", trigger:{trait:"poacher",min_count:2},
-    effectType:"persistent_multiply", effect:{multiply:1.3,target_position:["ST"]},
-    description:"2+ poachers: STs ×1.3" },
-  { id:"journeyman", name:"Journeyman", rarity:"rare", persistent:true,
-    triggerType:"squad_trait_present", trigger:{trait:"journeyman"},
-    effectType:"persistent_special", effect:{special:"fatigue_reset"},
-    description:"Journeyman: once per match fatigue reset" },
-  { id:"pace_and_power", name:"Pace & Power", rarity:"rare", persistent:true,
-    triggerType:"squad_trait_combo", trigger:{traits:["pacey","physical"],min_count:2},
-    effectType:"persistent_multiply", effect:{multiply:1.3,target_trait_combo:["pacey","physical"]},
-    description:"2+ pacey+physical: ×1.3" },
-  { id:"silent_killers", name:"Silent Killers", rarity:"uncommon", persistent:true,
-    triggerType:"squad_trait_combo", trigger:{traits:["clinical","pacey"],min_count:2},
-    effectType:"persistent_multiply", effect:{multiply:1.25,target_trait_combo:["clinical","pacey"]},
-    description:"2+ clinical+pacey: ×1.25" },
-  { id:"aerial_fortress", name:"Aerial Fortress", rarity:"uncommon", persistent:true,
-    triggerType:"squad_trait_count", trigger:{trait:"aerial",min_count:3},
-    effectType:"persistent_multiply", effect:{multiply:1.2,target_position:["ST","CB","GK"]},
-    description:"3+ aerial: ST/CB/GK ×1.2" },
-  { id:"playmaker_network", name:"Playmaker Network", rarity:"common", persistent:true,
-    triggerType:"squad_trait_count", trigger:{trait:"playmaker",min_count:3},
-    effectType:"persistent_multiply", effect:{multiply:1.15,target_position:["CM","CAM","CDM"]},
-    description:"3+ playmakers: midfield ×1.15" },
+  {id:"pace_in_behind",name:"Pace in Behind",rarity:"uncommon",persistent:true,triggerType:"squad_trait_count",trigger:{trait:"pacey",min_count:5},effectType:"persistent_multiply",effect:{multiply:1.15,target_trait:"pacey"},description:"5+ pacey: all pacey ×1.15 each phase"},
+  {id:"iron_wall",name:"Iron Wall",rarity:"uncommon",persistent:true,triggerType:"squad_trait_count",trigger:{trait:"physical",min_count:3},effectType:"persistent_multiply",effect:{multiply:1.2,target_trait:"physical",fatigue_penalty:0.6},description:"3+ physical: ×1.2 + fatigue ×0.6"},
+  {id:"leadership_council",name:"Leadership Council",rarity:"common",persistent:true,triggerType:"squad_trait_count",trigger:{trait:"leader",min_count:3},effectType:"persistent_add",effect:{chips:15,target:"all"},description:"3+ leaders: all get +15 chips per phase"},
+  {id:"tiki_taka_persistent",name:"Tiki-Taka",rarity:"uncommon",persistent:true,triggerType:"squad_trait_count",trigger:{trait:"technical",min_count:3},effectType:"persistent_multiply",effect:{multiply:1.15,target_position:["CM","CDM","CAM"]},description:"3+ technical: midfielders ×1.15"},
+  {id:"clinical_edge",name:"Clinical Edge",rarity:"common",persistent:true,triggerType:"squad_trait_count",trigger:{trait:"clinical",min_count:2},effectType:"persistent_add",effect:{chips:15,target_position:["LW","RW","ST"]},description:"2+ clinical: attackers +15 chips"},
+  {id:"double_destroyer",name:"Double Destroyer",rarity:"common",persistent:true,triggerType:"squad_trait_count",trigger:{trait:"destroyer",min_count:2},effectType:"persistent_multiply",effect:{multiply:1.2,target_position:["CB","FB","CDM"]},description:"2+ destroyers: defenders ×1.2"},
+  {id:"two_up_top",name:"Two Up Top",rarity:"rare",persistent:true,triggerType:"squad_trait_count",trigger:{trait:"poacher",min_count:2},effectType:"persistent_multiply",effect:{multiply:1.3,target_position:["ST"]},description:"2+ poachers: STs ×1.3"},
+  {id:"journeyman",name:"Journeyman",rarity:"rare",persistent:true,triggerType:"squad_trait_present",trigger:{trait:"journeyman"},effectType:"persistent_special",effect:{special:"fatigue_reset"},description:"Journeyman: once per match fatigue reset"},
+  {id:"pace_and_power",name:"Pace & Power",rarity:"rare",persistent:true,triggerType:"squad_trait_combo",trigger:{traits:["pacey","physical"],min_count:2},effectType:"persistent_multiply",effect:{multiply:1.3,target_trait_combo:["pacey","physical"]},description:"2+ pacey+physical: ×1.3"},
+  {id:"silent_killers",name:"Silent Killers",rarity:"uncommon",persistent:true,triggerType:"squad_trait_combo",trigger:{traits:["clinical","pacey"],min_count:2},effectType:"persistent_multiply",effect:{multiply:1.25,target_trait_combo:["clinical","pacey"]},description:"2+ clinical+pacey: ×1.25"},
+  {id:"aerial_fortress",name:"Aerial Fortress",rarity:"uncommon",persistent:true,triggerType:"squad_trait_count",trigger:{trait:"aerial",min_count:3},effectType:"persistent_multiply",effect:{multiply:1.2,target_position:["ST","CB","GK"]},description:"3+ aerial: ST/CB/GK ×1.2"},
+  {id:"playmaker_network",name:"Playmaker Network",rarity:"common",persistent:true,triggerType:"squad_trait_count",trigger:{trait:"playmaker",min_count:3},effectType:"persistent_multiply",effect:{multiply:1.15,target_position:["CM","CAM","CDM"]},description:"3+ playmakers: midfield ×1.15"},
 ];
 
+// SQUAD SYNERGY DETECTION (persistent buffs)
 function detectSquadSynergies(squad, synergyCards) {
-  var buffs = { fatigue_penalty:0.7, player_mult:{}, player_add:{}, position_mult:{}, position_add:{}, global_mult:1.0, global_add:0, journeyman_available:false, fired_synergies:[] };
+  var buffs = {fatigue_penalty:0.7,player_mult:{},player_add:{},position_mult:{},position_add:{},global_mult:1.0,global_add:0,journeyman_available:false,fired_synergies:[]};
   var traitToPlayers = {};
-  for (var pi=0; pi<squad.length; pi++) { var p=squad[pi]; for (var ti=0; ti<p.traits.length; ti++) { var t=p.traits[ti]; if (!traitToPlayers[t]) traitToPlayers[t]=[]; traitToPlayers[t].push(p); } }
-  for (var si=0; si<synergyCards.length; si++) { var syn=synergyCards[si]; if (!syn.persistent) continue; var tr=syn.trigger, eff=syn.effect, triggered=false;
-    if (syn.triggerType==='squad_trait_count') { var m=traitToPlayers[tr.trait]||[]; if (m.length>=(tr.min_count||1)) { triggered=true; applyPersistentEffect(buffs,syn,eff,m,squad); } }
-    else if (syn.triggerType==='squad_trait_present') { var m=traitToPlayers[tr.trait]||[]; if (m.length>0) { triggered=true; applyPersistentEffect(buffs,syn,eff,m,squad); } }
-    else if (syn.triggerType==='squad_trait_combo') { var m=squad.filter(function(p){return tr.traits.every(function(t){return p.traits.indexOf(t)>=0})}); if (m.length>=(tr.min_count||1)) { triggered=true; applyPersistentEffect(buffs,syn,eff,m,squad); } }
+  for (var pi=0;pi<squad.length;pi++) {var p=squad[pi];for(var ti=0;ti<p.traits.length;ti++){var t=p.traits[ti];if(!traitToPlayers[t])traitToPlayers[t]=[];traitToPlayers[t].push(p);}}
+  for (var si=0;si<synergyCards.length;si++) {var syn=synergyCards[si];if(!syn.persistent)continue;var tr=syn.trigger,eff=syn.effect;
+    if(syn.triggerType==='squad_trait_count'){var m=traitToPlayers[tr.trait]||[];if(m.length>=(tr.min_count||1))applyPersistentEffect(buffs,syn,eff,m,squad);}
+    else if(syn.triggerType==='squad_trait_present'){var m=traitToPlayers[tr.trait]||[];if(m.length>0)applyPersistentEffect(buffs,syn,eff,m,squad);}
+    else if(syn.triggerType==='squad_trait_combo'){var m=squad.filter(function(p){return tr.traits.every(function(t){return p.traits.indexOf(t)>=0})});if(m.length>=(tr.min_count||1))applyPersistentEffect(buffs,syn,eff,m,squad);}
   }
   return buffs;
 }
-
-function applyPersistentEffect(buffs, syn, eff, matching, squad) {
+function applyPersistentEffect(buffs,syn,eff,matching,squad) {
   buffs.fired_synergies.push(syn.name);
-  if (syn.effectType==='persistent_multiply') {
-    var mult=eff.multiply||1.0;
-    if (eff.target_trait) { for (var i=0;i<squad.length;i++) { var p=squad[i]; if (p.traits.indexOf(eff.target_trait)>=0) buffs.player_mult[p.id]=(buffs.player_mult[p.id]||1.0)*mult; } }
-    if (eff.target_trait_combo) { for (var i=0;i<squad.length;i++) { var p=squad[i]; if (eff.target_trait_combo.every(function(t){return p.traits.indexOf(t)>=0})) buffs.player_mult[p.id]=(buffs.player_mult[p.id]||1.0)*mult; } }
-    if (eff.target_position) { for (var i=0;i<eff.target_position.length;i++) { var pos=eff.target_position[i]; buffs.position_mult[pos]=(buffs.position_mult[pos]||1.0)*mult; } }
-    if (eff.fatigue_penalty!==undefined) buffs.fatigue_penalty=eff.fatigue_penalty;
-  } else if (syn.effectType==='persistent_add') {
-    var chips=eff.chips||0;
-    if (eff.target==='all') buffs.global_add+=chips;
-    if (eff.target_position) { for (var i=0;i<eff.target_position.length;i++) { var pos=eff.target_position[i]; buffs.position_add[pos]=(buffs.position_add[pos]||0)+chips; } }
-  } else if (syn.effectType==='persistent_special') {
-    if (eff.special==='fatigue_reset') buffs.journeyman_available=true;
-  }
+  if(syn.effectType==='persistent_multiply'){var mult=eff.multiply||1.0;
+    if(eff.target_trait){for(var i=0;i<squad.length;i++){var p=squad[i];if(p.traits.indexOf(eff.target_trait)>=0)buffs.player_mult[p.id]=(buffs.player_mult[p.id]||1.0)*mult;}}
+    if(eff.target_trait_combo){for(var i=0;i<squad.length;i++){var p=squad[i];if(eff.target_trait_combo.every(function(t){return p.traits.indexOf(t)>=0}))buffs.player_mult[p.id]=(buffs.player_mult[p.id]||1.0)*mult;}}
+    if(eff.target_position){for(var i=0;i<eff.target_position.length;i++){var pos=eff.target_position[i];buffs.position_mult[pos]=(buffs.position_mult[pos]||1.0)*mult;}}
+    if(eff.fatigue_penalty!==undefined)buffs.fatigue_penalty=eff.fatigue_penalty;
+  }else if(syn.effectType==='persistent_add'){var chips=eff.chips||0;
+    if(eff.target==='all')buffs.global_add+=chips;
+    if(eff.target_position){for(var i=0;i<eff.target_position.length;i++){var pos=eff.target_position[i];buffs.position_add[pos]=(buffs.position_add[pos]||0)+chips;}}
+  }else if(syn.effectType==='persistent_special'){if(eff.special==='fatigue_reset')buffs.journeyman_available=true;}
+}
+
+// SQUAD BUILDER HELPERS
+var ROLE_GROUPS = {GK:{positions:["GK"],min:1,label:"Goalkeeper"},Defenders:{positions:["CB","FB"],min:3,label:"Defenders (CB/FB)"},Midfielders:{positions:["CM","CDM","CAM"],min:3,label:"Midfielders (CM/CDM/CAM)"},Attackers:{positions:["ST","LW","RW"],min:2,label:"Attackers (ST/LW/RW)"}};
+function checkMinimums(squad) {
+  var missing=[],posCounts={};
+  for(var i=0;i<squad.length;i++){var pos=squad[i].position;posCounts[pos]=(posCounts[pos]||0)+1;}
+  for(var gn in ROLE_GROUPS){var cfg=ROLE_GROUPS[gn];var total=cfg.positions.reduce(function(s,p){return s+(posCounts[p]||0)},0);if(total<cfg.min)missing.push(cfg.label+' (have '+total+')');}
+  if(squad.length<MIN_TOTAL)missing.push('11 players minimum (have '+squad.length+')');
+  return missing;
+}
+function getAvailableSynergies(squad, allSynergies) {
+  var available = [];
+  for(var si=0;si<allSynergies.length;si++){var s=allSynergies[si];if(s.persistent)continue;var tr=s.trigger,canFire=false,involved=[];
+    if(s.triggerType==='clean_sheet'){var gks=squad.filter(function(p){return p.position==='GK'}),cbs=squad.filter(function(p){return p.position==='CB'});for(var gi=0;gi<gks.length;gi++){for(var ci=0;ci<cbs.length;ci++){if(gks[gi].def_+cbs[ci].def_>=tr.threshold){canFire=true;involved=[gks[gi].name,cbs[ci].name];break;}}if(canFire)break;}}
+    else if(s.triggerType==='stretch_backline'){var fbs=squad.filter(function(p){return p.position==='FB'}),lws=squad.filter(function(p){return p.position==='LW'});for(var fi=0;fi<fbs.length;fi++){for(var li=0;li<lws.length;li++){if(fbs[fi].pac+lws[li].pac>=tr.threshold){canFire=true;involved=[fbs[fi].name,lws[li].name];break;}}if(canFire)break;}}
+    else if(s.triggerType==='route_one'){var cbs2=squad.filter(function(p){return p.position==='CB'}),sts=squad.filter(function(p){return p.position==='ST'});for(var ci=0;ci<cbs2.length;ci++){for(var mi=0;mi<sts.length;mi++){if(cbs2[ci].pas+sts[mi].pac>=tr.threshold){canFire=true;involved=[cbs2[ci].name,sts[mi].name];break;}}if(canFire)break;}}
+    else if(s.triggerType==='battering_ram'){var cbs3=squad.filter(function(p){return p.position==='CB'}),sts2=squad.filter(function(p){return p.position==='ST'});for(var ci=0;ci<cbs3.length;ci++){for(var mi=0;mi<sts2.length;mi++){if(cbs3[ci].def_+sts2[mi].atk>=tr.threshold){canFire=true;involved=[cbs3[ci].name,sts2[mi].name];break;}}if(canFire)break;}}
+    else if(s.triggerType==='target_man_release'){var sts3=squad.filter(function(p){return p.position==='ST'}),wingers=squad.filter(function(p){return p.position==='LW'||p.position==='RW'});for(var si=0;si<sts3.length;si++){for(var wi=0;wi<wingers.length;wi++){if(sts3[si].atk+wingers[wi].pac>=tr.threshold){canFire=true;involved=[sts3[si].name,wingers[wi].name];break;}}if(canFire)break;}}
+    else if(s.triggerType==='set_piece_threat'){var defH=squad.filter(function(p){return p.def_>=tr.threshold_a}),spcH=squad.filter(function(p){return p.spc>=tr.threshold_b});for(var di=0;di<defH.length;di++){for(var spi=0;spi<spcH.length;spi++){if(defH[di].id!==spcH[spi].id){canFire=true;involved=[defH[di].name,spcH[spi].name];break;}}if(canFire)break;}}
+    else if(s.triggerType==='defensive_duo'){var sorted=squad.slice().sort(function(a,b){return b.def_-a.def_});if(sorted.length>=2&&sorted[0].def_+sorted[1].def_>=tr.threshold){canFire=true;involved=[sorted[0].name,sorted[1].name];}}
+    if(canFire)available.push({name:s.name,desc:s.description,players:involved});}
+  return available;
 }

@@ -1470,7 +1470,7 @@
         (pickOrder ? '<div class="pc-order">#' + pickOrder + '</div>' : '') +
         '<div class="pc-icon">' + icon + '</div>' +
         '<div class="pc-name">' + phase.name + '</div>' +
-        '<div class="pc-desc">' + (phase.description || '') + '</div>' +
+        '<div class="pc-desc">' + (phase.desc || phase.description || '') + '</div>' +
         '<div class="pc-slots">' + slotsStr + '</div>' +
         (bestFit.length ? '<div style="font-size:11px;color:var(--fg-dim);margin-top:var(--space-1)">Best: ' + bestFit.join(', ') + '</div>' : '') +
         (tagsHtml ? '<div style="margin-top:var(--space-1)">' + tagsHtml + '</div>' : '') +
@@ -1522,15 +1522,12 @@
   const TACTICAL_ZONES = {
     goal_kick:       { left:'0%',  width:'35%', label:'Defensive Third' },
     build_up:        { left:'15%', width:'35%', label:'Build-Up Zone' },
-    wing_attack:     { left:'50%', width:'45%', label:'Wide Channels' },
-    long_ball:       { left:'10%', width:'80%', label:'Full Pitch' },
+    wide_attack:     { left:'50%', width:'45%', label:'Wide Channels' },
+    direct_play:     { left:'10%', width:'80%', label:'Full Pitch' },
     defensive_block: { left:'0%',  width:'40%', label:'Defensive Zone' },
     tiki_taka:       { left:'25%', width:'40%', label:'Midfield Control' },
-    counter_attack:  { left:'55%', width:'40%', label:'Attacking Third' },
+    counter:         { left:'55%', width:'40%', label:'Attacking Third' },
     set_piece:       { left:'65%', width:'30%', label:'Box Area' },
-    high_press:      { left:'50%', width:'45%', label:'High Press Zone' },
-    through_ball:    { left:'35%', width:'45%', label:'Midfield to Front' },
-    wingback_push:   { left:'40%', width:'45%', label:'Wing Channel' },
   };
 
   const FORMULA_TEXT = {
@@ -1645,16 +1642,13 @@
       if (player && slot) field.push([player, slotFieldPosition(slot)]);
     }
 
-    // Detect synergies live
-    const synResult = field.length >= 2 ? detectSynergies(field, SYNERGIES) : {};
-    const globalMeta = synResult.__global__ || {};
-    delete synResult.__global__;
-    delete synResult.__carryover__;
+    // Detect synergies live (new API: returns {chips, add_mult, x_mult, fired_details})
+    const synResult = field.length >= 2 ? detectSynergies(field, SYNERGIES) : { chips:0, add_mult:0, x_mult:1.0, fired_details:[] };
 
     // Collect fired synergy names
     const firedSet = new Set();
-    for (const v of Object.values(synResult)) {
-      for (const name of (v.fired_synergies || [])) firedSet.add(name.split(' (')[0]);
+    for (const fd of (synResult.fired_details || [])) {
+      firedSet.add(fd.name.split(' (')[0]);
     }
     // Add persistent synergies
     for (const name of (G.persistentBuffs && G.persistentBuffs.fired_synergies || [])) {
@@ -1722,11 +1716,10 @@
       const sl = phase.slots[parseInt(fj)];
       if (p && sl) field.push([p, slotFieldPosition(sl)]);
     }
-    const synResult = field.length >= 2 ? detectSynergies(field, SYNERGIES) : {};
+    const synResult = field.length >= 2 ? detectSynergies(field, SYNERGIES) : { chips:0, add_mult:0, x_mult:1.0, fired_details:[] };
     const synPlayerSet = new Set();
-    for (const [sk, v] of Object.entries(synResult)) {
-      if (sk === '__global__' || sk === '__carryover__') continue;
-      if (v && v.fired_synergies && v.fired_synergies.length > 0) synPlayerSet.add(sk);
+    for (const fd of (synResult.fired_details || [])) {
+      for (const c of (fd.contributors || [])) synPlayerSet.add(c);
     }
 
     let html = '';
@@ -1743,7 +1736,7 @@
       const chips = filled ? calculateChips(player, fp) : 0;
       const posClass = getPosClass(fp);
       const synActive = filled && synPlayerSet.has(player.id);
-      const playerSynCount = synActive ? (synResult[player.id] && synResult[player.id].fired_synergies ? synResult[player.id].fired_synergies.length : 0) : 0;
+      const playerSynCount = synActive ? (synResult.fired_details || []).length : 0;
 
       html += '<div class="' + (filled ? 'slot-card filled' : 'slot-card') + (synActive ? ' syn-fired' : '') + '" onclick="selectSlot(' + i + ')" data-od-id="slot-' + i + '">' +
         '<div><span style="font-family:var(--font-display);font-size:9px;color:' +
@@ -1903,9 +1896,8 @@
     if (placed.length >= 2) {
       const result = detectSynergies(placed, SYNERGIES);
       const fired = new Set();
-      for (const pid of Object.keys(result)) {
-        if (pid === '__global__' || pid === '__carryover__') continue;
-        for (const name of (result[pid].fired_synergies || [])) fired.add(name.split(' (')[0]);
+      for (const fd of (result.fired_details || [])) {
+        fired.add(fd.name.split(' (')[0]);
       }
       for (const s of fired) {
         if (!lines.some(l => l.includes(s))) lines.push('<div class="synergy-row"><div class="synergy-dot"></div>' + s + '</div>');
@@ -1983,9 +1975,8 @@
           if (pp) testField.push([pp, slotFieldPosition(sl)]);
         }
       }
-      const synResult = testField.length >= 2 ? detectSynergies(testField, SYNERGIES) : {};
-      let synCount = 0;
-      for (const v of Object.values(synResult)) { synCount += (v.fired_synergies || []).length; }
+      const synResult = testField.length >= 2 ? detectSynergies(testField, SYNERGIES) : { chips:0, add_mult:0, x_mult:1.0, fired_details:[] };
+      let synCount = (synResult.fired_details || []).length;
 
       return { player: p, used, eligible, fatigueMult, baseChips, finalChips, synCount, fp };
     });
@@ -2047,14 +2038,12 @@
         if (pp) testField.push([pp, slotFieldPosition(sl)]);
       }
     }
-    const synResult = testField.length >= 2 ? detectSynergies(testField, SYNERGIES) : {};
+    const synResult = testField.length >= 2 ? detectSynergies(testField, SYNERGIES) : { chips:0, add_mult:0, x_mult:1.0, fired_details:[] };
     let synHtml = '';
+    const firedNames = (synResult.fired_details || []).map(fd => fd.name);
     for (const syn of SYNERGIES) {
       if (syn.persistent) continue;
-      let fired = false;
-      for (const v of Object.values(synResult)) {
-        if ((v.fired_synergies || []).includes(syn.name)) { fired = true; break; }
-      }
+      let fired = firedNames.some(n => n.startsWith(syn.name));
       const tr = syn.trigger;
       const relevant = (tr.pos_a === fp || tr.pos_b === fp || (tr.positions && tr.positions.includes(fp)));
       if (relevant || fired) {
@@ -2222,7 +2211,6 @@
     if (result.phase_mult && result.phase_mult !== 1.0) balatroHtml += ' × <span style="color:var(--magenta)">Phase ×' + result.phase_mult.toFixed(2) + '</span>';
     balatroHtml += ' = <span style="color:var(--gold);font-size:var(--text-xl);font-weight:bold">' + result.total + '</span></div>';
     balatroHtml += '</div>';
-    document.getElementById('pr-breakdown-rows').innerHTML = balatroHtml;
 
     // Player Contributions Table
     const formation = G.formation || {};
@@ -2245,7 +2233,7 @@
         '</div>';
     }).join('');
 
-    document.getElementById('pr-breakdown-rows').innerHTML = headerRow + rowsHtml;
+    document.getElementById('pr-breakdown-rows').innerHTML = balatroHtml + headerRow + rowsHtml;
 
     // Synergies Accordion
     const firedNames = result.fired_synergies || [];
@@ -2299,10 +2287,10 @@
             if (SYNERGIES[sj].name === name) { synDef = SYNERGIES[sj]; break; }
           }
           if (synDef) {
-            if (synDef.effectType === 'add_chips' && synDef.effect && synDef.effect.add_chips) {
-              valText = '+' + synDef.effect.add_chips;
-            } else if (synDef.effectType === 'multiply' && synDef.effect && synDef.effect.multiply) {
-              valText = '×' + synDef.effect.multiply;
+            if (synDef.effectType === 'add_chips' && synDef.effect && (synDef.effect.chips || synDef.effect.add_chips)) {
+              valText = '+' + (synDef.effect.chips || synDef.effect.add_chips);
+            } else if (synDef.effectType === 'multiply' && synDef.effect && (synDef.effect.x_mult || synDef.effect.multiply)) {
+              valText = '×' + (synDef.effect.x_mult || synDef.effect.multiply);
             }
           }
           synHtml += '<div class="pr-syn-item triggered">' +
@@ -2331,10 +2319,10 @@
             if (SYNERGIES[sj].name === name) { synDef = SYNERGIES[sj]; break; }
           }
           if (synDef) {
-            if (synDef.effectType === 'persistent_add' && synDef.effect && synDef.effect.add_chips) {
-              valText = '+' + synDef.effect.add_chips;
-            } else if (synDef.effectType === 'persistent_multiply' && synDef.effect && synDef.effect.multiply) {
-              valText = '×' + synDef.effect.multiply;
+            if (synDef.effectType === 'persistent_add' && synDef.effect && (synDef.effect.chips || synDef.effect.add_chips)) {
+              valText = '+' + (synDef.effect.chips || synDef.effect.add_chips);
+            } else if (synDef.effectType === 'persistent_multiply' && synDef.effect && (synDef.effect.multiply || synDef.effect.x_mult)) {
+              valText = '×' + (synDef.effect.multiply || synDef.effect.x_mult);
             }
           }
           synHtml += '<div class="pr-syn-item triggered">' +
