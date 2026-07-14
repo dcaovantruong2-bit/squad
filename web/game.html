@@ -2365,16 +2365,32 @@
   document.getElementById('pr-continue-btn').addEventListener('click', () => {
     G.phaseIdx++;
 
-    if (G.phaseIdx >= 3) {
-      // Round complete — check if won
-      const target = CAMPAIGN_MATCHES[G.matchIdx].targets[G.round];
-      const won = G.roundScore >= target;
-      G.roundWins[G.round] = won;
-      if (won) G.roundsWon++; else G.roundsLost++;
+    // AUTO-WIN: if we beat the target, immediately end the round
+    var target = CAMPAIGN_MATCHES[G.matchIdx].targets[G.round];
+    if (G.roundScore >= target) {
+      G.roundWins[G.round] = true;
+      G.roundsWon++;
+      // Calculate morale
+      var moraleEarned = 1 + (G.roundScore >= target ? 3 : 0) + (G.roundScore >= target * 1.5 ? 2 : 0);
+      G.morale += moraleEarned;
+      // Check match end
+      if (G.roundsWon >= 2 || G.roundsLost >= 2 || G.round >= 2) {
+        const matchWon = G.roundsWon > G.roundsLost;
+        G.matchResults.push({ won: matchWon, opponent: CAMPAIGN_MATCHES[G.matchIdx].opponent, name: CAMPAIGN_MATCHES[G.matchIdx].name, roundsWon: G.roundsWon, roundsLost: G.roundsLost });
+        showScreen('round-result');
+      } else {
+        renderShop();
+        showScreen('shop');
+      }
+      return;
+    }
 
+    if (G.phaseIdx >= 3) {
+      // Round complete — all phases used, target not met
+      G.roundWins[G.round] = false;
+      G.roundsLost++;
       // Check match end (best of 3)
       if (G.roundsWon >= 2 || G.roundsLost >= 2 || G.round >= 2) {
-        // Match complete
         const matchWon = G.roundsWon > G.roundsLost;
         G.matchResults.push({
           won: matchWon,
@@ -2383,12 +2399,9 @@
           roundsWon: G.roundsWon,
           roundsLost: G.roundsLost,
         });
-
         showScreen('round-result');
         return;
       }
-
-      // Next round
       showScreen('round-result');
       return;
     }
