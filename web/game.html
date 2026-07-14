@@ -859,6 +859,15 @@
   <script src="game-engine.js"></script>
 
   <script>
+  // Global error handler — shows errors on screen
+  window.onerror = function(msg, url, line, col, err) {
+    var div = document.createElement('div');
+    div.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#ff0000;color:#fff;padding:12px;font-family:monospace;font-size:14px;white-space:pre-wrap;max-height:50vh;overflow:auto';
+    div.textContent = 'JS ERROR: ' + msg + ' (line ' + line + ')';
+    document.body.appendChild(div);
+    console.error(msg, url, line, col, err);
+  };
+
   // ═══════════════════════════════════════════════════════════════════
   // VISUAL ANIMATIONS
   // ═══════════════════════════════════════════════════════════════════
