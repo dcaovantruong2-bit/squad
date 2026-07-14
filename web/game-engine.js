@@ -177,7 +177,7 @@ function calculateRoundScore(field, synergyCards, formation, fatigue, carryover,
   var fB=(formation&&formation.positionBonus&&formation.positionBonus[pos])||0;
   var eff=Math.round((base+fB+posA+ppA)*fat*oop*ppM*posM);pChips+=eff;
   breakdown.push({player:player.name,position:pos,base_chips:base,add_chips:0,multiply:1.0,fatigue:fat,oop_penalty:oop,subtotal:eff});}
-  var carryC=0;if(carryOver){var bc=carryOver.chips||carryOver.add_chips||0;for(var ai=0;ai<field.length;ai++){if(ATTACKER_POSITIONS.has(field[ai][1])){carryC+=bc;fired.push({name:(carryOver.source_synergy||'Carryover')+' (carryover)',effect_type:'carryover',value:bc,contributors:[]});break;}}}
+  var carryC=0;if(carryover){var bc=carryover.chips||carryover.add_chips||0;for(var ai=0;ai<field.length;ai++){if(ATTACKER_POSITIONS.has(field[ai][1])){carryC+=bc;fired.push({name:(carryover.source_synergy||'Carryover')+' (carryover)',effect_type:'carryover',value:bc,contributors:[]});break;}}}
   var shopC=shopBuffs.extra_chips||0,shopAM=shopBuffs.extra_add_mult||0,fM=formation?(formation.globalMult||1.0):1.0;
   var tC=pChips+synChips+carryC+shopC,tAM=1+addMult+shopAM,tXM=xMult*fM*momentum,total=Math.round(tC*tAM*tXM);
   var fS=[],sC={},sD={};for(var di=0;di<fired.length;di++){var fd=fired[di];fS.push(fd.name);sC[fd.name]=fd.contributors||[];sD[fd.name]=fd.effect_type==='chips'?'+'+fd.value+' chips':fd.effect_type==='add_mult'?'+'+fd.value+' mult':fd.effect_type==='x_mult'?'×'+fd.value:'';}
