@@ -2215,7 +2215,7 @@
     var addMultDisp = (result.add_mult || 1);
     balatroHtml += '<div style="color:var(--gold);font-weight:bold">➕ ADD MULT: ' + addMultDisp + '</div>';
     var xMultDisp = (result.x_mult || 1);
-    balatroHtml += '<div style="color:var(--info);font-weight:bold">✖ × MULT: ' + xMultDisp.toFixed(3) + '</div>';
+    balatroHtml += '<div style="color:var(--info);font-weight:bold">✖ × MULT: ' + xMultDisp.toFixed(2) + '</div>';
     balatroHtml += '<div style="border-top:1px solid var(--border);padding-top:var(--space-2);margin-top:var(--space-2);">FORMULA: <span style="color:var(--accent)">' + (result.total_chips || 0) + '</span> × <span style="color:var(--gold)">' + addMultDisp + '</span> × <span style="color:var(--info)">' + xMultDisp.toFixed(2) + '</span>';
     if (result.formation_mult && result.formation_mult !== 1.0) balatroHtml += ' × <span style="color:var(--muted)">' + result.formation_mult.toFixed(2) + '</span>';
     if (result.momentum && result.momentum !== 1.0) balatroHtml += ' × <span style="color:var(--gold)">Momentum ×' + result.momentum + '</span>';
