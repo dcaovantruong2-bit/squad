@@ -1357,28 +1357,34 @@
   }
 
   document.getElementById('confirm-formation-btn').addEventListener('click', () => {
-    if (!selectedFormationId) return;
-    G.formation = FORMATIONS.find(f => f.id === selectedFormationId);
-    G.round = 0;
-    G.roundsWon = 0;
-    G.roundsLost = 0;
-    G.roundWins = [false, false, false];
-    G.fatigue = {};
-    G.carryover = null;
-    G.journeymanUsed = false;
-    G.roundScore = 0;
-    G.phaseIdx = 0;
-    G.phasePlacement = {};
-    G.activeSlot = null;
-    G.morale = 0;
-    G.shopBuffs = {};
-    G.phaseFatigue = {};
-    for (var pfi = 0; pfi < ALL_PHASES.length; pfi++) {
-      G.phaseFatigue[ALL_PHASES[pfi].id] = 1.0;
+    try {
+      if (!selectedFormationId) return;
+      G.formation = FORMATIONS.find(f => f.id === selectedFormationId);
+      if (!G.formation) { console.error('Formation not found:', selectedFormationId); return; }
+      G.round = 0;
+      G.roundsWon = 0;
+      G.roundsLost = 0;
+      G.roundWins = [false, false, false];
+      G.fatigue = {};
+      G.carryover = null;
+      G.journeymanUsed = false;
+      G.roundScore = 0;
+      G.phaseIdx = 0;
+      G.phasePlacement = {};
+      G.activeSlot = null;
+      G.morale = 0;
+      G.shopBuffs = {};
+      G.phaseFatigue = {};
+      for (var pfi = 0; pfi < ALL_PHASES.length; pfi++) {
+        G.phaseFatigue[ALL_PHASES[pfi].id] = 1.0;
+      }
+      G.phaseHand = dealPhases();
+      G.selectedPhases = [];
+      startPhaseSelection();
+    } catch(err) {
+      console.error('Formation confirm error:', err);
+      alert('Error starting match: ' + err.message);
     }
-    G.phaseHand = dealPhases(6);
-    G.selectedPhases = [];
-    startPhaseSelection();
   });
 
   // ═══════════════════════════════════════════════════════════════════
@@ -1390,45 +1396,50 @@
   let _psHand = [];
 
   function startPhaseSelection() {
-    _psHand = G.phaseHand || dealPhases(6);
-    _psPicked = [];
-    G.selectedPhases = [];
-    G.momentum = 1.0;
+    try {
+      _psHand = G.phaseHand || dealPhases();
+      _psPicked = [];
+      G.selectedPhases = [];
+      G.momentum = 1.0;
 
-    // Generate opponent adjustments for this round
-    G.opponentAdjustments = {};
-    var shuffledAdj = shuffleArray(ALL_PHASES);
-    if (shuffledAdj.length > 0) G.opponentAdjustments[shuffledAdj[0].id] = 1.3;
-    if (shuffledAdj.length > 1) G.opponentAdjustments[shuffledAdj[1].id] = 0.7;
-    if (shuffledAdj.length > 2 && Math.random() < 0.5) {
-      G.opponentAdjustments[shuffledAdj[2].id] = Math.random() < 0.5 ? 1.15 : 0.85;
+      // Generate opponent adjustments for this round
+      G.opponentAdjustments = {};
+      var shuffledAdj = shuffleArray(ALL_PHASES);
+      if (shuffledAdj.length > 0) G.opponentAdjustments[shuffledAdj[0].id] = 1.3;
+      if (shuffledAdj.length > 1) G.opponentAdjustments[shuffledAdj[1].id] = 0.7;
+      if (shuffledAdj.length > 2 && Math.random() < 0.5) {
+        G.opponentAdjustments[shuffledAdj[2].id] = Math.random() < 0.5 ? 1.15 : 0.85;
+      }
+
+      const roundInfo = document.getElementById('ps-round-info');
+      roundInfo.textContent = 'Round ' + (G.round + 1) + '/3 - Target: ' + (CAMPAIGN_MATCHES[G.matchIdx] ? CAMPAIGN_MATCHES[G.matchIdx].targets[G.round] : 400);
+
+      // Show scouting report for the first round of each match
+      var scoutingEl = document.getElementById('ps-scouting');
+      if (G.round === 0 && CAMPAIGN_MATCHES[G.matchIdx] && CAMPAIGN_MATCHES[G.matchIdx].intro) {
+        scoutingEl.textContent = '🔍 ' + CAMPAIGN_MATCHES[G.matchIdx].intro;
+        scoutingEl.style.display = 'block';
+      } else if (scoutingEl) {
+        scoutingEl.style.display = 'none';
+      }
+
+      // Show available synergies
+      const synDiv = document.getElementById('ps-available-syns');
+      const av = getAvailableSynergies(G.squad, SYNERGIES);
+      if (av.length > 0) {
+        const lines = av.slice(0, 5).map(s =>
+          '<span style="color:var(--accent);margin-right:var(--space-2)">' + s.name + '</span>'
+        );
+        synDiv.innerHTML = 'Synergies available: ' + lines.join('');
+        if (av.length > 5) synDiv.innerHTML += ' <span style="color:var(--muted)">(+' + (av.length - 5) + ' more)</span>';
+      }
+
+      renderPhaseCards();
+      showScreen('phase-select');
+    } catch(err) {
+      console.error('startPhaseSelection error:', err);
+      alert('Error starting phase selection: ' + err.message);
     }
-
-    const roundInfo = document.getElementById('ps-round-info');
-    roundInfo.textContent = 'Round ' + (G.round + 1) + '/3 - Target: ' + (CAMPAIGN_MATCHES[G.matchIdx] ? CAMPAIGN_MATCHES[G.matchIdx].targets[G.round] : 400);
-
-    // Show scouting report for the first round of each match
-    var scoutingEl = document.getElementById('ps-scouting');
-    if (G.round === 0 && CAMPAIGN_MATCHES[G.matchIdx] && CAMPAIGN_MATCHES[G.matchIdx].intro) {
-      scoutingEl.textContent = '🔍 ' + CAMPAIGN_MATCHES[G.matchIdx].intro;
-      scoutingEl.style.display = 'block';
-    } else if (scoutingEl) {
-      scoutingEl.style.display = 'none';
-    }
-
-    // Show available synergies
-    const synDiv = document.getElementById('ps-available-syns');
-    const av = getAvailableSynergies(G.squad, SYNERGIES);
-    if (av.length > 0) {
-      const lines = av.slice(0, 5).map(s =>
-        '<span style="color:var(--accent);margin-right:var(--space-2)">' + s.name + '</span>'
-      );
-      synDiv.innerHTML = 'Synergies available: ' + lines.join('');
-      if (av.length > 5) synDiv.innerHTML += ' <span style="color:var(--muted)">(+' + (av.length - 5) + ' more)</span>';
-    }
-
-    renderPhaseCards();
-    showScreen('phase-select');
   }
 
   function renderPhaseCards() {
