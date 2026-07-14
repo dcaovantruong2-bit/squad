@@ -123,11 +123,7 @@ function slotFieldPosition(slot) {
   if (Array.isArray(slot)) return slot[0];
   return (slot && slot.as) ? slot.as : 'ST';
 }
-function slotLabel(slot) {
-  if (typeof slot === 'string') return slot;
-  if (Array.isArray(slot)) return slot.join('/');
-  return '?';
-}
+
 var POSITION_GROUPS = { 'GK':['GK'],'CB':['CB','FB','CDM'],'FB':['FB','CB','CDM'],'CDM':['CDM','CB','CM'],'CM':['CM','CAM','CDM'],'CAM':['CAM','CM','ST'],'LW':['LW','RW','ST'],'RW':['RW','LW','ST'],'ST':['ST','LW','RW'] };
 function getPositionPenalty(playerPos, fieldPos) {
   if (playerPos === fieldPos) return 1.0;
@@ -186,7 +182,6 @@ function calculateRoundScore(field, synergyCards, formation, fatigue, carryover,
 
 function shuffleArray(arr){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=a[i];a[i]=a[j];a[j]=tmp;}return a;}
 function dealPhases(){return shuffleArray(ALL_PHASES);}
-function pickRandomPhases(){return shuffleArray(ALL_PHASES);}
 
 // SYNERGIES
 var SYNERGIES=[

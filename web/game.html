@@ -1857,18 +1857,9 @@
     renderSynergyPreview();
     updateLivePhaseDisplay();
   }function formatSlotLabel(slot) {
-    if (typeof slot === 'string') return '';
-    if (typeof slot === 'object' && slot.as) {
-      const parts = [];
-      if (slot.min_atk) parts.push('ATK\u2265' + slot.min_atk);
-      if (slot.min_pac) parts.push('PAC\u2265' + slot.min_pac);
-      if (slot.min_pas) parts.push('PAS\u2265' + slot.min_pas);
-      if (slot.min_def) parts.push('DEF\u2265' + slot.min_def);
-      if (slot.min_spc) parts.push('SPC\u2265' + slot.min_spc);
-      if (slot.trait) parts.push(slot.trait);
-      return parts.length ? parts.join(' \u00b7 ') : '';
-    }
-    return '';
+    if (typeof slot === 'string') return slot;
+    if (Array.isArray(slot)) return slot.join('/');
+    return '?';
   }
 
   function updateSubmitHint() {
@@ -2473,7 +2464,7 @@
         G.fatigue = {};
         G.carryover = null;
         G.journeymanUsed = false;
-        G.phaseHand = dealPhases(6);
+        G.phaseHand = dealPhases();
         G.selectedPhases = [];
         startPhaseSelection();
       }
