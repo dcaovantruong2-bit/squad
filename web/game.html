@@ -2567,11 +2567,13 @@
     G.round++;
     G.roundScore = 0;
     G.phaseIdx = 0;
-    G.roundPhases = shuffleArray(ALL_PHASES);
+    G.phaseHand = null;
+    G.momentum = 1.0;
+    G.opponentAdjustments = {};
     G.phasePlacement = {};
     G.activeSlot = null;
     G.carryover = null;
-    showScreen('phase-select');
+    startPhaseSelection();
   }
 
   // ═══════════════════════════════════════════════════════════════════
