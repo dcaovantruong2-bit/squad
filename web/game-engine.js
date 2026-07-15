@@ -105,11 +105,11 @@ var FORMATIONS = [
 
 // CAMPAIGN
 var CAMPAIGN_MATCHES = [
-  { name:"Group Stage", opponent:"Wolves FC", targets:[8000,12000,18000], tier:"Match 1/5", intro:"Relegation battlers. Forwards can't finish — exploit set pieces." },
-  { name:"Round of 16", opponent:"Inter Your-Nan", targets:[12000,18000,25000], tier:"Match 2/5", intro:"Mid-table side. Solid defence but slow at the back." },
-  { name:"Quarter Final", opponent:"Borussia Mönchen-flapjack", targets:[18000,25000,35000], tier:"Match 3/5", intro:"European contenders. Press hard." },
-  { name:"Semi Final", opponent:"Man City Oilers", targets:[25000,35000,50000], tier:"Match 4/5", intro:"Title favourites. No obvious weakness." },
-  { name:"THE FINAL", opponent:"Galácticos FC", targets:[35000,50000,70000], tier:"Match 5/5", intro:"The best in the world. Leave nothing on the pitch." },
+  { name:"Group Stage", opponent:"Wolves FC", targets:[200000,350000,500000], tier:"Match 1/5", intro:"Relegation battlers. Forwards can't finish — exploit set pieces." },
+  { name:"Round of 16", opponent:"Inter Your-Nan", targets:[350000,500000,700000], tier:"Match 2/5", intro:"Mid-table side. Solid defence but slow at the back." },
+  { name:"Quarter Final", opponent:"Borussia Mönchen-flapjack", targets:[500000,700000,900000], tier:"Match 3/5", intro:"European contenders. Press hard." },
+  { name:"Semi Final", opponent:"Man City Oilers", targets:[700000,900000,1100000], tier:"Match 4/5", intro:"Title favourites. No obvious weakness." },
+  { name:"THE FINAL", opponent:"Galácticos FC", targets:[900000,1100000,1500000], tier:"Match 5/5", intro:"The best in the world. Leave nothing on the pitch." },
 ];
 
 // ELIGIBILITY + OOP
