@@ -1,130 +1,76 @@
 ---
-version: alpha
-name: Squad CM93 Authentic
-description: Authentic Championship Manager 93 Amiga/PC aesthetic — extracted from actual game screenshots. Yellow title bars, blue panels, grey content areas, 1px beveled borders, flat solid colors, Amiga Topaz-style pixel font.
+version: v2
+name: Squad Dark Neon
+description: Dark neon pixel aesthetic — deep purple backgrounds, neon green/gold accents, CRT scan lines, retro gaming terminal feel.
 colors:
-  bg-black: "#000000"
-  bg-navy: "#050C53"
-  bg-olive: "#2C2A1E"
-  bg-panel-blue: "#0040A0"
-  bg-content-blue: "#2080C0"
-  bg-panel-dark: "#03379E"
-  bg-grey-medium: "#6D6E69"
-  bg-grey-light: "#A5A4A3"
-  bg-white: "#E6E7E7"
-  accent-yellow: "#ECEB65"
-  accent-gold: "#E0E060"
-  accent-green: "#019F2E"
-  accent-green-dark: "#00A040"
-  accent-red: "#EB0506"
-  accent-orange: "#E87404"
-  accent-cyan: "#03EFF1"
-  accent-magenta: "#660364"
-  text-white: "#F0F0F0"
-  text-black: "#000000"
-  text-grey: "#9C9C9C"
-  text-yellow: "#ECEB65"
-  text-brown: "#403010"
-  text-dark-grey: "#707070"
-  border-light: "#D0D0D0"
-  border-mid: "#909090"
-  border-dark: "#404040"
+  bg: "#161120"
+  bg-deep: "#0d0a18"
+  surface: "#231a3a"
+  surface-raised: "#2e2250"
+  surface-hover: "#3a2d60"
+  fg: "#f0ecf8"
+  fg-dim: "#c8b8e0"
+  muted: "#9a8ab0"
+  accent: "#39ff14"          # neon green
+  accent-dim: "#2bcc10"
+  gold: "#ffd700"
+  gold-dim: "#cc9900"
+  danger: "#ff3344"
+  warn: "#ffa500"
+  info: "#00ccff"
+  pitch-green: "#0d3320"
+  pitch-line: "rgba(57, 255, 20, 0.35)"
+  border: "#3d2d5c"
+  border-bright: "#4d3d6c"
 typography:
+  display:
+    fontFamily: "'Press Start 2P', monospace"
+    fontSize: "10px"
+    textTransform: "uppercase"
   body:
-    fontFamily: "'VT323', 'Courier New', monospace"
-    fontSize: 16px
-    fontWeight: 400
-    lineHeight: 1.25
-  h1:
-    fontFamily: "'VT323', 'Courier New', monospace"
-    fontSize: 24px
-    fontWeight: 400
-    lineHeight: 1.2
-    color: "{colors.text-brown}"
-  stat-value:
-    fontFamily: "'VT323', 'Courier New', monospace"
-    fontSize: 16px
-    fontWeight: 400
-    color: "{colors.text-white}"
-  stat-label:
-    fontFamily: "'VT323', 'Courier New', monospace"
-    fontSize: 10px
-    fontWeight: 400
-    color: "{colors.text-black}"
-rounded:
-  none: 0px
-spacing:
-  xs: 4px
-  sm: 8px
-  md: 12px
-  lg: 16px
-  xl: 24px
+    fontFamily: "'VT323', monospace"
+    fontSize: "16px"
+    lineHeight: "1.25"
+  mono:
+    fontFamily: "'VT323', monospace"
+effects:
+  scanlines: "repeating-linear-gradient(0deg, rgba(0,0,0,0.08) 0px, transparent 1px, transparent 3px)"
+  neon-glow: "0 0 10px rgba(57,255,20,0.3)"
+  text-glow: "0 0 6px rgba(57,255,20,0.25)"
+  crt-curve: "none"
 components:
-  title-bar:
-    backgroundColor: "{colors.accent-gold}"
-    textColor: "{colors.text-brown}"
-    height: 24px
-    padding: 4px 8px
-    fontSize: 16px
-    textTransform: uppercase
-    borderBottom: "1px solid {colors.border-dark}"
-  panel:
-    backgroundColor: "{colors.bg-content-blue}"
-    textColor: "{colors.text-white}"
-    padding: 6px
-    border: "1px solid {colors.border-dark}"
-    borderTop: "2px solid {colors.border-light}"
-    borderLeft: "2px solid {colors.border-light}"
+  phase-card:
+    background: "{colors.surface}"
+    border: "1px solid {colors.border}"
+    hover: "1px solid {colors.accent}"
+    glow: "0 0 12px {colors.accent-glow}"
+  stat-bar:
+    background: "rgba(255,255,255,0.05)"
+    fill: "{stat-color}"
+    glow: "0 0 4px {stat-color}-glow"
+  pitch-diagram:
+    background: "{colors.pitch-green}"
+    lines: "rgba(57,255,20,0.35)"
+    slot-bg: "rgba(57,255,20,0.1)"
   button:
-    backgroundColor: "{colors.bg-grey-light}"
-    textColor: "{colors.text-black}"
-    padding: 6px 12px
-    fontSize: 16px
-    textTransform: uppercase
-    borderTop: "2px solid {colors.border-light}"
-    borderLeft: "2px solid {colors.border-light}"
-    borderBottom: "2px solid {colors.border-dark}"
-    borderRight: "2px solid {colors.border-dark}"
-  list-item:
-    backgroundColor: "{colors.bg-content-blue}"
-    textColor: "{colors.text-white}"
-    padding: 4px 6px
-    border: "1px solid {colors.border-mid}"
-    borderActive: "1px solid {colors.accent-yellow}"
-    backgroundActive: "{colors.accent-yellow}"
-  stat-box:
-    backgroundColor: "{colors.bg-content-blue}"
-    textColor: "{colors.text-white}"
-    padding: 2px 4px
-    border: "1px solid {colors.border-mid}"
-    minWidth: 32px
-  group-header:
-    backgroundColor: "{colors.bg-panel-blue}"
-    textColor: "{colors.text-white}"
-    padding: 4px 8px
-    fontSize: 14px
-    textTransform: uppercase
-    border: "1px solid {colors.border-dark}"
-  field-slot:
-    backgroundColor: "{colors.accent-green-dark}"
-    textColor: "{colors.text-white}"
-    padding: 4px 6px
-    border: "1px solid #006600"
-  field-slot-filled:
-    backgroundColor: "{colors.accent-green}"
-    borderColor: "{colors.accent-yellow}"
+    background: "transparent"
+    border: "1px solid {colors.accent}"
+    color: "{colors.accent}"
+    hover: "background {colors.accent}; color {colors.accent-on}"
+  combo-chain:
+    color: "{colors.gold}"
+    glow: "text-shadow: 0 0 8px {colors.gold-glow}"
 ---
 
 ## Design Notes
-- This is the AUTHENTIC CM93 palette extracted from actual game screenshots
-- CM93 uses YELLOW/GOLD title bars with BROWN text — the signature CM look
-- Content areas are LIGHT GREY (#A5A4A3 to #E6E7E7) — NOT dark backgrounds
-- Panels use DEEP BLUE (#0040A0) headers with LIGHT BLUE (#2080C0) fills
-- All borders are 1px — flat, no gradients, no shadows
-- Beveled borders: light top-left, dark bottom-right (Amiga gadtools style)
-- Font: Amiga Topaz-style 8×8 bitmap font — use VT323 from Google Fonts
-- ALL CAPS for headers and buttons
-- Maximum 16-32 colors on screen (Amiga ECS/OCS palette limitation)
-- Yellow (#ECEB65) is the signature highlight color
-- No decorative elements — pure functional text-heavy data display
-- Every pixel serves a purpose
+
+- **Dark neon pixel aesthetic** — deep purple backgrounds with neon green and gold accents
+- CRT scan lines overlay for retro terminal feel
+- **Press Start 2P** for display/headings, **VT323** for body text
+- Neon glow effects on interactive elements and stat bars
+- Color-coded stats: ATK (red), PAC (gold), PAS (cyan), DEF (green), SPC (purple)
+- Phase cards show combo tags with golden glow for active chains
+- Pitch diagram uses dark green with neon line overlays
+- Shop items use rarity colors: common (muted), uncommon (gold), rare (neon green)
+- Auto-win flash effect with gold glow
+- No beveled borders — flat with neon glow for modern retro feel
