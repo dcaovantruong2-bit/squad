@@ -58,17 +58,39 @@ function calculateChips(player, fieldPosition) {
   return fn ? fn(player) : (player.atk + player.pac + player.pas + player.def_ + player.spc) * 4;
 }
 
-// 8 TACTICAL FOCUSES
+// 12 TACTICAL FOCUSES (5 categories)
 var ALL_PHASES = [
-  { id:"goal_kick", name:"Goal Kick", weight:"DEF", icon:"GK", maxCards:3, desc:"Keeper launches long — defenders win the header", slots:["GK","CB","CB"] },
-  { id:"build_up", name:"Build-Up", weight:"PAS", icon:"BLD", maxCards:3, desc:"Play out from the back — fullbacks push up", slots:["FB","FB","CM"] },
-  { id:"wide_attack", name:"Wide Attack", weight:"PAC", icon:"WNG", maxCards:3, desc:"Overload the flanks — pacey wingers stretch defence", slots:["FB","LW","RW"] },
-  { id:"direct_play", name:"Direct Play", weight:"ATK", icon:"DIR", maxCards:3, desc:"Quick transition — bypass midfield", slots:[["LW","RW"],"ST","CM"] },
-  { id:"defensive_block", name:"Defensive Block", weight:"DEF", icon:"BLK", maxCards:3, desc:"Compact defensive shape", slots:["CB","CB","CDM"] },
-  { id:"tiki_taka", name:"Tiki-Taka", weight:"PAS", icon:"TIK", maxCards:3, desc:"Pass, move, repeat — creative midfielders", slots:["CM","CM","CAM"] },
-  { id:"counter", name:"Counter", weight:"PAC", icon:"CNT", maxCards:3, desc:"Explosive break — pacey attackers in behind", slots:["LW","ST","RW"] },
-  { id:"set_piece", name:"Set Piece", weight:"SPC", icon:"SET", maxCards:3, desc:"Dead ball specialist meets aerial threat", slots:["CAM","CB","ST"] },
+  // 🛡️ Defensive (4)
+  { id:"goal_kick", name:"Goal Kick", tag:"Defensive", weight:"DEF", icon:"GK", maxCards:3, desc:"Keeper launches long — defenders win the header", slots:["GK","CB","CB"] },
+  { id:"defensive_block", name:"Defensive Block", tag:"Defensive", weight:"DEF", icon:"BLK", maxCards:4, desc:"Pack the box — four defenders absorb pressure", slots:["CB","CB","FB","FB"] },
+  { id:"regroup", name:"Regroup", tag:"Defensive", weight:"DEF", icon:"RGP", maxCards:2, desc:"Fall back and reorganise — defensive shape", slots:[["CM","CDM"],["CB","FB"]] },
+  { id:"hold_shape", name:"Hold Shape", tag:"Defensive", weight:"DEF", icon:"HLD", maxCards:3, desc:"Protect the channels — midfield screens defence", slots:[["CM","CDM"],["CM","CDM"],["CB","FB"]] },
+  // 🔄 Possession (3)
+  { id:"build_up", name:"Build-Up", tag:"Possession", weight:"PAS", icon:"BLD", maxCards:3, desc:"Play out from the back — fullbacks push into midfield", slots:[["CB","CDM"],["FB","CM"],["CM","CAM"]] },
+  { id:"tiki_taka", name:"Tiki-Taka", tag:"Possession", weight:"PAS", icon:"TIK", maxCards:3, desc:"Pass, move, repeat — creative midfielders", slots:["CM","CM","CAM"] },
+  { id:"controlled_tempo", name:"Controlled Tempo", tag:"Possession", weight:"PAS", icon:"TMP", maxCards:2, desc:"Two playmakers dictate the rhythm", slots:["CM","CAM"] },
+  // ⚡ Transition (2)
+  { id:"direct_play", name:"Direct Play", tag:"Transition", weight:"ATK", icon:"DIR", maxCards:2, desc:"Quick vertical ball — bypass midfield", slots:[["LW","ST"],["ST","RW"]] },
+  { id:"counter_attack", name:"Counter Attack", tag:"Transition", weight:"PAC", icon:"CNT", maxCards:2, desc:"Explosive break — pacey attackers in behind", slots:["LW","ST"] },
+  // 🎯 Attacking (3)
+  { id:"wide_overload", name:"Wide Overload", tag:"Attacking", weight:"PAC", icon:"WNG", maxCards:4, desc:"Overload the flanks — wingers supported by fullback", slots:["LW","RW",["FB","LW"],["FB","RW"]] },
+  { id:"target_man", name:"Target Man", tag:"Attacking", weight:"ATK", icon:"TGT", maxCards:2, desc:"Hold-up play — striker brings midfield into attack", slots:["ST","CAM"] },
+  { id:"late_run", name:"Late Run", tag:"Attacking", weight:"ATK", icon:"RUN", maxCards:3, desc:"Midfielder beyond striker — unexpected arrival", slots:[["CM","CAM"],"ST","ST"] },
+  // ✨ Specialist (1)
+  { id:"set_piece", name:"Set Piece", tag:"Specialist", weight:"SPC", icon:"SET", maxCards:3, desc:"Dead ball specialist meets aerial threat", slots:[["CAM","CM"],["CB","ST"],["CB","ST"]] },
 ];
+
+// Combo chain rules: [prevTag→nextTag] → effect
+var COMBO_CHAINS = {
+  'Defensive_Transition': { effect:'x_mult', value:1.5, desc:'Absorb pressure, hit on break' },
+  'Possession_Attacking': { effect:'x_mult', value:1.3, desc:'Switch of play — patient build to incision' },
+  'Possession_Possession': { effect:'add_chips', value:25, desc:'Keep the ball — wear them down' },
+  'Transition_Transition': { effect:'add_chips', value:35, desc:'Rapid succession — no time to reset' },
+  'Defensive_Defensive': { effect:'fatigue_recovery', value:0.1, desc:'Rest while defending' },
+  'Specialist_any': { effect:'add_chips', value:30, desc:'Set piece leads to a chance — carryover' },
+  'Attacking_Defensive': { effect:'opp_penalty', value:0.9, desc:'Suck them in, then hold firm' },
+  'Possession_Transition': { effect:'x_mult', value:1.2, desc:'Unexpected speed shift' },
+};
 
 // FORMATIONS (with pitchPositions for carousel)
 var FORMATIONS = [
@@ -124,15 +146,59 @@ function slotFieldPosition(slot) {
   return (slot && slot.as) ? slot.as : 'ST';
 }
 
-var POSITION_GROUPS = { 'GK':['GK'],'CB':['CB','FB','CDM'],'FB':['FB','CB','CDM'],'CDM':['CDM','CB','CM'],'CM':['CM','CAM','CDM'],'CAM':['CAM','CM','ST'],'LW':['LW','RW','ST'],'RW':['RW','LW','ST'],'ST':['ST','LW','RW'] };
-function getPositionPenalty(playerPos, fieldPos) {
-  if (playerPos === fieldPos) return 1.0;
-  if (playerPos === 'GK' || fieldPos === 'GK') return 0.0;
-  var group = POSITION_GROUPS[playerPos] || [];
-  if (group.indexOf(fieldPos) >= 0) return 0.9;
-  return 0.7;
-}
+// Position adjacency — natural (1.0), adjacent (0.85), different (0.70)
+var POSITION_ADJACENCY = {
+  'GK':{natural:['GK'],adjacent:[],different:['CB','FB','CDM','CM','CAM','LW','RW','ST']},
+  'CB':{natural:['CB'],adjacent:['FB','CDM'],different:['CM','CAM','LW','RW','ST']},
+  'FB':{natural:['FB'],adjacent:['CB','CDM','CM','LW','RW'],different:['CAM','ST']},
+  'CDM':{natural:['CDM'],adjacent:['CB','FB','CM','CAM'],different:['LW','RW','ST']},
+  'CM':{natural:['CM'],adjacent:['CDM','CAM','FB'],different:['CB','LW','RW','ST']},
+  'CAM':{natural:['CAM'],adjacent:['CM','ST','LW','RW'],different:['CDM','CB','FB']},
+  'LW':{natural:['LW'],adjacent:['RW','ST','CAM','FB'],different:['CM','CDM','CB']},
+  'RW':{natural:['RW'],adjacent:['LW','ST','CAM','FB'],different:['CM','CDM','CB']},
+  'ST':{natural:['ST'],adjacent:['LW','RW','CAM'],different:['CM','CDM','CB','FB']}
+};
+// Trait bonuses — reduce OOP penalty by 0.10 per matching slot role
+var TRAIT_SLOT_FIT = {
+  'pacey':['LW','RW','ST','FB'],
+  'clinical':['LW','RW','ST','CAM'],
+  'technical':['CM','CAM','CDM','CB'],
+  'playmaker':['CM','CAM','LW','RW'],
+  'physical':['ST','CB','CDM','FB','CM'],
+  'destroyer':['CDM','CB','CM'],
+  'aerial':['CB','ST','GK'],
+  'poacher':['ST','LW','RW'],
+  'leader':['CB','CM','GK']
+};
 var ATTACKER_POSITIONS = new Set(["LW","RW","ST"]);
+function getPositionPenalty(player, fieldPos) {
+  var playerPos = player.position ? player.position : player;
+  if (playerPos === 'GK' || fieldPos === 'GK') return 0.0;
+  var adj = POSITION_ADJACENCY[playerPos];
+  if (!adj) return 0.7;
+  if (playerPos === fieldPos || adj.natural.indexOf(fieldPos) >= 0) return 1.0;
+  var base = adj.adjacent.indexOf(fieldPos) >= 0 ? 0.85 : 0.70;
+  // Trait bonuses: each matching trait adds 0.10
+  var bonus = 0;
+  if (player.traits && player.traits.length) {
+    for (var ti = 0; ti < player.traits.length; ti++) {
+      var t = player.traits[ti];
+      var fits = TRAIT_SLOT_FIT[t];
+      if (fits && fits.indexOf(fieldPos) >= 0) bonus += 0.10;
+    }
+  }
+  // Key stat ≥9 bonus
+  var highStats = { 'GK':'def_','DEF':'def_','MID':'pas','WNG':'pac','FWD':'atk' };
+  var slotCat = 'MID';
+  if (fieldPos === 'GK') slotCat = 'GK';
+  else if (['CB','FB','CDM'].indexOf(fieldPos)>=0) slotCat = 'DEF';
+  else if (['LW','RW'].indexOf(fieldPos)>=0) slotCat = 'WNG';
+  else if (fieldPos === 'ST') slotCat = 'FWD';
+  var keyStat = highStats[slotCat];
+  if (keyStat && player[keyStat] !== undefined && player[keyStat] >= 9) bonus += 0.05;
+  // Cap at 0.95 (never exceed natural)
+  return Math.min(base + bonus, 0.95);
+}
 
 // SYNERGY HELPERS
 function _playersAt(field, pos) { return field.filter(function(f){return f[1]===pos}).map(function(f){return f[0]}); }
@@ -167,7 +233,7 @@ function calculateRoundScore(field, synergyCards, formation, fatigue, carryover,
   var syn=detectSynergies(field,synergyCards),synChips=syn.chips||0,addMult=syn.add_mult||0,xMult=syn.x_mult||1.0,nextCarry=syn.nextCarryover||null,fired=syn.fired_details||[];
   if(persistentBuffs.fired_synergies){for(var pi=0;pi<persistentBuffs.fired_synergies.length;pi++)fired.push({name:persistentBuffs.fired_synergies[pi]+' (persistent)',effect_type:'persistent',value:0,contributors:[]});}
   var pChips=0,breakdown=[];
-  for(var fi=0;fi<field.length;fi++){var player=field[fi][0],pos=field[fi][1],base=calculateChips(player,pos),fat=fatigue[player.id]!==undefined?fatigue[player.id]:1.0,oop=getPositionPenalty(player.position,pos);
+  for(var fi=0;fi<field.length;fi++){var player=field[fi][0],pos=field[fi][1],base=calculateChips(player,pos),fat=fatigue[player.id]!==undefined?fatigue[player.id]:1.0,oop=getPositionPenalty(player,pos);
   var ppM=(persistentBuffs.player_mult&&persistentBuffs.player_mult[player.id])||1.0,ppA=(persistentBuffs.player_add&&persistentBuffs.player_add[player.id])||0;
   var posM=(persistentBuffs.position_mult&&persistentBuffs.position_mult[pos])||1.0,posA=(persistentBuffs.position_add&&persistentBuffs.position_add[pos])||0;
   var fB=(formation&&formation.positionBonus&&formation.positionBonus[pos])||0;

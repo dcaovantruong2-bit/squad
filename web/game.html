@@ -1532,12 +1532,17 @@
 
   const TACTICAL_ZONES = {
     goal_kick:       { left:'0%',  width:'35%', label:'Defensive Third' },
-    build_up:        { left:'15%', width:'35%', label:'Build-Up Zone' },
-    wide_attack:     { left:'50%', width:'45%', label:'Wide Channels' },
-    direct_play:     { left:'10%', width:'80%', label:'Full Pitch' },
     defensive_block: { left:'0%',  width:'40%', label:'Defensive Zone' },
+    regroup:         { left:'5%',  width:'30%', label:'Deep Defence' },
+    hold_shape:      { left:'15%', width:'35%', label:'Midfield Screen' },
+    build_up:        { left:'15%', width:'35%', label:'Build-Up Zone' },
     tiki_taka:       { left:'25%', width:'40%', label:'Midfield Control' },
-    counter:         { left:'55%', width:'40%', label:'Attacking Third' },
+    controlled_tempo:{ left:'30%', width:'30%', label:'Pivot Zone' },
+    direct_play:     { left:'10%', width:'80%', label:'Full Pitch' },
+    counter_attack:  { left:'55%', width:'40%', label:'Attacking Third' },
+    wide_overload:   { left:'50%', width:'45%', label:'Wide Channels' },
+    target_man:      { left:'65%', width:'30%', label:'Box Area' },
+    late_run:        { left:'60%', width:'35%', label:'Final Third' },
     set_piece:       { left:'65%', width:'30%', label:'Box Area' },
   };
 
@@ -2592,7 +2597,7 @@
         var p = G.squad[pi];
         if (usedIds.has(p.id) || !isPlayerEligible(p, slot)) continue;
         var fat = G.fatigue[p.id] !== undefined ? G.fatigue[p.id] : 1.0;
-        var oop = getPositionPenalty(p.position, fp);
+        var oop = getPositionPenalty(p, fp);
         var chips = Math.round(calculateChips(p, fp) * fat * oop);
         if (chips > bestChips) { bestChips = chips; best = p; }
       }

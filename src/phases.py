@@ -21,42 +21,66 @@ SlotSpec = str | list[str] | dict
 #   0.7  = different position (real penalty — unfamiliar role)
 #   0.0  = impossible (GK outfield / outfield GK)
 #
-# The similarity matrix is asymmetric: CB→CDM = 0.9, CDM→CB = 0.9 (same), 
-# but CM→CAM = 0.9 whereas CAM→CM = 0.9 (same).
+# Position adjacency — natural (1.0), adjacent (0.85), different (0.70)
+POSITION_ADJACENCY = {
+    "GK": {"natural": ["GK"], "adjacent": [], "different": ["CB", "FB", "CDM", "CM", "CAM", "LW", "RW", "ST"]},
+    "CB": {"natural": ["CB"], "adjacent": ["FB", "CDM"], "different": ["CM", "CAM", "LW", "RW", "ST"]},
+    "FB": {"natural": ["FB"], "adjacent": ["CB", "CDM", "CM", "LW", "RW"], "different": ["CAM", "ST"]},
+    "CDM": {"natural": ["CDM"], "adjacent": ["CB", "FB", "CM", "CAM"], "different": ["LW", "RW", "ST"]},
+    "CM": {"natural": ["CM"], "adjacent": ["CDM", "CAM", "FB"], "different": ["CB", "LW", "RW", "ST"]},
+    "CAM": {"natural": ["CAM"], "adjacent": ["CM", "ST", "LW", "RW"], "different": ["CDM", "CB", "FB"]},
+    "LW": {"natural": ["LW"], "adjacent": ["RW", "ST", "CAM", "FB"], "different": ["CM", "CDM", "CB"]},
+    "RW": {"natural": ["RW"], "adjacent": ["LW", "ST", "CAM", "FB"], "different": ["CM", "CDM", "CB"]},
+    "ST": {"natural": ["ST"], "adjacent": ["LW", "RW", "CAM"], "different": ["CM", "CDM", "CB", "FB"]},
+}
 
-POSITION_SIMILARITY = {
-    "GK": {"GK": 1.0},  # GK can only play GK
-    "CB": {"CB": 1.0, "FB": 0.9, "CDM": 0.9},
-    "FB": {"FB": 1.0, "CB": 0.9, "CDM": 0.9, "CM": 0.9},
-    "CDM": {"CDM": 1.0, "CB": 0.9, "FB": 0.9, "CM": 0.9},
-    "CM": {"CM": 1.0, "CAM": 0.9, "CDM": 0.9, "FB": 0.9},
-    "CAM": {"CAM": 1.0, "CM": 0.9, "ST": 0.9, "LW": 0.9, "RW": 0.9},
-    "LW": {"LW": 1.0, "RW": 0.9, "ST": 0.9, "CAM": 0.9},
-    "RW": {"RW": 1.0, "LW": 0.9, "ST": 0.9, "CAM": 0.9},
-    "ST": {"ST": 1.0, "LW": 0.9, "RW": 0.9, "CAM": 0.9},
+# Trait bonuses — reduce OOP penalty by 0.10 per matching slot role
+TRAIT_SLOT_FIT = {
+    "pacey": ["LW", "RW", "ST", "FB"],
+    "clinical": ["LW", "RW", "ST", "CAM"],
+    "technical": ["CM", "CAM", "CDM", "CB"],
+    "playmaker": ["CM", "CAM", "LW", "RW"],
+    "physical": ["ST", "CB", "CDM", "FB", "CM"],
+    "destroyer": ["CDM", "CB", "CM"],
+    "aerial": ["CB", "ST", "GK"],
+    "poacher": ["ST", "LW", "RW"],
+    "leader": ["CB", "CM", "GK"],
 }
 
 
-def get_position_penalty(player_position: str, field_position: str) -> float:
-    """Return OOP penalty multiplier for a player playing at field_position.
-    
-    1.0 = natural (same position)
-    0.9 = similar (adjacent role)
-    0.7 = different (unfamiliar)
-    0.0 = impossible (GK outfield or outfield GK)
-    
-    Penalty applies to the player's chip contribution in scoring.
-    """
+def get_position_penalty(player, field_position: str) -> float:
+    """Return OOP penalty multiplier for a player at field_position."""
+    player_position = player.position if hasattr(player, 'position') else player
     if player_position == field_position:
         return 1.0
-    
-    # GK playing outfield or outfield playing GK = blocked
     if player_position == "GK" or field_position == "GK":
         return 0.0
-    
-    # Check similarity matrix
-    sim = POSITION_SIMILARITY.get(player_position, {})
-    return sim.get(field_position, 0.7)
+    adj = POSITION_ADJACENCY.get(player_position)
+    if not adj:
+        return 0.7
+    if field_position in adj["natural"]:
+        return 1.0
+    base = 0.85 if field_position in adj["adjacent"] else 0.70
+    bonus = 0.0
+    if hasattr(player, 'traits'):
+        for t in player.traits:
+            fits = TRAIT_SLOT_FIT.get(t)
+            if fits and field_position in fits:
+                bonus += 0.10
+    high_stats = {'GK':'def_', 'DEF':'def_', 'MID':'pas', 'WNG':'pac', 'FWD':'atk'}
+    slot_cat = 'MID'
+    if field_position == 'GK':
+        slot_cat = 'GK'
+    elif field_position in ('CB', 'FB', 'CDM'):
+        slot_cat = 'DEF'
+    elif field_position in ('LW', 'RW'):
+        slot_cat = 'WNG'
+    elif field_position == 'ST':
+        slot_cat = 'FWD'
+    key_stat = high_stats.get(slot_cat)
+    if key_stat and hasattr(player, key_stat) and getattr(player, key_stat, 0) >= 9:
+        bonus += 0.05
+    return min(base + bonus, 0.95)
 
 
 def get_position_penalty_label(player_position: str, field_position: str) -> str:

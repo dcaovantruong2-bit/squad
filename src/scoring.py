@@ -615,7 +615,7 @@ def calculate_round_score(
             super_sub_mult = 1.3
 
         # OOP penalty for playing out of position
-        oop_penalty = get_position_penalty(player.position, pos)
+        oop_penalty = get_position_penalty(player, pos)
 
         # Player's effective chip contribution (fatigue, per-player buffs, OOP)
         effective_chips = (base_chips + pos_bonus + pos_add + pp_add) * fatigue_mult * pp_mult * pos_mult * super_sub_mult * oop_penalty
