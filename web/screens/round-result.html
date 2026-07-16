@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SQUAD -- Round Result Screen</title>
+  <link rel="stylesheet" href="../game.css">
+  <style>
+    .game-screen { display: none; min-height: 100vh; padding: var(--space-6) var(--space-4); max-width: 1200px; margin: 0 auto; }
+    .game-screen.active { display: block; }
+  </style>
+</head>
+<body>
+  <section class="game-screen active" id="screen-round-result" data-od-id="round-result-screen">
+<div class="result-screen">
+      <div class="round-verdict" id="rr-verdict">Round Won</div>
+      <div class="round-scores">
+        <div class="round-score-card"><div class="round-score-label">Your Score</div><div class="round-score-value yours" id="rr-your-score">0</div></div>
+        <div class="round-score-card"><div class="round-score-label">Target</div><div class="round-score-value target" id="rr-target">0</div></div>
+      </div>
+      <div class="match-progress-rounds" id="rr-rounds"></div>
+      <div id="rr-message" style="font-family:var(--font-body);font-size:var(--text-xl);color:var(--fg-dim);margin-bottom:var(--space-6)"></div>
+      <button class="btn btn-primary btn-lg" id="rr-continue-btn">Continue ▸</button>
+    </div>
+  </section>
+  
+  <script src="../game-engine.js"></script>
+  <script src="../game-ui.js"></script>
+</body>
+</html>

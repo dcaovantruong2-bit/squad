@@ -4,8 +4,8 @@
   "description": "Football card roguelike with tactical synergies",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0d1a2e",
-  "theme_color": "#1a3a1a",
+  "background_color": "#161120",
+  "theme_color": "#231a3a",
   "orientation": "portrait",
   "icons": [
     {

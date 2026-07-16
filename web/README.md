@@ -4,11 +4,12 @@ A football card roguelike with Championship Manager 01 aesthetics.
 
 ## Play Now
 
-Open `index.html` in any modern browser (Chrome, Safari, Firefox).
+Open `game.html` in any modern browser (Chrome, Safari, Firefox). `index.html`
+(109 bytes) just redirects to `game.html`.
 
 ### iPhone Installation
 
-1. Open `index.html` in Safari on your iPhone
+1. Open `game.html` in Safari on your iPhone
 2. Tap the Share button (square with arrow)
 3. Tap "Add to Home Screen"
 4. Launch from your home screen — it runs as a standalone app!

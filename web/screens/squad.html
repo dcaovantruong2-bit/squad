@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SQUAD -- Squad Builder Screen</title>
+  <link rel="stylesheet" href="../game.css">
+  <style>
+    .game-screen { display: none; min-height: 100vh; padding: var(--space-6) var(--space-4); max-width: 1200px; margin: 0 auto; }
+    .game-screen.active { display: block; }
+  </style>
+</head>
+<body>
+  <section class="game-screen active" id="screen-squad" data-od-id="squad-builder-screen">
+<div class="squad-header">
+      <h2 style="font-family:var(--font-display);font-size:11px;color:var(--accent);text-shadow:0 0 8px var(--accent-glow);letter-spacing:0.06em;">Build Your Squad</h2>
+      <div class="budget-row">
+        <div class="budget-track"><div class="budget-fill" id="budget-fill" style="width:0%"></div></div>
+        <div class="budget-text">Budget: <span class="num" id="budget-used">0</span> / 360</div>
+      </div>
+    </div>
+
+    <!-- Position filter tabs -->
+    <div class="pos-tabs" id="pos-tabs" data-od-id="position-tabs"></div>
+    <div class="sub-tabs" id="sub-tabs" data-od-id="sub-position-tabs"></div>
+
+    <!-- Player card grid — tabbed position hub -->
+    <div class="player-grid" id="player-grid" data-od-id="player-cards"></div>
+
+    <!-- Squad summary — Pill grid -->
+    <div class="squad-section" id="squad-section" data-od-id="squad-summary">
+      <div class="squad-section-title">
+        Your Squad <span class="count" id="squad-count">0</span>
+        <span style="flex:1"></span>
+        <span id="squad-cost-display" style="color:var(--gold);font-size:7px;font-family:var(--font-display)">Cost: 0</span>
+      </div>
+      <div id="squad-pills"></div>
+      <div class="req-strip" id="req-strip"></div>
+      <div class="form-fit-preview" id="form-fit-preview" data-od-id="formation-fit"></div>
+    </div>
+
+    <!-- Error box -->
+    <div class="squad-error" id="squad-error"></div>
+
+    <!-- Actions -->
+    <div class="squad-actions">
+      <button class="btn" onclick="showScreen('title')">◂ Back</button>
+      <button class="btn btn-primary btn-lg" id="confirm-squad-btn">Confirm Squad ▸</button>
+    </div>
+  </section>
+  
+  <script src="../game-engine.js"></script>
+  <script src="../game-ui.js"></script>
+</body>
+</html>

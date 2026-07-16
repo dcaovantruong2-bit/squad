@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SQUAD -- Phase Result Screen</title>
+  <link rel="stylesheet" href="../game.css">
+  <style>
+    .game-screen { display: none; min-height: 100vh; padding: var(--space-6) var(--space-4); max-width: 1200px; margin: 0 auto; }
+    .game-screen.active { display: block; }
+  </style>
+</head>
+<body>
+  <section class="game-screen active" id="screen-phase-result" data-od-id="phase-result-screen">
+<div style="display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:var(--space-6);text-align:center;">
+      <!-- Hero Score -->
+      <div class="pr-hero">
+        <div class="pr-verdict" id="pr-verdict">Phase Complete</div>
+        <div class="pr-score" id="pr-score">0</div>
+        <div class="pr-target" id="pr-target">Target: 500</div>
+      </div>
+
+      <!-- Player Contributions Table -->
+      <div class="pr-table-wrap">
+        <div class="pr-table-title">Contributions</div>
+        <div id="pr-breakdown-rows"></div>
+      </div>
+
+      <!-- Synergies Accordion -->
+      <div class="pr-syn-section">
+        <div class="pr-syn-header" id="pr-syn-toggle">
+          <span>▸▸ <span class="pr-syn-count" id="pr-syn-count">0</span> SYNERGIES FIRED</span>
+          <span class="pr-syn-total" id="pr-syn-total">+0</span>
+          <span class="pr-syn-arrow" id="pr-syn-arrow">▼</span>
+        </div>
+        <div class="pr-syn-body" id="pr-syn-body"></div>
+      </div>
+
+      <button class="btn btn-primary btn-lg" id="pr-continue-btn">Continue ▸</button>
+    </div>
+  </section>
+  
+  <script src="../game-engine.js"></script>
+  <script src="../game-ui.js"></script>
+</body>
+</html>

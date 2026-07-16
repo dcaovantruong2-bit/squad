@@ -1,4 +1,31 @@
-/** SQUAD — Game Engine (clean rebuild) */
+/**
+ * SQUAD — Game Engine (pure logic, no DOM)
+ *
+ * ARCHITECTURE:
+ *   game-engine.js  — Pure game data + logic (no DOM/rendering)
+ *   game-ui.js      — Rendering, state management, event handlers
+ *   game.html       — HTML screen layout + script loader
+ *
+ * RULES:
+ *   - No DOM references (no document.getElementById, etc.)
+ *   - All data (PLAYERS, FORMATIONS, SYNERGIES) defined here
+ *   - Pure functions only — no side effects, no global mutation
+ *   - Everything used by game-ui.js must be on the global scope
+ *
+ * CONTENTS:
+ *   PLAYERS          — 36-player roster with stats and traits
+ *   CHIPS_FORMULA    — Position-specific stat-weight formulas
+ *   FORMATIONS       — 6 formations with pitch positions
+ *   ALL_PHASES       — 13 tactical focuses with slot definitions
+ *   SYNERGIES        — 21 phase-specific synergy definitions
+ *   COMBO_CHAINS     — Phase tag sequence bonus effects
+ *   POSITION_ADJACENCY — Out-of-position penalty mapping
+ *   TRAIT_SLOT_FIT   — Trait-to-position fit bonus map
+ *   CAMPAIGN_MATCHES — 5-match campaign config
+ *   calculateChips()|calculateRoundScore()|detectSynergies()
+ *   detectSquadSynergies()|getPositionPenalty()
+ *   dealPhases()|shuffleArray()
+ */
 // PLAYER DATA
 const PLAYERS = [
   { id:"terry_henri", name:"Terry Henri", position:"ST", atk:9, pac:9, pas:6, def_:1, spc:8, traits:["pacey","clinical"], description:"The clinical speedster." },

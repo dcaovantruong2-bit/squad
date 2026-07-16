@@ -1,0 +1,9 @@
+# OpenDesign runtime data — do not track
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+.file-versions/
+.od-skills/
+events.jsonl
+connectors/*.json
+runs/

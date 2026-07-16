@@ -27,6 +27,12 @@ env/
 .DS_Store
 Thumbs.db
 
+# OpenDesign artifacts
+.file-versions/
+.od-skills/
+events.jsonl
+*.artifact.json
+
 # Project specific
 *.log
 *.db

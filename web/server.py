@@ -155,7 +155,5 @@ def reset_game():
 
 
 if __name__ == '__main__':
-    import sys
-    sys.stderr = open(os.devnull, 'w')
     print("Squad web server on http://0.0.0.0:8081")
     app.run(host='0.0.0.0', port=8081, debug=False, threaded=True)

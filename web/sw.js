@@ -1,7 +1,10 @@
 const CACHE_NAME = 'squad-v1';
 const urlsToCache = [
   '/',
-  '/index.html',
+  '/game.html',
+  '/game-engine.js',
+  '/game-ui.js',
+  '/game.css',
   '/manifest.json'
 ];
 

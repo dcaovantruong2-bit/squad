@@ -156,6 +156,10 @@ cd ~/games/squad
 ## Architecture
 
 - **Python terminal game**: `main.py` + `src/` (phases, scoring, shop, match)
-- **Web UI**: `web/game.html` + `web/game-engine.js` + `web/game.css`
-- Both share the same game logic and data structures
+- **Web UI**: Three-file split:
+  - `web/game-engine.js` — Pure game data + logic (PLAYERS, FORMATIONS, SYNERGIES, scoring, OOP)
+  - `web/game-ui.js` — Rendering, state management, event handlers, all 9 screens
+  - `web/game.html` — HTML layout + `<script>` loaders
+  - `web/game.css` — Dark neon design system
+- Both share the same game data (`data/players.toml`, `data/synergies.toml`) and logic
 - Tests in `tests/` use pytest
