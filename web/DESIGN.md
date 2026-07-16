@@ -10,8 +10,8 @@
 |----------|-------|
 | Name | Squad |
 | Style | Dark neon pixel — retro terminal meets football tactics |
-| Screen | 1920×1080 reference. No responsive breakpoints. |
 | Font stack | `'Press Start 2P'` (display) / `'VT323'` (body+mono) |
+| Screens | Designed for 1920×1080 reference. Responsive breakpoints at 920px (single column) and 600px (compact cards). |
 
 ---
 

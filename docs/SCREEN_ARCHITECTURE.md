@@ -1,6 +1,6 @@
 # Squad — Complete Screen Architecture Design Spec
 
-> **Ready for OpenDesign handoff.** Every screen described with purpose, layout, component tree, interaction model, and transition behavior.  
+> **Ready for implementation.** Every screen described with purpose, layout, component tree, interaction model, and transition behavior.  
 > Reference: `web/DESIGN.md` for visual tokens (colors, typography, components).  
 > Reference: `README.md` for game mechanics (scoring, synergies, campaign).
 

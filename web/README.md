@@ -83,10 +83,10 @@ Then access from iPhone: `http://100.82.27.85:8080`
 ## Features
 
 ✅ Full game logic ported from Python  
-✅ 30 players across all positions  
+✅ 36 players across all positions  
 ✅ 6 formations with position bonuses  
-✅ 11 phase types with stat-based slots  
-✅ 21 synergies (17 phase-specific + 4 persistent)  
+✅ 13 phase types with stat-based slots  
+✅ 30 synergies (18 phase-specific + 12 persistent)  
 ✅ Fatigue system with recovery  
 ✅ Campaign progression (5 matches)  
 ✅ PWA support (installable on iPhone)  

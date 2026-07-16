@@ -1,4 +1,9 @@
-# Squad — UI Layout Plan
+1|# Squad — UI Layout Plan  [HISTORICAL]
+2|>
+3|> ⚠️ **This document describes the terminal UI redesign plan and has been superseded.**
+4|> See **`docs/SCREEN_ARCHITECTURE.md`** for the current web UI design specification.
+5|> This file is retained for reference only — content may be outdated.
+6|>
 
 > Game design + UI engineering plan for every screen in the game.
 > Goal: clear visual hierarchy, reduced cognitive load, meaningful information at each decision point.
