@@ -31,8 +31,8 @@
    =================================================================== */
 
 var G = {
-  // Screen routing
-  currentScreen: 'title', // 'title'|'squad'|'formation'|'phases'|'match'|'phase-result'|'shop'|'round-result'|'campaign-complete'
+  // Screen routing (stale — set by engine but SPA shell uses Game._current() instead)
+  currentScreen: 'title', // 'squad'|'formation'|'phases'|'match'|'phase-result'|'shop'|'round-result'|'campaign-complete'
 
   // Squad
   playerPool: [],    // all 33 players (populated on init)
@@ -62,9 +62,9 @@ var G = {
   morale: 0,           // shop currency
   shopBuffs: [],       // active buffs [{id, effect, duration}]
 
-  // Match-level modifiers
-  phaseFatigue: {},    // {phaseId: multiplier} — starts at 1.0, ×0.85 when reused in a match
-  opponentAdjustments: {}, // {phaseId: multiplier} — scouting buffs/nerfs for this round
+  // Match-level modifiers (Python-compat, not yet wired in SPA flow)
+  phaseFatigue: {},    // {phaseId: multiplier} — starts at 1.0, ×0.85 when reused in a match (Python feature)
+  opponentAdjustments: {}, // {phaseId: multiplier} — scouting buffs/nerfs for this round (Python feature)
 
   // Campaign
   campaignWon: false,
@@ -1271,10 +1271,12 @@ function buyShopItem(itemId) {
 
 /**
  * resetRound()
- * Resets phase state for a new round, keeps fatigue and squad.
+ * Resets phase-level state between rounds.
+ * NOTE: This function is NOT currently called in the SPA flow.
+ *   The startRound() function handles round transitions.
+ *   If called, it MUST NOT reset roundIdx (that's the caller's responsibility).
  */
 function resetRound() {
-  G.roundIdx = 0;
   G.phaseIdx = 0;
   G.roundScore = 0;
   G.dealtPhases = [];

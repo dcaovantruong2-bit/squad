@@ -626,37 +626,11 @@
   }
 
   // ─── CONTINUE button ──────────────────────────────
-  $('pr-continue-btn').addEventListener('click', function() {
-    if (engineMode) {
-      // Check auto-win: if roundScore already >= target, skip remaining phases
-      if (!data.autoWin && G.phaseIdx < G.pickedPhases.length) {
-        // More phases in this round — go back to match
-        if (typeof saveGame === 'function') saveGame();
-        if (window.Game) {
-          window.Game.transition = 'slide-left';
-          window.Game.navigate('match');
-        } else {
-          window.location.href = 'match.html';
-        }
-      } else {
-        // Auto-win OR all phases done — finish this round
-        if (typeof finishRound === 'function') finishRound();
-        if (typeof saveGame === 'function') saveGame();
-        if (window.Game) {
-          window.Game.transition = 'slide-left';
-          window.Game.navigate('round-result');
-        } else {
-          window.location.href = 'round-result.html';
-        }
-      }
-    } else {
-      // Demo mode: restart animation
-      scoreEl.textContent = '0';
-      if (animationRAF) { cancelAnimationFrame(animationRAF); animationRAF = null; }
-      animating = false;
-      setTimeout(function() { animateScore(data.phaseScore, 800); }, 100);
-    }
-  });
+  // NOTE: the inline onclick on the button element handles navigation.
+  // This addEventListener is disabled to prevent double-firing.
+  // The inline onclick on pr-continue-btn handles engine→match|round-result routing.
+  // $('pr-continue-btn').addEventListener('click', function() { ... })
+  // That listener is commented out; the inline onclick is the active handler.
 
   // ─── Init ─────────────────────────────────────────
   render();
