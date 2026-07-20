@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Squad — Squad Builder</title>
+<!-- Google Fonts: Press Start 2P (display) + VT323 (body/mono) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════
+   SQUAD — Design System Tokens
+   Dark Neon Pixel | Retro Terminal × Football Tactics
+   ═══════════════════════════════════════════════════ */
+:root {
+  --bg: #161120;
+  --bg-deep: #0d0a18;
+  --surface: #231a3a;
+  --surface-raised: #2e2250;
+  --surface-hover: #3a2d60;
+  --fg: #f0ecf8;
+  --fg-dim: #c8b8e0;
+  --muted: #9a8ab0;
+  --accent: #39ff14;
+  --accent-dim: #2bcc10;
+  --gold: #ffd700;
+  --gold-dim: #cc9900;
+  --success: #39ff14;
+  --warn: #ffa500;
+  --danger: #ff3344;
+  --info: #00ccff;
+  --purple: #c084fc;
+  --pitch-green: #0d3320;
+  --border: #3d2d5c;
+  --border-bright: #4d3d6c;
+  --stat-atk: #ff3344;
+  --stat-pac: #ffd700;
+  --stat-pas: #00ccff;
+  --stat-def: #39ff14;
+  --stat-spc: #c084fc;
+  --font-display: 'Press Start 2P', monospace;
+  --font-body: 'VT323', monospace;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  body::after { display: none; }
+}
+
+/* ═══════════════════════════════════════════════════
+   Base / Reset
+   ═══════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.25;
+  min-height: 100dvh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* CRT Scanlines overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0,0,0,0.08) 0px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+/* ═══════════════════════════════════════════════════
+   Typography
+   ═══════════════════════════════════════════════════ */
+.display { font-family: var(--font-display); font-size: 10px; text-transform: uppercase; }
+.body { font-family: var(--font-body); font-size: 16px; }
+.mono { font-family: var(--font-body); font-size: 14px; }
+
+/* ═══════════════════════════════════════════════════
+   Layout
+   ═══════════════════════════════════════════════════ */
+.app {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+}
+.header-logo {
+  font-family: var(--font-display);
+  font-size: 14px;
+  color: var(--accent);
+  text-shadow: 0 0 8px rgba(57,255,20,0.35);
+  letter-spacing: 2px;
+}
+.header-logo span { color: var(--gold); }
+.header-meta {
+  font-family: var(--font-display);
+  font-size: 8px;
+  color: var(--muted);
+}
+.header-meta em { color: var(--fg-dim); font-style: normal; }
+
+/* ═══════════════════════════════════════════════════
+   Budget Bar
+   ═══════════════════════════════════════════════════ */
+.budget-section {
+  margin-bottom: 20px;
+}
+.budget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.budget-label {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--fg-dim);
+}
+.budget-value {
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: var(--gold);
+  text-shadow: 0 0 6px rgba(255,215,0,0.35);
+}
+.budget-bar-track {
+  height: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.budget-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  box-shadow: 0 0 6px rgba(57,255,20,0.3);
+  transition: width 200ms ease;
+}
+.budget-bar-fill.over { background: var(--danger); box-shadow: 0 0 6px rgba(255,51,68,0.3); }
+.budget-bar-fill.warning { background: var(--warn); box-shadow: 0 0 6px rgba(255,165,0,0.3); }
+
+/* ═══════════════════════════════════════════════════
+   Main Content - Two column
+   ═══════════════════════════════════════════════════ */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+  flex: 1;
+}
+
+/* ═══════════════════════════════════════════════════
+   Position Filter Tabs
+   ═══════════════════════════════════════════════════ */
+.filter-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+.filter-tab {
+  font-family: var(--font-body);
+  font-size: 14px;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 100ms ease;
+}
+.filter-tab:hover { color: var(--fg-dim); border-color: var(--border-bright); }
+.filter-tab.active {
+  color: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 8px rgba(57,255,20,0.2);
+}
+
+/* ═══════════════════════════════════════════════════
+   Player Card Grid
+   ═══════════════════════════════════════════════════ */
+.player-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  max-height: 60dvh;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+.player-grid::-webkit-scrollbar { width: 4px; }
+.player-grid::-webkit-scrollbar-track { background: var(--surface); }
+.player-grid::-webkit-scrollbar-thumb { background: var(--border-bright); }
+
+/* Player Card */
+.player-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 8px;
+  cursor: pointer;
+  transition: all 100ms ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.player-card:hover {
+  background: var(--surface-raised);
+  border-color: var(--accent);
+  box-shadow: 0 0 10px rgba(57,255,20,0.15);
+}
+.player-card.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(57,255,20,0.3);
+  background: var(--surface-hover);
+}
+.player-card.in-squad {
+  border-color: var(--gold-dim);
+  opacity: 0.7;
+}
+.player-card.in-squad::after {
+  content: 'IN SQUAD';
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--gold);
+  padding: 2px 4px;
+  border: 1px solid var(--gold-dim);
+}
+
+.player-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.player-name {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--fg);
+  line-height: 1.3;
+  max-width: 180px;
+}
+.player-pos {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--fg-dim);
+  background: var(--bg);
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+}
+.player-cost {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--gold);
+  text-align: right;
+}
+
+/* Stat Bars */
+.stat-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.stat-label {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--muted);
+  width: 28px;
+  flex-shrink: 0;
+}
+.stat-track {
+  flex: 1;
+  height: 4px;
+  background: rgba(255,255,255,0.05);
+  position: relative;
+  overflow: hidden;
+}
+.stat-fill {
+  height: 100%;
+  transition: width 150ms ease;
+}
+.stat-fill.atk  { background: var(--stat-atk); box-shadow: 0 0 4px var(--stat-atk); }
+.stat-fill.pac  { background: var(--stat-pac); box-shadow: 0 0 4px var(--stat-pac); }
+.stat-fill.pas  { background: var(--stat-pas); box-shadow: 0 0 4px var(--stat-pas); }
+.stat-fill.def  { background: var(--stat-def); box-shadow: 0 0 4px var(--stat-def); }
+.stat-fill.spc  { background: var(--stat-spc); box-shadow: 0 0 4px var(--stat-spc); }
+
+.stat-val {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--fg-dim);
+  width: 18px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* Traits */
+.trait-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+.trait-pill {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--fg-dim);
+  border: 1px solid var(--border);
+  padding: 2px 6px;
+  background: var(--bg);
+}
+
+/* ═══════════════════════════════════════════════════
+   Sidebar — Your Squad
+   ═══════════════════════════════════════════════════ */
+.sidebar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 70dvh;
+}
+.sidebar-title {
+  font-family: var(--font-display);
+  font-size: 10px;
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+.sidebar-title span { color: var(--gold); }
+
+/* Role requirements */
+.role-strip {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.role-badge {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 3px 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.role-badge.met { border-color: var(--accent-dim); color: var(--accent); }
+.role-badge.unmet { border-color: var(--danger); color: var(--danger); }
+.role-badge .count { color: var(--fg-dim); }
+
+/* Selected player pills */
+.squad-pills {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+.squad-pills::-webkit-scrollbar { width: 3px; }
+.squad-pills::-webkit-scrollbar-thumb { background: var(--border-bright); }
+
+.squad-pill {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--fg-dim);
+  cursor: pointer;
+  transition: all 100ms ease;
+}
+.squad-pill:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+  box-shadow: 0 0 6px rgba(255,51,68,0.2);
+}
+.squad-pill .pill-name { flex: 1; }
+.squad-pill .pill-pos { color: var(--muted); margin: 0 8px; font-family: var(--font-display); font-size: 10px; }
+.squad-pill .pill-cost { color: var(--gold); font-family: var(--font-body); font-size: 14px; }
+
+/* Formation fit preview */
+.form-fit {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--muted);
+  padding: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+.form-fit .fit-ok { color: var(--accent); }
+.form-fit .fit-warn { color: var(--warn); }
+
+/* ═══════════════════════════════════════════════════
+   Action Bar (sticky bottom)
+   ═══════════════════════════════════════════════════ */
+.action-bar {
+  position: sticky;
+  bottom: 0;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  background: var(--bg);
+}
+.btn {
+  font-family: var(--font-display);
+  font-size: 10px;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  cursor: pointer;
+  background: transparent;
+  transition: all 100ms ease;
+  border: 1px solid;
+}
+.btn-primary {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.btn-primary:hover {
+  background: var(--accent);
+  color: var(--bg);
+  box-shadow: 0 0 10px rgba(57,255,20,0.3);
+}
+.btn-primary:disabled {
+  color: var(--accent-dim);
+  border-color: var(--border);
+  cursor: not-allowed;
+}
+.btn-primary:disabled:hover {
+  background: transparent;
+  color: var(--accent-dim);
+  box-shadow: none;
+}
+.btn-secondary {
+  color: var(--muted);
+  border-color: var(--border);
+}
+.btn-secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ═══════════════════════════════════════════════════
+   Empty / Loading States
+   ═══════════════════════════════════════════════════ */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 18px;
+}
+
+/* Player card grid empty filter */
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 20px;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 9px;
+}
+
+/* ═══════════════════════════════════════════════════
+   Shake animation for invalid state
+   ═══════════════════════════════════════════════════ */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+.shake { animation: shake 200ms ease; }
+
+/* ═══════════════════════════════════════════════════
+   Responsive
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .main-grid { grid-template-columns: 1fr; }
+  .sidebar { max-height: none; }
+  .player-grid { max-height: none; }
+  .app { padding: 12px 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="app" data-od-id="squad-builder-screen">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-logo"><span>⟐</span> SQUAD</div>
+    <div class="header-meta">BUILD YOUR SQUAD &nbsp;<em>v1.0</em></div>
+  </header>
+
+  <!-- Budget Bar -->
+  <section class="budget-section">
+    <div class="budget-header">
+      <span class="budget-label">TRANSFER BUDGET</span>
+      <span class="budget-value" id="budgetDisplay">360 / 360 coins</span>
+    </div>
+    <div class="budget-bar-track">
+      <div class="budget-bar-fill" id="budgetFill" style="width:0%"></div>
+    </div>
+  </section>
+
+  <!-- Main Grid -->
+  <div class="main-grid">
+
+    <!-- Left: Player Pool -->
+    <div>
+      <!-- Filter Tabs -->
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="all">ALL</button>
+        <button class="filter-tab" data-filter="GK">GK</button>
+        <button class="filter-tab" data-filter="DEF">DEF</button>
+        <button class="filter-tab" data-filter="MID">MID</button>
+        <button class="filter-tab" data-filter="ATT">ATT</button>
+      </div>
+
+      <!-- Player Grid -->
+      <div class="player-grid" id="playerGrid">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- Right: Your Squad -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-title">YOUR SQUAD <span id="squadCount">0/11</span></div>
+
+      <!-- Role Requirements -->
+      <div class="role-strip" id="roleStrip">
+        <div class="role-badge unmet" data-role="GK">🧤 GK <span class="count">0/1</span></div>
+        <div class="role-badge unmet" data-role="DEF">🛡️ DEF <span class="count">0/3</span></div>
+        <div class="role-badge unmet" data-role="MID">⚡ MID <span class="count">0/3</span></div>
+        <div class="role-badge unmet" data-role="ATT">🎯 ATT <span class="count">0/2</span></div>
+      </div>
+
+      <!-- Selected Players -->
+      <div class="squad-pills" id="squadPills">
+        <div class="empty-state">No players selected</div>
+      </div>
+
+      <!-- Formation Fit -->
+      <div class="form-fit" id="formFit">
+        FORMATION: 4-4-2 &nbsp; <span class="fit-warn">↻ NEEDS COMPLETE SQUAD</span>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Action Bar -->
+  <div class="action-bar">
+    <button class="btn btn-secondary" id="autofillBtn">AUTO-FILL</button>
+    <button class="btn btn-secondary" id="resetBtn">RESET</button>
+    <button class="btn btn-primary" id="confirmBtn" disabled>CONFIRM SQUAD</button>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// SQUAD BUILDER — Game Data
+// 36 players across 9 positions
+// ═══════════════════════════════════════════════════
+var PLAYERS = window.PLAYERS || [
+   { id: 'g1', name: 'Alisson Becker', position: 'GK', atk: 3, pac: 3, pas: 7, def: 9, spc: 8, traits: ['leader','technical'], cost: 30 },
+  { id: 'g2', name: 'Ederson Santana', position: 'GK', atk: 4, pac: 3, pas: 9, def: 8, spc: 7, traits: ['playmaker','technical'], cost: 31 },
+  { id: 'g3', name: 'Jan Oblak', position: 'GK', atk: 2, pac: 2, pas: 5, def: 10, spc: 9, traits: ['leader','physical'], cost: 28 },
+  { id: 'g4', name: 'Mike Maignan', position: 'GK', atk: 3, pac: 4, pas: 6, def: 8, spc: 8, traits: ['pacey','physical'], cost: 29 },
+  { id: 'cb1', name: 'Virgil van Dijk', position: 'CB', atk: 5, pac: 6, pas: 6, def: 10, spc: 7, traits: ['leader','physical','aerial'], cost: 34 },
+  { id: 'cb2', name: 'Rúben Dias', position: 'CB', atk: 4, pac: 5, pas: 6, def: 9, spc: 6, traits: ['leader','physical'], cost: 30 },
+  { id: 'cb3', name: 'Eder Militão', position: 'CB', atk: 4, pac: 8, pas: 5, def: 8, spc: 5, traits: ['pacey','aerial'], cost: 30 },
+  { id: 'cb4', name: 'John Stones', position: 'CB', atk: 4, pac: 6, pas: 8, def: 8, spc: 6, traits: ['playmaker','technical'], cost: 32 },
+  { id: 'fb1', name: 'Trent Alexander-Arnold', position: 'FB', atk: 7, pac: 6, pas: 10, def: 6, spc: 7, traits: ['playmaker','technical'], cost: 36 },
+  { id: 'fb2', name: 'Andy Robertson', position: 'FB', atk: 6, pac: 8, pas: 7, def: 7, spc: 5, traits: ['pacey','physical'], cost: 33 },
+  { id: 'fb3', name: 'Kyle Walker', position: 'FB', atk: 5, pac: 10, pas: 5, def: 7, spc: 4, traits: ['pacey','physical'], cost: 31 },
+  { id: 'fb4', name: 'Achraf Hakimi', position: 'FB', atk: 7, pac: 10, pas: 6, def: 5, spc: 6, traits: ['pacey','technical'], cost: 34 },
+  { id: 'cdm1', name: 'Rodri Hernandez', position: 'CDM', atk: 6, pac: 5, pas: 8, def: 9, spc: 8, traits: ['leader','playmaker','physical'], cost: 36 },
+  { id: 'cdm2', name: 'Declan Rice', position: 'CDM', atk: 5, pac: 6, pas: 7, def: 9, spc: 6, traits: ['physical','aerial'], cost: 33 },
+  { id: 'cdm3', name: 'Aurélien Tchouaméni', position: 'CDM', atk: 5, pac: 6, pas: 6, def: 8, spc: 7, traits: ['physical','technical'], cost: 32 },
+  { id: 'cm1', name: 'Kevin De Bruyne', position: 'CM', atk: 9, pac: 6, pas: 10, def: 4, spc: 9, traits: ['playmaker','technical','clinical'], cost: 38 },
+  { id: 'cm2', name: 'Jude Bellingham', position: 'CM', atk: 8, pac: 7, pas: 7, def: 6, spc: 9, traits: ['playmaker','physical','clinical'], cost: 37 },
+  { id: 'cm3', name: 'Pedri González', position: 'CM', atk: 5, pac: 5, pas: 9, def: 5, spc: 8, traits: ['playmaker','technical'], cost: 32 },
+  { id: 'cm4', name: 'Federico Valverde', position: 'CM', atk: 7, pac: 8, pas: 7, def: 6, spc: 7, traits: ['pacey','physical','technical'], cost: 35 },
+  { id: 'cam1', name: 'Jamal Musiala', position: 'CAM', atk: 8, pac: 8, pas: 7, def: 3, spc: 9, traits: ['technical','pacey','clinical'], cost: 35 },
+  { id: 'cam2', name: 'James Maddison', position: 'CAM', atk: 7, pac: 5, pas: 9, def: 2, spc: 8, traits: ['playmaker','technical'], cost: 31 },
+  { id: 'cam3', name: 'Phil Foden', position: 'CAM', atk: 8, pac: 7, pas: 7, def: 3, spc: 8, traits: ['technical','clinical'], cost: 33 },
+  { id: 'lw1', name: 'Vinícius Jr', position: 'LW', atk: 9, pac: 10, pas: 6, def: 2, spc: 8, traits: ['pacey','technical','clinical'], cost: 35 },
+  { id: 'lw2', name: 'Rafael Leão', position: 'LW', atk: 8, pac: 10, pas: 5, def: 2, spc: 7, traits: ['pacey','physical','clinical'], cost: 32 },
+  { id: 'rw1', name: 'Mohamed Salah', position: 'RW', atk: 9, pac: 9, pas: 6, def: 2, spc: 8, traits: ['clinical','pacey','technical'], cost: 34 },
+  { id: 'rw2', name: 'Bukayo Saka', position: 'RW', atk: 7, pac: 8, pas: 8, def: 4, spc: 7, traits: ['playmaker','technical','pacey'], cost: 34 },
+  { id: 'rw3', name: 'Ousmane Dembélé', position: 'RW', atk: 7, pac: 10, pas: 6, def: 2, spc: 7, traits: ['pacey','technical'], cost: 32 },
+  { id: 'st1', name: 'Erling Haaland', position: 'ST', atk: 10, pac: 9, pas: 3, def: 2, spc: 7, traits: ['clinical','physical','aerial'], cost: 31 },
+  { id: 'st2', name: 'Kylian Mbappé', position: 'ST', atk: 9, pac: 10, pas: 5, def: 2, spc: 8, traits: ['clinical','pacey','technical'], cost: 34 },
+  { id: 'st3', name: 'Harry Kane', position: 'ST', atk: 10, pac: 5, pas: 8, def: 3, spc: 8, traits: ['clinical','playmaker','aerial'], cost: 34 },
+  { id: 'st4', name: 'Robert Lewandowski', position: 'ST', atk: 10, pac: 5, pas: 6, def: 3, spc: 7, traits: ['clinical','aerial','physical'], cost: 31 },
+  { id: 'st5', name: 'Lautaro Martínez', position: 'ST', atk: 9, pac: 7, pas: 5, def: 3, spc: 6, traits: ['clinical','physical'], cost: 30 },
+  { id: 'st6', name: 'Victor Osimhen', position: 'ST', atk: 9, pac: 9, pas: 4, def: 2, spc: 6, traits: ['pacey','physical','aerial'], cost: 30 },
+  { id: 'cb5', name: 'Wesley Fofana', position: 'CB', atk: 3, pac: 7, pas: 4, def: 7, spc: 4, traits: ['pacey','physical'], cost: 25 },
+  { id: 'cm5', name: 'Enzo Fernández', position: 'CM', atk: 6, pac: 5, pas: 8, def: 5, spc: 7, traits: ['playmaker','technical'], cost: 31 },
+  { id: 'fb5', name: 'Reece James', position: 'FB', atk: 6, pac: 7, pas: 8, def: 6, spc: 5, traits: ['playmaker','aerial'], cost: 32 },
+];
+
+// Position → role group mapping
+const POS_TO_ROLE = {
+  GK: 'GK',
+  CB: 'DEF', FB: 'DEF',
+  CDM: 'MID', CM: 'MID', CAM: 'MID',
+  LW: 'ATT', RW: 'ATT', ST: 'ATT'
+};
+
+// Role requirements
+const ROLE_REQS = { GK: { min: 1 }, DEF: { min: 3 }, MID: { min: 3 }, ATT: { min: 2 } };
+
+// Budget
+const MAX_BUDGET = 360;
+const MIN_PLAYERS = 11;
+
+// State
+let squad = [];        // selected player ids
+let filter = 'all';
+let selectedCardId = null;
+
+// DOM refs
+const playerGrid = document.getElementById('playerGrid');
+const squadPills = document.getElementById('squadPills');
+const budgetFill = document.getElementById('budgetFill');
+const budgetDisplay = document.getElementById('budgetDisplay');
+const squadCount = document.getElementById('squadCount');
+const confirmBtn = document.getElementById('confirmBtn');
+const autofillBtn = document.getElementById('autofillBtn');
+const resetBtn = document.getElementById('resetBtn');
+
+// ─── Derived State ──────────────────────────────────
+function getSquadPlayers() { return squad.map(id => PLAYERS.find(p => p.id === id)); }
+function squadCost() { return getSquadPlayers().reduce((sum, p) => sum + p.cost, 0); }
+function budgetRemaining() { return MAX_BUDGET - squadCost(); }
+function squadSize() { return squad.length; }
+
+function roleCounts() {
+  const counts = { GK: 0, DEF: 0, MID: 0, ATT: 0 };
+  getSquadPlayers().forEach(p => { const r = POS_TO_ROLE[p.position]; if (r) counts[r]++; });
+  return counts;
+}
+
+function isSquadValid() {
+  if (squadSize() < MIN_PLAYERS) return false;
+  if (budgetRemaining() < 0) return false;
+  const roles = roleCounts();
+  return Object.entries(ROLE_REQS).every(([role, req]) => roles[role] >= req.min);
+}
+
+// ─── Player Filtering ──────────────────────────────
+function getFilteredPlayers() {
+  let filtered = PLAYERS.filter(p => !squad.includes(p.id));
+  if (filter === 'all') return filtered;
+  return filtered.filter(p => POS_TO_ROLE[p.position] === filter);
+}
+
+function getPlayersForRole(role) {
+  return PLAYERS.filter(p => POS_TO_ROLE[p.position] === role && !squad.includes(p.id));
+}
+
+// ─── Rendering ─────────────────────────────────────
+function renderPlayerGrid() {
+  const players = getFilteredPlayers();
+  if (players.length === 0) {
+    playerGrid.innerHTML = `<div class="no-results">No available players in this position</div>`;
+    return;
+  }
+  playerGrid.innerHTML = players.map(p => `
+    <div class="player-card" data-id="${p.id}" onclick="togglePlayer('${p.id}')">
+      <div class="player-card-top">
+        <span class="player-name">${p.name}</span>
+        <span class="player-pos">${p.position}</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">ATK</span>
+        <div class="stat-track"><div class="stat-fill atk" style="width:${p.atk * 10}%"></div></div>
+        <span class="stat-val">${p.atk}</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">PAC</span>
+        <div class="stat-track"><div class="stat-fill pac" style="width:${p.pac * 10}%"></div></div>
+        <span class="stat-val">${p.pac}</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">PAS</span>
+        <div class="stat-track"><div class="stat-fill pas" style="width:${p.pas * 10}%"></div></div>
+        <span class="stat-val">${p.pas}</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">DEF</span>
+        <div class="stat-track"><div class="stat-fill def" style="width:${p.def * 10}%"></div></div>
+        <span class="stat-val">${p.def}</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">SPC</span>
+        <div class="stat-track"><div class="stat-fill spc" style="width:${p.spc * 10}%"></div></div>
+        <span class="stat-val">${p.spc}</span>
+      </div>
+      <div class="player-cost">${p.cost} coins</div>
+      ${p.traits.length ? `<div class="trait-row">${p.traits.map(t => `<span class="trait-pill">${t}</span>`).join('')}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function renderSquadPills() {
+  if (squad.length === 0) {
+    squadPills.innerHTML = `<div class="empty-state">No players selected</div>`;
+    return;
+  }
+  const players = getSquadPlayers();
+  squadPills.innerHTML = players.map(p => `
+    <div class="squad-pill" title="Click to remove">
+      <span class="pill-name">${p.name}</span>
+      <span class="pill-pos">${p.position}</span>
+      <span class="pill-cost">${p.cost}c</span>
+    </div>
+  `).join('');
+}
+
+function renderRoleStrip() {
+  const counts = roleCounts();
+  Object.entries(ROLE_REQS).forEach(([role, req]) => {
+    const el = document.querySelector(`.role-badge[data-role="${role}"]`);
+    if (!el) return;
+    const count = counts[role] || 0;
+    const met = count >= req.min;
+    el.className = `role-badge ${met ? 'met' : 'unmet'}`;
+    el.querySelector('.count').textContent = `${count}/${req.min}`;
+  });
+}
+
+function renderBudget() {
+  const spent = squadCost();
+  const remaining = budgetRemaining();
+  const pct = Math.min((spent / MAX_BUDGET) * 100, 100);
+  budgetFill.style.width = `${pct}%`;
+  budgetFill.className = `budget-bar-fill${remaining < 0 ? ' over' : remaining < 60 ? ' warning' : ''}`;
+  budgetDisplay.textContent = `${remaining} / ${MAX_BUDGET} coins`;
+}
+
+function renderSquadCount() {
+  squadCount.textContent = `${squadSize()}/${MIN_PLAYERS}`;
+}
+
+function renderFormFit() {
+  const el = document.getElementById('formFit');
+  const counts = roleCounts();
+  if (squadSize() < MIN_PLAYERS) {
+    el.innerHTML = `FORMATION: 4-4-2 &nbsp; <span class="fit-warn">↻ NEEDS ${MIN_PLAYERS - squadSize()} MORE PLAYERS</span>`;
+    return;
+  }
+  if (budgetRemaining() < 0) {
+    el.innerHTML = `FORMATION: 4-4-2 &nbsp; <span class="fit-warn">⚠ OVER BUDGET BY ${Math.abs(budgetRemaining())}c</span>`;
+    return;
+  }
+  const allMet = Object.entries(ROLE_REQS).every(([role, req]) => (counts[role] || 0) >= req.min);
+  el.innerHTML = `FORMATION: 4-4-2 &nbsp; <span class="${allMet ? 'fit-ok' : 'fit-warn'}">${allMet ? '✓ SQUAD READY' : '↻ CHECK ROLE REQUIREMENTS'}</span>`;
+}
+
+function renderConfirmBtn() {
+  confirmBtn.disabled = !isSquadValid();
+}
+
+function renderAll() {
+  renderPlayerGrid();
+  renderSquadPills();
+  renderRoleStrip();
+  renderBudget();
+  renderSquadCount();
+  renderFormFit();
+  renderConfirmBtn();
+}
+
+// ─── Actions ──────────────────────────────────────
+function togglePlayer(id) {
+  const idx = squad.indexOf(id);
+  if (idx >= 0) {
+    squad.splice(idx, 1);
+  } else {
+    if (squadSize() >= 15) return; // max squad size
+    squad.push(id);
+  }
+  renderAll();
+}
+
+function removePlayer(id) {
+  const idx = squad.indexOf(id);
+  if (idx >= 0) { squad.splice(idx, 1); renderAll(); }
+}
+
+function autoFill() {
+  squad = [];
+  const roles = ['GK', 'DEF', 'DEF', 'DEF', 'MID', 'MID', 'MID', 'ATT', 'ATT'];
+  // Pick cheapest available for each role
+  roles.forEach(role => {
+    const candidates = PLAYERS
+      .filter(p => POS_TO_ROLE[p.position] === role && !squad.includes(p.id))
+      .sort((a, b) => a.cost - b.cost);
+    if (candidates.length > 0 && squad.length < 15) squad.push(candidates[0].id);
+  });
+  // Fill remaining with cheapest available
+  const remaining = PLAYERS
+    .filter(p => !squad.includes(p.id))
+    .sort((a, b) => a.cost - b.cost);
+  remaining.forEach(p => { if (squad.length < 11) squad.push(p.id); });
+  renderAll();
+}
+
+function resetSquad() { squad = []; renderAll(); }
+
+// ─── Filter Tabs ──────────────────────────────────
+document.querySelectorAll('.filter-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    filter = tab.dataset.filter;
+    renderPlayerGrid();
+  });
+});
+
+// ─── Event Delegation for squad pill clicks ──────
+squadPills.addEventListener('click', (e) => {
+  const pill = e.target.closest('.squad-pill');
+  if (!pill) return;
+  const name = pill.querySelector('.pill-name')?.textContent;
+  const player = PLAYERS.find(p => p.name === name);
+  if (player) { removePlayer(player.id); }
+});
+
+// ─── Button Handlers ─────────────────────────────
+autofillBtn.addEventListener('click', autoFill);
+resetBtn.addEventListener('click', resetSquad);
+confirmBtn.addEventListener('click', () => {
+  if (isSquadValid()) {
+    confirmBtn.textContent = '✓ CONFIRMED!';
+    confirmBtn.disabled = true;
+    // Save state to sessionStorage BEFORE navigating
+    if (window.G) { saveGame(); }
+    sessionStorage.setItem('squad_pending_squad', JSON.stringify(window.G ? G.selectedIds : squad));
+    sessionStorage.setItem('squad_pending_formation', JSON.stringify((window.G && G.formation) || '4-3-3'));
+    if (window.Game) {
+      window.Game.transition = 'slide-left';
+      window.Game.navigate('formation');
+    } else {
+      setTimeout(() => { confirmBtn.textContent = 'CONFIRM SQUAD'; }, 1500);
+    }
+  } else {
+    document.querySelector('.action-bar').classList.add('shake');
+    setTimeout(() => document.querySelector('.action-bar').classList.remove('shake'), 200);
+  }
+});
+
+// ─── Init ─────────────────────────────────────────
+renderAll();
+
+// ============================================================
+// SHARED GAME STATE INTEGRATION
+// Works both standalone AND when loaded via game.html
+// ============================================================
+(function initSharedState() {
+  // 1. On load: pre-select from G.selectedIds if available
+  if (window.G && window.G.selectedIds && window.G.selectedIds.length > 0) {
+    squad = window.G.selectedIds.slice();
+    // Validate that all IDs exist in PLAYERS
+    squad = squad.filter(function(id) {
+      return PLAYERS.some(function(p) { return p.id === id; });
+    });
+    // Re-render with pre-selected squad
+    if (squad.length > 0) {
+      renderAll();
+    }
+  }
+
+  // 2. Auto-Fill: use engine's autoFillSquad() if available
+  var origAutoFill = autoFill; // preserve standalone
+  window._autoFillOrig = origAutoFill;
+  autofillBtn.addEventListener('click', function(e) {
+    if (window.G && typeof autoFillSquad === 'function') {
+      // Use the engine's autoFillSquad (returns player IDs)
+      var engineIds = autoFillSquad();
+      if (engineIds && engineIds.length > 0) {
+        // Convert engine IDs to our local PLAYERS IDs if needed
+        // Engine PLAYERS have different IDs than the inline ones
+        // Check if any engine IDs match our local PLAYERS
+        var matched = false;
+        for (var i = 0; i < engineIds.length; i++) {
+          if (PLAYERS.some(function(p) { return p.id === engineIds[i]; })) {
+            matched = true;
+            break;
+          }
+        }
+        if (matched) {
+          // Engine IDs match local PLAYERS — use directly
+          squad = engineIds.filter(function(id) {
+            return PLAYERS.some(function(p) { return p.id === id; });
+          });
+        } else {
+          // Different ID schemes — use local autoFill fallback
+          origAutoFill();
+          return;
+        }
+        renderAll();
+        return;
+      }
+    }
+    // Fallback: use local autoFill
+    origAutoFill();
+  });
+
+  // 3. Confirm Squad: write to G.selectedIds and navigate
+  var origConfirmHandler = confirmBtn.onclick;
+  confirmBtn.addEventListener('click', function(e) {
+    if (!isSquadValid()) return;
+
+    // Write to shared G
+    if (window.G) {
+      G.selectedIds = squad.slice();
+      if (typeof commitSquad === 'function') {
+        commitSquad(squad.slice());
+      }
+    }
+
+    // Save to localStorage
+    if (window.G && typeof saveGame === 'function') {
+      saveGame();
+    }
+
+    // Also save to sessionStorage as backup
+    sessionStorage.setItem('squad_pending_squad', JSON.stringify(G.selectedIds || squad));
+    sessionStorage.setItem('squad_pending_formation', JSON.stringify(G.formation || '4-3-3'));
+
+    // Navigate to formation
+    if (window.Game) {
+      window.Game.transition = 'slide-left';
+      window.Game.navigate('formation');
+    } else {
+      confirmBtn.textContent = '\u2713 CONFIRMED!';
+      confirmBtn.disabled = true;
+      setTimeout(function() { confirmBtn.textContent = 'CONFIRM SQUAD'; }, 1500);
+    }
+  });
+
+  // 4. Budget display — show engine squad cost if available
+  function updateSharedBudget() {
+    if (window.G && typeof getSquadCost === 'function' && G.selectedIds.length > 0) {
+      // If using engine IDs, show engine cost
+      var engineCost = getSquadCost();
+      if (engineCost > 0) {
+        budgetDisplay.textContent = 'Engine cost: ' + engineCost;
+      }
+    }
+  }
+  // Call once on load
+  updateSharedBudget();
+})();
+
+// ─── setupScreen hook for game.html to re-run initialization ───
+window.setupScreen = function(screenId) {
+  if (document.readyState !== 'loading') {
+    if (typeof renderAll === 'function') renderAll();
+  }
+};
+</script>
+</body>
+</html>

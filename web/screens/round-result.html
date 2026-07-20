@@ -1,30 +1,561 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SQUAD -- Round Result Screen</title>
-  <link rel="stylesheet" href="../game.css">
-  <style>
-    .game-screen { display: none; min-height: 100vh; padding: var(--space-6) var(--space-4); max-width: 1200px; margin: 0 auto; }
-    .game-screen.active { display: block; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQUAD — Round Result</title>
+<style>
+/* ═══════════════════════════════════════════════════
+   Dark Neon Pixel design system (self-contained, no external CSS)
+   ═══════════════════════════════════════════════════ */
+:root {
+  --bg: #161120; --bg-deep: #0d0a18; --surface: #231a3a; --surface-raised: #2e2250; --surface-hover: #3a2d60;
+  --fg: #f0ecf8; --fg-dim: #c8b8e0; --muted: #9a8ab0;
+  --accent: #39ff14; --accent-dim: #2bcc10; --accent-glow: rgba(57,255,20,0.4); --accent-on: #0a0612;
+  --gold: #ffd700; --gold-dim: #cc9900; --gold-glow: rgba(255,215,0,0.35);
+  --success: #39ff14; --success-glow: rgba(57,255,20,0.3);
+  --warn: #ffa500; --warn-glow: rgba(255,165,0,0.3);
+  --danger: #ff3344; --danger-glow: rgba(255,51,68,0.3);
+  --info: #00ccff; --info-glow: rgba(0,204,255,0.3);
+  --border: #3d2d5c; --border-bright: #4d3d6c;
+  --font-display: 'Press Start 2P', monospace; --font-body: 'VT323', monospace; --font-mono: 'VT323', monospace;
+  --radius-sm: 2px; --radius-md: 4px;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px; --space-8: 32px;
+  --motion-fast: 80ms; --motion-base: 160ms;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:18px;line-height:1.5;min-height:100vh;overflow-x:hidden;letter-spacing:0.02em}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 4px,rgba(0,0,0,0.03) 4px,rgba(0,0,0,0.03) 8px);pointer-events:none;z-index:9999}
+
+.game-screen{min-height:100vh;padding:var(--space-6) var(--space-4);max-width:1200px;margin:0 auto}
+.rr-wrap{display:flex;flex-direction:column;align-items:center;gap:var(--space-6);padding:var(--space-8) 0}
+
+/* ─── Verdict Banner ────────────────────────────── */
+.rr-verdict{font-family:var(--font-display);font-size:clamp(28px,5vw,54px);text-transform:uppercase;letter-spacing:0.08em;text-align:center;padding:var(--space-4) var(--space-8);animation:rrVerdictIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;line-height:1.4}
+.rr-verdict.won{color:var(--accent);text-shadow:0 0 20px var(--accent-glow),0 0 60px rgba(57,255,20,0.3),0 0 100px rgba(57,255,20,0.15)}
+.rr-verdict.lost{color:var(--danger);text-shadow:0 0 20px var(--danger-glow),0 0 60px rgba(255,51,68,0.3),0 0 100px rgba(255,51,68,0.15)}
+@keyframes rrVerdictIn{0%{opacity:0;transform:scale(0.3)}60%{transform:scale(1.12)}100%{opacity:1;transform:scale(1)}}
+
+/* ─── Match Label ───────────────────────────────── */
+.rr-match-label{font-family:var(--font-display);font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;text-align:center}
+.rr-opponent-name{color:var(--gold);font-size:11px}
+
+/* ─── Score Comparison ──────────────────────────── */
+.rr-scores{display:flex;align-items:center;gap:var(--space-6);padding:var(--space-4) var(--space-6);background:var(--surface);border:2px solid var(--border);border-radius:var(--radius-md)}
+.rr-score-card{display:flex;flex-direction:column;align-items:center;gap:var(--space-1);min-width:100px}
+.rr-score-label{font-family:var(--font-display);font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em}
+.rr-score-value{font-family:var(--font-display);font-size:clamp(36px,8vw,76px);line-height:1;letter-spacing:0.04em}
+.rr-score-value.yours{color:var(--accent);text-shadow:0 0 16px var(--accent-glow)}
+.rr-score-value.target{color:var(--gold);text-shadow:0 0 16px var(--gold-glow)}
+.rr-score-divider{font-family:var(--font-display);font-size:32px;color:var(--muted);opacity:0.4}
+.rr-diff{font-family:var(--font-display);font-size:14px;letter-spacing:0.06em;text-align:center;margin-top:var(--space-1)}
+.rr-diff.won{color:var(--accent);text-shadow:0 0 8px var(--accent-glow)}
+.rr-diff.lost{color:var(--danger);text-shadow:0 0 8px var(--danger-glow)}
+.rr-score-value.animating{animation:rrCountUp 0.5s ease-out both}
+@keyframes rrCountUp{from{opacity:0.4;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── Round Progress Panel ──────────────────────── */
+.rr-rounds-panel{width:100%;max-width:500px;background:var(--surface);border:2px solid var(--border);border-radius:var(--radius-md);padding:var(--space-4)}
+.rr-rounds-title{font-family:var(--font-display);font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;text-align:center;margin-bottom:var(--space-3)}
+.rr-rounds-list{display:flex;flex-direction:column;gap:var(--space-2)}
+.rr-round-item{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-3);background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:22px;transition:all var(--motion-fast) ease}
+.rr-round-item.current{border-color:var(--accent);box-shadow:0 0 8px var(--accent-glow)}
+.rr-round-item.won{border-color:var(--success)}
+.rr-round-item.lost{border-color:var(--danger)}
+.rr-round-status{font-family:var(--font-display);font-size:10px;min-width:36px;text-align:center}
+.rr-round-status.won{color:var(--accent)}
+.rr-round-status.lost{color:var(--danger)}
+.rr-round-status.current{color:var(--info)}
+.rr-round-num{color:var(--fg-dim);min-width:60px;font-family:var(--font-display);font-size:8px;text-transform:uppercase;letter-spacing:0.06em}
+.rr-round-score{margin-left:auto;font-family:var(--font-display);font-size:10px;color:var(--fg)}
+.rr-round-score .accent{color:var(--accent)}
+.rr-round-score .target{color:var(--gold-dim)}
+.rr-round-score .diff-won{color:var(--accent);font-family:var(--font-body)}
+.rr-round-score .diff-lost{color:var(--danger);font-family:var(--font-body)}
+
+/* ─── Campaign Map ──────────────────────────────── */
+.rr-campaign{width:100%;max-width:900px;background:var(--surface);border:2px solid var(--border);border-radius:var(--radius-md);padding:var(--space-5) var(--space-4)}
+.rr-campaign-title{font-family:var(--font-display);font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;text-align:center;margin-bottom:var(--space-4)}
+.rr-campaign-track{display:flex;align-items:center;justify-content:center;gap:0;padding:var(--space-4) 0;position:relative;overflow-x:auto;overflow-y:visible}
+.rr-cnode{display:flex;flex-direction:column;align-items:center;gap:var(--space-1);position:relative;z-index:2;min-width:0;flex-shrink:0}
+.rr-cnode-dot{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:12px;border:3px solid var(--border);background:var(--bg-deep);transition:all var(--motion-base) ease;cursor:default;position:relative}
+.rr-cnode-dot.won{border-color:var(--accent);background:rgba(57,255,20,0.1);color:var(--accent);box-shadow:0 0 12px var(--accent-glow)}
+.rr-cnode-dot.won::after{content:'✓';position:absolute;font-size:18px;color:var(--accent);text-shadow:0 0 8px var(--accent-glow)}
+.rr-cnode-dot.lost{border-color:var(--danger);background:rgba(255,51,68,0.1);color:var(--danger);box-shadow:0 0 12px var(--danger-glow)}
+.rr-cnode-dot.lost::after{content:'✗';position:absolute;font-size:18px;color:var(--danger);text-shadow:0 0 8px var(--danger-glow)}
+.rr-cnode-dot.current{border-color:var(--gold);background:rgba(255,215,0,0.12);color:var(--gold);box-shadow:0 0 20px var(--gold-glow),0 0 40px rgba(255,215,0,0.15);animation:rrCurrentPulse 1.8s ease-in-out infinite}
+@keyframes rrCurrentPulse{0%,100%{box-shadow:0 0 16px var(--gold-glow),0 0 32px rgba(255,215,0,0.12)}50%{box-shadow:0 0 28px var(--gold-glow),0 0 56px rgba(255,215,0,0.25)}}
+.rr-cnode-dot.upcoming{border-color:var(--border-bright);color:var(--muted);opacity:0.55}
+.rr-cnode-dot.upcoming::after{content:'○';position:absolute;font-size:16px;color:var(--muted)}
+.rr-cnode-dot .node-num{font-family:var(--font-display);font-size:11px;z-index:1}
+.rr-cnode-label{font-family:var(--font-display);font-size:7px;color:var(--fg-dim);text-transform:uppercase;letter-spacing:0.06em;text-align:center;max-width:100px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rr-cnode-label .highlight{color:var(--gold)}
+.rr-cnode-status{font-family:var(--font-body);font-size:12px;margin-top:1px}
+.rr-cnode-status.won{color:var(--accent)}
+.rr-cnode-status.lost{color:var(--danger)}
+.rr-cnode-status.current{color:var(--gold)}
+.rr-cnode-status.upcoming{color:var(--muted)}
+.rr-cnode-connector{flex-shrink:0;width:60px;height:4px;background:var(--border);position:relative;z-index:1;border-radius:1px;transition:background var(--motion-base) ease}
+.rr-cnode-connector.done{background:var(--accent);box-shadow:0 0 6px var(--accent-glow)}
+.rr-cnode-connector.done.lost{background:var(--danger);box-shadow:0 0 6px var(--danger-glow)}
+.rr-cnode-connector.active{animation:rrConnectorDraw 0.6s ease-out both}
+@keyframes rrConnectorDraw{from{background:var(--border);box-shadow:none;transform:scaleX(0);transform-origin:left center}to{transform:scaleX(1)}}
+
+/* ─── Tooltip ───────────────────────────────────── */
+.rr-cnode-tooltip{position:absolute;bottom:calc(100% + 12px);left:50%;transform:translateX(-50%);background:var(--surface-raised);border:1px solid var(--border-bright);border-radius:var(--radius-sm);padding:var(--space-2) var(--space-3);font-family:var(--font-body);font-size:14px;color:var(--fg);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity var(--motion-fast) ease;z-index:10;text-align:center;box-shadow:0 0 12px rgba(0,0,0,0.5)}
+.rr-cnode-dot:hover+.rr-cnode-tooltip,.rr-cnode-dot:focus-visible+.rr-cnode-tooltip{opacity:1}
+.rr-cnode-tooltip .tt-title{font-family:var(--font-display);font-size:7px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em}
+.rr-cnode-tooltip .tt-opponent{color:var(--fg);font-family:var(--font-display);font-size:8px}
+.rr-cnode-tooltip .tt-targets{color:var(--gold-dim);font-size:14px}
+.rr-cnode-tooltip .tt-status{margin-top:2px}
+.rr-cnode-tooltip .tt-status.won{color:var(--accent)}
+.rr-cnode-tooltip .tt-status.lost{color:var(--danger)}
+.rr-cnode-tooltip .tt-status.current{color:var(--gold)}
+.rr-cnode-tooltip .tt-status.upcoming{color:var(--muted)}
+
+/* ─── Buttons ───────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-3) var(--space-6);border-radius:var(--radius-md);border:2px solid var(--border);font-family:var(--font-display);font-size:11px;text-transform:uppercase;letter-spacing:0.06em;transition:all var(--motion-fast) ease;cursor:pointer;user-select:none;text-shadow:0 0 6px currentColor}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:0 0 12px var(--accent-glow)}
+.btn-primary{background:var(--accent);color:var(--accent-on);border-color:var(--accent);box-shadow:0 0 16px var(--accent-glow),inset 0 0 8px rgba(255,255,255,0.1);text-shadow:none}
+.btn-primary:hover:not(:disabled){box-shadow:0 0 28px var(--accent-glow),0 0 60px rgba(57,255,20,0.15);background:#45ff20}
+.btn-lg{padding:var(--space-4) var(--space-8);font-size:13px}
+.rr-continue-area{display:flex;flex-direction:column;align-items:center;gap:var(--space-3);margin-top:var(--space-2)}
+.rr-continue-label{font-family:var(--font-display);font-size:7px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em}
+
+/* ─── Responsive ────────────────────────────────── */
+@media(max-width:768px){
+  .rr-scores{flex-direction:column;gap:var(--space-3);padding:var(--space-3)}
+  .rr-score-divider{display:none}.rr-score-card{min-width:80px}
+  .rr-cnode-dot{width:36px;height:36px}.rr-cnode-dot::after{font-size:14px!important}
+  .rr-cnode-dot .node-num{font-size:9px}.rr-cnode-connector{width:30px;min-width:20px}.rr-cnode-label{max-width:70px;font-size:6px}
+}
+@media(max-width:480px){
+  .rr-verdict{font-size:22px}.rr-score-value{font-size:32px}
+  .rr-cnode-dot{width:28px;height:28px}.rr-cnode-dot .node-num{font-size:7px}
+  .rr-cnode-connector{width:16px;min-width:12px}.rr-cnode-label{max-width:55px;font-size:5px}.rr-cnode-tooltip{display:none}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}}
+</style>
 </head>
 <body>
-  <section class="game-screen active" id="screen-round-result" data-od-id="round-result-screen">
-<div class="result-screen">
-      <div class="round-verdict" id="rr-verdict">Round Won</div>
-      <div class="round-scores">
-        <div class="round-score-card"><div class="round-score-label">Your Score</div><div class="round-score-value yours" id="rr-your-score">0</div></div>
-        <div class="round-score-card"><div class="round-score-label">Target</div><div class="round-score-value target" id="rr-target">0</div></div>
-      </div>
-      <div class="match-progress-rounds" id="rr-rounds"></div>
-      <div id="rr-message" style="font-family:var(--font-body);font-size:var(--text-xl);color:var(--fg-dim);margin-bottom:var(--space-6)"></div>
-      <button class="btn btn-primary btn-lg" id="rr-continue-btn">Continue ▸</button>
+
+<section class="game-screen" id="screen-round-result">
+  <div class="rr-wrap">
+
+    <!-- Verdict Banner -->
+    <div class="rr-verdict" id="rr-verdict">ROUND WON!</div>
+
+    <!-- Match context -->
+    <div class="rr-match-label" id="rr-match-label">
+      <span id="rr-match-stage">Group Stage</span> — <span class="rr-opponent-name" id="rr-opponent-name">vs Wolves FC</span>
     </div>
-  </section>
-  
-  <script src="../game-engine.js"></script>
-  <script src="../game-ui.js"></script>
+
+    <!-- Score Comparison -->
+    <div class="rr-scores" id="rr-scores">
+      <div class="rr-score-card">
+        <div class="rr-score-label">Your Score</div>
+        <div class="rr-score-value yours" id="rr-your-score">0</div>
+      </div>
+      <div class="rr-score-divider">:</div>
+      <div class="rr-score-card">
+        <div class="rr-score-label">Target</div>
+        <div class="rr-score-value target" id="rr-target">0</div>
+      </div>
+    </div>
+
+    <!-- Difference -->
+    <div class="rr-diff" id="rr-diff">+0 above target</div>
+
+    <!-- Round Progress Panel -->
+    <div class="rr-rounds-panel">
+      <div class="rr-rounds-title">Match Progress</div>
+      <div class="rr-rounds-list" id="rr-rounds-list"></div>
+    </div>
+
+    <!-- Campaign Map -->
+    <div class="rr-campaign">
+      <div class="rr-campaign-title">Campaign Progress</div>
+      <div class="rr-campaign-track" id="rr-campaign-track"></div>
+    </div>
+
+    <!-- Continue -->
+    <div class="rr-continue-area">
+      <button class="btn btn-primary btn-lg" id="rr-continue-btn">▶ CONTINUE</button>
+      <div class="rr-continue-label" id="rr-continue-label"></div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   SQUAD — Round Result Screen Logic
+   Reads from game engine G state with fallback demo data
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  'use strict';
+
+  var $ = function(id) { return document.getElementById(id); };
+
+  // ─── Data sources ──────────────────────────────────
+  var engineMode = (typeof G !== 'undefined' && G.roundResults && G.roundResults.length > 0);
+  var engineCampaign = (typeof window !== 'undefined' && window.CAMPAIGN_MATCHES) ? window.CAMPAIGN_MATCHES : [];
+  var engineAllPhases = (typeof window !== 'undefined' && window.ALL_PHASES) ? window.ALL_PHASES : [];
+
+  // ─── Campaign data (from engine or fallback) ────────
+  var campaignMatches = buildCampaignMatches();
+
+  function buildCampaignMatches() {
+    if (engineCampaign.length >= 5) return engineCampaign.slice();
+    // Fallback
+    return [
+      { name:'Group Stage', opponent:'Wolves FC', targets:[350,450,600] },
+      { name:'Round of 16', opponent:'Inter Your-Nan', targets:[450,580,750] },
+      { name:'Quarter Final', opponent:'Borussia Mönchen-flapjack', targets:[550,700,880] },
+      { name:'Semi Final', opponent:'Man City Oilers', targets:[650,800,1050] },
+      { name:'THE FINAL', opponent:'Galácticos FC', targets:[800,950,1200] }
+    ];
+  }
+
+  // ─── Build match results array ──────────────────────
+  function buildMatchResults() {
+    var results = [];
+    for (var mi = 0; mi < campaignMatches.length; mi++) {
+      if (engineMode) {
+        if (mi < G.matchIdx) {
+          // Past match — check G.matchResults
+          var mr = G.matchResults[mi];
+          if (mr) {
+            var rounds = [];
+            for (var ri = 0; ri < 3; ri++) {
+              rounds.push({ score: 0, target: campaignMatches[mi].targets[ri], won: ri < mr.roundsWon });
+            }
+            results.push(rounds);
+          } else {
+            results.push(null);
+          }
+        } else if (mi === G.matchIdx) {
+          // Current match — use G.roundResults
+          var rounds = [];
+          for (var ri = 0; ri < 3; ri++) {
+            if (ri < G.roundResults.length) {
+              var rr = G.roundResults[ri];
+              rounds.push({ score: rr.score, target: rr.target, won: rr.won });
+            } else {
+              rounds.push(null);
+            }
+          }
+          results.push(rounds);
+        } else {
+          results.push(null); // Future match
+        }
+      } else {
+        // Demo data
+        if (mi === 0) {
+          results.push([
+            { score:487, target:350, won:true },
+            { score:512, target:450, won:true },
+            { score:638, target:600, won:true }
+          ]);
+        } else if (mi === 1) {
+          results.push([
+            { score:520, target:450, won:true },
+            { score:610, target:580, won:true },
+            { score:720, target:750, won:false }
+          ]);
+        } else {
+          results.push(null);
+        }
+      }
+    }
+    return results;
+  }
+
+  var matchResults = buildMatchResults();
+  var currentMatchIdx = engineMode ? G.matchIdx : 1;
+  var currentRoundIdx = engineMode ? G.roundIdx : 2;
+
+  // ─── Get current round info ────────────────────────
+  function getCurrentRoundInfo() {
+    var mr = matchResults[currentMatchIdx];
+    var ri = Math.min(currentRoundIdx, 2);
+    if (mr && mr[ri]) return mr[ri];
+    if (mr && mr.length > 0) {
+      // Find last non-null
+      for (var i = mr.length - 1; i >= 0; i--) { if (mr[i]) return mr[i]; }
+    }
+    return null;
+  }
+
+  var roundInfo = getCurrentRoundInfo();
+  // Explicitly use the last completed round result for the verdict
+  var roundWon, yourScore, targetScore;
+  if (engineMode && G.roundResults && G.roundResults.length > 0) {
+    var lastRR = G.roundResults[G.roundResults.length - 1];
+    roundWon = lastRR.won;
+    yourScore = lastRR.score;
+    targetScore = lastRR.target;
+  } else {
+    roundWon = roundInfo ? roundInfo.won : false;
+    yourScore = roundInfo ? roundInfo.score : 0;
+    targetScore = roundInfo ? roundInfo.target : campaignMatches[currentMatchIdx].targets[currentRoundIdx] || 0;
+  }
+
+  // ─── Count-up animation ────────────────────────────
+  function animateCountUp(el, targetValue, duration) {
+    duration = duration || 500;
+    var start = performance.now();
+    function tick(now) {
+      var elapsed = now - start;
+      var progress = Math.min(elapsed / duration, 1);
+      var eased = 1 - (1 - progress) * (1 - progress);
+      el.textContent = Math.floor(eased * targetValue).toLocaleString();
+      if (progress < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        el.textContent = targetValue.toLocaleString();
+      }
+    }
+    el.textContent = '0';
+    el.classList.add('animating');
+    requestAnimationFrame(tick);
+  }
+
+  // ─── Render ────────────────────────────────────────
+  function render() {
+    var match = campaignMatches[currentMatchIdx];
+    var diff = yourScore - targetScore;
+
+    // Verdict
+    var verdictEl = $('rr-verdict');
+    verdictEl.textContent = roundWon ? 'ROUND WON!' : 'ROUND LOST';
+    verdictEl.className = 'rr-verdict ' + (roundWon ? 'won' : 'lost');
+    verdictEl.style.animation = 'none';
+    void verdictEl.offsetHeight;
+    verdictEl.style.animation = '';
+
+    // Match context
+    $('rr-match-stage').textContent = match.name || 'Match';
+    $('rr-opponent-name').textContent = 'vs ' + (match.opponent || '???');
+
+    // Scores
+    animateCountUp($('rr-your-score'), yourScore, 500);
+    animateCountUp($('rr-target'), targetScore, 500);
+
+    // Difference
+    var diffEl = $('rr-diff');
+    if (diff >= 0) {
+      diffEl.textContent = '+' + diff.toLocaleString() + ' above target';
+      diffEl.className = 'rr-diff won';
+    } else {
+      diffEl.textContent = diff.toLocaleString() + ' below target';
+      diffEl.className = 'rr-diff lost';
+    }
+
+    // Round Progress Panel
+    var roundsList = $('rr-rounds-list');
+    roundsList.innerHTML = '';
+    var mr = matchResults[currentMatchIdx];
+    var numLabels = ['First Round', 'Second Round', 'Third Round'];
+
+    if (mr) {
+      for (var ri = 0; ri < mr.length; ri++) {
+        var r = mr[ri];
+        var item = document.createElement('div');
+        item.className = 'rr-round-item';
+
+        var statusClass, statusText;
+        if (ri === currentRoundIdx) {
+          statusClass = 'current'; statusText = '●';
+        } else if (r === null) {
+          statusClass = 'upcoming'; statusText = '○';
+        } else if (r.won) {
+          statusClass = 'won'; statusText = '✓';
+        } else {
+          statusClass = 'lost'; statusText = '✗';
+        }
+
+        if (ri === currentRoundIdx) item.classList.add('current');
+        else if (r && r.won) item.classList.add('won');
+        else if (r && !r.won) item.classList.add('lost');
+
+        var itemDiff = r ? (r.score - r.target) : 0;
+        item.innerHTML =
+          '<span class="rr-round-status ' + statusClass + '">' + statusText + '</span>' +
+          '<span class="rr-round-num">' + (numLabels[ri] || 'Round ' + (ri+1)) + '</span>' +
+          '<span class="rr-round-score">' +
+            (r ? '<span class="accent">' + r.score.toLocaleString() + '</span> <span class="target">/ ' + r.target.toLocaleString() + '</span>' : '<span class="target">—</span>') +
+            (r && ri === currentRoundIdx ? '<span class="diff-' + (itemDiff >= 0 ? 'won' : 'lost') + '"> (' + (itemDiff >= 0 ? '+' : '') + itemDiff.toLocaleString() + ')</span>' : '') +
+          '</span>';
+        roundsList.appendChild(item);
+      }
+    }
+
+    // Campaign Map
+    var track = $('rr-campaign-track');
+    track.innerHTML = '';
+
+    for (var mi = 0; mi < campaignMatches.length; mi++) {
+      var cm = campaignMatches[mi];
+      var status = getNodeStatus(mi);
+      var isCurrentMatch = mi === currentMatchIdx;
+
+      var node = document.createElement('div');
+      node.className = 'rr-cnode';
+
+      var targetsStr = cm.targets.join(' / ');
+      var matchRounds = matchResults[mi];
+      var tooltipRoundsHtml = '';
+      if (matchRounds) {
+        tooltipRoundsHtml = '<div style="font-size:11px;color:var(--fg-dim)">Rounds: ' +
+          matchRounds.map(function(rr, ri) {
+            return rr ? '<span style="color:' + (rr.won ? 'var(--accent)' : 'var(--danger)') + '">R' + (ri+1) + ': ' + rr.score + '/' + rr.target + '</span>' :
+              '<span style="color:var(--muted)">R' + (ri+1) + ': —</span>';
+          }).join(' · ') + '</div>';
+      }
+
+      node.innerHTML =
+        '<div class="rr-cnode-dot ' + status.dotClass + '" tabindex="0">' +
+          '<span class="node-num">' + (mi + 1) + '</span>' +
+        '</div>' +
+        '<div class="rr-cnode-tooltip">' +
+          '<div class="tt-title">' + cm.name + '</div>' +
+          '<div class="tt-opponent">vs ' + cm.opponent + '</div>' +
+          '<div class="tt-targets">Targets: ' + targetsStr + '</div>' +
+          '<div class="tt-status ' + status.dotClass + '">' + status.statusLabel + '</div>' +
+          tooltipRoundsHtml +
+        '</div>' +
+        '<div class="rr-cnode-label">' +
+          '<span class="' + (isCurrentMatch ? 'highlight' : '') + '">' + cm.name + '</span>' +
+        '</div>' +
+        '<div class="rr-cnode-status ' + status.dotClass + '">' + status.statusLabel + '</div>';
+
+      track.appendChild(node);
+
+      // Connector
+      if (mi < campaignMatches.length - 1) {
+        var connector = document.createElement('div');
+        connector.className = 'rr-cnode-connector';
+        if (status.connectorDone) {
+          connector.classList.add('done');
+          if (status.connectorLost) connector.classList.add('lost');
+        }
+        if (status.connectorActive) connector.classList.add('active');
+        track.appendChild(connector);
+      }
+    }
+
+    // Continue button
+    var btn = $('rr-continue-btn');
+    var label = $('rr-continue-label');
+
+    var matchOver = mr && mr.every(function(r) { return r !== null; });
+    var campaignOver = matchResults.every(function(r) { return r !== null; });
+
+    btn.textContent = '▶ CONTINUE';
+
+    if (campaignOver) {
+      label.textContent = 'All matches complete!';
+    } else if (matchOver) {
+      label.textContent = 'Match complete! Advance to next opponent';
+    } else {
+      label.textContent = 'Continue to next round';
+    }
+
+    btn.onclick = function() {
+      if (engineMode) {
+        G.roundIdx += 1;
+
+        if (G.roundIdx < 3) {
+          // More rounds — go to shop; shop will start the next round
+          G.phaseIdx = 0;
+          if (typeof saveGame === 'function') saveGame();
+          if (window.Game) {
+            window.Game.transition = 'slide-left';
+            window.Game.navigate('shop');
+          } else {
+            window.location.href = 'shop.html';
+          }
+        } else {
+          // All 3 rounds done — finish match and follow the engine's return value
+          var matchOutcome = (typeof finishMatch === 'function') ? finishMatch() : 'campaign-won';
+          if (typeof saveGame === 'function') saveGame();
+          if (window.Game) {
+            window.Game.transition = 'slide-left';
+            if (matchOutcome === 'next-match') {
+              // Next opponent: reset round counter and go to shop before the next match flow begins
+              G.roundIdx = 0;
+              G.phaseIdx = 0;
+              window.Game.navigate('shop');
+            } else {
+              window.Game.navigate('campaign-complete');
+            }
+          } else {
+            window.location.href = (matchOutcome === 'next-match') ? 'shop.html' : 'campaign-complete.html';
+          }
+        }
+      } else {
+        // Demo mode: restart animation
+        $('rr-your-score').textContent = '0';
+        $('rr-target').textContent = '0';
+        setTimeout(function() {
+          animateCountUp($('rr-your-score'), yourScore, 500);
+          animateCountUp($('rr-target'), targetScore, 500);
+        }, 100);
+      }
+    };
+  }
+
+  // ─── Campaign node status ──────────────────────────
+  function getNodeStatus(mi) {
+    var mr = matchResults[mi];
+    var isFullyComplete = mr && mr.every(function(r) { return r !== null; });
+    var isPast = isFullyComplete && mi < currentMatchIdx;
+    var isCurrent = mi === currentMatchIdx;
+    var isFuture = mi > currentMatchIdx;
+
+    var dotClass, statusLabel;
+    var matchWon = false, matchLost = false;
+
+    if (isFullyComplete) {
+      var wonCount = mr.filter(function(r) { return r && r.won; }).length;
+      matchWon = wonCount >= 2;
+      matchLost = !matchWon;
+      dotClass = matchWon ? 'won' : 'lost';
+      statusLabel = matchWon ? 'WON ✓' : 'LOST ✗';
+    } else if (mi === currentMatchIdx) {
+      dotClass = 'current';
+      statusLabel = 'PLAYING ●';
+    } else {
+      dotClass = 'upcoming';
+      statusLabel = 'UPCOMING ○';
+    }
+
+    var connectorDone = false, connectorLost = false, connectorActive = false;
+    if (mi < campaignMatches.length - 1) {
+      if (isFullyComplete) {
+        connectorDone = true;
+        if (matchLost) connectorLost = true;
+      }
+      if (mi === currentMatchIdx && isFullyComplete && (!matchResults[mi + 1] || matchResults[mi + 1].every(function(r){return r===null;}))) {
+        connectorActive = true;
+      }
+    }
+
+    return { dotClass: dotClass, statusLabel: statusLabel, matchWon: matchWon, matchLost: matchLost,
+      connectorDone: connectorDone, connectorLost: connectorLost, connectorActive: connectorActive };
+  }
+
+  // ─── Init ──────────────────────────────────────────
+  if (document.readyState !== 'loading') render();
+  else document.addEventListener('DOMContentLoaded', render);
+
+  // Expose for external use
+  window.renderRoundResult = render;
+
+})();
+</script>
 </body>
 </html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Squad — Match Phase</title>
+<style>
+:root{--bg:#161120;--bg2:#0d0a18;--surf:#231a3a;--surf2:#2e2250;--fg:#f0ecf8;--fg2:#c8b8e0;--mut:#9a8ab0;--acc:#39ff14;--acc2:#2bcc10;--gold:#ffd700;--danger:#ff3344;--info:#00ccff;--purple:#c084fc;--atk:#ff3344;--pac:#ffd700;--pas:#00ccff;--def:#39ff14;--spc:#c084fc;--bord:#3d2d5c}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font:18px 'VT323',monospace;min-height:100dvh;overflow-x:hidden}
+.display{font:11px 'Press Start 2P',monospace;text-transform:uppercase;letter-spacing:.05em}
+
+.top-bar{display:flex;justify-content:center;align-items:center;gap:30px;padding:14px 16px 8px;border-bottom:2px solid var(--bord)}
+.top-bar .team{text-align:center}
+.top-bar .team .name{font:12px 'Press Start 2P',monospace;color:var(--acc)}
+.top-bar .team .score{font:28px 'VT323',monospace;color:var(--fg);margin-top:4px}
+.top-bar .vs{font:10px 'Press Start 2P',monospace;color:var(--mut)}
+.top-bar .target{font:14px 'VT323',monospace;color:var(--gold)}
+
+.phase-info{text-align:center;padding:10px 16px;background:var(--surf);border-bottom:1px solid var(--bord)}
+.phase-info .icon{font-size:24px}
+.phase-info .name{font:14px 'Press Start 2P',monospace;color:var(--acc);margin-top:2px}
+.phase-info .slots{color:var(--fg2);margin-top:4px}
+.phase-info .tag{display:inline-block;padding:2px 8px;border-radius:3px;font:11px 'Press Start 2P',monospace;margin-top:4px}
+
+.score-bar{display:flex;justify-content:center;gap:20px;padding:10px 16px;background:var(--bg2);border-bottom:1px solid var(--bord)}
+.score-bar .stat{text-align:center}
+.score-bar .stat .val{font:22px 'VT323',monospace}
+.score-bar .stat .lbl{font:9px 'Press Start 2P',monospace;color:var(--mut)}
+.score-bar .total .val{font:36px 'VT323',monospace;color:var(--acc)}
+
+.pitch{display:flex;justify-content:center;gap:12px;padding:20px 16px;flex-wrap:wrap;min-height:120px}
+.pitch .slot{width:100px;min-height:90px;border:2px dashed var(--bord);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;text-align:center}
+.pitch .slot:hover{border-color:var(--acc);border-style:solid;box-shadow:0 0 12px rgba(57,255,20,.2)}
+.pitch .slot.filled{border-color:var(--gold);border-style:solid;background:var(--surf)}
+.pitch .slot .empty{color:var(--mut);font-size:11px}
+.pitch .slot .pname{color:var(--acc);font:15px 'VT323',monospace}
+.pitch .slot .ppos{font:12px 'VT323',monospace;color:var(--fg2)}
+.pitch .slot .pchips{font:11px 'VT323',monospace;color:var(--gold)}
+
+.actions{display:flex;justify-content:center;gap:10px;padding:12px 16px}
+.actions button{padding:10px 20px;border:2px solid var(--acc);background:var(--surf);color:var(--acc);font:16px 'VT323',monospace;cursor:pointer;border-radius:6px;transition:all .15s}
+.actions button:hover{background:var(--acc);color:var(--bg)}
+.actions button:disabled{opacity:.35;cursor:not-allowed}
+.actions button.primary{border-color:var(--gold);color:var(--gold)}
+.actions button.primary:hover{background:var(--gold);color:var(--bg)}
+.actions button.danger{border-color:var(--danger);color:var(--danger)}
+
+/* ============= MODAL =============== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:flex;align-items:center;justify-content:center}
+.modal-overlay.hidden{display:none}
+.modal{background:var(--bg);border:2px solid var(--bord);border-radius:10px;max-width:600px;width:95%;max-height:80vh;overflow:hidden;display:flex;flex-direction:column}
+.modal-header{padding:12px 16px;background:var(--surf2);border-bottom:2px solid var(--bord);display:flex;justify-content:space-between;align-items:center}
+.modal-header h3{font:12px 'Press Start 2P',monospace;color:var(--acc)}
+.modal-header .close{background:none;border:none;color:var(--mut);font-size:20px;cursor:pointer}
+.modal-body{overflow-y:auto;padding:10px}
+.modal-body table{width:100%;border-collapse:collapse}
+.modal-body th{font:10px 'Press Start 2P',monospace;color:var(--mut);padding:8px 6px;text-align:center;border-bottom:1px solid var(--bord);position:sticky;top:0;background:var(--bg)}
+.modal-body td{padding:8px 6px;text-align:center;font:16px 'VT323',monospace;border-bottom:1px solid var(--bord)}
+.modal-body tr:hover td{background:var(--surf);cursor:pointer}
+.modal-body tr.selected td{background:var(--surf2);border-color:var(--acc)}
+.modal-body .stat-atk{color:var(--atk)}
+.modal-body .stat-pac{color:var(--pac)}
+.modal-body .stat-pas{color:var(--pas)}
+.modal-body .stat-def{color:var(--def)}
+.modal-body .stat-spc{color:var(--spc)}
+.modal-body .fatigue-ok{color:var(--acc)}
+.modal-body .fatigue-warn{color:var(--gold)}
+.modal-body .fatigue-tired{color:var(--danger)}
+.modal-body .points{color:var(--gold);font-weight:bold}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="team"><div class="name">YOU</div><div class="score" id="scoreYou">0</div></div>
+  <div class="vs">VS</div>
+  <div class="team"><div class="name" id="oppName">AFC RAVENS</div><div class="score" id="scoreOpp">0</div></div>
+  <div class="target" id="matchInfo">Match 1/5</div>
+</div>
+
+<div class="phase-info">
+  <div class="icon" id="phaseIcon">🥅</div>
+  <div class="name" id="phaseName">Goal Kick</div>
+  <div class="slots" id="phaseSlots">Slots: GK · CB · CB</div>
+  <span class="tag" id="phaseTag" style="background:var(--def)22;color:var(--def)">DEFENSIVE</span>
+</div>
+
+<div class="score-bar">
+  <div class="stat"><div class="val" id="chipsVal" style="color:var(--gold)">0</div><div class="lbl">CHIPS</div></div>
+  <div class="stat"><div class="val" id="addMultVal">+0</div><div class="lbl">ADD</div></div>
+  <div class="stat"><div class="val" id="xMultVal" style="color:var(--purple)">×1.0</div><div class="lbl">×MULT</div></div>
+  <div class="stat total"><div class="val" id="totalVal">0</div><div class="lbl">TOTAL</div></div>
+</div>
+
+<div class="pitch" id="pitchSlots"></div>
+
+<div class="actions">
+  <button onclick="autoFillAll()">⟳ AUTO-FILL</button>
+  <button class="danger" onclick="clearAllSlots()">✕ CLEAR</button>
+  <button class="primary" onclick="submitPhaseHandler()" id="submitBtn" disabled>⚡ SUBMIT PHASE</button>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay hidden" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">SELECT PLAYER</h3>
+      <button class="close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <table>
+        <thead>
+          <tr>
+            <th>NAME</th>
+            <th>POS</th>
+            <th>OVR</th>
+            <th class="stat-atk">ATK</th>
+            <th class="stat-pac">PAC</th>
+            <th class="stat-pas">PAS</th>
+            <th class="stat-def">DEF</th>
+            <th class="stat-spc">SPC</th>
+            <th>FATIGUE</th>
+            <th>PTS</th>
+          </tr>
+        </thead>
+        <tbody id="modalBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== LOAD PLAYERS FROM ENGINE =====
+var squadIds = (typeof G !== 'undefined' && G.selectedIds && G.selectedIds.length > 0) ? G.selectedIds : [];
+var enginePlayers = window.PLAYERS || [];
+
+// Convert to unified format
+function toScreen(p) {
+  return {
+    id: p.id, name: p.name,
+    pos: p.position || p.pos || 'CM',
+    atk: p.atk || 5, pac: p.pac || 5, pas: p.pas || 5,
+    def: p.def_ || p.def || 5, spc: p.spc || 5,
+    ovr: p.ovr || Math.round(((p.atk||5)+(p.pac||5)+(p.pas||5)+((p.def_||p.def||5))+(p.spc||5))/5),
+    fatigue: (typeof G !== 'undefined' && G.fatigue && G.fatigue[p.id]) || p.fatigue || 1.0,
+    traits: p.traits || []
+  };
+}
+
+var ALL_PLAYERS = enginePlayers.map(toScreen);
+
+// Filter to squad
+if (squadIds.length > 0) {
+  var squadSet = {};
+  for (var i = 0; i < squadIds.length; i++) squadSet[squadIds[i]] = true;
+  ALL_PLAYERS = ALL_PLAYERS.filter(function(p) { return squadSet[p.id]; });
+}
+
+// Fallback demo if empty
+if (ALL_PLAYERS.length === 0) {
+  ALL_PLAYERS = [
+    {id:'d1',name:'Glove Garcia',pos:'GK',atk:22,pac:28,pas:40,def:75,spc:80,ovr:74,fatigue:.92,traits:[]},
+    {id:'d2',name:'Stone Wall',pos:'CB',atk:35,pac:55,pas:50,def:85,spc:40,ovr:82,fatigue:.85,traits:[]},
+    {id:'d3',name:'Flash Felipe',pos:'FB',atk:55,pac:82,pas:58,def:68,spc:35,ovr:78,fatigue:.80,traits:[]},
+    {id:'d4',name:'Midfield Max',pos:'CM',atk:55,pac:58,pas:72,def:50,spc:48,ovr:79,fatigue:.90,traits:[]},
+    {id:'d5',name:'Magic Marco',pos:'CAM',atk:65,pac:60,pas:75,def:30,spc:68,ovr:80,fatigue:.85,traits:[]},
+    {id:'d6',name:'Wingy Winger',pos:'LW',atk:72,pac:85,pas:58,def:22,spc:45,ovr:80,fatigue:.88,traits:[]},
+    {id:'d7',name:'Salah Clone',pos:'RW',atk:74,pac:86,pas:60,def:24,spc:48,ovr:82,fatigue:.82,traits:[]},
+    {id:'d8',name:'Striker Sam',pos:'ST',atk:82,pac:72,pas:45,def:18,spc:50,ovr:84,fatigue:.78,traits:[]},
+    {id:'d9',name:'Shield Shaun',pos:'CDM',atk:45,pac:55,pas:62,def:74,spc:42,ovr:78,fatigue:.89,traits:[]},
+    {id:'d10',name:'Basti Bastille',pos:'CB',atk:38,pac:50,pas:52,def:82,spc:38,ovr:80,fatigue:.93,traits:[]},
+    {id:'d11',name:'Finn Finisher',pos:'ST',atk:80,pac:68,pas:44,def:22,spc:52,ovr:81,fatigue:.92,traits:[]}
+  ];
+}
+
+// ===== PHASE CONFIG =====
+var phaseSlots = ['GK','CB','CB']; // default
+var phaseName = 'Goal Kick';
+var phaseIcon = '🥅';
+var phaseTag = 'DEFENSIVE';
+var phaseTagColor = '#39ff14';
+
+// Try to get phase from engine
+if (typeof G !== 'undefined' && G.pickedPhases && G.pickedPhases.length > 0) {
+  var pid = G.pickedPhases[G.phaseIdx || 0];
+  if (pid && window.ALL_PHASES) {
+    for (var i = 0; i < window.ALL_PHASES.length; i++) {
+      if (window.ALL_PHASES[i].id === pid) {
+        var ep = window.ALL_PHASES[i];
+        phaseName = ep.name || phaseName;
+        phaseSlots = (ep.slots || ['GK','CB','CB']).map(function(s){return typeof s==='string'?s:s[0]});
+        phaseTag = (ep.tag || ep.weight || 'DEF').toUpperCase();
+        break;
+      }
+    }
+  }
+}
+
+// ===== STATE =====
+var slots = []; // each: {playerId: null|string}
+for (var i = 0; i < phaseSlots.length; i++) slots.push({playerId:null});
+var activeSlotIdx = -1;
+
+// ===== CHIPS FORMULA =====
+function calcChipsForSlot(playerId, slotPos) {
+  var p = null;
+  for (var i = 0; i < ALL_PLAYERS.length; i++) { if (ALL_PLAYERS[i].id === playerId) { p = ALL_PLAYERS[i]; break; } }
+  if (!p) return 0;
+  var w = {GK:[0,0,0,3,1],CB:[0,2,1,3,0],FB:[0,3,1,2,0],CDM:[1,0,3,2,0],CM:[2,0,3,1,0],CAM:[2,0,3,0,1],LW:[2,3,1,0,0],RW:[2,3,1,0,0],ST:[4,2,0,0,1]};
+  var ww = w[slotPos] || [2,1,1,1,0];
+  return Math.round(p.atk*ww[0] + p.pac*ww[1] + p.pas*ww[2] + p.def*ww[3] + p.spc*ww[4]) * p.fatigue;
+}
+
+// ===== RENDER =====
+function renderPitch() {
+  var container = document.getElementById('pitchSlots');
+  container.innerHTML = '';
+  for (var i = 0; i < phaseSlots.length; i++) {
+    var slot = document.createElement('div');
+    slot.className = 'slot';
+    var playerId = slots[i] ? slots[i].playerId : null;
+    if (playerId) {
+      slot.className += ' filled';
+      var p = null;
+      for (var j = 0; j < ALL_PLAYERS.length; j++) { if (ALL_PLAYERS[j].id === playerId) { p = ALL_PLAYERS[j]; break; } }
+      var chips = calcChipsForSlot(playerId, phaseSlots[i]);
+      slot.innerHTML = '<div class="pname">' + (p?p.name:'?') + '</div>' +
+        '<div class="ppos">' + (p?p.pos:'?') + '</div>' +
+        '<div class="pchips">+' + Math.round(chips) + ' pts</div>';
+    } else {
+      slot.innerHTML = '<div class="empty">' + phaseSlots[i] + '</div><div class="empty">tap to fill</div>';
+    }
+    slot.onclick = function(idx) { return function() {
+      if (slots[idx] && slots[idx].playerId) { slots[idx].playerId = null; renderPitch(); updateScore(); updateSubmit(); return; }
+      openModal(idx);
+    };}(i);
+    container.appendChild(slot);
+  }
+  updateScore();
+  updateSubmit();
+}
+
+function updateScore() {
+  var chips = 0;
+  for (var i = 0; i < slots.length; i++) {
+    if (slots[i] && slots[i].playerId) chips += calcChipsForSlot(slots[i].playerId, phaseSlots[i]);
+  }
+  var filled = slots.filter(function(s){return s&&s.playerId;}).length;
+  var xMult = 1.0;
+  if (filled === phaseSlots.length) xMult = 1.5;
+  if (filled >= 2) xMult = 1.25;
+  var total = Math.round(chips * xMult);
+  document.getElementById('chipsVal').textContent = Math.round(chips);
+  document.getElementById('xMultVal').textContent = '×' + xMult.toFixed(2);
+  document.getElementById('totalVal').textContent = total;
+  document.getElementById('addMultVal').textContent = '+0';
+}
+
+function updateSubmit() {
+  var filled = slots.filter(function(s){return s&&s.playerId;}).length;
+  document.getElementById('submitBtn').disabled = filled < 1;
+}
+
+// ===== MODAL =====
+function openModal(slotIdx) {
+  activeSlotIdx = slotIdx;
+  var slotPos = phaseSlots[slotIdx];
+  document.getElementById('modalTitle').textContent = 'SELECT FOR ' + slotPos + ' SLOT';
+  
+  var tbody = document.getElementById('modalBody');
+  tbody.innerHTML = '';
+  
+  // Build sorted list: best fit first
+  var players = ALL_PLAYERS.slice();
+  var usedIds = {};
+  for (var i = 0; i < slots.length; i++) { if (slots[i] && slots[i].playerId) usedIds[slots[i].playerId] = true; }
+  
+  players.sort(function(a,b) {
+    var ca = calcChipsForSlot(a.id, slotPos);
+    var cb = calcChipsForSlot(b.id, slotPos);
+    return cb - ca; // highest points first
+  });
+  
+  for (var i = 0; i < players.length; i++) {
+    var p = players[i];
+    var chips = calcChipsForSlot(p.id, slotPos);
+    var fatigueClass = p.fatigue >= 0.9 ? 'fatigue-ok' : p.fatigue >= 0.8 ? 'fatigue-warn' : 'fatigue-tired';
+    var alreadyUsed = usedIds[p.id];
+    
+    var tr = document.createElement('tr');
+    if (alreadyUsed) tr.style.opacity = '0.3';
+    tr.innerHTML = 
+      '<td title="' + (p.traits||[]).join(', ') + '">' + p.name + '</td>' +
+      '<td>' + p.pos + '</td>' +
+      '<td style="font-weight:bold">' + p.ovr + '</td>' +
+      '<td class="stat-atk">' + p.atk + '</td>' +
+      '<td class="stat-pac">' + p.pac + '</td>' +
+      '<td class="stat-pas">' + p.pas + '</td>' +
+      '<td class="stat-def">' + p.def + '</td>' +
+      '<td class="stat-spc">' + p.spc + '</td>' +
+      '<td class="' + fatigueClass + '">' + Math.round(p.fatigue*100) + '%</td>' +
+      '<td class="points">+' + Math.round(chips) + '</td>';
+    
+    if (!alreadyUsed) {
+      tr.onclick = function(pid) { return function() {
+        slots[activeSlotIdx] = {playerId: pid};
+        renderPitch();
+        closeModal();
+      };}(p.id);
+    }
+    tbody.appendChild(tr);
+  }
+  
+  document.getElementById('modalOverlay').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  activeSlotIdx = -1;
+}
+
+// ===== ACTIONS =====
+function autoFillAll() {
+  var used = {};
+  for (var i = 0; i < slots.length; i++) { if (slots[i] && slots[i].playerId) used[slots[i].playerId] = true; }
+  for (var i = 0; i < slots.length; i++) {
+    if (!slots[i] || !slots[i].playerId) {
+      var best = null, bestChips = -1;
+      for (var j = 0; j < ALL_PLAYERS.length; j++) {
+        if (used[ALL_PLAYERS[j].id]) continue;
+        var chips = calcChipsForSlot(ALL_PLAYERS[j].id, phaseSlots[i]);
+        if (chips > bestChips) { bestChips = chips; best = ALL_PLAYERS[j]; }
+      }
+      if (best) { slots[i] = {playerId: best.id}; used[best.id] = true; }
+    }
+  }
+  renderPitch();
+}
+
+function clearAllSlots() {
+  for (var i = 0; i < slots.length; i++) slots[i] = {playerId:null};
+  renderPitch();
+}
+
+function submitPhaseHandler() {
+  // Build field array from filled slots
+  var filled = [];
+  for (var i = 0; i < slots.length; i++) {
+    if (slots[i] && slots[i].playerId) filled.push({playerId: slots[i].playerId, slotId: phaseSlots[i]});
+  }
+  if (filled.length === 0) return;
+  
+  // Use engine's submitPhase which handles scoring, roundScore, phaseIdx, fatigue
+  if (typeof G !== 'undefined' && typeof submitPhase === 'function') {
+    var result = submitPhase(filled);
+    // Engine already set: G.roundScore, G.phaseIdx, G.phaseResults, G.field, fatigue
+    var total = result.score;
+  } else {
+    // Fallback: manual scoring
+    var chips = 0;
+    for (var i = 0; i < filled.length; i++) {
+      for (var j = 0; j < phaseSlots.length; j++) {
+        if (slots[j] && slots[j].playerId === filled[i].playerId) {
+          chips += calcChipsForSlot(filled[i].playerId, phaseSlots[j]);
+          break;
+        }
+      }
+    }
+    var xMult = filled.length === phaseSlots.length ? 1.5 : filled.length >= 2 ? 1.25 : 1.0;
+    var total = Math.round(chips * xMult);
+    if (typeof G !== 'undefined') {
+      if (!G.phaseResults) G.phaseResults = [];
+      G.phaseResults.push({score: total, chips: chips, xMult: xMult, field: filled});
+      G.roundScore = (G.roundScore || 0) + total;
+      G.phaseIdx = (G.phaseIdx || 0) + 1;
+    }
+  }
+  
+  if (typeof saveGame === 'function') saveGame();
+  
+  if (window.Game) {
+    Game.transition = 'slide-left';
+    Game.navigate('phase-result');
+  } else {
+    alert('Phase scored: ' + total + ' points!');
+  }
+}
+
+// ===== INIT =====
+(function initPhaseUI() {
+  document.getElementById('phaseName').textContent = phaseName;
+  document.getElementById('phaseIcon').textContent = phaseIcon;
+  document.getElementById('phaseSlots').textContent = 'Slots: ' + phaseSlots.join(' · ');
+  document.getElementById('phaseTag').textContent = phaseTag;
+  
+  // Match info
+  if (typeof G !== 'undefined' && G.matchResults) {
+    document.getElementById('matchInfo').textContent = 'Match ' + ((G.matchIdx||0)+1) + '/5';
+  }
+  
+  renderPitch();
+})();
+
+// Close modal on overlay click
+document.getElementById('modalOverlay').onclick = function(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+};
+
+// Setup screen hook for SPA
+window.setupScreen = function(screenId) {
+  if (screenId === 'match') {
+    // Re-init phase from G state
+    if (typeof G !== 'undefined' && G.pickedPhases && G.pickedPhases.length > 0) {
+      var pid = G.pickedPhases[G.phaseIdx || 0];
+      if (pid && window.ALL_PHASES) {
+        for (var i = 0; i < window.ALL_PHASES.length; i++) {
+          if (window.ALL_PHASES[i].id === pid) {
+            var ep = window.ALL_PHASES[i];
+            phaseName = ep.name;
+            phaseSlots = (ep.slots||['GK','CB','CB']).map(function(s){return typeof s==='string'?s:s[0]});
+            if (ep.icon) phaseIcon = ep.icon;
+            phaseTag = (ep.tag || ep.weight || 'DEF').toUpperCase();
+            break;
+          }
+        }
+      }
+    }
+    slots = [];
+    for (var i = 0; i < phaseSlots.length; i++) slots.push({playerId:null});
+    document.getElementById('phaseName').textContent = phaseName;
+    document.getElementById('phaseIcon').textContent = phaseIcon;
+    document.getElementById('phaseSlots').textContent = 'Slots: ' + phaseSlots.join(' · ');
+    document.getElementById('phaseTag').textContent = phaseTag;
+    // Update match info
+    if (typeof G !== 'undefined' && G.matchResults) {
+      document.getElementById('matchInfo').textContent = 'Match ' + ((G.matchIdx||0)+1) + '/5';
+    }
+    renderPitch();
+  }
+};
+</script>
+</body>
+</html>

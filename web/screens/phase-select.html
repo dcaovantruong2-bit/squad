@@ -1,103 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SQUAD -- Phase Select Screen</title>
-  <link rel="stylesheet" href="../game.css">
-  <style>
-    .game-screen { display: none; min-height: 100vh; padding: var(--space-6) var(--space-4); max-width: 1200px; margin: 0 auto; }
-    .game-screen.active { display: block; }
-  </style>
+<meta charset="UTF-8">
+<title>Squad — Pick Your Phases</title>
+<style>
+:root{--bg:#161120;--bg2:#0d0a18;--surf:#231a3a;--surf2:#2e2250;--fg:#f0ecf8;--fg2:#c8b0e0;--mut:#9a8ab0;--acc:#39ff14;--acc2:#2bcc10;--gold:#ffd700;--danger:#ff3344;--info:#00ccff;--purple:#c084fc;--bord:#3d2d5c}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font:18px 'VT323',monospace;min-height:100dvh}
+.display{font:11px 'Press Start 2P',monospace;text-transform:uppercase;letter-spacing:.05em}
+.header{text-align:center;padding:20px 16px 10px;border-bottom:2px solid var(--bord)}
+.header h1{font:14px 'Press Start 2P',monospace;color:var(--acc)}
+.header p{color:var(--mut);margin-top:6px}
+.selection{margin-top:10px;color:var(--gold);font-size:16px}
+.info{text-align:center;padding:6px;color:var(--mut);font-size:14px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;padding:16px;max-width:700px;margin:0 auto}
+.card{background:var(--surf);border:2px solid var(--bord);border-radius:8px;padding:12px;cursor:pointer;transition:all .15s;text-align:center}
+.card:hover{border-color:var(--acc);box-shadow:0 0 10px rgba(57,255,20,.15)}
+.card.picked{border-color:var(--gold);background:var(--surf2);opacity:.5;pointer-events:none}
+.card .c-icon{font-size:28px;margin-bottom:4px}
+.card .c-name{font:13px 'Press Start 2P',monospace;color:var(--acc)}
+.card .c-slots{font-size:13px;color:var(--fg2);margin-top:4px}
+.card .c-desc{font-size:13px;color:var(--mut);margin-top:4px}
+.card .c-cat{padding:2px 8px;border-radius:3px;font:9px 'Press Start 2P',monospace;display:inline-block;margin-top:6px}
+
+.bar{display:flex;align-items:center;justify-content:center;gap:12px;padding:12px 16px;flex-wrap:wrap;background:var(--surf);border-top:1px solid var(--bord);border-bottom:1px solid var(--bord)}
+.bar .selected-phase{background:var(--surf2);border:1px solid var(--gold);border-radius:6px;padding:8px 12px;font-size:14px}
+.bar .selected-phase .sp-name{color:var(--gold)}
+.bar .selected-phase .sp-slots{color:var(--mut);font-size:12px}
+.bar .arrow{color:var(--acc);font-size:20px}
+
+.actions{display:flex;justify-content:center;gap:10px;padding:16px}
+.actions button{padding:10px 22px;border:2px solid var(--acc);background:var(--surf);color:var(--acc);font:16px 'VT323',monospace;cursor:pointer;border-radius:6px;transition:all .15s}
+.actions button:hover{background:var(--acc);color:var(--bg)}
+.actions button:disabled{opacity:.35;cursor:not-allowed}
+.actions button.primary{border-color:var(--gold);color:var(--gold)}
+.actions button.primary:hover{background:var(--gold);color:var(--bg)}
+.actions button.danger{border-color:var(--danger);color:var(--danger)}
+
+.combo{text-align:center;padding:8px 16px;color:var(--mut);font-size:14px;min-height:24px}
+.combo .bonus{color:var(--gold)}
+</style>
 </head>
 <body>
-  <section class="game-screen active" id="screen-phase-select" data-od-id="phase-select-screen">
-<div class="ps-header">
-      <h1 class="form-title">Pick Your Phases</h1>
-      <p class="form-subtitle">Dealt 6 phase cards. Pick 3 to play. Order matters for carryover!</p>
-    </div>
-    <div id="ps-round-info" style="font-family:var(--font-body);font-size:var(--text-lg);color:var(--fg-dim);text-align:center;margin-bottom:var(--space-4)"></div>
-    <div id="ps-scouting" style="font-family:var(--font-body);font-size:var(--text-sm);color:var(--accent);text-align:center;margin-bottom:var(--space-2);padding:4px 8px;background:rgba(57,255,20,0.05);border-radius:4px;display:none"></div>
-    <div id="ps-available-syns" style="font-family:var(--font-body);font-size:var(--text-sm);color:var(--accent);text-align:center;margin-bottom:var(--space-4)"></div>
-    <div class="ps-cards" id="ps-cards"></div>
-    <div class="ps-picks" id="ps-picks"></div>
-    <div class="squad-actions" id="ps-actions">
-      <button class="btn btn-primary btn-lg" id="confirm-phases-btn" disabled>Confirm Phase Order ▸</button>
-    </div>
-    <style>
-      .ps-cards { display:grid; grid-template-columns: repeat(3, 1fr); gap:var(--space-3); max-width:900px; margin:0 auto; }
-      .ps-card { background:var(--surface); border:2px solid var(--border); border-radius:var(--radius-md); padding:var(--space-3); cursor:pointer; transition:all var(--motion-fast) ease; position:relative; }
-      .ps-card:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:0 0 12px var(--accent-glow); }
-      .ps-card.selected { border-color:var(--gold); box-shadow:0 0 16px var(--gold-glow); }
-      .ps-card.picked { opacity:0.5; border-color:var(--border); cursor:default; transform:none; box-shadow:none; }
-      .ps-card .pc-icon { font-size:28px; margin-bottom:var(--space-2); }
-      .ps-card .pc-name { font-family:var(--font-display); font-size:7px; color:var(--fg); margin-bottom:var(--space-1); text-transform:uppercase; letter-spacing:0.06em; }
-      .ps-card .pc-desc { font-family:var(--font-body); font-size:var(--text-sm); color:var(--muted); margin-bottom:var(--space-2); }
-      .ps-card .pc-slots { font-family:var(--font-mono); font-size:12px; color:var(--fg-dim); }
-      .ps-card .pc-syn { font-family:var(--font-body); font-size:var(--text-sm); color:var(--accent); margin-top:var(--space-1); }
-      .ps-card .pc-order { position:absolute; top:var(--space-2); right:var(--space-2); font-family:var(--font-display); font-size:10px; color:var(--gold); }
-      .ps-picks { text-align:center; font-family:var(--font-body); font-size:var(--text-lg); color:var(--gold); margin:var(--space-4) 0; min-height:2em; }
-    
-    /* ─── Card Flip Animation ────────────────────────────────────── */
-    .ps-card {
-      perspective: 1000px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .ps-card:not(.picked):hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 0 24px var(--accent-glow);
-    }
-    .ps-card.selected {
-      animation: card-select-pop 0.4s ease-out;
-    }
-    @keyframes card-select-pop {
-      0% { transform: scale(1); box-shadow: 0 0 0 var(--gold-glow); }
-      50% { transform: scale(1.05); box-shadow: 0 0 40px var(--gold-glow); }
-      100% { transform: scale(1); box-shadow: 0 0 16px var(--gold-glow); }
-    }
-    .ps-card.picked {
-      animation: card-picked 0.6s ease-out;
-    }
-    @keyframes card-picked {
-      0% { transform: scale(1) rotateY(0); opacity: 1; }
-      30% { transform: scale(0.95) rotateY(90deg); opacity: 0.7; }
-      60% { transform: scale(0.95) rotateY(90deg); opacity: 0.7; }
-      100% { transform: scale(1) rotateY(0); opacity: 0.5; }
-    }
-    /* Phase card number badge */
-    .pc-order {
-      animation: order-pop 0.3s ease-out;
-    }
-    @keyframes order-pop {
-      0% { transform: scale(0); }
-      50% { transform: scale(1.4); }
-      100% { transform: scale(1); }
-    }
-    /* ─── Score Cascade ──────────────────────────────────────────── */
-    .pr-score {
-      font-variant-numeric: tabular-nums;
-    }
-    .score-cascading {
-      animation: score-glow-pulse 0.8s ease-in-out;
-    }
-    @keyframes score-glow-pulse {
-      0% { text-shadow: 0 0 0 var(--gold-glow); }
-      50% { text-shadow: 0 0 40px var(--gold-glow), 0 0 80px rgba(255,215,0,0.2); }
-      100% { text-shadow: 0 0 10px var(--gold-glow); }
-    }
-    /* ─── Synergy Particle Burst ─────────────────────────────────── */
-    .pr-syn-item {
-      animation: syn-appear 0.5s ease-out;
-    }
-    @keyframes syn-appear {
-      0% { transform: translateX(-20px); opacity: 0; }
-      60% { transform: translateX(5px); opacity: 1; }
-      100% { transform: translateX(0); opacity: 1; }
-    }
-</style>
-  </section>
+
+<div class="header">
+  <h1>⚽ PICK YOUR PHASES</h1>
+  <p>Select 3 phases to play this round</p>
+  <div class="selection" id="selectionCounter">0 / 3 selected</div>
+</div>
+<div class="info">📊 Target this round: <span id="roundTarget">350</span> pts | Formation: <span id="formationLabel">4-3-3</span></div>
+
+<div class="grid" id="phaseGrid"></div>
+
+<div class="bar" id="selectionBar" style="min-height:40px">
+  <span style="color:var(--mut)">Selected: none</span>
+</div>
+
+<div class="combo" id="comboPreview"></div>
+
+<div class="actions">
+  <button class="danger" onclick="undoLast()" id="undoBtn" disabled>↩ UNDO</button>
+  <button class="primary" onclick="confirmPhases()" id="confirmBtn" disabled>✓ CONFIRM & START MATCH</button>
+</div>
+
+<script>
+// ===== GET PHASES =====
+var phases = [];
+if (typeof window !== 'undefined' && window.ALL_PHASES) {
+  // Engine phases
+  for (var i = 0; i < window.ALL_PHASES.length; i++) {
+    var ep = window.ALL_PHASES[i];
+    phases.push({
+      id: ep.id,
+      name: ep.name || ep.id,
+      slots: (ep.slots||[]).map(function(s){return typeof s==='string'?s:s[0]}),
+      icon: getIcon(ep.weight||ep.tag||'DEF'),
+      category: (ep.weight||ep.tag||'DEF').toUpperCase(),
+      desc: ep.desc || ep.description || '',
+      weight: ep.weight || 'DEF'
+    });
+  }
+}
+if (phases.length === 0) {
+  // Demo phases
+  phases = [
+    {id:'goal_kick',name:'Goal Kick',slots:['GK','CB','CB'],icon:'🛡️',category:'DEFENSIVE',desc:'Keeper launches long',weight:'DEF'},
+    {id:'build_up',name:'Build-Up',slots:['FB','FB','CM'],icon:'🔄',category:'POSSESSION',desc:'Play from the back',weight:'PAS'},
+    {id:'wide_attack',name:'Wide Attack',slots:['FB','LW','RW'],icon:'⚡',category:'TRANSITION',desc:'Overload the flanks',weight:'PAC'},
+    {id:'direct_play',name:'Direct Play',slots:['LW','ST','CM'],icon:'🎯',category:'TRANSITION',desc:'Quick transition',weight:'ATK'},
+    {id:'defensive_block',name:'Defensive Block',slots:['CB','CB','CDM'],icon:'🛡️',category:'DEFENSIVE',desc:'Compact shape',weight:'DEF'},
+    {id:'tiki_taka',name:'Tiki-Taka',slots:['CM','CM','CAM'],icon:'🔄',category:'POSSESSION',desc:'Pass, move, repeat',weight:'PAS'},
+    {id:'counter',name:'Counter',slots:['LW','ST','RW'],icon:'⚡',category:'TRANSITION',desc:'Explosive break',weight:'PAC'},
+    {id:'set_piece',name:'Set Piece',slots:['CAM','CB','ST'],icon:'✨',category:'SPECIALIST',desc:'Dead ball specialist',weight:'SPC'}
+  ];
+}
+
+function getIcon(tag) {
+  var m = {DEF:'🛡️',PAS:'🔄',PAC:'⚡',ATK:'🎯',SPC:'✨',DEFENSIVE:'🛡️',POSSESSION:'🔄',TRANSITION:'⚡',ATTACKING:'⚔️',SPECIALIST:'🎯'};
+  return m[(tag||'').toUpperCase()] || '🎯';
+}
+
+// ===== STATE =====
+var selectedIndices = []; // up to 3
+
+// ===== RENDER GRID =====
+function renderGrid() {
+  var grid = document.getElementById('phaseGrid');
+  grid.innerHTML = '';
+  for (var i = 0; i < phases.length; i++) {
+    var p = phases[i];
+    var card = document.createElement('div');
+    card.className = 'card';
+    if (selectedIndices.indexOf(i) >= 0) card.className += ' picked';
+    card.innerHTML = 
+      '<div class="c-icon">' + p.icon + '</div>' +
+      '<div class="c-name">' + p.name + '</div>' +
+      '<div class="c-slots">' + p.slots.join(' · ') + '</div>' +
+      '<div class="c-desc">' + p.desc + '</div>' +
+      '<span class="c-cat" style="background:var(--' + (p.weight||'def').toLowerCase() + ')22;color:var(--' + (p.weight||'def').toLowerCase() + ')">' + p.category + '</span>';
+    card.onclick = function(idx) { return function() { pickPhase(idx); }; }(i);
+    grid.appendChild(card);
+  }
+}
+
+// ===== PICK PHASE =====
+function pickPhase(idx) {
+  if (selectedIndices.length >= 3) return;
+  if (selectedIndices.indexOf(idx) >= 0) return;
+  selectedIndices.push(idx);
+  updateDisplay();
+}
+
+function undoLast() {
+  if (selectedIndices.length === 0) return;
+  selectedIndices.pop();
+  updateDisplay();
+}
+
+function updateDisplay() {
+  var bar = document.getElementById('selectionBar');
+  var preview = document.getElementById('comboPreview');
+  var count = selectedIndices.length;
   
-  <script src="../game-engine.js"></script>
-  <script src="../game-ui.js"></script>
+  document.getElementById('selectionCounter').textContent = count + ' / 3 selected';
+  document.getElementById('undoBtn').disabled = count === 0;
+  document.getElementById('confirmBtn').disabled = count < 1;
+  
+  if (count === 0) {
+    bar.innerHTML = '<span style="color:var(--mut)">Selected: none</span>';
+    preview.innerHTML = '';
+  } else {
+    var html = '';
+    for (var i = 0; i < count; i++) {
+      var p = phases[selectedIndices[i]];
+      html += '<div class="selected-phase"><span class="sp-name">' + p.icon + ' ' + p.name + '</span> <span class="sp-slots">' + p.slots.join('·') + '</span></div>';
+      if (i < count - 1) html += '<div class="arrow">→</div>';
+    }
+    bar.innerHTML = html;
+    
+    // Combo preview
+    if (count >= 2) {
+      var bonus = count === 3 ? '2.0×' : '1.5×';
+      preview.innerHTML = '🔗 Chain bonus: <span class="bonus">' + bonus + '</span> combo multiplier';
+    } else {
+      preview.innerHTML = 'Select 2+ phases for combo bonuses';
+    }
+  }
+  
+  renderGrid();
+}
+
+// ===== CONFIRM =====
+function confirmPhases() {
+  var pickedIds = selectedIndices.map(function(i) { return phases[i].id; });
+  
+  // Write to G
+  if (typeof G !== 'undefined') {
+    G.pickedPhases = pickedIds;
+    G.phaseIdx = 0;
+    G.roundScore = 0;
+    G.phaseResults = [];
+    if (typeof saveGame === 'function') saveGame();
+  }
+  
+  // Save to sessionStorage for match screen
+  try {
+    sessionStorage.setItem('squad_pending_phases', JSON.stringify(pickedIds));
+    sessionStorage.setItem('squad_pending_formation', JSON.stringify(G ? G.formation : '4-3-3'));
+    sessionStorage.setItem('squad_pending_squad', JSON.stringify(G ? G.selectedIds || [] : []));
+  } catch(e) {}
+  
+  // Navigate
+  if (window.Game) {
+    Game.transition = 'slide-left';
+    Game.navigate('match');
+  } else {
+    alert('Starting match with ' + count + ' phases!');
+  }
+}
+
+// ===== INIT =====
+// Show current formation/round target
+if (typeof G !== 'undefined') {
+  document.getElementById('formationLabel').textContent = G.formation || '4-3-3';
+  if (G.matchIdx !== undefined && window.CAMPAIGN_MATCHES) {
+    var cm = window.CAMPAIGN_MATCHES[G.matchIdx];
+    if (cm && cm.targets && cm.targets[G.roundIdx || 0]) {
+      document.getElementById('roundTarget').textContent = cm.targets[G.roundIdx||0];
+    }
+  }
+}
+
+renderGrid();
+updateDisplay();
+
+window.setupScreen = function(screenId) {
+  if (screenId === 'phases') { renderGrid(); updateDisplay(); }
+};
+</script>
 </body>
 </html>

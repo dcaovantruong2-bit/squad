@@ -1,0 +1,487 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   SQUAD — emilkowalski-motion Animation System
+   Transform & opacity animations for all 9 game screens
+   Dark Neon Pixel × Emil Kowalski's motion principles
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ─── prefers-reduced-motion: kill all animation and transition durations ─── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   KEYFRAMES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ─── FADE VARIANTS (transform + opacity only) ───── */
+@keyframes gm-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes gm-fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes gm-fade-down {
+  from { opacity: 0; transform: translateY(-16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes gm-fade-left {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes gm-fade-right {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ─── SCALE VARIANTS ─────────────────────────────── */
+@keyframes gm-scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes gm-scale-up-bounce {
+  0%   { opacity: 0; transform: scale(0.3); }
+  60%  { opacity: 1; transform: scale(1.12); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* ─── SLIDE VARIANTS ─────────────────────────────── */
+@keyframes gm-slide-up {
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes gm-slide-right {
+  from { opacity: 0; transform: translateX(100%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ─── PULSE VARIANTS ─────────────────────────────── */
+@keyframes gm-pulse-opacity {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.6; }
+}
+@keyframes gm-pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px var(--accent-glow, rgba(57,255,20,0.3)); }
+  50%      { box-shadow: 0 0 24px var(--accent-glow, rgba(57,255,20,0.6)); }
+}
+@keyframes gm-pulse-glow-gold {
+  0%, 100% { box-shadow: 0 0 8px var(--gold-glow, rgba(255,215,0,0.3)); }
+  50%      { box-shadow: 0 0 24px var(--gold-glow, rgba(255,215,0,0.6)); }
+}
+
+/* ─── LOGO GLOW (Title Screen) ───────────────────── */
+@keyframes gm-logo-glow {
+  0%, 100% { text-shadow:
+      0 0 15px var(--accent-glow, rgba(57,255,20,0.4)),
+      0 0 40px var(--accent-glow, rgba(57,255,20,0.2)); }
+  50% { text-shadow:
+      0 0 25px var(--accent-glow, rgba(57,255,20,0.7)),
+      0 0 60px var(--accent-glow, rgba(57,255,20,0.35)),
+      0 0 80px rgba(57,255,20,0.1); }
+}
+
+/* ─── CARD DEAL (Phase Selection) ────────────────── */
+@keyframes gm-card-deal {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.6) rotate(-8deg);
+  }
+  60% {
+    opacity: 1;
+    transform: translate(0, -6px) scale(1.02) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+}
+
+/* ─── PICKED CARD SHRINK + SLIDE TO TRAY ─────────── */
+@keyframes gm-card-picked {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.6;
+    transform: scale(0.85);
+  }
+}
+
+/* ─── LINE DRAW (Campaign Map) ───────────────────── */
+@keyframes gm-line-draw {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+
+/* ─── GREEN FLASH (Synergy badges) ──────────────── */
+@keyframes gm-green-flash {
+  0%   { box-shadow: 0 0 0 transparent; }
+  30%  { box-shadow: 0 0 20px var(--accent, #39ff14), 0 0 40px rgba(57,255,20,0.2); }
+  100% { box-shadow: 0 0 6px var(--accent-glow, rgba(57,255,20,0.3)); }
+}
+
+/* ─── COUNT-UP PULSE ─────────────────────────────── */
+@keyframes gm-count-pulse {
+  0%, 100% { text-shadow: 0 0 10px var(--gold-glow, rgba(255,215,0,0.3)), 0 0 30px var(--gold-glow, rgba(255,215,0,0.15)); }
+  50% { text-shadow: 0 0 20px var(--gold-glow, rgba(255,215,0,0.6)), 0 0 50px var(--gold-glow, rgba(255,215,0,0.3)); }
+}
+
+/* ─── GOLD SPARKLE VICTORY (Campaign) ────────────── */
+@keyframes gm-sparkle {
+  0%   { opacity: 0; transform: translateY(0) scale(0) rotate(0deg); }
+  20%  { opacity: 1; transform: translateY(-20px) scale(1) rotate(90deg); }
+  80%  { opacity: 0.6; }
+  100% { opacity: 0; transform: translateY(-100px) scale(0.3) rotate(360deg); }
+}
+
+/* ─── BOUNCE IN ────────────────────────────────── */
+@keyframes gm-bounce-in {
+  0%   { opacity: 0; transform: scale(0.7); }
+  60%  { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* ─── ACCORDION EXPAND ──────────────────────────── */
+@keyframes gm-accordion-open {
+  from { opacity: 0; transform: translateY(-4px); max-height: 0; }
+  to   { opacity: 1; transform: translateY(0); max-height: 500px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   UTILITY CLASSES
+   These are applied programmatically by game-motion.js.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ─── FADE CLASSES ──────────────────────────────── */
+.gm-fade-in     { animation: gm-fade-in var(--motion-base, 160ms) ease-out both; }
+.gm-fade-up     { animation: gm-fade-up var(--motion-base, 160ms) ease-out both; }
+.gm-fade-down   { animation: gm-fade-down var(--motion-base, 160ms) ease-out both; }
+.gm-fade-left   { animation: gm-fade-left var(--motion-base, 160ms) ease-out both; }
+.gm-fade-right  { animation: gm-fade-right var(--motion-base, 160ms) ease-out both; }
+
+/* ─── SCALE CLASSES ─────────────────────────────── */
+.gm-scale-in        { animation: gm-scale-in 200ms ease-out both; }
+.gm-scale-up-bounce { animation: gm-scale-up-bounce 400ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+/* ─── SLIDE CLASSES ─────────────────────────────── */
+.gm-slide-up    { animation: gm-slide-up 200ms cubic-bezier(0.2, 0, 0, 1) both; }
+.gm-slide-right { animation: gm-slide-right 200ms cubic-bezier(0.2, 0, 0, 1) both; }
+
+/* ─── PULSE CLASSES ─────────────────────────────── */
+.gm-pulse-opacity  { animation: gm-pulse-opacity 2s ease-in-out infinite; }
+.gm-pulse-glow     { animation: gm-pulse-glow 2s ease-in-out infinite; }
+.gm-pulse-glow-gold { animation: gm-pulse-glow-gold 1.5s ease-in-out infinite; }
+
+/* ─── LOGO GLOW ────────────────────────────────── */
+.gm-logo-glow { animation: gm-logo-glow 2s ease-in-out infinite; }
+
+/* ─── CARD DEAL ─────────────────────────────────── */
+.gm-card-deal { animation: gm-card-deal 500ms cubic-bezier(0.2, 0, 0, 1) both; }
+
+/* ─── PICKED CARD ───────────────────────────────── */
+.gm-card-picked { animation: gm-card-picked 200ms ease-out forwards; }
+
+/* ─── LINE DRAW ─────────────────────────────────── */
+.gm-line-draw { animation: gm-line-draw 500ms ease-out both; }
+
+/* ─── GREEN FLASH ──────────────────────────────── */
+.gm-green-flash { animation: gm-green-flash 200ms ease-out; }
+
+/* ─── COUNT-UP PULSE ─────────────────────────────── */
+.gm-count-pulse { animation: gm-count-pulse 300ms ease-out; }
+
+/* ─── SPARKLE (Golden sparkle particles for victory) ─── */
+.gm-sparkle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #ffd700;
+  border-radius: 0;
+  pointer-events: none;
+  animation: gm-sparkle 1.5s ease-out forwards;
+}
+.gm-sparkle::after {
+  content: '✦';
+  font-size: 10px;
+  color: #ffd700;
+  text-shadow: 0 0 6px rgba(255,215,0,0.8);
+}
+
+/* ─── BOUNCE IN ────────────────────────────────── */
+.gm-bounce-in { animation: gm-bounce-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+/* ─── ACCORDION OPEN ────────────────────────────── */
+.gm-accordion-open { animation: gm-accordion-open 200ms ease-out both; overflow: hidden; }
+
+/* ─── TRANSITION CLASSES (not keyframed, CSS transition-based) ───── */
+
+/* Budget bar width via transition (set style.width in JS, transition does the rest) */
+.gm-budget-animate .budget-bar-fill,
+.gm-budget-animate .budget-fill {
+  transition: width 200ms ease-out !important;
+}
+
+/* Sidebar / panel slide transition */
+.gm-panel-slide {
+  transition: transform 200ms cubic-bezier(0.2, 0, 0, 1), opacity 200ms ease-out;
+}
+
+/* Carousel card slide */
+.gm-carousel-slide {
+  transition: transform 250ms ease-out, opacity 200ms ease-out;
+}
+
+/* Dot indicator active state */
+.gm-dot-active {
+  animation: gm-pulse-glow 1.5s ease-in-out infinite;
+}
+
+/* Player pill fade-in */
+.gm-pill-fade-in {
+  animation: gm-fade-in 100ms ease-out both;
+}
+
+/* Modal slide-up */
+.gm-modal-up {
+  animation: gm-slide-up 200ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+/* Dimmed/fade-out purchased item */
+.gm-item-dimmed {
+  opacity: 0.35;
+  transition: opacity 150ms ease-out;
+}
+
+/* Score count-up class (for skip-on-click) */
+.gm-counting {
+  cursor: pointer;
+}
+.gm-counting:active {
+  animation: none;
+  transition: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SCREEN-SPECIFIC ANIMATIONS (applied via CSS when screen is active)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ─── TITLE SCREEN ──────────────────────────────── */
+#screen-title.active .title-logo {
+  animation: gm-logo-glow 2s ease-in-out infinite;
+}
+#screen-title.active .btn {
+  opacity: 0;
+  animation: gm-fade-up 300ms ease-out forwards;
+}
+#screen-title.active .btn:nth-child(1) { animation-delay: 0s; }
+#screen-title.active .btn:nth-child(2) { animation-delay: 0.1s; }
+
+#screen-title.active .info-card-item {
+  opacity: 0;
+  animation: gm-fade-left 350ms ease-out forwards;
+}
+#screen-title.active .info-card-item:nth-child(1) { animation-delay: 0.05s; }
+#screen-title.active .info-card-item:nth-child(2) { animation-delay: 0.10s; }
+#screen-title.active .info-card-item:nth-child(3) { animation-delay: 0.15s; }
+#screen-title.active .info-card-item:nth-child(4) { animation-delay: 0.20s; }
+
+#title-how-to-modal.active {
+  animation: gm-slide-up 200ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+/* ─── SQUAD BUILDER ─────────────────────────────── */
+#screen-squad.active .player-card {
+  opacity: 0;
+}
+#screen-squad.active .player-card:nth-child(-n+4)  { animation: gm-fade-up 300ms ease-out forwards; animation-delay: 0.05s; }
+#screen-squad.active .player-card:nth-child(n+5):nth-child(-n+8)  { animation: gm-fade-up 300ms ease-out forwards; animation-delay: 0.10s; }
+#screen-squad.active .player-card:nth-child(n+9):nth-child(-n+12) { animation: gm-fade-up 300ms ease-out forwards; animation-delay: 0.15s; }
+#screen-squad.active .player-card:nth-child(n+13):nth-child(-n+16) { animation: gm-fade-up 300ms ease-out forwards; animation-delay: 0.20s; }
+#screen-squad.active .player-card:nth-child(n+17):nth-child(-n+20) { animation: gm-fade-up 300ms ease-out forwards; animation-delay: 0.25s; }
+#screen-squad.active .player-card:nth-child(n+21) { animation: gm-fade-up 300ms ease-out forwards; animation-delay: 0.30s; }
+
+/* ─── FORMATION SELECT ──────────────────────────── */
+#screen-formation.active .formation-card {
+  transition: transform 250ms ease-out, opacity 200ms ease-out;
+}
+#screen-formation.active .formation-detail {
+  animation: gm-fade-in 150ms ease-out both;
+}
+#screen-formation.active .auto-recommend-badge {
+  opacity: 0;
+  animation: gm-bounce-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+#screen-formation.active .dot-indicator.active {
+  animation: gm-pulse-glow 1.5s ease-in-out infinite;
+}
+
+/* ─── PHASE SELECTION ───────────────────────────── */
+#screen-phase-select.active .phase-card {
+  opacity: 0;
+  animation: gm-card-deal 500ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+#screen-phase-select.active .phase-card:nth-child(1) { animation-delay: 0ms; }
+#screen-phase-select.active .phase-card:nth-child(2) { animation-delay: 80ms; }
+#screen-phase-select.active .phase-card:nth-child(3) { animation-delay: 160ms; }
+#screen-phase-select.active .phase-card:nth-child(4) { animation-delay: 240ms; }
+#screen-phase-select.active .phase-card:nth-child(5) { animation-delay: 320ms; }
+#screen-phase-select.active .phase-card:nth-child(6) { animation-delay: 400ms; }
+
+#screen-phase-select.active .phase-card.picked {
+  animation: gm-card-picked 200ms ease-out forwards;
+}
+
+#screen-phase-select.active .combo-chain-preview {
+  transition: opacity 150ms ease-out;
+}
+
+#screen-phase-select.active .scouting-report {
+  animation: gm-fade-down 200ms ease-out both;
+}
+
+/* ─── MATCH SCREEN ──────────────────────────────── */
+#screen-match.active .dock-player {
+  opacity: 0;
+  animation: gm-fade-up 150ms ease-out forwards;
+}
+#screen-match.active .dock-player:nth-child(1) { animation-delay: 0ms; }
+#screen-match.active .dock-player:nth-child(2) { animation-delay: 50ms; }
+#screen-match.active .dock-player:nth-child(3) { animation-delay: 100ms; }
+#screen-match.active .dock-player:nth-child(4) { animation-delay: 150ms; }
+#screen-match.active .dock-player:nth-child(5) { animation-delay: 200ms; }
+#screen-match.active .dock-player:nth-child(6) { animation-delay: 250ms; }
+#screen-match.active .dock-player:nth-child(7) { animation-delay: 300ms; }
+#screen-match.active .dock-player:nth-child(8) { animation-delay: 350ms; }
+
+#screen-match.active .pitch-slot.highlight {
+  animation: gm-pulse-glow 1.5s ease-in-out infinite;
+}
+
+#screen-match.active .synergy-item.fired {
+  animation: gm-green-flash 200ms ease-out;
+}
+
+#screen-match.active .slot-fill-animate {
+  animation: gm-fade-up 80ms ease-out both;
+}
+#screen-match.active .slot-fill-animate .pitch-slot.filled {
+  animation: gm-pulse-glow 400ms ease-in-out;
+}
+
+/* ─── PHASE RESULT ──────────────────────────────── */
+#screen-phase-result.active .pr-score {
+  font-variant-numeric: tabular-nums;
+  transition: none;
+}
+#screen-phase-result.active .pr-score.gm-count-pulse {
+  animation: gm-count-pulse 300ms ease-out;
+}
+#screen-phase-result.active .pr-formula-col {
+  opacity: 0;
+  animation: gm-fade-up 400ms ease-out forwards;
+}
+#screen-phase-result.active .pr-formula-col:nth-child(1) { animation-delay: 0ms; }
+#screen-phase-result.active .pr-formula-col:nth-child(2) { animation-delay: 100ms; }
+#screen-phase-result.active .pr-formula-col:nth-child(3) { animation-delay: 200ms; }
+#screen-phase-result.active .pr-formula-col:nth-child(4) { animation-delay: 300ms; }
+
+#screen-phase-result.active .synergy-accordion.open {
+  animation: gm-accordion-open 200ms ease-out both;
+}
+
+#screen-phase-result.active .player-result-row {
+  opacity: 0;
+  animation: gm-fade-left 150ms ease-out forwards;
+}
+#screen-phase-result.active .player-result-row:nth-child(1)  { animation-delay: 0ms; }
+#screen-phase-result.active .player-result-row:nth-child(2)  { animation-delay: 40ms; }
+#screen-phase-result.active .player-result-row:nth-child(3)  { animation-delay: 80ms; }
+#screen-phase-result.active .player-result-row:nth-child(4)  { animation-delay: 120ms; }
+#screen-phase-result.active .player-result-row:nth-child(5)  { animation-delay: 160ms; }
+#screen-phase-result.active .player-result-row:nth-child(6)  { animation-delay: 200ms; }
+#screen-phase-result.active .player-result-row:nth-child(7)  { animation-delay: 240ms; }
+#screen-phase-result.active .player-result-row:nth-child(8)  { animation-delay: 280ms; }
+#screen-phase-result.active .player-result-row:nth-child(9)  { animation-delay: 320ms; }
+#screen-phase-result.active .player-result-row:nth-child(10) { animation-delay: 360ms; }
+
+/* ─── SHOP ──────────────────────────────────────── */
+#screen-shop.active .shop-item {
+  opacity: 0;
+  animation: gm-fade-right 300ms ease-out forwards;
+}
+#screen-shop.active .shop-item:nth-child(1) { animation-delay: 0ms; }
+#screen-shop.active .shop-item:nth-child(2) { animation-delay: 100ms; }
+#screen-shop.active .shop-item:nth-child(3) { animation-delay: 200ms; }
+#screen-shop.active .shop-item:nth-child(4) { animation-delay: 300ms; }
+#screen-shop.active .shop-item:nth-child(5) { animation-delay: 400ms; }
+
+#screen-shop.active .morale-count {
+  transition: transform 200ms ease-out, color 200ms ease-out;
+}
+#screen-shop.active .morale-count.spend {
+  color: var(--gold, #ffd700);
+  transform: scale(1.15);
+}
+
+#screen-shop.active .buy-btn.confirming {
+  animation: gm-scale-in 100ms ease-out both;
+}
+
+#screen-shop.active .shop-item.purchased {
+  opacity: 0.35;
+  transition: opacity 150ms ease-out;
+}
+
+/* ─── ROUND RESULT ──────────────────────────────── */
+#screen-round-result.active .rr-verdict {
+  animation: gm-scale-up-bounce 400ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+#screen-round-result.active .rr-score-value {
+  font-variant-numeric: tabular-nums;
+}
+#screen-round-result.active .rr-score-value.gm-count-pulse {
+  animation: gm-count-pulse 300ms ease-out;
+}
+
+#screen-round-result.active .campaign-map-line {
+  animation: gm-line-draw 500ms ease-out both;
+}
+
+/* ─── CAMPAIGN COMPLETE ─────────────────────────── */
+#screen-campaign.active .result-row {
+  opacity: 0;
+  animation: gm-fade-up 300ms ease-out forwards;
+}
+#screen-campaign.active .result-row:nth-child(1) { animation-delay: 0ms; }
+#screen-campaign.active .result-row:nth-child(2) { animation-delay: 100ms; }
+#screen-campaign.active .result-row:nth-child(3) { animation-delay: 200ms; }
+#screen-campaign.active .result-row:nth-child(4) { animation-delay: 300ms; }
+#screen-campaign.active .result-row:nth-child(5) { animation-delay: 400ms; }
+
+#screen-campaign.active .play-again-btn {
+  opacity: 0;
+  animation: gm-fade-up 400ms ease-out forwards;
+  animation-delay: 1000ms;
+}
+#screen-campaign.active .play-again-btn.pulse {
+  animation: gm-pulse-glow-gold 1.5s ease-in-out infinite;
+}
+
+/* ─── VICTORY SPARKLE CONTAINER ─────────────────── */
+.gm-sparkle-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  overflow: hidden;
+}

@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Squad — Campaign Complete</title>
+<style>
+  /* ── Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%; width: 100%;
+    background: #0a0812;
+    color: #f0ecf8;
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    line-height: 1.45;
+    overflow-x: hidden;
+    -webkit-font-smoothing: none;
+    image-rendering: pixelated;
+  }
+
+  /* ── CRT Scanlines ── */
+  body::after {
+    content: '';
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 9999;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px
+    );
+  }
+
+  /* ── Screen wrapper ── */
+  .screen {
+    position: relative; min-height: 100vh; width: 100%;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 30px 16px 48px;
+    animation: fadeIn 0.9s ease-out forwards; opacity: 0;
+  }
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  .screen.victory {
+    background: radial-gradient(ellipse at 50% 0%, rgba(255,215,0,0.10) 0%, transparent 55%),
+                linear-gradient(180deg, #0a0812 0%, #060410 100%);
+  }
+
+  .screen.defeat {
+    background: radial-gradient(ellipse at 50% 40%, rgba(255,51,68,0.10) 0%, transparent 65%),
+                linear-gradient(180deg, #0a0812 0%, #060410 100%);
+  }
+
+  /* ── Sparkle/confetti (victory) ── */
+  .sparkle-container {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 1; overflow: hidden;
+  }
+  .sparkle {
+    position: absolute; width: 4px; height: 4px;
+    background: #ffd700; pointer-events: none; opacity: 0;
+    animation: sparkleFloat 1.6s ease-out forwards;
+  }
+  @keyframes sparkleFloat {
+    0%   { opacity: 0; transform: translateY(0) scale(0); }
+    30%  { opacity: 1; transform: translateY(-30px) scale(1); }
+    100% { opacity: 0; transform: translateY(-130px) scale(0.3); }
+  }
+
+  .confetti-container {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 1; overflow: hidden;
+  }
+  .confetti-piece {
+    position: absolute; width: 6px; height: 6px; opacity: 0;
+    animation: confettiFall 2.6s ease-out forwards;
+  }
+  @keyframes confettiFall {
+    0%   { opacity: 0; transform: translateY(-20px) rotate(0deg); }
+    20%  { opacity: 0.85; }
+    100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
+  }
+
+  /* ── Vignette (defeat) ── */
+  .vignette {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 1;
+    background: radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(255,51,68,0.15) 100%);
+    animation: vignettePulse 3s ease-in-out infinite;
+  }
+  @keyframes vignettePulse {
+    0%, 100% { opacity: 0.6; }
+    50%      { opacity: 1; }
+  }
+
+  /* ── Banner ── */
+  .banner {
+    position: relative; z-index: 2;
+    text-align: center; margin-bottom: 28px; padding: 20px 24px;
+  }
+  .banner-icon { display: block; font-size: 36px; margin-bottom: 8px; }
+  .banner h1 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px; line-height: 1.7;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .banner.victory h1 {
+    color: #ffd700;
+    text-shadow: 0 0 14px rgba(255,215,0,0.6), 0 0 32px rgba(255,215,0,0.3);
+  }
+  .banner.defeat h1 {
+    color: #ff3344;
+    text-shadow: 0 0 14px rgba(255,51,68,0.6), 0 0 32px rgba(255,51,68,0.3);
+  }
+  .banner-sub {
+    font-family: 'VT323', monospace; font-size: 20px;
+    color: #c8b8e0; margin-top: 10px;
+  }
+
+  /* ── Section titles ── */
+  .section-title {
+    position: relative; z-index: 2;
+    font-family: 'Press Start 2P', monospace; font-size: 10px;
+    color: #9a8ab0; text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 14px; text-align: center;
+  }
+
+  /* ── Match Results Table ── */
+  .matches-section {
+    position: relative; z-index: 2;
+    width: 100%; max-width: 700px; margin-bottom: 34px;
+  }
+  .matches-table {
+    width: 100%; border-collapse: collapse;
+    background: #110d1f; border: 1px solid #2e2250;
+  }
+  .matches-table th {
+    font-family: 'Press Start 2P', monospace; font-size: 9px;
+    color: #9a8ab0; text-transform: uppercase; letter-spacing: 0.5px;
+    padding: 10px 12px; border-bottom: 1px solid #2e2250;
+    text-align: left; background: #1a1530;
+  }
+  .matches-table th:last-child { text-align: center; }
+  .matches-table td {
+    padding: 10px 12px; border-bottom: 1px solid #2e2250;
+    font-family: 'VT323', monospace; font-size: 16px; color: #f0ecf8;
+    opacity: 0; animation: slideUp 0.5s ease-out forwards;
+  }
+  .matches-table tr:nth-child(1) td { animation-delay: 0.10s; }
+  .matches-table tr:nth-child(2) td { animation-delay: 0.20s; }
+  .matches-table tr:nth-child(3) td { animation-delay: 0.30s; }
+  .matches-table tr:nth-child(4) td { animation-delay: 0.40s; }
+  .matches-table tr:nth-child(5) td { animation-delay: 0.50s; }
+  .matches-table tr:last-child td { border-bottom: none; }
+  @keyframes slideUp {
+    0%   { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .round-cell { width: 100px; color: #c8b8e0; font-size: 14px; }
+  .opponent-cell { min-width: 160px; }
+  .score-cell { width: 80px; text-align: center; font-family: 'Press Start 2P', monospace; font-size: 11px; }
+  .result-cell { width: 70px; text-align: center; }
+  .match-opponent { font-weight: bold; color: #f0ecf8; }
+
+  .badge {
+    display: inline-block; padding: 3px 12px;
+    font-family: 'Press Start 2P', monospace; font-size: 8px;
+    text-transform: uppercase; letter-spacing: 1px; line-height: 1.6;
+    border: 1px solid; text-align: center; min-width: 48px;
+  }
+  .badge-win {
+    color: #39ff14; border-color: #2bcc10;
+    background: rgba(57,255,20,0.08);
+    text-shadow: 0 0 6px rgba(57,255,20,0.4);
+  }
+  .badge-loss {
+    color: #ff3344; border-color: #ff3344;
+    background: rgba(255,51,68,0.08);
+    text-shadow: 0 0 6px rgba(255,51,68,0.4);
+  }
+
+  /* ── Hall of Fame ── */
+  .hof-section {
+    position: relative; z-index: 2;
+    width: 100%; max-width: 700px; margin-bottom: 34px;
+  }
+  .hof-scroll {
+    display: flex; gap: 14px; overflow-x: auto;
+    padding: 12px 4px 16px; scroll-behavior: smooth;
+    cursor: grab; user-select: none;
+  }
+  .hof-scroll::-webkit-scrollbar { height: 6px; }
+  .hof-scroll::-webkit-scrollbar-track { background: #110d1f; border: 1px solid #2e2250; }
+  .hof-scroll::-webkit-scrollbar-thumb { background: #3d2d5c; border: 1px solid #4d3d6c; }
+  .hof-scroll:active { cursor: grabbing; }
+
+  .hof-card {
+    flex: 0 0 180px; background: #110d1f;
+    border: 1px solid #2e2250; padding: 18px 14px;
+    text-align: center; transition: border-color 0.2s, transform 0.2s;
+    opacity: 0; animation: fadeInCard 0.6s ease-out forwards;
+  }
+  .hof-card:nth-child(1) { animation-delay: 0.55s; }
+  .hof-card:nth-child(2) { animation-delay: 0.65s; }
+  .hof-card:nth-child(3) { animation-delay: 0.75s; }
+  .hof-card:nth-child(4) { animation-delay: 0.85s; }
+  .hof-card:nth-child(5) { animation-delay: 0.95s; }
+  @keyframes fadeInCard {
+    0%   { opacity: 0; transform: translateY(14px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .hof-card:hover {
+    border-color: #ffd700; transform: translateY(-4px);
+  }
+  .hof-avatar {
+    width: 56px; height: 56px; background: #1a1530;
+    border: 1px solid #4d3d6c; margin: 0 auto 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+  }
+  .hof-name {
+    font-family: 'Press Start 2P', monospace; font-size: 9px;
+    color: #f0ecf8; margin-bottom: 3px; line-height: 1.4;
+  }
+  .hof-pos {
+    font-family: 'VT323', monospace; font-size: 14px;
+    color: #9a8ab0; margin-bottom: 6px;
+  }
+  .hof-award {
+    display: inline-block; font-family: 'Press Start 2P', monospace;
+    font-size: 7px; padding: 3px 10px; margin-bottom: 8px;
+    border: 1px solid #cc9900; background: rgba(255,215,0,0.08);
+    color: #ffd700; text-shadow: 0 0 6px rgba(255,215,0,0.3);
+    letter-spacing: 0.5px;
+  }
+  .hof-stat {
+    font-family: 'VT323', monospace; font-size: 14px; color: #c8b8e0;
+  }
+  .hof-stat strong { color: #f0ecf8; font-weight: normal; }
+
+  /* ── Stats Summary ── */
+  .stats-section {
+    position: relative; z-index: 2;
+    width: 100%; max-width: 700px; margin-bottom: 34px;
+  }
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px; background: #110d1f; border: 1px solid #2e2250; padding: 18px;
+  }
+  .stat-item {
+    text-align: center; padding: 10px 6px;
+    opacity: 0; animation: fadeInStat 0.5s ease-out forwards;
+  }
+  .stat-item:nth-child(1) { animation-delay: 0.80s; }
+  .stat-item:nth-child(2) { animation-delay: 0.90s; }
+  .stat-item:nth-child(3) { animation-delay: 1.00s; }
+  .stat-item:nth-child(4) { animation-delay: 1.10s; }
+  .stat-item:nth-child(5) { animation-delay: 1.20s; }
+  @keyframes fadeInStat {
+    0%   { opacity: 0; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  .stat-value {
+    font-family: 'Press Start 2P', monospace; font-size: 14px;
+    color: #f0ecf8; margin-bottom: 4px;
+  }
+  .stat-value.gold { color: #ffd700; }
+  .stat-value.red  { color: #ff3344; }
+  .stat-label {
+    font-family: 'VT323', monospace; font-size: 14px; color: #9a8ab0;
+  }
+
+  /* ── Buttons ── */
+  .actions {
+    position: relative; z-index: 2;
+    display: flex; gap: 16px; flex-wrap: wrap;
+    justify-content: center; margin-top: 4px;
+  }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 8px; padding: 14px 30px; min-width: 190px;
+    font-family: 'Press Start 2P', monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    border: 2px solid; cursor: pointer; background: transparent;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    color: #f0ecf8; line-height: 1.4; text-decoration: none;
+  }
+  .btn:active { transform: scale(0.96); }
+  .btn-primary {
+    color: #39ff14; border-color: #2bcc10;
+    background: rgba(57,255,20,0.06);
+  }
+  .btn-primary:hover {
+    background: rgba(57,255,20,0.15);
+    border-color: #39ff14;
+    box-shadow: 0 0 14px rgba(57,255,20,0.18);
+  }
+  .btn-share {
+    color: #00ccff; border-color: #0088aa;
+    background: rgba(0,204,255,0.06);
+  }
+  .btn-share:hover {
+    background: rgba(0,204,255,0.14);
+    border-color: #00ccff;
+    box-shadow: 0 0 14px rgba(0,204,255,0.18);
+  }
+
+  /* ── Share overlay ── */
+  .share-overlay {
+    display: none; position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(10,8,18,0.88); z-index: 10000;
+    justify-content: center; align-items: center; padding: 20px;
+  }
+  .share-overlay.active { display: flex; }
+  .share-box {
+    background: #110d1f; border: 1px solid #2e2250;
+    padding: 28px 24px; max-width: 420px; width: 100%;
+    text-align: center; animation: fadeInCard 0.3s ease-out forwards;
+  }
+  .share-box h2 {
+    font-family: 'Press Start 2P', monospace; font-size: 10px;
+    color: #f0ecf8; margin-bottom: 16px; text-transform: uppercase;
+  }
+  .share-field {
+    display: flex; background: #1a1530;
+    border: 1px solid #2e2250; margin-bottom: 14px;
+  }
+  .share-field input {
+    flex: 1; background: transparent; border: none;
+    padding: 10px 12px; font-family: 'VT323', monospace;
+    font-size: 16px; color: #f0ecf8; outline: none;
+  }
+  .share-field button {
+    padding: 10px 14px; background: #3d2d5c; border: none;
+    border-left: 1px solid #2e2250; color: #39ff14;
+    font-family: 'Press Start 2P', monospace; font-size: 8px;
+    cursor: pointer; text-transform: uppercase;
+  }
+  .share-close {
+    display: inline-block; padding: 8px 20px;
+    font-family: 'Press Start 2P', monospace; font-size: 9px;
+    color: #9a8ab0; border: 1px solid #2e2250;
+    cursor: pointer; background: transparent;
+    text-transform: uppercase; margin-top: 4px;
+  }
+  .share-close:hover { color: #f0ecf8; border-color: #4d3d6c; }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    .banner h1 { font-size: 10px; }
+    .matches-table td { padding: 8px 6px; font-size: 14px; }
+    .hof-card { flex: 0 0 150px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .btn { min-width: 140px; font-size: 9px; padding: 10px 20px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .screen, .screen.defeat { animation: none; opacity: 1; }
+    .matches-table td, .hof-card, .stat-item { animation: none; opacity: 1; }
+    .sparkle, .confetti-piece { animation: none; display: none; }
+    .vignette { animation: none; }
+    .hof-card:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ================================================================
+     ENGINE DETECTION
+     ================================================================ */
+
+  var engineAvailable = (typeof G !== 'undefined' && G.matchResults && G.matchResults.length > 0);
+  var isVictory;
+
+  /* ================================================================
+     DATA — from engine G, with fallback
+     ================================================================ */
+
+  var matchesData = [];
+  var hallOfFame = [];
+  var statsData = [];
+
+  function formatScore(n) {
+    if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+    if (n >= 1000)    return Math.round(n / 1000).toString() + 'K';
+    return n.toLocaleString ? n.toLocaleString() : n.toString();
+  }
+
+  function buildEngineData() {
+    // ── Victory/Defeat ──
+    isVictory = !!(G.campaignWon);
+
+    // ── Match Results ──
+    matchesData = [];
+    var matchResults = G.matchResults || [];
+    for (var mi = 0; mi < matchResults.length; mi++) {
+      var mr = matchResults[mi];
+      var matchConfig = (window.CAMPAIGN_MATCHES && window.CAMPAIGN_MATCHES[mi])
+        ? window.CAMPAIGN_MATCHES[mi]
+        : null;
+      var matchName = matchConfig ? matchConfig.name : ('Match ' + (mi + 1));
+      var opponent = matchConfig ? matchConfig.opponent : 'Unknown';
+      var result = (mr.roundsWon >= 2) ? 'W' : 'L';
+      matchesData.push({
+        round: matchName,
+        opponent: opponent,
+        score: mr.roundsWon + '-' + mr.roundsLost,
+        result: result
+      });
+    }
+
+    // ── Hall of Fame: Top 5 squad players sorted by total contribution ──
+    hallOfFame = [];
+    if (typeof getSquad === 'function') {
+      var squad = getSquad();
+      // Sort by total stats (contribution proxy)
+      squad.sort(function(a, b) {
+        var sumA = a.atk + a.pac + a.pas + a.def_ + a.spc;
+        var sumB = b.atk + b.pac + b.pas + b.def_ + b.spc;
+        return sumB - sumA;
+      });
+
+      var topPlayers = squad.slice(0, 5);
+      var awards = ['★ MVP', '★ WALL', '★ LOCK', '★ ASST KING', '★ ENGINE'];
+      var awardLabels = ['MVP', 'WALL', 'LOCK', 'ASST KING', 'ENGINE'];
+      var posIcons = {
+        'ST': '⚡', 'LW': '💨', 'RW': '💨', 'CAM': '🎯', 'CM': '🔄',
+        'CDM': '🛡️', 'CB': '🧱', 'FB': '🏃', 'GK': '🧤'
+      };
+
+      for (var pi = 0; pi < topPlayers.length; pi++) {
+        var p = topPlayers[pi];
+        var totalStat = p.atk + p.pac + p.pas + p.def_ + p.spc;
+        hallOfFame.push({
+          name: p.name,
+          pos: p.position,
+          avatar: posIcons[p.position] || '⚽',
+          award: awards[pi] || '★ STAR',
+          awardLabel: awardLabels[pi] || 'STAR',
+          stat: totalStat + ' total'
+        });
+      }
+    }
+
+    // ── Stats ──
+    var totalMatches = matchResults.length;
+    var totalWins = 0;
+    var totalChips = 0;
+    for (var mi2 = 0; mi2 < matchResults.length; mi2++) {
+      if (matchResults[mi2].roundsWon >= 2) totalWins++;
+      totalChips += (matchResults[mi2].totalScore || 0);
+    }
+
+    // Count synergies from persistent squad detection
+    var synergiesFound = 0;
+    if (typeof getSquad === 'function' && typeof detectSquadSynergies === 'function') {
+      var squadBuffs = detectSquadSynergies(getSquad());
+      if (squadBuffs && squadBuffs.firedSynergies) {
+        synergiesFound = squadBuffs.firedSynergies.length;
+      }
+    }
+
+    // Use bestRun if available
+    if (G.bestRun && G.bestRun.score && G.bestRun.score > totalChips) {
+      totalChips = G.bestRun.score;
+    }
+
+    statsData = [
+      { value: totalMatches.toString(),         label: 'Matches Played' },
+      { value: totalWins.toString(),            label: 'Matches Won' },
+      { value: formatScore(totalChips),          label: 'Total Chips' },
+      { value: formatScore(Math.round(totalChips / Math.max(totalMatches, 1))), label: 'Avg / Match' },
+      { value: synergiesFound.toString(),       label: 'Synergies Found' }
+    ];
+  }
+
+  function buildFallbackData() {
+    // Demo data when engine is not available
+    var urlParams = new URLSearchParams(window.location.search);
+    isVictory = urlParams.get('state') !== 'defeat';
+
+    matchesData = [
+      { round:'Group Stage',   opponent:'Wolves FC',              score:'2-1', result:(isVictory?'W':'W') },
+      { round:'Round of 16',   opponent:'Inter Your-Nan',         score:'3-0', result:(isVictory?'W':'W') },
+      { round:'Quarter Final', opponent:'Borussia Mönchen-flapjack',score:'1-0',result:(isVictory?'W':'W') },
+      { round:'Semi Final',    opponent:'Man City Oilers',         score:'2-1', result:(isVictory?'W':'W') },
+      { round:'THE FINAL',     opponent:'Galácticos FC',           score:'3-2', result:(isVictory?'W':'L') }
+    ];
+
+    hallOfFame = [
+      { name:'Terry Henri',    pos:'ST', avatar:'⚡', award:'MVP',    stat:'182K chips' },
+      { name:'El Capitán',     pos:'CB', avatar:'🛡️', award:'WALL',   stat:'4 clean sheets' },
+      { name:'Gigi Wall',      pos:'GK', avatar:'🧤', award:'LOCK',   stat:'3 clean sheets' },
+      { name:'Don Andres',     pos:'CM', avatar:'🎯', award:'ASST',   stat:'14 synergies' },
+      { name:'Maestro Xav',    pos:'CM', avatar:'🔄', award:'ENGINE', stat:'11 assists' }
+    ];
+
+    statsData = isVictory
+      ? [
+          { value:'5',     label:'Matches Played' },
+          { value:'5',     label:'Matches Won' },
+          { value:'4.2M',  label:'Total Chips' },
+          { value:'840K',  label:'Avg / Match' },
+          { value:'8',     label:'Synergies Found' }
+        ]
+      : [
+          { value:'5',     label:'Matches Played' },
+          { value:'3',     label:'Matches Won' },
+          { value:'2.1M',  label:'Total Chips' },
+          { value:'420K',  label:'Avg / Match' },
+          { value:'5',     label:'Synergies Found' }
+        ];
+  }
+
+  /* ================================================================
+     SPARKLE / CONFETTI
+     ================================================================ */
+
+  function createSparkles() {
+    var container = document.getElementById('sparkle-container');
+    if (!container) return;
+    for (var i = 0; i < 28; i++) {
+      var el = document.createElement('div');
+      el.className = 'sparkle';
+      el.style.left = (Math.random() * 100) + '%';
+      el.style.top = (Math.random() * 100) + '%';
+      el.style.animationDuration = (1.1 + Math.random() * 1.0) + 's';
+      el.style.animationDelay = (Math.random() * 1.3) + 's';
+      el.style.width = (2 + Math.random() * 4) + 'px';
+      el.style.height = el.style.width;
+      container.appendChild(el);
+    }
+  }
+
+  function createConfetti() {
+    var container = document.getElementById('confetti-container');
+    if (!container) return;
+    var colors = ['#ffd700', '#39ff14', '#c084fc', '#00ccff', '#ffa500'];
+    for (var i = 0; i < 40; i++) {
+      var el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.left = (Math.random() * 100) + '%';
+      el.style.top = '-10px';
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.width = (3 + Math.random() * 5) + 'px';
+      el.style.height = (3 + Math.random() * 5) + 'px';
+      el.style.animationDuration = (1.6 + Math.random() * 1.8) + 's';
+      el.style.animationDelay = (Math.random() * 1.6) + 's';
+      el.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+      container.appendChild(el);
+    }
+  }
+
+  /* ================================================================
+     HOF SCROLL
+     ================================================================ */
+
+  function initHofScroll() {
+    var scrollEl = document.getElementById('hof-scroll');
+    if (!scrollEl) return;
+
+    scrollEl.addEventListener('wheel', function(e) {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        this.scrollLeft += e.deltaY;
+      }
+    }, { passive: false });
+
+    var isDown = false, startX, scrollLeft;
+    scrollEl.addEventListener('mousedown', function(e) {
+      isDown = true; startX = e.pageX - this.offsetLeft; scrollLeft = this.scrollLeft;
+    });
+    scrollEl.addEventListener('mouseleave', function() { isDown = false; });
+    scrollEl.addEventListener('mouseup', function() { isDown = false; });
+    scrollEl.addEventListener('mousemove', function(e) {
+      if (!isDown) return;
+      e.preventDefault();
+      this.scrollLeft = scrollLeft - (e.pageX - this.offsetLeft - startX) * 1.5;
+    });
+  }
+
+  /* ================================================================
+     SHARE OVERLAY
+     ================================================================ */
+
+  function initShareOverlay() {
+    var openBtn = document.getElementById('btn-share');
+    var overlay = document.getElementById('share-overlay');
+    var closeBtn = document.getElementById('share-close');
+    var copyBtn = document.getElementById('share-copy');
+    var shareInput = document.getElementById('share-input');
+
+    if (!openBtn || !overlay) return;
+
+    var shareText = isVictory
+      ? '🏆 I just won the SQUAD Campaign! ' + statsData[2].value + ' total chips. Hall of Fame squad!'
+      : '💔 Squad Campaign complete. ' + statsData[2].value + ' total chips. Run it back!';
+
+    if (shareInput) shareInput.value = shareText;
+
+    openBtn.addEventListener('click', function() {
+      overlay.classList.add('active');
+      if (shareInput) { shareInput.select(); shareInput.setSelectionRange(0, shareInput.value.length); }
+    });
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function() { overlay.classList.remove('active'); });
+    }
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) overlay.classList.remove('active');
+    });
+
+    if (copyBtn && shareInput) {
+      copyBtn.addEventListener('click', function() {
+        shareInput.select(); shareInput.setSelectionRange(0, shareInput.value.length);
+        try {
+          document.execCommand('copy');
+          copyBtn.textContent = '✓ COPIED!';
+          setTimeout(function() { copyBtn.textContent = 'Copy'; }, 2000);
+        } catch(_) {}
+      });
+    }
+  }
+
+  /* ================================================================
+     RENDER
+     ================================================================ */
+
+  function render() {
+    var app = document.getElementById('app');
+    var stateClass = isVictory ? 'victory' : 'defeat';
+    var bannerIcon = isVictory ? '🏆' : '💔';
+    var bannerTitle = isVictory ? 'CAMPAIGN COMPLETE!' : 'CAMPAIGN OVER';
+    var bannerSub = isVictory
+      ? 'You conquered the season. Legendary!'
+      : 'The season ends here. Rise again.';
+    var playAgainText = isVictory ? '▶ PLAY AGAIN' : '↻ RETRY CAMPAIGN';
+
+    // Build match rows
+    var matchRows = '';
+    for (var mi = 0; mi < matchesData.length; mi++) {
+      var m = matchesData[mi];
+      var badgeClass = m.result === 'W' ? 'badge-win' : 'badge-loss';
+      matchRows += '<tr>' +
+        '<td class="round-cell">' + escHtml(m.round) + '</td>' +
+        '<td class="opponent-cell"><span class="match-opponent">' + escHtml(m.opponent) + '</span></td>' +
+        '<td class="score-cell">' + escHtml(m.score) + '</td>' +
+        '<td class="result-cell"><span class="badge ' + badgeClass + '">' + escHtml(m.result) + '</span></td>' +
+      '</tr>';
+    }
+
+    // Build HOF cards
+    var hofCards = '';
+    for (var hi = 0; hi < hallOfFame.length; hi++) {
+      var h = hallOfFame[hi];
+      hofCards += '<div class="hof-card">' +
+        '<div class="hof-avatar">' + escHtml(h.avatar) + '</div>' +
+        '<div class="hof-name">' + escHtml(h.name) + '</div>' +
+        '<div class="hof-pos">' + escHtml(h.pos) + '</div>' +
+        '<div class="hof-award">' + escHtml(h.awardLabel) + '</div>' +
+        '<div class="hof-stat"><strong>' + escHtml(h.stat) + '</strong></div>' +
+      '</div>';
+    }
+
+    // Build stats
+    var statsHtml = '';
+    var statColorClass = isVictory ? 'gold' : 'red';
+    for (var si = 0; si < statsData.length; si++) {
+      var s = statsData[si];
+      statsHtml += '<div class="stat-item">' +
+        '<div class="stat-value ' + statColorClass + '">' + escHtml(s.value) + '</div>' +
+        '<div class="stat-label">' + escHtml(s.label) + '</div>' +
+      '</div>';
+    }
+
+    app.innerHTML =
+      '<div class="screen ' + stateClass + '">' +
+        /* Sparkle / confetti or vignette */
+        (isVictory
+          ? '<div class="sparkle-container" id="sparkle-container"></div><div class="confetti-container" id="confetti-container"></div>'
+          : '<div class="vignette"></div>') +
+
+        /* Banner */
+        '<div class="banner ' + stateClass + '">' +
+          '<span class="banner-icon">' + bannerIcon + '</span>' +
+          '<h1>' + bannerTitle + '</h1>' +
+          '<div class="banner-sub">' + bannerSub + '</div>' +
+        '</div>' +
+
+        /* Match Results */
+        '<div class="matches-section">' +
+          '<div class="section-title">Match Results</div>' +
+          '<table class="matches-table">' +
+            '<thead><tr>' +
+              '<th class="round-cell">Round</th>' +
+              '<th class="opponent-cell">Opponent</th>' +
+              '<th class="score-cell">Score</th>' +
+              '<th class="result-cell">Result</th>' +
+            '</tr></thead>' +
+            '<tbody>' + matchRows + '</tbody>' +
+          '</table>' +
+        '</div>' +
+
+        /* Hall of Fame */
+        '<div class="hof-section">' +
+          '<div class="section-title">Squad Hall of Fame</div>' +
+          '<div class="hof-scroll" id="hof-scroll">' +
+            hofCards +
+          '</div>' +
+        '</div>' +
+
+        /* Stats Summary */
+        '<div class="stats-section">' +
+          '<div class="section-title">Campaign Stats</div>' +
+          '<div class="stats-grid">' + statsHtml + '</div>' +
+        '</div>' +
+
+        /* Actions */
+        '<div class="actions">' +
+          '<button class="btn btn-primary" id="btn-play-again">' + playAgainText + '</button>' +
+          '<button class="btn btn-share" id="btn-share">📤 SHARE RESULT</button>' +
+        '</div>' +
+      '</div>' +
+
+      /* Share Overlay */
+      '<div class="share-overlay" id="share-overlay">' +
+        '<div class="share-box">' +
+          '<h2>🏆 Share Your Campaign</h2>' +
+          '<div class="share-field">' +
+            '<input type="text" id="share-input" readonly>' +
+            '<button id="share-copy">Copy</button>' +
+          '</div>' +
+          '<button class="share-close" id="share-close">Close</button>' +
+        '</div>' +
+      '</div>';
+
+    // Post-render
+    if (isVictory) {
+      createSparkles();
+      createConfetti();
+    }
+    initHofScroll();
+    initShareOverlay();
+
+    // Play Again button
+    var playBtn = document.getElementById('btn-play-again');
+    if (playBtn) {
+      playBtn.addEventListener('click', function() {
+        if (engineAvailable && typeof initNewGame === 'function') {
+          initNewGame();
+        } else if (engineAvailable) {
+          // Manual reset
+          G.currentScreen = 'title';
+          G.matchIdx = 0; G.roundIdx = 0; G.phaseIdx = 0;
+          G.formation = null; G.selectedIds = [];
+          G.dealtPhases = []; G.pickedPhases = [];
+          G.field = []; G.roundScore = 0;
+          G.phaseResults = []; G.roundResults = [];
+          G.matchResults = []; G.fatigue = {};
+          G.morale = 5; G.shopBuffs = [];
+          G.campaignWon = false;
+        }
+
+        if (engineAvailable && typeof saveGame === 'function') {
+          saveGame();
+        }
+
+        // Clean sessionStorage
+        if (typeof sessionStorage !== 'undefined') {
+          try {
+            sessionStorage.removeItem('squad_campaign_complete_save');
+          } catch(e) {}
+        }
+
+        if (window.Game && typeof window.Game.navigate === 'function') {
+          window.Game.transition = 'slide-left';
+          window.Game.navigate('title');
+        } else {
+          // Fallback reload
+          this.textContent = '▶ LOADING…';
+          this.style.opacity = '0.6';
+          this.style.pointerEvents = 'none';
+          setTimeout(function() { window.location.reload(); }, 500);
+        }
+      });
+    }
+
+    console.log('[Campaign Complete] Rendered — victory:', isVictory, 'matches:', matchesData.length, 'hof:', hallOfFame.length);
+  }
+
+  /* ================================================================
+     HTML ESCAPE
+     ================================================================ */
+
+  function escHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  /* ================================================================
+     INIT
+     ================================================================ */
+
+  function init() {
+    // Build data
+    if (engineAvailable) {
+      buildEngineData();
+    } else {
+      buildFallbackData();
+    }
+
+    render();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>

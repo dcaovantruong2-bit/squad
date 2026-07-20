@@ -3,44 +3,669 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SQUAD -- Phase Result Screen</title>
-  <link rel="stylesheet" href="../game.css">
+  <title>SQUAD — Phase Result</title>
   <style>
-    .game-screen { display: none; min-height: 100vh; padding: var(--space-6) var(--space-4); max-width: 1200px; margin: 0 auto; }
-    .game-screen.active { display: block; }
+    /* ════════════════════════════════════════════════════════════
+       Dark Neon Pixel design system (self-contained, no external CSS)
+       ════════════════════════════════════════════════════════════ */
+    :root {
+      --bg: #161120; --bg-deep: #0d0a18; --surface: #231a3a; --surface-raised: #2e2250; --surface-hover: #3a2d60;
+      --fg: #f0ecf8; --fg-dim: #c8b8e0; --muted: #9a8ab0;
+      --accent: #39ff14; --accent-dim: #2bcc10; --accent-glow: rgba(57,255,20,0.4); --accent-on: #0a0612;
+      --gold: #ffd700; --gold-dim: #cc9900; --gold-glow: rgba(255,215,0,0.35);
+      --success: #39ff14; --success-glow: rgba(57,255,20,0.3);
+      --warn: #ffa500; --warn-glow: rgba(255,165,0,0.3);
+      --danger: #ff3344; --danger-glow: rgba(255,51,68,0.3);
+      --info: #00ccff; --info-glow: rgba(0,204,255,0.3);
+      --purple: #c084fc;
+      --border: #3d2d5c; --border-bright: #4d3d6c;
+      --font-display: 'Press Start 2P', monospace; --font-body: 'VT323', monospace; --font-mono: 'VT323', monospace;
+      --radius-sm: 2px; --radius-md: 4px;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px; --space-8: 32px;
+      --motion-fast: 80ms; --motion-base: 160ms;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:18px;line-height:1.5;min-height:100vh;overflow-x:hidden;letter-spacing:0.02em}
+    button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+    body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 4px,rgba(0,0,0,0.03) 4px,rgba(0,0,0,0.03) 8px);pointer-events:none;z-index:9999}
+
+    /* ─── Layout ──────────────────────────────────── */
+    .game-screen{min-height:100vh;padding:var(--space-6) var(--space-4);max-width:1200px;margin:0 auto}
+    .pr-wrapper{display:flex;flex-direction:column;align-items:center;gap:var(--space-6)}
+
+    /* ─── Phase Header ────────────────────────────── */
+    .pr-phase-header{text-align:center;margin-bottom:var(--space-2)}
+    .pr-phase-header .pr-phase-name{font-family:var(--font-display);font-size:14px;color:var(--accent);text-transform:uppercase;letter-spacing:0.06em;text-shadow:0 0 10px var(--accent-glow);margin-bottom:var(--space-2)}
+    .pr-phase-header .pr-phase-tag{font-family:var(--font-body);font-size:14px;color:var(--muted)}
+
+    /* ─── Hero Score ──────────────────────────────── */
+    .pr-hero{display:flex;flex-direction:column;align-items:center;gap:var(--space-2);padding:var(--space-6) var(--space-8);background:var(--surface);border:2px solid var(--border-bright);min-width:320px;text-align:center}
+    .pr-hero .pr-score-label{font-family:var(--font-display);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em}
+    .pr-hero .pr-score{font-family:var(--font-display);font-size:clamp(48px,10vw,72px);color:var(--gold);text-shadow:0 0 10px var(--gold-glow),0 0 30px var(--gold-glow),0 0 60px rgba(255,215,0,0.15);line-height:1;font-variant-numeric:tabular-nums;cursor:pointer;user-select:none}
+    .pr-hero .pr-score.cascading{animation:score-glow-pulse 0.8s ease-in-out infinite}
+    @keyframes score-glow-pulse{0%,100%{text-shadow:0 0 10px var(--gold-glow),0 0 30px var(--gold-glow)}50%{text-shadow:0 0 20px var(--gold-glow),0 0 40px var(--gold-glow),0 0 80px rgba(255,215,0,0.2)}}
+    .pr-hero .pr-target{font-family:var(--font-body);font-size:22px;color:var(--fg-dim);letter-spacing:0.04em}
+    .pr-hero .pr-verdict{font-family:var(--font-display);font-size:8px;color:var(--accent);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:var(--space-2);animation:neonPulse 2s ease-in-out infinite}
+    @keyframes neonPulse{0%,100%{text-shadow:0 0 10px var(--accent-glow),0 0 40px var(--accent-glow)}50%{text-shadow:0 0 20px var(--accent-glow),0 0 60px var(--accent-glow),0 0 80px rgba(57,255,20,0.1)}}
+
+    /* ─── Auto-Win Banner ─────────────────────────── */
+    .pr-auto-win{display:none;width:100%;max-width:600px;padding:var(--space-4) var(--space-6);background:rgba(255,215,0,0.08);border:2px solid var(--gold);text-align:center;margin-bottom:var(--space-2)}
+    .pr-auto-win.visible{display:block;animation:auto-win-glow 1.5s ease-in-out infinite}
+    @keyframes auto-win-glow{0%,100%{box-shadow:0 0 8px var(--gold-glow),inset 0 0 8px rgba(255,215,0,0.03)}50%{box-shadow:0 0 20px var(--gold-glow),0 0 40px rgba(255,215,0,0.08),inset 0 0 12px rgba(255,215,0,0.05)}}
+    .pr-auto-win .pr-auto-win-title{font-family:var(--font-display);font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;text-shadow:0 0 8px var(--gold-glow);margin-bottom:var(--space-1)}
+    .pr-auto-win .pr-auto-win-desc{font-family:var(--font-body);font-size:18px;color:var(--fg-dim)}
+    .pr-auto-win .pr-auto-win-desc strong{color:var(--gold)}
+
+    /* ─── Formula Columns ─────────────────────────── */
+    .pr-formula{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--space-3);width:100%;max-width:800px;margin-bottom:var(--space-2)}
+    .pr-formula-col{background:var(--surface);border:2px solid var(--accent);padding:var(--space-4);display:flex;flex-direction:column;gap:var(--space-2);animation:fade-slide-up 0.5s ease-out both}
+    .pr-formula-col:nth-child(1){animation-delay:0.1s}
+    .pr-formula-col:nth-child(2){animation-delay:0.2s}
+    .pr-formula-col:nth-child(3){animation-delay:0.3s}
+    @keyframes fade-slide-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    .pr-formula-col .pr-col-header{font-family:var(--font-display);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;padding-bottom:var(--space-2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:var(--space-2)}
+    .pr-formula-col .pr-col-icon{font-size:18px}
+    .pr-formula-col .pr-col-total{font-family:var(--font-display);font-size:36px;text-align:center;padding:var(--space-2) 0;letter-spacing:0.04em}
+    .pr-col-header.chips-header{color:var(--accent)}
+    .pr-col-header.mult-header{color:var(--gold)}
+    .pr-col-header.xmult-header{color:var(--info)}
+    .pr-col-total.chips-total{color:var(--accent);text-shadow:0 0 8px rgba(57,255,20,0.3)}
+    .pr-col-total.mult-total{color:var(--gold);text-shadow:0 0 8px rgba(255,215,0,0.3)}
+    .pr-col-total.xmult-total{color:var(--info);text-shadow:0 0 8px rgba(0,204,255,0.3)}
+    .pr-formula-col .pr-col-item{font-family:var(--font-body);font-size:14px;color:var(--fg-dim);display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dotted rgba(61,45,92,0.4)}
+    .pr-formula-col .pr-col-item .pr-item-label{color:var(--muted)}
+    .pr-formula-col .pr-col-item .pr-item-value{color:var(--fg);font-weight:700}
+    .pr-formula-col .pr-col-item .chips-color{color:var(--accent)}
+    .pr-formula-col .pr-col-item .mult-color{color:var(--gold)}
+    .pr-formula-col .pr-col-item .xmult-color{color:var(--info)}
+    .pr-formula-col .pr-col-divider{border-top:1px solid var(--border-bright);padding-top:var(--space-2);font-weight:700}
+    .pr-formula-col .pr-col-divider .pr-item-value{color:var(--gold);font-size:22px}
+
+    /* ─── Formula Bar ─────────────────────────────── */
+    .pr-formula-bar{width:100%;max-width:700px;padding:var(--space-3) var(--space-4);background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:var(--space-2);flex-wrap:wrap;font-family:var(--font-body);font-size:18px;color:var(--fg-dim)}
+    .pr-formula-bar .fb-val{font-weight:700;font-size:22px}
+    .pr-formula-bar .fb-op{color:var(--muted)}
+    .pr-formula-bar .fb-val.chips{color:var(--accent)}
+    .pr-formula-bar .fb-val.mult{color:var(--gold)}
+    .pr-formula-bar .fb-val.xmult{color:var(--info)}
+    .pr-formula-bar .fb-val.total{color:var(--gold);text-shadow:0 0 8px var(--gold-glow)}
+
+    /* ─── Player Contribution Table ───────────────── */
+    .pr-table-wrap{width:100%;max-width:700px;background:var(--surface);border:2px solid var(--border)}
+    .pr-table-title{font-family:var(--font-display);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;padding:var(--space-3) var(--space-4);border-bottom:2px solid var(--border);color:var(--fg-dim);display:flex;align-items:center;gap:var(--space-2)}
+    .pr-table-header{display:grid;grid-template-columns:32px 1fr 56px 64px 80px 72px;padding:var(--space-2) var(--space-4);font-family:var(--font-display);font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border)}
+    .pr-table-body{max-height:240px;overflow-y:auto}
+    .pr-table-body::-webkit-scrollbar{width:4px}
+    .pr-table-body::-webkit-scrollbar-track{background:var(--bg-deep)}
+    .pr-table-body::-webkit-scrollbar-thumb{background:var(--border-bright)}
+    .pr-table-row{display:grid;grid-template-columns:32px 1fr 56px 64px 80px 72px;padding:var(--space-2) var(--space-4);font-family:var(--font-body);font-size:18px;align-items:center;transition:background var(--motion-fast) ease}
+    .pr-table-row:hover{background:var(--surface-hover)}
+    .pr-table-row+.pr-table-row{border-top:1px solid rgba(61,45,92,0.3)}
+    .pr-table-row .pr-td-num{color:var(--muted);font-size:14px;text-align:center}
+    .pr-table-row .pr-td-player{font-weight:700;color:var(--fg)}
+    .pr-table-row .pr-td-pos{font-family:var(--font-display);font-size:9px;color:var(--accent);letter-spacing:0.06em;text-align:center}
+    .pr-table-row .pr-td-base{font-family:var(--font-mono);color:var(--fg-dim);text-align:right;font-variant-numeric:tabular-nums}
+    .pr-table-row .pr-td-fatigue{text-align:center;font-size:14px}
+    .pr-table-row .pr-td-fatigue.ok{color:var(--accent)}
+    .pr-table-row .pr-td-fatigue.tired{color:var(--warn)}
+    .pr-table-row .pr-td-final{font-family:var(--font-mono);color:var(--gold);text-align:right;font-weight:700;font-variant-numeric:tabular-nums;text-shadow:0 0 4px var(--gold-glow)}
+
+    /* ─── Synergy Accordion ───────────────────────── */
+    .pr-syn-section{width:100%;max-width:700px;background:var(--surface);border:2px solid var(--border)}
+    .pr-syn-header{display:flex;align-items:center;justify-content:space-between;padding:var(--space-4);cursor:pointer;user-select:none;transition:background var(--motion-fast) ease;border-bottom:1px solid transparent}
+    .pr-syn-header:hover{background:var(--surface-hover)}
+    .pr-syn-header.open{border-bottom-color:var(--border)}
+    .pr-syn-header .pr-syn-left{display:flex;align-items:center;gap:var(--space-3);font-family:var(--font-display);font-size:9px;text-transform:uppercase;letter-spacing:0.06em;color:var(--fg-dim)}
+    .pr-syn-header .pr-syn-count-badge{background:var(--accent);color:var(--accent-on);padding:1px 8px;font-size:9px;border-radius:var(--radius-sm)}
+    .pr-syn-header .pr-syn-total{font-family:var(--font-body);font-size:22px;color:var(--accent);font-weight:700}
+    .pr-syn-header .pr-syn-arrow{font-size:14px;color:var(--muted);transition:transform var(--motion-base) ease}
+    .pr-syn-header .pr-syn-arrow.open{transform:rotate(180deg)}
+    .pr-syn-body{max-height:0;overflow:hidden;transition:max-height 0.3s ease}
+    .pr-syn-body.open{max-height:600px}
+    .pr-syn-body-inner{padding:var(--space-3) var(--space-4);display:flex;flex-direction:column;gap:var(--space-2)}
+    .pr-syn-group-title{font-family:var(--font-display);font-size:8px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);padding:var(--space-2) 0;border-bottom:1px dotted var(--border)}
+    .pr-syn-item{display:grid;grid-template-columns:10px 1fr auto;gap:var(--space-3);align-items:center;padding:var(--space-2) var(--space-2);background:rgba(0,0,0,0.15);border:1px solid rgba(61,45,92,0.4);animation:syn-appear 0.4s ease-out both}
+    .pr-syn-item:nth-child(2){animation-delay:0.05s}
+    .pr-syn-item:nth-child(3){animation-delay:0.1s}
+    .pr-syn-item:nth-child(4){animation-delay:0.15s}
+    .pr-syn-item:nth-child(5){animation-delay:0.2s}
+    @keyframes syn-appear{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+    .pr-syn-item .pr-syn-dot{width:8px;height:8px;border-radius:0;background:var(--border)}
+    .pr-syn-item .pr-syn-dot.active{background:var(--accent);box-shadow:0 0 6px var(--accent-glow)}
+    .pr-syn-item .pr-syn-info{display:flex;flex-direction:column;gap:2px}
+    .pr-syn-item .pr-syn-name{font-family:var(--font-body);font-size:18px;color:var(--fg);font-weight:700}
+    .pr-syn-item .pr-syn-desc{font-family:var(--font-body);font-size:14px;color:var(--muted)}
+    .pr-syn-item .pr-syn-contrib{font-family:var(--font-body);font-size:14px;color:var(--accent-dim)}
+    .pr-syn-item .pr-syn-value{font-family:var(--font-display);font-size:10px;padding:2px 8px;border:1px solid var(--accent);color:var(--accent);text-align:center;white-space:nowrap}
+    .pr-syn-item .pr-syn-value.gold-value{border-color:var(--gold);color:var(--gold)}
+    .pr-syn-item .pr-syn-value.info-value{border-color:var(--info);color:var(--info)}
+    .pr-syn-item.combo{border-color:rgba(192,132,252,0.3)}
+    .pr-syn-item.combo .pr-syn-dot{background:var(--purple);box-shadow:0 0 6px rgba(192,132,252,0.3)}
+    .pr-syn-item.combo .pr-syn-value{border-color:var(--purple);color:var(--purple)}
+    .pr-syn-none{font-family:var(--font-body);font-size:14px;color:var(--muted);text-align:center;padding:var(--space-4)}
+
+    /* ─── Buttons ─────────────────────────────────── */
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-3) var(--space-6);border-radius:var(--radius-md);border:2px solid var(--border);font-family:var(--font-display);font-size:11px;text-transform:uppercase;letter-spacing:0.06em;transition:all var(--motion-fast) ease;cursor:pointer;user-select:none;text-shadow:0 0 6px currentColor}
+    .btn:active{transform:translateY(1px)}
+    .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:0 0 12px var(--accent-glow)}
+    .btn-primary{background:var(--accent);color:var(--accent-on);border-color:var(--accent);box-shadow:0 0 16px var(--accent-glow),inset 0 0 8px rgba(255,255,255,0.1);text-shadow:none}
+    .btn-primary:hover:not(:disabled){box-shadow:0 0 28px var(--accent-glow),0 0 60px rgba(57,255,20,0.15);background:#45ff20}
+    .btn-lg{padding:var(--space-4) var(--space-8);font-size:13px}
+    .pr-actions{display:flex;gap:var(--space-4);margin-top:var(--space-4)}
+
+    /* ─── Responsive ──────────────────────────────── */
+    @media(max-width:700px){.pr-formula{grid-template-columns:1fr;max-width:400px}.pr-table-header,.pr-table-row{grid-template-columns:28px 1fr 44px 52px 64px 56px;font-size:14px;padding:var(--space-2) var(--space-2)}.pr-hero .pr-score{font-size:clamp(36px,12vw,56px)}}
+    @media(prefers-reduced-motion:reduce){.pr-formula-col,.pr-syn-item{animation:none}.pr-hero .pr-score.cascading{animation:none}.pr-auto-win.visible{animation:none}}
   </style>
 </head>
 <body>
-  <section class="game-screen active" id="screen-phase-result" data-od-id="phase-result-screen">
-<div style="display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:var(--space-6);text-align:center;">
-      <!-- Hero Score -->
-      <div class="pr-hero">
-        <div class="pr-verdict" id="pr-verdict">Phase Complete</div>
-        <div class="pr-score" id="pr-score">0</div>
-        <div class="pr-target" id="pr-target">Target: 500</div>
-      </div>
+<section class="game-screen" id="screen-phase-result">
+  <div class="pr-wrapper">
 
-      <!-- Player Contributions Table -->
-      <div class="pr-table-wrap">
-        <div class="pr-table-title">Contributions</div>
-        <div id="pr-breakdown-rows"></div>
-      </div>
-
-      <!-- Synergies Accordion -->
-      <div class="pr-syn-section">
-        <div class="pr-syn-header" id="pr-syn-toggle">
-          <span>▸▸ <span class="pr-syn-count" id="pr-syn-count">0</span> SYNERGIES FIRED</span>
-          <span class="pr-syn-total" id="pr-syn-total">+0</span>
-          <span class="pr-syn-arrow" id="pr-syn-arrow">▼</span>
-        </div>
-        <div class="pr-syn-body" id="pr-syn-body"></div>
-      </div>
-
-      <button class="btn btn-primary btn-lg" id="pr-continue-btn">Continue ▸</button>
+    <!-- Phase Header -->
+    <div class="pr-phase-header">
+      <div class="pr-phase-name" id="pr-phase-name">PHASE COMPLETE</div>
+      <div class="pr-phase-tag" id="pr-phase-tag"></div>
     </div>
-  </section>
-  
-  <script src="../game-engine.js"></script>
-  <script src="../game-ui.js"></script>
+
+    <!-- Auto-Win Banner -->
+    <div class="pr-auto-win" id="pr-auto-win">
+      <div class="pr-auto-win-title">🏆 AUTO-WIN!</div>
+      <div class="pr-auto-win-desc">Round target already beaten! <strong id="pr-auto-win-morale">+1 morale</strong> earned.</div>
+    </div>
+
+    <!-- Hero Score -->
+    <div class="pr-hero">
+      <div class="pr-verdict" id="pr-verdict">PHASE COMPLETE</div>
+      <div class="pr-score" id="pr-score" title="Click to skip">0</div>
+      <div class="pr-target" id="pr-target">Round so far: 0 / Target: 0</div>
+    </div>
+
+    <!-- Formula Visualization -->
+    <div class="pr-formula" id="pr-formula">
+      <!-- CHIPS Column -->
+      <div class="pr-formula-col">
+        <div class="pr-col-header chips-header"><span class="pr-col-icon">♣</span> Chips</div>
+        <div class="pr-col-total chips-total" id="pr-chips-total">0</div>
+        <div id="pr-chips-items"></div>
+        <div class="pr-col-item pr-col-divider">
+          <span class="pr-item-label">Total Chips</span>
+          <span class="pr-item-value chips-color" id="pr-chips-grand-total">0</span>
+        </div>
+      </div>
+
+      <!-- ADD MULT Column -->
+      <div class="pr-formula-col">
+        <div class="pr-col-header mult-header"><span class="pr-col-icon">➕</span> Add Mult</div>
+        <div class="pr-col-total mult-total" id="pr-mult-total">×1.0</div>
+        <div id="pr-mult-items">
+          <div class="pr-col-item"><span class="pr-item-label">Base</span><span class="pr-item-value mult-color">1.0</span></div>
+        </div>
+        <div class="pr-col-item pr-col-divider">
+          <span class="pr-item-label">Total Add Mult</span>
+          <span class="pr-item-value mult-color">×1.0</span>
+        </div>
+      </div>
+
+      <!-- ×MULT Column -->
+      <div class="pr-formula-col">
+        <div class="pr-col-header xmult-header"><span class="pr-col-icon">✖</span> × Mult</div>
+        <div class="pr-col-total xmult-total" id="pr-xmult-total">×1.0</div>
+        <div id="pr-xmult-items"></div>
+        <div class="pr-col-item pr-col-divider">
+          <span class="pr-item-label">Total × Mult</span>
+          <span class="pr-item-value xmult-color" id="pr-xmult-grand-total">×1.0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formula Bar -->
+    <div class="pr-formula-bar">
+      <span class="fb-val chips" id="fb-chips">0</span>
+      <span class="fb-op">×</span>
+      <span class="fb-val mult" id="fb-mult">1.0</span>
+      <span class="fb-op">×</span>
+      <span class="fb-val xmult" id="fb-xmult">1.0</span>
+      <span class="fb-op">=</span>
+      <span class="fb-val total" id="pr-formula-total">0</span>
+    </div>
+
+    <!-- Player Contribution Table -->
+    <div class="pr-table-wrap">
+      <div class="pr-table-title">👥 Player Contributions</div>
+      <div class="pr-table-header">
+        <span>#</span><span>Player</span><span>Pos</span><span>Base</span><span>Fatigue</span><span>Final</span>
+      </div>
+      <div class="pr-table-body" id="pr-breakdown-rows"></div>
+    </div>
+
+    <!-- Synergy Breakdown -->
+    <div class="pr-syn-section">
+      <div class="pr-syn-header" id="pr-syn-toggle">
+        <div class="pr-syn-left">
+          <span>▼</span><span>Synergies Fired</span>
+          <span class="pr-syn-count-badge" id="pr-syn-count">0</span>
+        </div>
+        <div class="pr-syn-total" id="pr-syn-total">+0</div>
+        <span class="pr-syn-arrow" id="pr-syn-arrow">▾</span>
+      </div>
+      <div class="pr-syn-body" id="pr-syn-body">
+        <div class="pr-syn-body-inner" id="pr-syn-body-inner"></div>
+      </div>
+    </div>
+
+    <!-- Continue Button -->
+    <div class="pr-actions">
+      <button class="btn btn-primary btn-lg" id="pr-continue-btn" onclick="(function(){if(typeof G!=='undefined'&&G.phaseResults&&G.phaseResults.length>0){var match=window.CAMPAIGN_MATCHES?window.CAMPAIGN_MATCHES[G.matchIdx]:null;var target=match&&match.targets?match.targets[G.roundIdx]:0;var autoWin=G.roundScore>=target&&target>0;if(!autoWin&&G.phaseIdx<G.pickedPhases.length){if(typeof saveGame==='function')saveGame();if(window.Game){Game.transition='slide-left';Game.navigate('match')}}else{if(typeof finishRound==='function')finishRound();if(typeof saveGame==='function')saveGame();if(window.Game){Game.transition='slide-left';Game.navigate('round-result')}}}else{location.reload()}})()">▶ CONTINUE</button>
+    </div>
+
+  </div>
+</section>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   SQUAD — Phase Result Screen Logic
+   Reads from game engine G state with fallback demo data
+   ═══════════════════════════════════════════════════════════ */
+(function(){
+  'use strict';
+
+  // ─── Resolve data source ───────────────────────────
+  var engineMode = (typeof G !== 'undefined' && G.phaseResults && G.phaseResults.length > 0);
+  var ALL_PHASES = (typeof window !== 'undefined' && window.ALL_PHASES) ? window.ALL_PHASES : [];
+  var CAMPAIGN_MATCHES = (typeof window !== 'undefined' && window.CAMPAIGN_MATCHES) ? window.CAMPAIGN_MATCHES : [];
+  var PLAYERS = (typeof window !== 'undefined' && window.PLAYERS) ? window.PLAYERS : [];
+
+  var data = buildData();
+  var animating = false, animationRAF = null;
+
+  // ─── Build data object from engine or demo ─────────
+  function buildData() {
+    if (engineMode) return buildFromEngine();
+    return buildDemo();
+  }
+
+  function buildFromEngine() {
+    var last = G.phaseResults[G.phaseResults.length - 1];
+    var phaseIdx = G.phaseIdx;
+    var pickedPhases = G.pickedPhases || [];
+    // The just-completed phase is at index phaseIdx-1 (submitPhase increments phaseIdx)
+    var completedPhaseIdx = Math.max(0, phaseIdx - 1);
+    var phaseId = (pickedPhases.length > completedPhaseIdx) ? pickedPhases[completedPhaseIdx] : null;
+
+    // Find phase info
+    var phaseInfo = null;
+    if (phaseId && ALL_PHASES.length) {
+      for (var i = 0; i < ALL_PHASES.length; i++) {
+        if (ALL_PHASES[i].id === phaseId) { phaseInfo = ALL_PHASES[i]; break; }
+      }
+    }
+
+    // Match/round context
+    var match = (CAMPAIGN_MATCHES.length > G.matchIdx) ? CAMPAIGN_MATCHES[G.matchIdx] : null;
+    var roundTarget = (match && match.targets && match.targets[G.roundIdx]) ? match.targets[G.roundIdx] : 0;
+    var roundSoFar = G.roundScore || 0;
+
+    // Breakdown data
+    var breakdown = last.breakdown || [];
+    var synergies = last.synergies || { details: [], chips: 0, addMult: 0, xMult: 1 };
+
+    // Build players list
+    var players = [];
+    for (var pi = 0; pi < breakdown.length; pi++) {
+      var b = breakdown[pi];
+      players.push({
+        name: b.playerName || 'Player ' + (pi + 1),
+        position: b.position || '??',
+        fatigue: b.fatigue !== undefined ? b.fatigue : 1.0,
+        baseChips: b.baseChips || 0,
+        effectiveChips: b.subtotal || 0
+      });
+    }
+
+    // Calculate totals
+    var playerChips = last.playerChips || players.reduce(function(s,p){return s+p.baseChips;},0);
+    var synergyChips = last.synergyChips || synergies.chips || 0;
+    var totalChips = playerChips + synergyChips;
+    var addMult = last.addMult || 1;
+    var xMult = last.xMult || 1;
+    var formationMult = last.formationMult || 1;
+    var momentum = last.momentum || 1;
+    var fatigueAvg = last.fatigueAvg || 1;
+    var phaseScore = last.score || 0;
+
+    // Categorize synergy details
+    var phaseSyns = [], persistentSyns = [], comboSyns = [];
+    if (synergies.details && synergies.details.length) {
+      for (var si = 0; si < synergies.details.length; si++) {
+        var s = synergies.details[si];
+        var entry = {
+          name: s.name || '',
+          desc: '',
+          value: '',
+          contributors: (s.contributors || []).join(' · ') || ''
+        };
+        if (s.type === 'chips' || s.type === 'combo_chips') {
+          entry.value = '+' + (s.value || 0);
+          if (s.type === 'combo_chips') { comboSyns.push(entry); }
+          else { phaseSyns.push(entry); }
+        } else if (s.type === 'addMult') {
+          entry.value = '+' + (s.value || 0);
+          phaseSyns.push(entry);
+        } else if (s.type === 'xMult') {
+          entry.value = '\u00d7' + (s.value || 1).toFixed(1);
+          phaseSyns.push(entry);
+        } else if (s.type === 'carryover') {
+          entry.value = '+' + (s.value || 0) + ' → next';
+          comboSyns.push(entry);
+        }
+      }
+    }
+    // Persistent buffs
+    if (last.persistentBuffs && last.persistentBuffs.length) {
+      for (var bi = 0; bi < last.persistentBuffs.length; bi++) {
+        persistentSyns.push({ name: last.persistentBuffs[bi], desc: 'Squad synergy', value: '✓', contributors: 'Squad' });
+      }
+    }
+
+    return {
+      phase: {
+        name: phaseInfo ? phaseInfo.name : 'Phase',
+        number: phaseIdx,
+        tag: phaseInfo ? phaseInfo.tag + ' · ' + breakdown.length + ' players' : ''
+      },
+      players: players,
+      playerChips: playerChips,
+      synergyChips: synergyChips,
+      totalChips: totalChips,
+      addMult: addMult,
+      xMult: xMult,
+      formationMult: formationMult,
+      momentum: momentum,
+      fatigueAvg: fatigueAvg,
+      phaseScore: phaseScore,
+      roundTarget: roundTarget,
+      roundSoFar: roundSoFar,
+      autoWin: roundSoFar >= roundTarget && roundTarget > 0,
+      autoWinMorale: 1,
+      synergies: { phase: phaseSyns, persistent: persistentSyns, combos: comboSyns },
+      xMultItems: buildXMultItems(formationMult, momentum, fatigueAvg, last),
+      formationName: G.formation || '4-4-2'
+    };
+  }
+
+  function buildXMultItems(fm, mom, fa, last) {
+    var items = [];
+    items.push({ label: 'Formation Bonus', value: fm });
+    items.push({ label: 'Momentum', value: mom });
+    items.push({ label: 'Fatigue Avg', value: Math.round(fa * 100) / 100 });
+    if (last && last.phaseMult && last.phaseMult !== 1) {
+      items.push({ label: 'Combo Chain', value: last.phaseMult });
+    }
+    return items;
+  }
+
+  function buildDemo() {
+    // Standalone fallback demo data
+    return {
+      phase: { name: 'Goal Kick', number: 1, tag: 'Defensive · 3 players' },
+      players: [
+        { name: 'Gigi Wall', position: 'GK', fatigue: 1.0, baseChips: 30, effectiveChips: 30 },
+        { name: 'El Capit\u00e1n', position: 'CB', fatigue: 1.0, baseChips: 30, effectiveChips: 30 },
+        { name: 'JT Rock', position: 'CB', fatigue: 1.0, baseChips: 27, effectiveChips: 27 }
+      ],
+      playerChips: 87, synergyChips: 40, totalChips: 127,
+      addMult: 1.0, xMult: 1.3, formationMult: 1.0, momentum: 1.0, fatigueAvg: 1.0,
+      phaseScore: 165, roundTarget: 200000, roundSoFar: 42350, autoWin: false, autoWinMorale: 0,
+      formationName: '4-4-2',
+      xMultItems: [
+        { label: 'Formation Bonus', value: 1.0 },
+        { label: 'Momentum', value: 1.0 },
+        { label: 'Fatigue Avg', value: 1.0 },
+        { label: 'Combo Chain', value: 1.3 }
+      ],
+      synergies: {
+        phase: [
+          { name: 'Clean Sheet', desc: 'GK DEF + CB DEF ≥ 18: +20 chips', value: '+20', contributors: 'Gigi Wall · El Capit\u00e1n' },
+          { name: 'Organised Defence', desc: '2 CBs DEF ≥ 18: +20 chips', value: '+20', contributors: 'El Capit\u00e1n · JT Rock' }
+        ],
+        persistent: [{ name: 'Leadership Council', desc: '3+ leaders: all +15 chips', value: '+15', contributors: 'All players' }],
+        combos: [{ name: 'Defensive → Possession', desc: 'Absorb pressure, build from back — +25 chips', value: '+25', contributors: 'Team' }]
+      }
+    };
+  }
+
+  // ─── DOM refs ──────────────────────────────────────
+  function $(id) { return document.getElementById(id); }
+  var scoreEl = $('pr-score'), targetEl = $('pr-target'), phaseNameEl = $('pr-phase-name');
+  var phaseTagEl = $('pr-phase-tag'), verdictEl = $('pr-verdict'), autoWinEl = $('pr-auto-win');
+  var autoWinMoraleEl = $('pr-auto-win-morale'), breakdownBody = $('pr-breakdown-rows');
+  var synBodyInner = $('pr-syn-body-inner'), synCount = $('pr-syn-count'), synTotal = $('pr-syn-total');
+  var synToggle = $('pr-syn-toggle'), synArrow = $('pr-syn-arrow');
+  var chipsTotal = $('pr-chips-total'), multTotal = $('pr-mult-total'), xmultTotal = $('pr-xmult-total');
+  var chipsGrand = $('pr-chips-grand-total'), xmultGrand = $('pr-xmult-grand-total');
+  var formulaTotal = $('pr-formula-total'), fbChips = $('fb-chips'), fbMult = $('fb-mult');
+  var fbXmult = $('fb-xmult'), chipsItems = $('pr-chips-items'), xmultItems = $('pr-xmult-items');
+
+  // ─── Score Count-Up Animation ─────────────────────
+  function animateScore(finalScore, duration) {
+    if (animationRAF) { cancelAnimationFrame(animationRAF); animationRAF = null; }
+    animating = true;
+    var start = performance.now();
+    function tick(now) {
+      var elapsed = now - start;
+      var progress = Math.min(elapsed / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      scoreEl.textContent = Math.round(eased * finalScore).toLocaleString();
+      if (progress < 1 && animating) {
+        animationRAF = requestAnimationFrame(tick);
+      } else {
+        scoreEl.textContent = finalScore.toLocaleString();
+        scoreEl.classList.remove('cascading');
+        animating = false; animationRAF = null;
+      }
+    }
+    scoreEl.classList.add('cascading');
+    requestAnimationFrame(tick);
+  }
+
+  scoreEl.addEventListener('click', function() {
+    if (animating) {
+      animating = false;
+      if (animationRAF) { cancelAnimationFrame(animationRAF); animationRAF = null; }
+      scoreEl.textContent = data.phaseScore.toLocaleString();
+      scoreEl.classList.remove('cascading');
+    }
+  });
+
+  // ─── Synergy Toggle ───────────────────────────────
+  var synOpen = false;
+  synToggle.addEventListener('click', function() {
+    synOpen = !synOpen;
+    $('pr-syn-body').classList.toggle('open', synOpen);
+    synArrow.classList.toggle('open', synOpen);
+    synToggle.classList.toggle('open', synOpen);
+  });
+
+  // ─── Render ───────────────────────────────────────
+  function render() {
+    var d = data;
+
+    // Header
+    phaseNameEl.textContent = d.phase.name + ' — Phase ' + d.phase.number + ' Complete';
+    phaseTagEl.textContent = d.phase.tag;
+    verdictEl.textContent = d.autoWin ? 'AUTO-WIN!' : 'PHASE COMPLETE';
+
+    // Progress
+    targetEl.textContent = 'Round so far: ' + d.roundSoFar.toLocaleString() + ' / Target: ' + d.roundTarget.toLocaleString();
+
+    // Auto-win
+    if (d.autoWin) {
+      autoWinEl.classList.add('visible');
+      autoWinMoraleEl.textContent = '+' + d.autoWinMorale + ' morale';
+    } else {
+      autoWinEl.classList.remove('visible');
+    }
+
+    // Formula — Chips column
+    chipsTotal.textContent = d.totalChips;
+    chipsGrand.textContent = d.totalChips;
+    var chipsHtml = '';
+    for (var pi = 0; pi < d.players.length; pi++) {
+      var p = d.players[pi];
+      chipsHtml += '<div class="pr-col-item"><span class="pr-item-label">' + p.position + ' ' + p.name + '</span><span class="pr-item-value chips-color">+' + p.baseChips + '</span></div>';
+    }
+    if (d.synergyChips > 0) {
+      chipsHtml += '<div class="pr-col-item"><span class="pr-item-label">Synergies</span><span class="pr-item-value chips-color">+' + d.synergyChips + '</span></div>';
+    }
+    chipsItems.innerHTML = chipsHtml;
+
+    // Formula — Add Mult column
+    multTotal.textContent = '\u00d7' + d.addMult.toFixed(1);
+    // Add Mult display stays as base + any addMult from synergies
+    var addMultItems = $('pr-mult-items');
+    if (d.addMult > 1) {
+      addMultItems.innerHTML = '<div class="pr-col-item"><span class="pr-item-label">Base</span><span class="pr-item-value mult-color">1.0</span></div>' +
+        '<div class="pr-col-item"><span class="pr-item-label">Synergy Bonus</span><span class="pr-item-value mult-color">+' + (d.addMult - 1).toFixed(1) + '</span></div>';
+    } else {
+      addMultItems.innerHTML = '<div class="pr-col-item"><span class="pr-item-label">Base</span><span class="pr-item-value mult-color">1.0</span></div>';
+    }
+
+    // Formula — X Mult column
+    var xMultDisplay = d.xMult;
+    // Separate synergy xMults from base multipliers
+    var baseXMult = d.formationMult * d.momentum * d.fatigueAvg;
+    var synXMult = d.xMult / baseXMult;
+    xmultTotal.textContent = '\u00d7' + xMultDisplay.toFixed(1);
+    xmultGrand.textContent = '\u00d7' + xMultDisplay.toFixed(1);
+
+    var xmHtml = '';
+    for (var xi = 0; xi < d.xMultItems.length; xi++) {
+      var item = d.xMultItems[xi];
+      xmHtml += '<div class="pr-col-item"><span class="pr-item-label">' + item.label + '</span><span class="pr-item-value xmult-color">\u00d7' + item.value.toFixed(1) + '</span></div>';
+    }
+    // Show synergy xMult items
+    if (d.synergies.phase.length > 0) {
+      for (var si = 0; si < d.synergies.phase.length; si++) {
+        var s = d.synergies.phase[si];
+        if (s.value && s.value.indexOf('\u00d7') === 0) {
+          xmHtml += '<div class="pr-col-item"><span class="pr-item-label">' + s.name + ' (syn)</span><span class="pr-item-value xmult-color">' + s.value + '</span></div>';
+        }
+      }
+    }
+    xmultItems.innerHTML = xmHtml;
+
+    // Formula bar
+    fbChips.textContent = d.totalChips;
+    fbMult.textContent = d.addMult.toFixed(1);
+    fbXmult.textContent = d.xMult.toFixed(1);
+    formulaTotal.textContent = d.phaseScore.toLocaleString();
+
+    // Player table
+    var rows = '';
+    for (var ri = 0; ri < d.players.length; ri++) {
+      var rp = d.players[ri];
+      var fatigueClass = rp.fatigue < 1.0 ? 'tired' : 'ok';
+      var fatigueDisplay = rp.fatigue < 1.0 ? '\u00d7' + rp.fatigue.toFixed(1) : '\u2713\u00d71.0';
+      rows += '<div class="pr-table-row">' +
+        '<span class="pr-td-num">' + (ri + 1) + '</span>' +
+        '<span class="pr-td-player">' + rp.name + '</span>' +
+        '<span class="pr-td-pos">' + rp.position + '</span>' +
+        '<span class="pr-td-base">' + rp.baseChips + '</span>' +
+        '<span class="pr-td-fatigue ' + fatigueClass + '">' + fatigueDisplay + '</span>' +
+        '<span class="pr-td-final">' + rp.effectiveChips + '\u2663</span>' +
+        '</div>';
+    }
+    breakdownBody.innerHTML = rows;
+
+    // Synergy count & total
+    var totalSynFired = d.synergies.phase.length + d.synergies.persistent.length + d.synergies.combos.length;
+    synCount.textContent = totalSynFired;
+    var totalSynValue = d.synergyChips;
+    synTotal.textContent = totalSynValue >= 0 ? '+' + totalSynValue : totalSynValue;
+
+    // Synergy accordion
+    var synHtml = '';
+    if (d.synergies.phase.length > 0) {
+      synHtml += '<div class="pr-syn-group-title">\u26a1 Phase Synergies</div>';
+      for (var ai = 0; ai < d.synergies.phase.length; ai++) {
+        var as = d.synergies.phase[ai];
+        synHtml += '<div class="pr-syn-item"><div class="pr-syn-dot active"></div><div class="pr-syn-info"><div class="pr-syn-name">' + as.name + '</div>' +
+          (as.desc ? '<div class="pr-syn-desc">' + as.desc + '</div>' : '') +
+          (as.contributors ? '<div class="pr-syn-contrib">' + as.contributors + '</div>' : '') +
+          '</div><div class="pr-syn-value">' + as.value + '</div></div>';
+      }
+    }
+    if (d.synergies.persistent.length > 0) {
+      synHtml += '<div class="pr-syn-group-title">\ud83d\udd04 Persistent Synergies</div>';
+      for (var bi = 0; bi < d.synergies.persistent.length; bi++) {
+        var bs = d.synergies.persistent[bi];
+        synHtml += '<div class="pr-syn-item"><div class="pr-syn-dot active"></div><div class="pr-syn-info"><div class="pr-syn-name">' + bs.name + '</div>' +
+          (bs.desc ? '<div class="pr-syn-desc">' + bs.desc + '</div>' : '') +
+          '</div><div class="pr-syn-value info-value">' + bs.value + '</div></div>';
+      }
+    }
+    if (d.synergies.combos.length > 0) {
+      synHtml += '<div class="pr-syn-group-title">\ud83d\udd17 Combo Chains</div>';
+      for (var ci = 0; ci < d.synergies.combos.length; ci++) {
+        var cs = d.synergies.combos[ci];
+        synHtml += '<div class="pr-syn-item combo"><div class="pr-syn-dot"></div><div class="pr-syn-info"><div class="pr-syn-name">' + cs.name + '</div>' +
+          (cs.desc ? '<div class="pr-syn-desc">' + cs.desc + '</div>' : '') +
+          (cs.contributors ? '<div class="pr-syn-contrib">' + cs.contributors + '</div>' : '') +
+          '</div><div class="pr-syn-value">' + cs.value + '</div></div>';
+      }
+    }
+    if (synHtml === '') {
+      synBodyInner.innerHTML = '<div class="pr-syn-none">No synergies fired this phase</div>';
+    } else {
+      synBodyInner.innerHTML = synHtml;
+    }
+
+    // Animate
+    setTimeout(function() { animateScore(d.phaseScore, 800); }, 150);
+  }
+
+  // ─── CONTINUE button ──────────────────────────────
+  $('pr-continue-btn').addEventListener('click', function() {
+    if (engineMode) {
+      // Check auto-win: if roundScore already >= target, skip remaining phases
+      if (!data.autoWin && G.phaseIdx < G.pickedPhases.length) {
+        // More phases in this round — go back to match
+        if (typeof saveGame === 'function') saveGame();
+        if (window.Game) {
+          window.Game.transition = 'slide-left';
+          window.Game.navigate('match');
+        } else {
+          window.location.href = 'match.html';
+        }
+      } else {
+        // Auto-win OR all phases done — finish this round
+        if (typeof finishRound === 'function') finishRound();
+        if (typeof saveGame === 'function') saveGame();
+        if (window.Game) {
+          window.Game.transition = 'slide-left';
+          window.Game.navigate('round-result');
+        } else {
+          window.location.href = 'round-result.html';
+        }
+      }
+    } else {
+      // Demo mode: restart animation
+      scoreEl.textContent = '0';
+      if (animationRAF) { cancelAnimationFrame(animationRAF); animationRAF = null; }
+      animating = false;
+      setTimeout(function() { animateScore(data.phaseScore, 800); }, 100);
+    }
+  });
+
+  // ─── Init ─────────────────────────────────────────
+  render();
+
+  // Expose for external use
+  window.renderPhaseResult = render;
+  window.animateScoreCascade = function(final, duration) { animateScore(final, duration || 800); };
+
+})();
+</script>
 </body>
 </html>

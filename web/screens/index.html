@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Squad — All Screens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #161120; --surface: #231a3a; --surface-raised: #2e2250;
+  --fg: #f0ecf8; --fg-dim: #c8b8e0; --muted: #9a8ab0;
+  --accent: #39ff14; --gold: #ffd700; --danger: #ff3344;
+  --border: #3d2d5c; --font-d: 'Press Start 2P', monospace; --font-b: 'VT323', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-b);
+  font-size: 16px; min-height: 100dvh; padding: 24px;
+}
+body::after {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,0.06) 0px, transparent 1px, transparent 3px);
+}
+h1 { font-family: var(--font-d); font-size: 16px; color: var(--accent); margin-bottom: 8px; text-shadow: 0 0 10px rgba(57,255,20,0.3); }
+.sub { color: var(--muted); font-size: 18px; margin-bottom: 24px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.card {
+  background: var(--surface); border: 1px solid var(--border); padding: 16px;
+  display: flex; flex-direction: column; gap: 8px; transition: all 100ms;
+  text-decoration: none; color: inherit;
+}
+.card:hover { border-color: var(--accent); box-shadow: 0 0 12px rgba(57,255,20,0.2); }
+.card-num { font-family: var(--font-d); font-size: 8px; color: var(--muted); }
+.card-title { font-family: var(--font-d); font-size: 10px; color: var(--fg); }
+.card-desc { font-family: var(--font-b); font-size: 16px; color: var(--fg-dim); line-height: 1.3; }
+.card-size { font-family: var(--font-b); font-size: 14px; color: var(--muted); }
+.card-badge {
+  display: inline-block; font-family: var(--font-d); font-size: 7px;
+  padding: 2px 6px; border: 1px solid var(--accent); color: var(--accent);
+  align-self: flex-start;
+}
+.stats { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+.stat { font-family: var(--font-d); font-size: 8px; color: var(--gold); }
+.stat span { color: var(--muted); }
+a { color: inherit; text-decoration: none; }
+</style>
+</head>
+<body>
+<h1>⟐  SQUAD</h1>
+<p class="sub">Football Card Roguelike — Screen Inventory</p>
+
+<div class="stats">
+  <div class="stat">9 <span>screens</span></div>
+  <div class="stat">280 KB <span>total</span></div>
+  <div class="stat">8,500+ <span>lines of code</span></div>
+  <div class="stat">33 <span>players</span></div>
+  <div class="stat">6 <span>formations</span></div>
+  <div class="stat">8 <span>phases</span></div>
+</div>
+
+<div class="grid">
+  <a class="card" href="title-screen.html">
+    <div class="card-num">SCREEN 1/9</div>
+    <div class="card-title">🏠 Title & Onboarding</div>
+    <div class="card-desc">First impression. Start campaign, quick start, how to play.</div>
+    <span class="card-badge">18 KB</span>
+  </a>
+
+  <a class="card" href="squad-builder.html">
+    <div class="card-num">SCREEN 2/9</div>
+    <div class="card-title">🧑‍🤝‍🧑 Squad Builder</div>
+    <div class="card-desc">Draft 11-12 players within 360 coin budget. Filter by position, compare stats.</div>
+    <span class="card-badge">32 KB</span>
+  </a>
+
+  <a class="card" href="formation-select.html">
+    <div class="card-num">SCREEN 3/9</div>
+    <div class="card-title">📋 Formation Select</div>
+    <div class="card-desc">Choose tactical shape. Carousel with pitch diagram, position bonuses, auto-recommend.</div>
+    <span class="card-badge">32 KB</span>
+  </a>
+
+  <a class="card" href="phase-select.html">
+    <div class="card-num">SCREEN 4/9</div>
+    <div class="card-title">🎯 Phase Selection</div>
+    <div class="card-desc">Pick 3 phases from 6 dealt. Combo chain preview, scouting report.</div>
+    <span class="card-badge">34 KB</span>
+  </a>
+
+  <a class="card" href="match-screen.html">
+    <div class="card-num">SCREEN 5/9</div>
+    <div class="card-title">⚽ Match — Phase Placement</div>
+    <div class="card-desc">Place players into phase slots. Live scoring, synergy triggers, auto-fill.</div>
+    <span class="card-badge">48 KB</span>
+  </a>
+
+  <a class="card" href="phase-result.html">
+    <div class="card-num">SCREEN 6/9</div>
+    <div class="card-title">📊 Phase Result</div>
+    <div class="card-desc">Balatro-style scoring breakdown. Chips × Add_Mult × X_Mult formula visualization.</div>
+    <span class="card-badge">35 KB</span>
+  </a>
+
+  <a class="card" href="shop-screen.html">
+    <div class="card-num">SCREEN 7/9</div>
+    <div class="card-title">💰 Shop</div>
+    <div class="card-desc">Spend morale on buffs. Squad status, 6 shop items, active buffs tracker.</div>
+    <span class="card-badge">22 KB</span>
+  </a>
+
+  <a class="card" href="round-result.html">
+    <div class="card-num">SCREEN 8/9</div>
+    <div class="card-title">🏆 Round Result & Campaign Map</div>
+    <div class="card-desc">Round win/loss, match progress, campaign map across 5 matches.</div>
+    <span class="card-badge">28 KB</span>
+  </a>
+
+  <a class="card" href="campaign-complete.html">
+    <div class="card-num">SCREEN 9/9</div>
+    <div class="card-title">🎉 Campaign Complete</div>
+    <div class="card-desc">Victory/defeat screen. Hall of Fame, stats, play again.</div>
+    <span class="card-badge">27 KB</span>
+  </a>
+</div>
+
+<div class="stats" style="margin-top:24px">
+  <div class="stat">Open Design Skills Used</div>
+  <div class="stat"><span>frontend-design</span></div>
+  <div class="stat"><span>impeccable-design-polish</span></div>
+  <div class="stat"><span>taste-skill</span></div>
+  <div class="stat"><span>emilkowalski-motion</span></div>
+  <div class="stat"><span>brandkit</span></div>
+</div>
+</body>
+</html>

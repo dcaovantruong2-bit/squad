@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formation Select — Squad</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================
+       DESIGN SYSTEM — Squad Dark Neon Pixel
+       ============================================ */
+    :root {
+      --bg: #161120;
+      --bg-deep: #0d0a18;
+      --surface: #231a3a;
+      --surface-raised: #2e2250;
+      --surface-hover: #3a2d60;
+      --fg: #f0ecf8;
+      --fg-dim: #c8b8e0;
+      --muted: #9a8ab0;
+      --accent: #39ff14;
+      --accent-dim: #2bcc10;
+      --gold: #ffd700;
+      --gold-dim: #cc9900;
+      --danger: #ff3344;
+      --info: #00ccff;
+      --purple: #c084fc;
+      --warn: #ffa500;
+      --pitch-green: #0d3320;
+      --pitch-light: #12442a;
+      --border: #3d2d5c;
+      --border-bright: #4d3d6c;
+      --font-display: 'Press Start 2P', monospace;
+      --font-body: 'VT323', monospace;
+      --crt-line: rgba(57, 255, 20, 0.03);
+      --glow-accent: 0 0 8px rgba(57, 255, 20, 0.6), 0 0 20px rgba(57, 255, 20, 0.2);
+      --glow-gold: 0 0 8px rgba(255, 215, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.2);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg-deep);
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.4;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* --- CRT Scanlines Overlay --- */
+    .crt-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        var(--crt-line) 2px,
+        var(--crt-line) 4px
+      );
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+
+    /* ============================================
+       SCREEN LAYOUT
+       ============================================ */
+    .screen {
+      min-height: 100vh;
+      background: var(--bg);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px 16px 40px;
+      position: relative;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    /* ============================================
+       HEADER
+       ============================================ */
+    header {
+      text-align: center;
+      padding: 16px 0 8px;
+      width: 100%;
+    }
+    header h1 {
+      font-family: var(--font-display);
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--accent);
+      text-shadow: var(--glow-accent);
+    }
+    header .subtitle {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ============================================
+       CAROUSEL
+       ============================================ */
+    .carousel-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .carousel-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .carousel-btn {
+      width: 44px;
+      height: 44px;
+      border: 2px solid var(--border-bright);
+      background: var(--surface);
+      color: var(--fg-dim);
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      flex-shrink: 0;
+      font-family: sans-serif;
+      line-height: 1;
+      user-select: none;
+    }
+    .carousel-btn:hover {
+      background: var(--surface-hover);
+      color: var(--accent);
+      border-color: var(--accent);
+      box-shadow: var(--glow-accent);
+    }
+    .carousel-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* --- Formation Card --- */
+    .formation-card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      padding: 18px 20px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      width: 260px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      position: relative;
+    }
+    .formation-card.active {
+      border-color: var(--accent);
+      box-shadow: var(--glow-accent);
+    }
+    .formation-card.recommended {
+      border-color: var(--gold);
+      box-shadow: var(--glow-gold);
+    }
+
+    .formation-card .card-label {
+      font-family: var(--font-display);
+      font-size: 9px;
+      color: var(--fg-dim);
+      letter-spacing: 1px;
+    }
+
+    /* --- Pitch Diagram --- */
+    .pitch {
+      width: 180px;
+      height: 220px;
+      background: var(--pitch-green);
+      border: 2px solid rgba(57, 255, 20, 0.25);
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    /* Center line */
+    .pitch::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    /* Center circle */
+    .pitch .center-circle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+    /* Center spot */
+    .pitch .center-spot {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+    /* Penalty area top */
+    .pitch .penalty-top {
+      position: absolute;
+      top: 6%;
+      left: 25%;
+      width: 50%;
+      height: 18%;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    /* Penalty area bottom */
+    .pitch .penalty-bot {
+      position: absolute;
+      bottom: 6%;
+      left: 25%;
+      width: 50%;
+      height: 18%;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    /* Goal area top */
+    .pitch .goal-area-top {
+      position: absolute;
+      top: 10%;
+      left: 35%;
+      width: 30%;
+      height: 8%;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    /* Goal area bottom */
+    .pitch .goal-area-bot {
+      position: absolute;
+      bottom: 10%;
+      left: 35%;
+      width: 30%;
+      height: 8%;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* --- Position Dot --- */
+    .pos-dot {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid rgba(57, 255, 20, 0.6);
+      box-shadow: 0 0 6px rgba(57, 255, 20, 0.4);
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .pos-dot .pos-label {
+      font-family: var(--font-display);
+      font-size: 5px;
+      color: var(--bg-deep);
+      font-weight: bold;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+    /* Position color variants */
+    .pos-dot.gk   { background: #ffd700; border-color: rgba(255,215,0,0.6); box-shadow: 0 0 6px rgba(255,215,0,0.4); }
+    .pos-dot.def  { background: #00ccff; border-color: rgba(0,204,255,0.6); box-shadow: 0 0 6px rgba(0,204,255,0.4); }
+    .pos-dot.mid  { background: #c084fc; border-color: rgba(192,132,252,0.6); box-shadow: 0 0 6px rgba(192,132,252,0.4); }
+    .pos-dot.att  { background: #ff3344; border-color: rgba(255,51,68,0.6); box-shadow: 0 0 6px rgba(255,51,68,0.4); }
+
+    /* ============================================
+       DOT INDICATORS
+       ============================================ */
+    .dots-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      align-items: center;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border: 2px solid var(--border-bright);
+      background: var(--surface);
+      cursor: pointer;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .dot.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: var(--glow-accent);
+    }
+    .dot:hover {
+      border-color: var(--accent-dim);
+    }
+
+    /* ============================================
+       DETAIL PANEL
+       ============================================ */
+    .detail-panel {
+      width: 100%;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .detail-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .detail-header h2 {
+      font-family: var(--font-display);
+      font-size: 10px;
+      color: var(--fg);
+      letter-spacing: 1px;
+    }
+
+    .global-mult {
+      font-family: var(--font-display);
+      font-size: 22px;
+      color: var(--gold);
+      text-shadow: var(--glow-gold);
+      line-height: 1;
+    }
+
+    .description {
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: var(--fg-dim);
+      line-height: 1.4;
+    }
+
+    /* --- Position Bonus Tags --- */
+    .bonus-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .bonus-tag {
+      font-family: var(--font-display);
+      font-size: 7px;
+      padding: 4px 8px;
+      border: 1px solid;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      line-height: 1.2;
+    }
+    .bonus-tag.positive {
+      color: var(--accent);
+      border-color: rgba(57, 255, 20, 0.4);
+    }
+    .bonus-tag.negative {
+      color: var(--danger);
+      border-color: rgba(255, 51, 68, 0.4);
+    }
+
+    /* --- Squad Fit Table --- */
+    .fit-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-body);
+      font-size: 14px;
+    }
+    .fit-table thead th {
+      font-family: var(--font-display);
+      font-size: 7px;
+      color: var(--muted);
+      text-align: left;
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--border);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .fit-table tbody td {
+      padding: 6px 8px;
+      border-bottom: 1px solid rgba(61, 45, 92, 0.5);
+      color: var(--fg-dim);
+      vertical-align: top;
+    }
+    .fit-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    .fit-table .pos-cell {
+      font-family: var(--font-display);
+      font-size: 7px;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+    .fit-table .names-cell {
+      font-size: 14px;
+      color: var(--fg);
+    }
+    .fit-table .fit-badge {
+      display: inline-block;
+      font-family: var(--font-display);
+      font-size: 6px;
+      padding: 2px 6px;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    .fit-badge.natural { color: var(--accent); border: 1px solid rgba(57,255,20,0.3); }
+    .fit-badge.adjacent { color: var(--gold); border: 1px solid rgba(255,215,0,0.3); }
+    .fit-badge.oop { color: var(--warn); border: 1px solid rgba(255,165,0,0.3); }
+
+    .avail-count {
+      font-family: var(--font-display);
+      font-size: 9px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* ============================================
+       AUTO-RECOMMEND
+       ============================================ */
+    .auto-rec-area {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .auto-rec-btn {
+      font-family: var(--font-display);
+      font-size: 8px;
+      padding: 10px 18px;
+      background: transparent;
+      border: 2px solid var(--border-bright);
+      color: var(--fg-dim);
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: all 0.15s;
+    }
+    .auto-rec-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      box-shadow: var(--glow-gold);
+    }
+    .auto-rec-btn:active {
+      transform: scale(0.96);
+    }
+    .rec-badge {
+      font-family: var(--font-display);
+      font-size: 7px;
+      padding: 6px 12px;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      background: rgba(255, 215, 0, 0.08);
+      letter-spacing: 0.5px;
+      display: none;
+    }
+    .rec-badge.visible {
+      display: inline-block;
+    }
+
+    /* ============================================
+       ACTION BUTTONS
+       ============================================ */
+    .actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      width: 100%;
+      padding-top: 4px;
+    }
+    .btn {
+      font-family: var(--font-display);
+      font-size: 9px;
+      padding: 12px 28px;
+      border: 2px solid var(--border-bright);
+      background: transparent;
+      color: var(--fg-dim);
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: all 0.15s;
+    }
+    .btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: var(--glow-accent);
+    }
+    .btn:active {
+      transform: scale(0.96);
+    }
+    .btn-confirm {
+      border-color: var(--accent);
+      color: var(--accent);
+      text-shadow: var(--glow-accent);
+    }
+    .btn-confirm:hover {
+      background: rgba(57, 255, 20, 0.08);
+    }
+    .btn-back:hover {
+      color: var(--fg);
+      border-color: var(--fg-dim);
+      box-shadow: none;
+    }
+
+    /* ============================================
+       SCROLLBAR STYLING
+       ============================================ */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: var(--border); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-bright); }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 500px) {
+      .formation-card { width: 200px; padding: 14px 12px; }
+      .pitch { width: 150px; height: 195px; }
+      .detail-panel { padding: 14px; }
+      header h1 { font-size: 9px; }
+      .btn { padding: 10px 20px; font-size: 8px; }
+    }
+
+    /* ============================================
+       ANIMATIONS
+       ============================================ */
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .detail-panel,
+    .formation-card {
+      animation: fadeSlideIn 0.18s ease-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div class="screen">
+    <div class="container">
+
+      <!-- HEADER -->
+      <header>
+        <h1>⚡ CHOOSE FORMATION</h1>
+        <div class="subtitle">Select a formation to maximize your squad's potential</div>
+      </header>
+
+      <!-- CAROUSEL -->
+      <div class="carousel-wrapper">
+        <div class="carousel-row">
+          <button class="carousel-btn" id="prevBtn" aria-label="Previous formation">◂</button>
+
+          <div class="formation-card" id="formationCard">
+            <div class="card-label" id="cardFormationName">4-4-2</div>
+            <div class="pitch" id="pitchContainer">
+              <div class="center-circle"></div>
+              <div class="center-spot"></div>
+              <div class="penalty-top"></div>
+              <div class="penalty-bot"></div>
+              <div class="goal-area-top"></div>
+              <div class="goal-area-bot"></div>
+            </div>
+          </div>
+
+          <button class="carousel-btn" id="nextBtn" aria-label="Next formation">▸</button>
+        </div>
+
+        <div class="dots-row" id="dotsRow"></div>
+      </div>
+
+      <!-- DETAIL PANEL -->
+      <div class="detail-panel" id="detailPanel">
+        <div class="detail-header">
+          <h2 id="detailName">4-4-2</h2>
+          <span class="global-mult" id="detailMult">×1.00</span>
+        </div>
+
+        <p class="description" id="detailDesc">Balanced. No frills. Classic.</p>
+
+        <div class="bonus-tags" id="bonusTags"></div>
+
+        <table class="fit-table">
+          <thead>
+            <tr>
+              <th>Position</th>
+              <th>Avail</th>
+              <th>Players</th>
+              <th>Fit</th>
+            </tr>
+          </thead>
+          <tbody id="fitBody"></tbody>
+        </table>
+
+        <div class="auto-rec-area">
+          <button class="auto-rec-btn" id="autoRecBtn">⚡ AUTO-RECOMMEND FORMATION</button>
+          <span class="rec-badge" id="recBadge"></span>
+        </div>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="actions">
+        <button class="btn btn-back" id="backBtn">← BACK</button>
+        <button class="btn btn-confirm" id="confirmBtn" onclick="var ci=window._formIdx||0;var fm=(window._form||window.FORMATIONS||[])[ci];if(fm&&window.G){G.formation=fm.id;try{saveGame()}catch(e){};try{sessionStorage.setItem('squad_pending_formation',JSON.stringify(G.formation))}catch(e){}}if(window.Game){window.Game.transition='slide-left';window.Game.navigate('phases')}">CONFIRM ✓</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    /* ============================================
+       FORMATIONS DATA
+       ============================================ */
+    var FORMATIONS = window.FORMATIONS || [
+      {
+        id: '4-4-2',
+        name: '4-4-2',
+        slots: ['CB','CB','FB','FB','CM','CM','ST','ST'],
+        global: 1.00,
+        bonuses: {},
+        desc: 'Balanced. No frills. Classic.'
+      },
+      {
+        id: '4-3-3',
+        name: '4-3-3',
+        slots: ['CB','CB','FB','FB','CDM','CM','CM','LW','RW','ST'],
+        global: 1.05,
+        bonuses: { LW: '+20', RW: '+20', ST: '-15', CDM: '-10' },
+        desc: 'Attacking width with a midfield anchor.'
+      },
+      {
+        id: '5-3-2',
+        name: '5-3-2',
+        slots: ['CB','CB','CB','FB','FB','CM','CM','CDM','ST','ST'],
+        global: 0.95,
+        bonuses: { CB: '+25', FB: '+12', LW: '-20', RW: '-20' },
+        desc: 'Defensive solidity. Wing-backs provide the width.'
+      },
+      {
+        id: '3-4-3',
+        name: '3-4-3',
+        slots: ['CB','CB','FB','FB','CM','CM','LW','RW','ST','ST'],
+        global: 1.08,
+        bonuses: { ST: '+20', LW: '+15', RW: '+15', CB: '-25' },
+        desc: 'All-out attack. Overload the final third.'
+      },
+      {
+        id: '4-2-3-1',
+        name: '4-2-3-1',
+        slots: ['CB','CB','FB','FB','CM','CM','CAM','LW','RW','ST'],
+        global: 1.02,
+        bonuses: { CM: '+10', CAM: '+25', ST: '-15' },
+        desc: 'Creative playmaker behind a lone striker.'
+      },
+      {
+        id: '4-5-1',
+        name: '4-5-1',
+        slots: ['CB','CB','FB','FB','CDM','CM','CM','LW','RW','ST'],
+        global: 0.98,
+        bonuses: { CDM: '+15', LW: '+20', RW: '+20', ST: '-20', CB: '-5' },
+        desc: 'Pack the midfield. Control the game.'
+      }
+    ];
+
+    // Expose globally for onclick fallback
+    window._form = FORMATIONS;
+    window._formIdx = 0;
+
+    /* Position → Role Group mapping */
+    const POS_ROLE = {
+      GK: 'GK',
+      CB: 'DEF',
+      FB: 'DEF',
+      CDM: 'MID',
+      CM: 'MID',
+      CAM: 'MID',
+      LW: 'ATT',
+      RW: 'ATT',
+      ST: 'ATT'
+    };
+
+    /* Position → CSS class on pitch dot */
+    const POS_DOT_CLASS = {
+      GK: 'gk',
+      CB: 'def',
+      FB: 'def',
+      CDM: 'mid',
+      CM: 'mid',
+      CAM: 'mid',
+      LW: 'att',
+      RW: 'att',
+      ST: 'att'
+    };
+
+    /* ============================================
+       MOCK SQUAD DATA
+       ============================================ */
+    const MOCK_SQUAD = [
+      { name: 'Alisson',     pos: 'GK',  primary: 'GK',  ovr: 89 },
+      { name: 'Kelleher',    pos: 'GK',  primary: 'GK',  ovr: 77 },
+      { name: 'Van Dijk',    pos: 'CB',  primary: 'CB',  ovr: 88 },
+      { name: 'Konaté',      pos: 'CB',  primary: 'CB',  ovr: 84 },
+      { name: 'Gomez',       pos: 'CB',  primary: 'CB',  ovr: 82 },
+      { name: 'Quansah',     pos: 'CB',  primary: 'CB',  ovr: 78 },
+      { name: 'Robertson',   pos: 'FB',  primary: 'FB',  ovr: 86 },
+      { name: 'Trent',       pos: 'FB',  primary: 'FB',  ovr: 85 },
+      { name: 'Tsimikas',    pos: 'FB',  primary: 'FB',  ovr: 79 },
+      { name: 'Bradley',     pos: 'FB',  primary: 'FB',  ovr: 78 },
+      { name: 'Endo',        pos: 'CDM', primary: 'CDM', ovr: 81 },
+      { name: 'Bajcetic',    pos: 'CDM', primary: 'CDM', ovr: 78 },
+      { name: 'Mac Allister',pos: 'CM',  primary: 'CM',  ovr: 86 },
+      { name: 'Szoboszlai',  pos: 'CM',  primary: 'CM',  ovr: 84 },
+      { name: 'Gravenberch', pos: 'CM',  primary: 'CM',  ovr: 82 },
+      { name: 'Jones',       pos: 'CM',  primary: 'CM',  ovr: 82 },
+      { name: 'Elliott',     pos: 'CAM', primary: 'CAM', ovr: 81 },
+      { name: 'Díaz',        pos: 'LW',  primary: 'LW',  ovr: 85 },
+      { name: 'Gakpo',       pos: 'LW',  primary: 'LW',  ovr: 84 },
+      { name: 'Jota',        pos: 'RW',  primary: 'RW',  ovr: 84 },
+      { name: 'Salah',       pos: 'RW',  primary: 'RW',  ovr: 90 },
+      { name: 'Núñez',       pos: 'ST',  primary: 'ST',  ovr: 83 },
+      { name: 'Jota (CF)',   pos: 'ST',  primary: 'ST',  ovr: 84 },
+      { name: 'Danns',       pos: 'ST',  primary: 'ST',  ovr: 76 }
+    ];
+
+    /* ============================================
+       PITCH COORDINATES ENGINE
+       ============================================ */
+    function getPosCoords(type, index, count) {
+      // All coords as percentages of pitch width/height
+      const defs = {
+        GK:   () => ({ x: 50, y: 88 }),
+        CB:   (idx, n) => {
+          const xs = n === 3 ? [25, 50, 75] : n === 1 ? [50] : [35, 65];
+          const y  = n >= 3 ? 78 : 74;
+          return { x: xs[idx] || 50, y };
+        },
+        FB:   (idx) => idx === 0 ? { x: 10, y: 70 } : { x: 90, y: 70 },
+        CDM:  () => ({ x: 50, y: 56 }),
+        CM:   (idx, n) => {
+          const xs = n === 1 ? [50] : n === 3 ? [25, 50, 75] : [33, 67];
+          return { x: xs[idx] || 50, y: 46 };
+        },
+        CAM:  () => ({ x: 50, y: 36 }),
+        LW:   () => ({ x: 8, y: 26 }),
+        RW:   () => ({ x: 92, y: 26 }),
+        ST:   (idx, n) => {
+          const xs = n === 1 ? [50] : n === 3 ? [20, 50, 80] : [33, 67];
+          return { x: xs[idx] || 50, y: n > 1 ? 18 : 15 };
+        }
+      };
+      const fn = defs[type];
+      if (!fn) return { x: 50, y: 50 };
+      return fn(index, count);
+    }
+
+    function groupSlots(slots) {
+      const map = {};
+      slots.forEach(s => { map[s] = (map[s] || 0) + 1; });
+      return map;
+    }
+
+    /* Build an array of {type, index, total} for each slot */
+    function enumerateSlots(slots) {
+      const counts = {};
+      return slots.map(type => {
+        counts[type] = (counts[type] || 0) + 1;
+        return { type, index: counts[type] - 1, total: slots.filter(s => s === type).length };
+      });
+    }
+
+    /* ============================================
+       RENDER PITCH
+       ============================================ */
+    function renderPitch(formation) {
+      const pitch = document.getElementById('pitchContainer');
+      // Remove old dots (keep structural divs with class or data attributes)
+      const oldDots = pitch.querySelectorAll('.pos-dot');
+      oldDots.forEach(d => d.remove());
+
+      const enumerated = enumerateSlots(formation.slots);
+      enumerated.forEach(({ type, index, total }) => {
+        const coords = getPosCoords(type, index, total);
+        const dot = document.createElement('div');
+        dot.className = `pos-dot ${POS_DOT_CLASS[type] || ''}`;
+        dot.style.left = coords.x + '%';
+        dot.style.top = coords.y + '%';
+
+        const label = document.createElement('span');
+        label.className = 'pos-label';
+        label.textContent = type;
+        dot.appendChild(label);
+
+        // Tooltip on hover via title
+        dot.title = type;
+
+        pitch.appendChild(dot);
+      });
+    }
+
+    /* ============================================
+       DETERMINE FIT QUALITY
+       ============================================ */
+    function getFitQuality(playerPos, requiredSlot) {
+      if (playerPos === requiredSlot) return 'natural';
+      const playerGroup = POS_ROLE[playerPos];
+      const slotGroup   = POS_ROLE[requiredSlot];
+      if (playerGroup && playerGroup === slotGroup) return 'adjacent';
+      return 'oop';
+    }
+
+    /* ============================================
+       BUILD SQUAD FIT TABLE
+       ============================================ */
+    function buildFitTable(formation, squad) {
+      const tbody = document.getElementById('fitBody');
+      tbody.innerHTML = '';
+
+      const slotGroups = groupSlots(formation.slots);
+
+      // For each unique position type in the formation
+      Object.entries(slotGroups).forEach(([posType, needed]) => {
+        // Find squad players for this position
+        const candidates = squad.filter(p => p.primary === posType || POS_ROLE[p.primary] === POS_ROLE[posType]);
+        // Sort: natural first, then adjacent, then OOP
+        const sorted = [...candidates].sort((a, b) => {
+          const fa = getFitQuality(a.primary, posType);
+          const fb = getFitQuality(b.primary, posType);
+          const rank = { natural: 0, adjacent: 1, oop: 2 };
+          return rank[fa] - rank[fb];
+        });
+
+        // For fit display, show a representative badge
+        const bestFit = sorted.length > 0 ? getFitQuality(sorted[0].primary, posType) : 'oop';
+
+        const tr = document.createElement('tr');
+
+        // Position cell
+        const posCell = document.createElement('td');
+        posCell.className = 'pos-cell';
+        posCell.textContent = posType;
+        tr.appendChild(posCell);
+
+        // Available count
+        const availCell = document.createElement('td');
+        availCell.className = 'avail-count';
+        availCell.textContent = `${sorted.length} / ${needed}`;
+        tr.appendChild(availCell);
+
+        // Names
+        const namesCell = document.createElement('td');
+        namesCell.className = 'names-cell';
+        if (sorted.length > 0) {
+          namesCell.textContent = sorted.map(p => p.name).slice(0, 4).join(', ') + (sorted.length > 4 ? '…' : '');
+        } else {
+          namesCell.textContent = '—';
+          namesCell.style.color = 'var(--muted)';
+        }
+        tr.appendChild(namesCell);
+
+        // Fit badge
+        const fitCell = document.createElement('td');
+        const badge = document.createElement('span');
+        badge.className = `fit-badge ${bestFit}`;
+        const labels = { natural: 'NATURAL', adjacent: 'ADJACENT', oop: 'OOP' };
+        badge.textContent = labels[bestFit] || 'OOP';
+        fitCell.appendChild(badge);
+        tr.appendChild(fitCell);
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    /* ============================================
+       RENDER BONUS TAGS
+       ============================================ */
+    function renderBonuses(formation) {
+      const container = document.getElementById('bonusTags');
+      container.innerHTML = '';
+
+      const entries = Object.entries(formation.bonuses);
+      if (entries.length === 0) {
+        container.style.display = 'none';
+        return;
+      }
+      container.style.display = 'flex';
+
+      entries.forEach(([pos, value]) => {
+        const tag = document.createElement('span');
+        const isPositive = value.startsWith('+');
+        tag.className = `bonus-tag ${isPositive ? 'positive' : 'negative'}`;
+        tag.textContent = `${isPositive ? '+' : ''}${value} ${pos}`;
+        container.appendChild(tag);
+      });
+    }
+
+    /* ============================================
+       UPDATE DETAIL PANEL
+       ============================================ */
+    function updateDetail(formation) {
+      document.getElementById('detailName').textContent = formation.name;
+      document.getElementById('detailMult').textContent = `×${formation.global.toFixed(2)}`;
+      document.getElementById('detailDesc').textContent = formation.desc;
+      renderBonuses(formation);
+      buildFitTable(formation, MOCK_SQUAD);
+    }
+
+    /* ============================================
+       UPDATE CAROUSEL CARD
+       ============================================ */
+    function updateCard(formation, isRecommended) {
+      const card = document.getElementById('formationCard');
+      card.className = 'formation-card active' + (isRecommended ? ' recommended' : '');
+      document.getElementById('cardFormationName').textContent = formation.name;
+      renderPitch(formation);
+    }
+
+    /* ============================================
+       DOTS
+       ============================================ */
+    function renderDots(activeIndex, recommendedIndex) {
+      const row = document.getElementById('dotsRow');
+      row.innerHTML = '';
+      FORMATIONS.forEach((f, i) => {
+        const dot = document.createElement('span');
+        dot.className = 'dot' + (i === activeIndex ? ' active' : '');
+        if (i === recommendedIndex) {
+          dot.style.borderColor = 'var(--gold)';
+        }
+        dot.dataset.index = i;
+        dot.addEventListener('click', () => {
+          selectFormation(i);
+        });
+        row.appendChild(dot);
+      });
+    }
+
+    /* ============================================
+       STATE
+       ============================================ */
+    let currentIndex = 0;
+    let recommendedIndex = -1;
+    let isRecommended = false;
+
+    /* ============================================
+       SELECT FORMATION
+       ============================================ */
+    function selectFormation(index) {
+      if (index < 0) index = FORMATIONS.length - 1;
+      if (index >= FORMATIONS.length) index = 0;
+      currentIndex = index;
+
+      // Expose globally for onclick handlers
+      window._formIdx = currentIndex;
+      window._form = FORMATIONS;
+
+      const formation = FORMATIONS[currentIndex];
+      const recd = (currentIndex === recommendedIndex);
+
+      updateCard(formation, recd);
+      updateDetail(formation);
+      renderDots(currentIndex, recommendedIndex);
+
+      // Highlight recommended badge if on rec
+      const badge = document.getElementById('recBadge');
+      if (recd && recommendedIndex >= 0) {
+        badge.classList.add('visible');
+      } else {
+        badge.classList.remove('visible');
+      }
+    }
+
+    /* ============================================
+       AUTO-RECOMMEND
+       ============================================ */
+    function scoreFormation(formation, squad) {
+      let score = 0;
+      let maxScore = formation.slots.length * 3; // best possible
+
+      formation.slots.forEach(slot => {
+        // Find the BEST-fitting player for this slot
+        let bestFit = 'oop';
+        squad.forEach(p => {
+          const q = getFitQuality(p.primary, slot);
+          const rank = { natural: 0, adjacent: 1, oop: 2 };
+          if (rank[q] < rank[bestFit]) bestFit = q;
+        });
+        score += bestFit === 'natural' ? 3 : bestFit === 'adjacent' ? 2 : 1;
+      });
+
+      // Bonus for global multiplier (higher is better but diminishing returns)
+      score *= (0.5 + formation.global * 0.5);
+
+      return { score, maxScore, pct: maxScore > 0 ? (score / maxScore) * 100 : 0 };
+    }
+
+    function autoRecommend() {
+      let bestIdx = 0;
+      let bestScore = -1;
+      let bestResult = null;
+
+      FORMATIONS.forEach((f, i) => {
+        const result = scoreFormation(f, MOCK_SQUAD);
+        if (result.score > bestScore) {
+          bestScore = result.score;
+          bestIdx = i;
+          bestResult = result;
+        }
+      });
+
+      recommendedIndex = bestIdx;
+      isRecommended = true;
+
+      // Show badge
+      const badge = document.getElementById('recBadge');
+      const formation = FORMATIONS[bestIdx];
+      badge.textContent = `★ RECOMMENDED: ${formation.name} — fit ${bestResult ? Math.round(bestResult.pct) : 0}% optimal`;
+      badge.classList.add('visible');
+
+      // Navigate to recommended
+      selectFormation(bestIdx);
+    }
+
+    /* ============================================
+       INIT
+       ============================================ */
+    function init() {
+      // Initial render
+      recommendedIndex = -1;
+      selectFormation(0);
+
+      // Event listeners
+      document.getElementById('prevBtn').addEventListener('click', () => selectFormation(currentIndex - 1));
+      document.getElementById('nextBtn').addEventListener('click', () => selectFormation(currentIndex + 1));
+      document.getElementById('autoRecBtn').addEventListener('click', autoRecommend);
+
+      document.getElementById('backBtn').addEventListener('click', () => {
+        if (window.Game) {
+          window.Game.back();
+        } else {
+          alert('← BACK — Would navigate to Squad Builder (Screen 2)');
+        }
+      });
+      document.getElementById('confirmBtn').addEventListener('click', () => {
+        if (window.G && FORMATIONS[currentIndex]) {
+          G.formation = FORMATIONS[currentIndex].id;
+          if (typeof saveGame === 'function') saveGame();
+        }
+        sessionStorage.setItem('squad_pending_formation', JSON.stringify((window.G && G.formation) || (FORMATIONS[currentIndex] && FORMATIONS[currentIndex].id) || '4-4-2'));
+        if (window.Game) {
+          window.Game.transition = 'slide-left';
+          window.Game.navigate('phases');
+        } else {
+          alert(`✓ CONFIRMED: ${FORMATIONS[currentIndex].name} selected`);
+        }
+      });
+
+      // Keyboard nav
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') selectFormation(currentIndex - 1);
+        if (e.key === 'ArrowRight') selectFormation(currentIndex + 1);
+        if (e.key === 'Enter' && e.ctrlKey) autoRecommend();
+      });
+    }
+
+    // Integration: write formation to G on confirm
+    document.getElementById('confirmBtn').addEventListener('click', function() {
+      if (typeof FORMATIONS !== 'undefined' && FORMATIONS[currentIndex]) {
+        if (window.G) G.formation = FORMATIONS[currentIndex].id;
+      }
+      if (window.G && typeof saveGame === 'function') saveGame();
+      sessionStorage.setItem('squad_pending_formation', JSON.stringify((window.G && G.formation) || (FORMATIONS[currentIndex] && FORMATIONS[currentIndex].id) || '4-4-2'));
+      if (window.Game) {
+        window.Game.transition = 'slide-left';
+        window.Game.navigate('phases');
+      }
+    });
+
+    // Also add direct onelick for maximum compatibility
+    document.getElementById('confirmBtn').onclick = function() {
+      if (typeof FORMATIONS !== 'undefined' && FORMATIONS[currentIndex]) {
+        if (window.G) G.formation = FORMATIONS[currentIndex].id;
+      }
+      if (window.G && typeof saveGame === 'function') saveGame();
+      sessionStorage.setItem('squad_pending_formation', JSON.stringify((window.G && G.formation) || (FORMATIONS[currentIndex] && FORMATIONS[currentIndex].id) || '4-4-2'));
+      if (window.Game) {
+        window.Game.transition = 'slide-left';
+        window.Game.navigate('phases');
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', init);
+    // Also run immediately if already loaded (for SPA injection)
+    if (document.readyState !== 'loading') init();
+  })();
+</script>
+
+<script>
+(function() {
+  // SHARED GAME STATE INTEGRATION
+  // Works both standalone AND when loaded via game.html
+  
+  // game.html calls this after injecting the screen
+  window.setupScreen = function(screenId) {
+    // Re-run initialization when loaded via game.html
+    if (document.readyState !== 'loading') {
+      if (typeof init === 'function') init();
+    }
+  };
+
+  // 1. On load: read G.selectedIds to show which squad is built
+  if (window.G && window.G.selectedIds && window.G.selectedIds.length > 0) {
+    var subtitle = document.querySelector('.subtitle');
+    if (subtitle) {
+      subtitle.textContent = 'Squad: ' + G.selectedIds.length + ' players selected · Choose your formation';
+    }
+  }
+
+  // 2. Auto-Recommend: use engine's autoRecommendFormation()
+  var autoRecBtn = document.getElementById('autoRecBtn');
+  if (autoRecBtn) {
+    autoRecBtn.addEventListener('click', function() {
+      if (window.G && window.G.selectedIds && window.G.selectedIds.length > 0 &&
+          typeof autoRecommendFormation === 'function') {
+        var recId = autoRecommendFormation(G.selectedIds);
+        if (recId) {
+          for (var i = 0; i < FORMATIONS.length; i++) {
+            if (FORMATIONS[i].id === recId) {
+              recommendedIndex = i;
+              isRecommended = true;
+              var badge = document.getElementById('recBadge');
+              badge.textContent = '\u2605 RECOMMENDED: ' + FORMATIONS[i].name;
+              badge.classList.add('visible');
+              selectFormation(i);
+              return;
+            }
+          }
+        }
+      }
+      autoRecommend();
+    });
+  }
+
+  // 3. Confirm: write to G.formation and navigate
+  var confirmBtn = document.getElementById('confirmBtn');
+  if (confirmBtn) {
+    confirmBtn.addEventListener('click', function() {
+      var selectedFormation = FORMATIONS[currentIndex];
+      if (window.G) {
+        G.formation = selectedFormation.id;
+        if (typeof commitSquad === 'function' && G.selectedIds.length > 0) {
+          commitSquad(G.selectedIds, selectedFormation.id);
+        }
+      }
+      if (window.G && typeof saveGame === 'function') saveGame();
+      sessionStorage.setItem('squad_pending_formation', JSON.stringify(G.formation || '4-4-2'));
+      if (window.Game) {
+        window.Game.transition = 'slide-left';
+        window.Game.navigate('phases');
+      } else if (window.G) {
+        alert('\u2713 CONFIRMED: ' + selectedFormation.name + ' selected');
+      }
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

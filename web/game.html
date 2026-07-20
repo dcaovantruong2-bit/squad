@@ -1,961 +1,800 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SQUAD — Football Card Roguelike</title>
-  <link rel="stylesheet" href="game.css">
-  <style>
-    /* ─── SPA Screen Management ───────────────────────────────────── */
-    .game-screen { display: none; min-height: 100vh; padding: var(--space-6) var(--space-4); max-width: 1200px; margin: 0 auto; }
-    .game-screen.active { display: block; }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="SQUAD — Football Card Roguelike">
+<title>SQUAD — Football Card Roguelike</title>
+<link rel="stylesheet" href="game.css">
+<link rel="stylesheet" href="game-motion.css">
 
-    /* ─── Title Screen ──────────────────────────────────────────── */
-    #screen-title.active { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 100vh; }
-    .title-logo { font-family: var(--font-display); font-size: 48px; color: var(--accent); text-shadow: 0 0 20px var(--accent-glow); margin-bottom: var(--space-4); animation: logo-pulse 2s ease-in-out infinite; letter-spacing: 0.15em; }
-    @keyframes logo-pulse { 0%,100% { text-shadow: 0 0 15px var(--accent-glow); } 50% { text-shadow: 0 0 30px var(--accent-glow); } }
-    .title-tagline { font-family: var(--font-display); font-size: 10px; color: var(--gold); text-shadow: 0 0 12px var(--gold-glow); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: var(--space-12); }
-    .title-info { font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); margin-bottom: var(--space-8); line-height: 1.6; }
-    .title-info span { color: var(--accent); }
-    .title-help { margin-top: var(--space-6); }
-    .title-help .help-link { font-family: var(--font-body); font-size: var(--text-base); color: var(--muted); text-decoration: none; cursor: pointer; transition: color var(--motion-fast) ease; border-bottom: 1px dashed var(--border); }
-    .title-help .help-link:hover { color: var(--accent); border-bottom-color: var(--accent); text-shadow: 0 0 8px var(--accent-glow); }
-    /* CRT scanlines: single overlay via body::after in game.css — no duplicate */
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   SQUAD — Navigation Shell (game.html)
+   SPA screen router with motion transitions
+   ═══════════════════════════════════════════════════════════════════════ */
 
-    /* ─── Squad Builder — Visual Grid + Pill Grid ─────────────── */
-    .squad-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3); flex-wrap: wrap; gap: var(--space-3); }
-    .budget-row { display: flex; align-items: center; gap: var(--space-3); }
-    .budget-text { font-family: var(--font-display); font-size: 11px; color: var(--fg-dim); white-space:nowrap; }
-    .budget-text .num { color: var(--gold); }
-    .budget-text .num.over { color: var(--danger); }
-    .budget-track { width: 160px; height: 10px; background: var(--bg-deep); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
-    .budget-fill { height: 100%; background: var(--accent); box-shadow: 0 0 6px var(--accent-glow); transition: width 0.3s ease; }
-    .budget-fill.over { background: var(--danger); box-shadow: 0 0 6px var(--danger-glow); }
+/* ─── Frame Container ─────────────────────────────────────────────── */
+#game-shell {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+}
+#screen-container {
+  position: relative;
+  min-height: 100vh;
+  padding-top: 32px; /* room for nav-bar */
+}
 
-    /* Position tabs */
-    .pos-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: var(--space-3); }
-    .pos-tab { font-family: var(--font-display); font-size: 11px; padding: 6px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; cursor: pointer; color: var(--fg-dim); transition: all var(--motion-fast) ease; }
-    .pos-tab:hover { border-color: var(--border-bright); }
-    .pos-tab.active { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 6px var(--accent-glow); background: var(--surface-raised); }
+/* ─── Screen Frames ───────────────────────────────────────────────── */
+.screen-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  min-height: calc(100vh - 32px);
+  margin-top: 32px;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+  background: var(--bg);
+  transition: none; /* animation-driven */
+}
+.screen-frame.active {
+  opacity: 1;
+  pointer-events: auto;
+  position: relative;
+  z-index: 2;
+}
+.screen-frame.active.screen-frame-gas {
+  z-index: 1; /* outgoing frame stays behind after animation */
+}
 
-    /* Sub-tab pills */
-    .sub-tabs { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: var(--space-3); padding-left: var(--space-2); }
-    .sub-tab { font-family: var(--font-display); font-size: 10px; padding: 4px 10px; background: var(--bg-deep); border: 1px solid var(--border); border-radius: 2px; cursor: pointer; color: var(--muted); transition: all var(--motion-fast) ease; letter-spacing: 0.04em; }
-    .sub-tab:hover { border-color: var(--border-bright); color: var(--fg-dim); }
-    .sub-tab.active { border-color: var(--gold); color: var(--gold); background: rgba(255,215,0,0.08); box-shadow: 0 0 4px var(--gold-glow); }
+/* ─── Transition Animations ───────────────────────────────────────── */
+/* slide-left: current exits left, new enters from right */
+.slide-left-out {
+  animation: slideLeftOut 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  z-index: 3;
+}
+.slide-left-in {
+  animation: slideLeftIn 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  z-index: 4;
+}
+/* slide-right: current exits right, new enters from left */
+.slide-right-out {
+  animation: slideRightOut 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  z-index: 3;
+}
+.slide-right-in {
+  animation: slideRightIn 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  z-index: 4;
+}
+/* fade: both fade */
+.fade-out {
+  animation: fadeOut 200ms ease-out forwards;
+  z-index: 3;
+}
+.fade-in {
+  animation: fadeIn 200ms ease-out forwards;
+  z-index: 3;
+}
 
-    /* Player card grid — tabbed position hub */
-    .player-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: var(--space-4); max-height: calc(100vh - 360px); overflow-y: auto; padding: var(--space-2); scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
-    .player-card { display: flex; flex-direction: column; cursor: pointer; transition: all 0.15s ease; position: relative; padding: 10px 12px; border-radius: var(--radius-md); border: 2px solid transparent; background: var(--surface); }
-    .player-card:hover { background: var(--surface-raised); border-color: var(--border-bright); }
-    .player-card.selected { border-color: var(--accent); background: rgba(57,255,20,0.06); box-shadow: 0 0 12px var(--accent-glow); }
-    .player-card.selected::after { content:'✓'; position:absolute; top:6px; right:8px; font-size:16px; color:var(--accent); font-family:var(--font-display); text-shadow:0 0 6px var(--accent-glow); }
-    .pc-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-    .pc-pos { font-family: var(--font-display); font-size: 11px; padding: 2px 8px; border-radius: 2px; letter-spacing: 0.06em; font-weight: 700; }
-    .pc-pos.GK { background: rgba(255,215,0,0.15); color: var(--gold); border: 1px solid var(--gold); }
-    .pc-pos.CB, .pc-pos.FB { background: rgba(57,255,20,0.1); color: var(--accent); border: 1px solid var(--accent); }
-    .pc-pos.CM, .pc-pos.CAM, .pc-pos.CDM { background: rgba(0,204,255,0.1); color: var(--info); border: 1px solid var(--info); }
-    .pc-pos.ST, .pc-pos.LW, .pc-pos.RW { background: rgba(255,51,68,0.12); color: var(--danger); border: 1px solid var(--danger); }
-    .pc-name { font-family: var(--font-body); font-size: 17px; color: var(--fg); font-weight: 600; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .pc-cost { font-family: var(--font-display); font-size: 12px; color: var(--gold); text-shadow: 0 0 4px var(--gold-glow); }
-    /* Stat bars */
-    .pc-stats { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
-    .pc-stat { display: flex; align-items: center; gap: 6px; }
-    .pc-stat-label { font-family: var(--font-display); font-size: 10px; color: var(--muted); width: 28px; text-align: right; letter-spacing: 0.04em; }
-    .pc-stat-bar { flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
-    .pc-stat-fill { height: 100%; border-radius: 2px; transition: width 0.2s ease; }
-    .pc-stat-fill.atk { background: #ff3344; }
-    .pc-stat-fill.pac { background: var(--gold); }
-    .pc-stat-fill.pas { background: var(--info); }
-    .pc-stat-fill.def { background: var(--accent); }
-    .pc-stat-fill.spc { background: #c084fc; }
-    .pc-stat-val { font-family: var(--font-mono); font-size: 16px; font-weight: 700; width: 20px; }
-    .pc-stat-val.atk { color: #ff3344; }
-    .pc-stat-val.pac { color: var(--gold); }
-    .pc-stat-val.pas { color: var(--info); }
-    .pc-stat-val.def { color: var(--accent); }
-    .pc-stat-val.spc { color: #c084fc; }
-    .pc-traits { font-family: var(--font-body); font-size: 15px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@keyframes slideLeftOut {
+  0%   { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(-100%); opacity: 0; }
+}
+@keyframes slideLeftIn {
+  0%   { transform: translateX(100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideRightOut {
+  0%   { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+@keyframes slideRightIn {
+  0%   { transform: translateX(-100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+@keyframes fadeOut {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes fadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
 
-    /* Squad summary — pill grid */
-    .squad-section { background:var(--surface); border:2px solid var(--border); border-radius:var(--radius-md); padding:var(--space-3) var(--space-4); margin-bottom:var(--space-3); }
-    .squad-section-title { font-family:var(--font-display); font-size:10px; color:var(--fg-dim); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:var(--space-2); display:flex; align-items:center; gap:var(--space-3); }
-    .squad-section-title .count { color:var(--gold); font-size:11px; }
-    .pill-line { display:flex; align-items:center; gap:6px; margin-bottom:5px; flex-wrap:wrap; }
-    .pill-label { font-family:var(--font-display); font-size:10px; text-transform:uppercase; letter-spacing:0.06em; min-width:28px; }
-    .pill-label-GK { color:var(--gold); }
-    .pill-label-DEF { color:var(--accent); }
-    .pill-label-MID { color:var(--info); }
-    .pill-label-ATT { color:var(--danger); }
-    .pill { display:inline-flex; align-items:center; gap:4px; font-family:var(--font-body); font-size:16px; padding:3px 10px; border-radius:3px; border:1px solid; cursor:pointer; transition:all 0.1s ease; }
-    .pill:hover { filter:brightness(1.2); }
-    .pill .pill-cost { font-family:var(--font-display); font-size:10px; opacity:0.7; }
-    .pill .pill-rm { font-family:var(--font-display); font-size:10px; margin-left:2px; color:var(--danger); opacity:0.5; }
-    .pill .pill-rm:hover { opacity:1; }
-    .pill-GK { border-color:var(--gold); background:rgba(255,215,0,0.08); color:var(--gold); }
-    .pill-DEF { border-color:var(--accent); background:rgba(57,255,20,0.06); color:var(--accent); }
-    .pill-MID { border-color:var(--info); background:rgba(0,204,255,0.06); color:var(--info); }
-    .pill-ATT { border-color:var(--danger); background:rgba(255,51,68,0.06); color:var(--danger); }
-    .pill-open { display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:10px; padding:3px 12px; border:1px dashed var(--border); border-radius:3px; color:var(--muted); min-width:52px; }
-    .pill-line-status { font-family:var(--font-body); font-size:17px; color:var(--fg-dim); margin-left:var(--space-2); }
-    .pill-line-status.met { color:var(--accent); }
-    .pill-line-status.unmet { color:var(--danger); }
+/* ─── Navigation Bar ──────────────────────────────────────────────── */
+#nav-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 16px;
+  height: 32px;
+  background: var(--bg-deep);
+  border-bottom: 2px solid var(--border);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+#nav-bar .nav-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#nav-bar .nav-brand {
+  font-family: var(--font-display);
+  font-size: 10px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-shadow: 0 0 6px var(--accent-glow);
+  user-select: none;
+}
+#nav-bar .nav-sep {
+  width: 1px;
+  height: 16px;
+  background: var(--border);
+  display: inline-block;
+}
+#nav-bar .nav-screen-name {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--fg-dim);
+  white-space: nowrap;
+}
+#nav-bar .nav-center {
+  font-family: var(--font-display);
+  font-size: 8px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+#nav-bar .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#nav-bar .nav-progress {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--fg-dim);
+}
+#nav-bar .nav-arrow {
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  background: none;
+  border: none;
+  padding: 2px 6px;
+  font-family: var(--font-body);
+}
+#nav-bar .nav-arrow:hover {
+  color: var(--accent);
+  text-shadow: 0 0 4px var(--accent-glow);
+}
+#nav-bar .nav-arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+  color: var(--muted);
+  text-shadow: none;
+}
 
-    .req-strip { display:flex; flex-wrap:wrap; gap:var(--space-2); margin-top:var(--space-2); }
-    .req-badge { font-family:var(--font-display); font-size:10px; padding:4px 10px; border:1px solid var(--border); border-radius:3px; color:var(--fg-dim); }
-    .req-badge.met { border-color:var(--accent); color:var(--accent); }
-    .req-badge.unmet { border-color:var(--danger); color:var(--danger); }
+/* ─── Loading Spinner ─────────────────────────────────────────────── */
+#loading-spinner {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  z-index: 200;
+}
+#loading-spinner.visible {
+  display: flex;
+}
+.spinner-content {
+  text-align: center;
+}
+.spinner-icon {
+  font-size: 32px;
+  animation: spinPulse 0.8s ease-in-out infinite;
+  display: block;
+  margin-bottom: 12px;
+}
+.spinner-text {
+  font-family: var(--font-display);
+  font-size: 10px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  text-shadow: 0 0 8px var(--accent-glow);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes spinPulse {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
 
-    .squad-actions { display: flex; justify-content: center; gap: var(--space-4); padding: var(--space-3) 0; }
-    .squad-error { background:rgba(255,51,68,0.15); border:1px solid var(--danger); border-radius:var(--radius-md); padding:var(--space-2) var(--space-4); color:var(--danger); font-family:var(--font-body); font-size:var(--text-lg); margin-bottom:var(--space-3); display:none; }
-    .squad-error.visible { display:block; }
+/* ─── Dev Badge ───────────────────────────────────────────────────── */
+#dev-badge {
+  position: fixed;
+  bottom: 8px;
+  right: 8px;
+  z-index: 300;
+  font-family: var(--font-display);
+  font-size: 7px;
+  padding: 2px 6px;
+  background: var(--surface);
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  opacity: 0.6;
+  letter-spacing: 0.06em;
+  pointer-events: none;
+  display: none; /* hidden by default, shown in dev mode via class */
+}
+#dev-badge.visible {
+  display: block;
+}
 
-    /* Player card chips */
-    .pc-chips { display:flex; align-items:center; justify-content:space-between; margin-top:6px; padding-top:4px; border-top:1px solid var(--border-soft); }
+/* ─── Toast Notifications (shell-level) ────────────────────────────── */
+.shell-toast {
+  position: fixed;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 250;
+  font-family: var(--font-body);
+  font-size: 16px;
+  padding: 6px 18px;
+  background: var(--danger);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 20px var(--danger-glow);
+  animation: toastIn 0.3s ease-out;
+  pointer-events: none;
+  white-space: nowrap;
+}
+@keyframes toastIn {
+  0%   { transform: translateX(-50%) translateY(-12px); opacity: 0; }
+  100% { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
 
-    /* Formation fit preview */
-    .form-fit-preview { display:flex; flex-wrap:wrap; gap:6px; margin-top:var(--space-2); padding:var(--space-1) 0; align-items:center; }
-    .form-fit-label { font-family:var(--font-display); font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; margin-right:4px; }
-    .form-fit-badge { font-family:var(--font-display); font-size:10px; padding:3px 8px; border:1px solid var(--border); border-radius:3px; color:var(--fg-dim); cursor:pointer; transition:all 0.15s ease; background:var(--surface); }
-    .form-fit-badge:hover { border-color:var(--border-bright); }
-    .form-fit-badge.best { border-color:var(--accent); color:var(--accent); background:rgba(57,255,20,0.06); box-shadow:0 0 6px var(--accent-glow); }
-    .form-fit-badge .pct { color:var(--gold); margin-left:2px; }
+/* ─── Screen content area (inside frame) ──────────────────────────── */
+.screen-content {
+  min-height: 100%;
+}
 
-    /* ─── Formation Select — Carousel ────────────────────────────── */
-    .form-header { text-align: center; margin-bottom: var(--space-6); }
-    .form-title { font-family: var(--font-display); font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); margin-bottom: var(--space-2); }
-    .form-subtitle { font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); }
+/* ─── prefers-reduced-motion ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .slide-left-out,
+  .slide-left-in,
+  .slide-right-out,
+  .slide-right-in,
+  .fade-out,
+  .fade-in {
+    animation-duration: 0.01ms !important;
+  }
+  .screen-frame {
+    transition-duration: 0.01ms !important;
+  }
+  #loading-spinner .spinner-icon {
+    animation: none;
+  }
+}
 
-    .carousel-wrap { max-width: 520px; margin: 0 auto var(--space-4); display: flex; align-items: center; gap: var(--space-3); }
-    .carousel-arrow { flex-shrink:0; width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); cursor:pointer; font-size:20px; color:var(--fg-dim); transition:all var(--motion-fast) ease; }
-    .carousel-arrow:hover { border-color:var(--accent); color:var(--accent); box-shadow:0 0 8px var(--accent-glow); }
-    .carousel-arrow:disabled { opacity:0.3; cursor:default; border-color:var(--border); color:var(--muted); box-shadow:none; }
-    .carousel-arrow:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
-
-    .carousel-frame { flex:1; min-height:0; }
-    .carousel-card { background:var(--surface); border:2px solid var(--border); border-radius:var(--radius-md); padding:var(--space-5) var(--space-5) var(--space-4); transition:all var(--motion-fast) ease; position:relative; }
-
-    .carousel-dots { display:flex; justify-content:center; gap:var(--space-2); margin-bottom:var(--space-4); }
-    .carousel-dot { width:10px; height:10px; border-radius:50%; background:var(--surface); border:1px solid var(--border); cursor:pointer; transition:all var(--motion-fast) ease; }
-    .carousel-dot:hover { border-color:var(--accent); }
-    .carousel-dot.active { background:var(--accent); border-color:var(--accent); box-shadow:0 0 6px var(--accent-glow); }
-
-    .formation-name { font-family: var(--font-display); font-size: 18px; text-align: center; margin-bottom: var(--space-1); color: var(--fg); letter-spacing: 0.08em; }
-    .formation-index { font-family:var(--font-body); font-size:var(--text-base); color:var(--muted); text-align:center; margin-bottom:var(--space-3); }
-    .form-pitch { background: var(--pitch-green); border: 2px solid var(--pitch-dark); border-radius: var(--radius-sm); aspect-ratio: 68/105; max-height: 220px; margin: 0 auto var(--space-4); position: relative; overflow: hidden; box-shadow: inset 0 0 30px rgba(0,0,0,0.4); }
-    .form-pitch::before { content:''; position:absolute; top:50%; left:0; right:0; height:1px; background:var(--pitch-line); }
-    .form-pitch::after { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:44px; height:44px; border:1px solid var(--pitch-line); border-radius:50%; }
-    .form-slot { position: absolute; width: 26px; height: 26px; background: var(--accent); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 9px; color: var(--accent-on); transform: translate(-50%, -50%); box-shadow: 0 0 6px var(--accent-glow); }
-    .form-rec { position:absolute; top:8px; right:8px; font-family:var(--font-display); font-size:10px; padding:3px 8px; background:var(--accent); color:var(--accent-on); border-radius:3px; text-transform:uppercase; letter-spacing:0.06em; box-shadow:0 0 8px var(--accent-glow); animation:rec-pulse 2s ease-in-out infinite; }
-    @keyframes rec-pulse { 0%,100%{box-shadow:0 0 6px var(--accent-glow)} 50%{box-shadow:0 0 14px var(--accent-glow)} }
-
-    /* Detail panel below carousel */
-    .form-detail { max-width:520px; margin:0 auto var(--space-4); background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); padding:var(--space-4) var(--space-5); }
-    .form-desc { font-family:var(--font-body); font-size:var(--text-lg); color:var(--muted); margin-bottom:var(--space-3); line-height:1.5; }
-    .form-detail-meta { display: flex; gap: var(--space-5); flex-wrap: wrap; margin-bottom: var(--space-3); }
-    .form-detail-stat { font-family:var(--font-display); font-size:10px; color:var(--fg-dim); text-transform:uppercase; letter-spacing:0.06em; }
-    .form-detail-stat .val { color:var(--fg); font-size:18px; display:block; margin-top:2px; font-family:var(--font-body); }
-    .form-detail-stat .val.green { color:var(--accent); }
-    .form-detail-stat .val.gold { color:var(--gold); }
-    .bonuses { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
-    .bonus-tag { font-family: var(--font-display); font-size: 9px; padding: 3px 8px; border-radius: var(--radius-sm); }
-    .bonus-pos { background: rgba(57,255,20,0.1); color: var(--accent); border: 1px solid var(--accent); }
-    .bonus-neg { background: rgba(255,51,68,0.1); color: var(--danger); border: 1px solid var(--danger); }
-    .fit-rows { display:flex; flex-direction:column; gap:2px; margin:var(--space-3) 0; }
-    .fit-row { display:flex; align-items:center; gap:var(--space-3); padding:4px var(--space-2); background:rgba(255,255,255,0.02); border-radius:var(--radius-sm); }
-    .fit-row-pos { font-family:var(--font-display); font-size:9px; text-transform:uppercase; letter-spacing:0.06em; min-width:36px; padding:1px 4px; border-radius:2px; text-align:center; }
-    .fit-row-pos.GK { color:#1a0a00; background:var(--gold); }
-    .fit-row-pos.CB, .fit-row-pos.FB { color:#fff; background:#1a4a7a; }
-    .fit-row-pos.CDM, .fit-row-pos.CM, .fit-row-pos.CAM { color:#fff; background:#1a5a1a; }
-    .fit-row-pos.ST, .fit-row-pos.LW, .fit-row-pos.RW { color:#fff; background:#7a1a1a; }
-    .fit-row-players { flex:1; font-family:var(--font-body); font-size:14px; color:var(--fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .fit-row-count { font-family:var(--font-body); font-size:14px; font-weight:600; color:var(--fg-dim); min-width:44px; text-align:center; }
-    .fit-row-status { font-family:var(--font-body); font-size:13px; min-width:90px; text-align:right; }
-    .fit-row-status.green { color:var(--accent); }
-    .fit-row-status.gold { color:var(--gold); }
-    .fit-row-status.poor { color:var(--danger); }
-
-    /* ─── Match Screen ──────────────────────────────────────────── */
-    .match-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-4); flex-wrap: wrap; gap: var(--space-3); }
-    .match-vs { display: flex; align-items: center; gap: var(--space-4); }
-    .match-team-name { font-family: var(--font-display); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-dim); }
-    .match-team.you .match-team-name { color: var(--accent); text-shadow: 0 0 8px var(--accent-glow); }
-    .match-score { font-family: var(--font-display); font-size: 20px; min-width: 80px; text-align: center; color: var(--fg); }
-    .score-dash { color: var(--muted); margin: 0 var(--space-2); }
-    .match-progress { display: flex; gap: var(--space-6); margin-bottom: var(--space-4); flex-wrap: wrap; }
-    .progress-group { flex: 1; min-width: 160px; }
-    .progress-label { font-family: var(--font-display); font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: var(--space-2); }
-    .progress-dots { display: flex; gap: var(--space-2); }
-    .progress-dot { width: 28px; height: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); transition: all 0.3s ease; }
-    .progress-dot.active { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
-    .progress-dot.done { background: var(--accent-dim); border-color: var(--accent-dim); }
-    .progress-dot.lose { background: var(--danger); border-color: var(--danger); }
-
-    /* Phase info bar */
-    .phase-bar { display: flex; align-items: center; gap: var(--space-4); background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3) var(--space-5); margin-bottom: var(--space-5); }
-    .phase-bar-icon { font-size: 28px; filter: drop-shadow(0 0 8px var(--accent-glow)); }
-    .phase-bar-info { flex: 1; }
-    .phase-bar-name { font-family: var(--font-display); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg); }
-    .phase-bar-weight { display: inline-flex; align-items: center; gap: var(--space-1); padding: 3px 10px; background: var(--accent); color: var(--accent-on); border-radius: var(--radius-sm); font-family: var(--font-display); font-size: 9px; text-transform: uppercase; margin-left: var(--space-2); box-shadow: 0 0 4px var(--accent-glow); }
-    .phase-bar-desc { font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); margin-top: var(--space-1); }
-    .phase-bar-zone { font-family: var(--font-display); font-size: 9px; color: var(--info); text-transform: uppercase; letter-spacing: 0.08em; margin-top: var(--space-1); }
-    .phase-bar-zone::before { content: '▸ '; color: var(--info); }
-
-    /* Live phase score bar */
-    .live-score-bar { display:flex; align-items:center; justify-content:space-between; gap:var(--space-3); background:var(--surface-raised); border:2px solid var(--border); border-radius:var(--radius-md); padding:var(--space-3) var(--space-5); margin-bottom:var(--space-4); }
-    .live-score-info { display:flex; align-items:baseline; gap:var(--space-2); }
-    .live-score-label { font-family:var(--font-display); font-size:9px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); }
-    .live-score-value { font-family:var(--font-display); font-size:32px; color:var(--gold); text-shadow:0 0 12px var(--gold-glow); transition:all 0.3s ease; font-variant-numeric:tabular-nums; }
-    .live-score-unit { font-family:var(--font-display); font-size:20px; color:var(--gold); text-shadow:0 0 8px var(--gold-glow); }
-    .live-score-detail { font-family:var(--font-body); font-size:var(--text-sm); color:var(--muted); margin-left:var(--space-2); }
-    .live-score-detail.change { transition:opacity 0.2s ease; }
-    .live-synergy-badges { display:flex; gap:var(--space-1); flex-wrap:wrap; justify-content:flex-end; max-width:380px; }
-    .live-syn-badge { font-family:var(--font-display); font-size:9px; padding:3px 10px; border-radius:3px; white-space:nowrap; letter-spacing:0.04em; }
-    .live-syn-badge.fired { background:rgba(57,255,20,0.12); border:1px solid var(--accent); color:var(--accent); text-shadow:0 0 4px var(--accent-glow); }
-    .live-syn-badge.inactive { background:rgba(255,255,255,0.04); border:1px solid var(--border); color:var(--muted); }
-    .live-syn-empty { font-family:var(--font-body); font-size:var(--text-sm); color:var(--muted); }
-    .live-syn-point { color:var(--accent); font-family:var(--font-mono); font-size:var(--text-sm); margin-left:var(--space-1); }
-
-    /* Game area layout */
-    .game-area { display: grid; grid-template-columns: 1fr 340px; gap: var(--space-5); margin-bottom: var(--space-5); }
-
-    /* ─── Team Sheet (replaces Tactical Pitch) ──────────────────── */
-    .team-sheet { background:var(--surface); border:2px solid var(--border); border-radius:var(--radius-md); overflow:hidden; margin-bottom:var(--space-3); }
-    .team-sheet-header { font-family:var(--font-display); font-size:9px; color:var(--fg-dim); text-transform:uppercase; letter-spacing:0.08em; padding:8px 14px 6px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
-    .team-sheet-header .ts-formation { color:var(--accent); }
-    .team-sheet-row { display:grid; grid-template-columns:28px 36px 1fr 52px 28px; gap:4px; padding:6px 14px; border-bottom:1px solid rgba(255,255,255,0.04); align-items:center; cursor:default; transition:background 0.1s ease; }
-    .team-sheet-row:hover { background:rgba(255,255,255,0.02); }
-    .team-sheet-row:last-child { border-bottom:none; }
-    .ts-num { font-family:var(--font-display); font-size:9px; color:var(--muted); text-align:center; }
-    .ts-pos { font-family:var(--font-display); font-size:9px; color:var(--fg-dim); text-align:center; text-transform:uppercase; letter-spacing:0.06em; }
-    .ts-pos.GK { color:var(--gold); }
-    .ts-pos.DEF { color:var(--accent); }
-    .ts-pos.MID { color:var(--info); }
-    .ts-pos.ATT { color:var(--danger); }
-    .ts-name { font-family:var(--font-body); font-size:17px; color:var(--fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .ts-chips { font-family:var(--font-display); font-size:10px; color:var(--gold); text-shadow:0 0 4px var(--gold-glow); text-align:right; }
-    .ts-status { font-family:var(--font-display); font-size:9px; text-align:center; }
-    .ts-status.filled { color:var(--accent); }
-    .ts-status.empty { color:var(--muted); }
-    .ts-slash { font-family:var(--font-display); font-size:9px; color:var(--fg-dim); text-align:right; }
-    /* Phase slot row — overrides with glow */
-    .team-sheet-row.slot-row { cursor:pointer; border-color:var(--border); background:rgba(57,255,20,0.03); animation:slot-pulse 2s ease-in-out infinite; }
-    @keyframes slot-pulse { 0%,100%{background:rgba(57,255,20,0.03)} 50%{background:rgba(57,255,20,0.06)} }
-    .team-sheet-row.slot-row:hover { background:rgba(57,255,20,0.06); border-color:var(--accent); }
-    .team-sheet-row.slot-row .ts-name { color:var(--fg); }
-    .team-sheet-row.slot-row .ts-num { color:var(--fg-dim); text-shadow:none; }
-    .team-sheet-row.slot-row .ts-pos { color:var(--fg-dim); }
-    .team-sheet-row.slot-row .ts-slash { display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--accent); }
-    .team-sheet-row.slot-row .ts-slash::before { content: '➤'; }
-    .team-sheet-row.slot-row.filled-slot { animation:none; background:rgba(57,255,20,0.06); }
-    .team-sheet-row.slot-row.filled-slot .ts-slash::before { content:'✓'; color:var(--accent); }
-    .team-sheet-row.slot-row.no-eligible { animation:none; background:rgba(220,38,38,0.06); border-color:var(--danger); cursor:default; }
-    .team-sheet-row.slot-row.no-eligible .ts-slash::before { content:'╳'; color:var(--danger); opacity:0.5; }
-    /* Line separator */
-    .ts-divider { border:none; border-top:1px solid rgba(255,255,255,0.06); margin:0; }
-    .ts-line-label { font-family:var(--font-display); font-size:8px; padding:4px 14px; background:rgba(255,255,255,0.02); color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; }
-
-    /* ─── Player Picker Modal ───────────────────────────────────── */
-    .picker-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:200; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
-    .picker-modal { background:var(--surface-raised, #2e2250); border:2px solid var(--accent); border-radius:12px; width:92%; max-width:720px; max-height:85vh; display:flex; flex-direction:column; box-shadow:0 0 40px var(--accent-glow); overflow:hidden; }
-    .picker-hdr { padding:14px 18px; border-bottom:2px solid var(--border); display:flex; flex-wrap:wrap; align-items:center; gap:6px; position:relative; }
-    .picker-hdr-title { font-family:var(--font-display); font-size:11px; color:var(--accent); text-shadow:0 0 8px var(--accent-glow); }
-    .picker-hdr-req { font-family:var(--font-body); font-size:16px; color:var(--fg-dim); }
-    .picker-hdr-formula { font-family:var(--font-mono, monospace); font-size:15px; color:var(--gold); width:100%; margin-top:2px; }
-    .picker-close { position:absolute; top:10px; right:14px; background:none; border:none; color:var(--muted); font-size:18px; cursor:pointer; font-family:var(--font-body); line-height:1; }
-    .picker-close:hover { color:var(--danger); }
-    .picker-cols { display:grid; grid-template-columns:1fr 42px 42px 42px 42px 42px 54px 32px; gap:3px; padding:5px 14px; border-bottom:1px solid var(--border); }
-    .picker-cols span { font-family:var(--font-display); font-size:8px; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; text-align:center; }
-    .picker-cols span:first-child { text-align:left; }
-    .picker-body { overflow-y:auto; flex:1; padding:4px 0; }
-    .picker-body::-webkit-scrollbar { width:4px; }
-    .picker-body::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
-    .picker-row { display:grid; grid-template-columns:1fr 42px 42px 42px 42px 42px 54px 32px; gap:3px; padding:7px 14px; border-bottom:1px solid rgba(255,255,255,0.04); cursor:pointer; transition:all 0.15s ease; align-items:center; }
-    .picker-row:hover { background:rgba(255,255,255,0.03); }
-    .picker-row.used { opacity:0.3; cursor:default; }
-    .picker-row.inel { opacity:0.3; cursor:default; }
-    .picker-row .pr-name { font-family:var(--font-body); font-size:16px; color:var(--fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .picker-row .pr-st { font-family:var(--font-mono, monospace); font-size:15px; text-align:center; }
-    .picker-row .pr-st.atk { color:#ff3344; }
-    .picker-row .pr-st.pac { color:var(--gold); }
-    .picker-row .pr-st.pas { color:var(--info); }
-    .picker-row .pr-st.def { color:var(--accent); }
-    .picker-row .pr-st.spc { color:#c084fc; }
-    .picker-row .pr-chips { font-family:var(--font-display); font-size:10px; color:var(--gold); text-shadow:0 0 4px var(--gold-glow); text-align:right; }
-    .picker-row .pr-syn { font-family:var(--font-display); font-size:9px; color:var(--accent); text-align:center; }
-    /* Expanded breakdown */
-    .picker-expand { padding:12px 16px; background:rgba(255,255,255,0.04); border:1px solid var(--accent); border-radius:6px; margin:2px 14px 6px; display:none; }
-    .picker-expand.open { display:block; animation:exp-in 0.2s ease-out; }
-    @keyframes exp-in { 0%{opacity:0;max-height:0} 100%{opacity:1;max-height:500px} }
-    .pe-traits { display:flex; gap:4px; margin-bottom:8px; flex-wrap:wrap; }
-    .pe-traits span { font-family:var(--font-body); font-size:14px; padding:1px 5px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:3px; color:var(--fg-dim); }
-    .pe-stat-row { display:flex; align-items:center; gap:6px; margin-bottom:3px; }
-    .pe-stat-lbl { font-family:var(--font-display); font-size:9px; width:28px; }
-    .pe-stat-bar { flex:1; height:7px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }
-    .pe-stat-fill { height:100%; border-radius:2px; }
-    .pe-stat-val { font-family:var(--font-mono, monospace); font-size:15px; width:18px; text-align:right; }
-    .pe-stat-mult { font-family:var(--font-mono, monospace); font-size:14px; color:var(--muted); width:28px; }
-    .pe-stat-res { font-family:var(--font-mono, monospace); font-size:15px; width:36px; text-align:right; }
-    .pe-divider { border:none; border-top:1px solid var(--border); margin:8px 0; }
-    .pe-info { font-family:var(--font-mono, monospace); font-size:15px; color:var(--fg-dim); margin-bottom:2px; }
-    .pe-total { font-family:var(--font-display); font-size:12px; color:var(--gold); text-shadow:0 0 6px var(--gold-glow); margin:8px 0 4px; }
-    .pe-syn-title { font-family:var(--font-display); font-size:8px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px; }
-    .pe-syn-row { display:flex; align-items:center; gap:5px; margin-bottom:2px; font-family:var(--font-body); font-size:15px; }
-    .pe-syn-row.fired { color: var(--gold); text-shadow: 0 0 6px var(--gold-glow); }
-    .pe-syn-row.inact { color: #8a7aa0; opacity: 0.85; }
-    .pe-syn-chk { font-size: 11px; width: 14px; text-align: center; }
-    .pe-syn-desc { font-size: 13px; color: #9a8ab0; opacity: 0.85; }
-    .pe-pick { margin-top:10px; padding:10px 24px; background:var(--accent); color:var(--accent-on); border:none; border-radius:6px; font-family:var(--font-display); font-size:10px; cursor:pointer; box-shadow:0 0 12px var(--accent-glow); transition:all 0.15s ease; text-transform:uppercase; letter-spacing:0.06em; }
-    .pe-pick:hover { box-shadow:0 0 20px var(--accent-glow); transform:translateY(-1px); }
-
-    /* ─── Tutorial Modal ──────────────────────────────────────── */
-    .tut-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:300; display:none; align-items:center; justify-content:center; backdrop-filter:blur(6px); }
-    .tut-modal { background:var(--bg-deep); border:2px solid var(--accent); border-radius:12px; width:92%; max-width:560px; max-height:85vh; display:flex; flex-direction:column; box-shadow:0 0 40px var(--accent-glow), 0 0 80px rgba(57,255,20,0.1); overflow:hidden; animation:tut-in 0.35s ease-out; }
-    @keyframes tut-in { 0%{opacity:0;transform:scale(0.92) translateY(20px)} 100%{opacity:1;transform:scale(1) translateY(0)} }
-    .tut-hdr { padding:16px 20px; border-bottom:2px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
-    .tut-hdr-title { font-family:var(--font-display); font-size:11px; color:var(--accent); text-shadow:0 0 8px var(--accent-glow); text-transform:uppercase; letter-spacing:0.08em; }
-    .tut-close { background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer; font-family:var(--font-body); line-height:1; padding:0 4px; }
-    .tut-close:hover { color:var(--danger); text-shadow:0 0 8px var(--danger-glow); }
-    .tut-body { flex:1; overflow-y:auto; padding:var(--space-5) var(--space-6); }
-    .tut-body::-webkit-scrollbar { width:4px; }
-    .tut-body::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
-    .tut-slide { margin-bottom:var(--space-5); }
-    .tut-slide:last-child { margin-bottom:0; }
-    .tut-slide-icon { font-size:28px; margin-bottom:var(--space-2); display:block; }
-    .tut-slide-title { font-family:var(--font-display); font-size:10px; color:var(--gold); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:var(--space-2); text-shadow:0 0 6px var(--gold-glow); }
-    .tut-slide-text { font-family:var(--font-body); font-size:var(--text-base); color:var(--fg-dim); line-height:1.6; }
-    .tut-slide-text strong { color:var(--accent); }
-    .tut-slide-divider { border:none; border-top:1px solid rgba(255,255,255,0.06); margin:var(--space-4) 0; }
-    .tut-footer { padding:12px 20px; border-top:2px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
-    .tut-footer .tut-nav { font-family:var(--font-body); font-size:var(--text-base); color:var(--muted); }
-    .tut-footer .tut-dots { display:flex; gap:6px; }
-    .tut-dot { width:10px; height:10px; border-radius:2px; background:var(--surface); border:1px solid var(--border); transition:all var(--motion-fast) ease; }
-    .tut-dot.active { background:var(--accent); border-color:var(--accent); box-shadow:0 0 6px var(--accent-glow); }
-
-    /* Sidebar panels */
-    .match-sidebar { display: flex; flex-direction: column; gap: var(--space-3); }
-    .sidebar-panel { background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3); }
-    .panel-title { font-family: var(--font-display); font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-dim); margin-bottom: var(--space-2); padding-bottom: var(--space-1); border-bottom: 1px solid var(--border); }
-
-    /* Target display */
-    .target-display { text-align: center; }
-    .target-num { font-family: var(--font-display); font-size: 18px; color: var(--gold); text-shadow: 0 0 6px var(--gold-glow); margin: var(--space-1) 0; }
-    .round-score-live { font-family: var(--font-body); font-size: var(--text-lg); color: var(--accent); }
-
-    /* Slot cards */
-    .slot-cards { display: flex; flex-direction: column; gap: var(--space-2); }
-    .slot-card { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-3); background: var(--bg-deep); border: 2px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all var(--motion-fast) ease; }
-    .slot-card:hover { border-color: var(--border-bright); background: var(--surface-raised); }
-    .slot-card.filled { border-color: var(--border-bright); background: rgba(57,255,20,0.04); }
-    .slot-card.filled.syn-fired { border-color: var(--accent); background: rgba(57,255,20,0.08); box-shadow: 0 0 8px var(--accent-glow); }
-    .slot-card-num { font-family: var(--font-display); font-size: 10px; color: var(--muted); min-width: 16px; text-align: center; }
-    .slot-card-req { font-family: var(--font-body); font-size: var(--text-xl); color: var(--fg); flex: 1; }
-    .slot-card-req .req-pos { color: var(--accent); font-weight: bold; }
-    .slot-card-req .req-stats { color: var(--fg-dim); font-size: var(--text-sm); }
-    .slot-card-status { font-family: var(--font-display); font-size: 10px; color: var(--muted); }
-    .slot-card-chips { font-family: var(--font-display); font-size: 10px; color: var(--gold); text-shadow: 0 0 4px var(--gold-glow); min-width: 40px; text-align: right; }
-
-    /* Synergy preview */
-    .synergy-list { display: flex; flex-direction: column; gap: var(--space-1); }
-    .synergy-row { display: flex; align-items: center; gap: var(--space-2); font-family: var(--font-body); font-size: var(--text-lg); color: #ffd700; text-shadow: 0 0 4px rgba(255,215,0,0.3); }
-    .synergy-dot { width: 6px; height: 6px; border-radius: var(--radius-sm); background: var(--gold); box-shadow: 0 0 4px var(--gold-glow); flex-shrink: 0; }
-
-    /* Submit section */
-    .submit-section { text-align: center; padding: var(--space-4) 0; }
-
-    /* ─── Phase Result — Option C: Accordion ────────────────────── */
-    .pr-hero { text-align: center; margin-bottom: var(--space-5); }
-    .pr-verdict { font-family: var(--font-display); font-size: var(--text-xl); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: var(--space-3); }
-    .pr-verdict.win { color: var(--accent); text-shadow: 0 0 30px var(--accent-glow); animation: verdict-glow 1.5s ease-in-out infinite; }
-    .pr-verdict.lose { color: var(--danger); text-shadow: 0 0 30px var(--danger-glow); }
-    @keyframes verdict-glow { 0%,100% { text-shadow: 0 0 10px var(--accent-glow); } 50% { text-shadow: 0 0 30px var(--accent-glow); } }
-    .pr-score { font-family: var(--font-display); font-size: 56px; color: var(--gold); text-shadow: 0 0 15px var(--gold-glow); line-height: 1; margin-bottom: var(--space-2); }
-    .pr-target { font-family: var(--font-body); font-size: var(--text-lg); color: var(--fg-dim); }
-    .pr-table-wrap { width: 100%; max-width: 640px; background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3); margin-bottom: var(--space-4); }
-    .pr-table-title { font-family: var(--font-display); font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-dim); margin-bottom: var(--space-2); }
-    .pr-tr { display: grid; grid-template-columns: 30px 1fr 44px 36px 36px 50px; align-items: center; gap: var(--space-1); padding: var(--space-1) 0; border-bottom: 1px solid var(--border-soft); font-family: var(--font-body); font-size: var(--text-lg); }
-    .pr-tr:last-child { border-bottom: none; }
-    .pr-td-pos { font-family: var(--font-display); font-size: 8px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); text-align: center; }
-    .pr-td-name { color: var(--fg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .pr-td-base { color: var(--fg-dim); text-align: right; }
-    .pr-td-form { color: var(--info); text-align: right; font-size: var(--text-sm); }
-    .pr-td-fatigue { text-align: right; font-size: var(--text-sm); }
-    .pr-td-fatigue.ok { color: var(--accent); }
-    .pr-td-fatigue.tired { color: var(--warn); }
-    .pr-td-chips { font-family: var(--font-display); font-size: 10px; color: var(--gold); text-shadow: 0 0 6px var(--gold-glow); text-align: right; }
-    .pr-syn-section { width: 100%; max-width: 640px; margin-bottom: var(--space-6); }
-    .pr-syn-header { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-3); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; font-family: var(--font-body); font-size: var(--text-lg); color: var(--fg); user-select: none; }
-    .pr-syn-header:hover { background: var(--surface-hover); }
-    .pr-syn-count { color: var(--fg); }
-    .pr-syn-total { margin-left: auto; font-family: var(--font-display); font-size: 10px; color: var(--gold); text-shadow: 0 0 4px var(--gold-glow); }
-    .pr-syn-arrow { color: var(--muted); font-size: var(--text-sm); transition: transform 0.2s; }
-    .pr-syn-body { display: none; padding: var(--space-2) 0; }
-    .pr-syn-body.open { display: block; }
-    .pr-syn-group-title { font-family: var(--font-display); font-size: 7px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-dim); padding: var(--space-2) var(--space-2) var(--space-1); }
-    .pr-syn-item { display: grid; grid-template-columns: 10px 1fr 44px; gap: var(--space-2); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); align-items: start; }
-    .pr-syn-item.triggered { background: rgba(57,255,20,0.04); }
-    .pr-syn-item.inactive { opacity: 0.5; }
-    .pr-syn-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
-    .pr-syn-dot.active { background: var(--accent); box-shadow: 0 0 4px var(--accent-glow); }
-    .pr-syn-dot.inactive { background: var(--muted); }
-    .pr-syn-name { font-family: var(--font-body); font-size: var(--text-xl); color: var(--fg); }
-    .pr-syn-desc { font-family: var(--font-body); font-size: var(--text-base); color: var(--muted); line-height: 1.3; }
-    .pr-syn-contrib { font-family: var(--font-body); font-size: var(--text-base); color: var(--fg-dim); }
-    .pr-syn-value { font-family: var(--font-display); font-size: 10px; color: var(--gold); text-shadow: 0 0 4px var(--gold-glow); text-align: right; }
-    .pr-syn-none { font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); padding: var(--space-2); }
-
-    /* ─── Round Result ──────────────────────────────────────────── */
-    .round-verdict { font-family: var(--font-display); font-size: 20px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: var(--space-6); }
-    .round-verdict.win { color: var(--accent); text-shadow: 0 0 20px var(--accent-glow); }
-    .round-verdict.lose { color: var(--danger); text-shadow: 0 0 20px var(--danger-glow); }
-    .round-scores { display: flex; gap: var(--space-8); justify-content: center; margin-bottom: var(--space-6); }
-    .round-score-card { text-align: center; }
-    .round-score-label { font-family: var(--font-display); font-size: 9px; color: var(--muted); text-transform: uppercase; margin-bottom: var(--space-2); }
-    .round-score-value { font-family: var(--font-display); font-size: 24px; }
-    .round-score-value.yours { color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
-    .round-score-value.target { color: var(--gold); text-shadow: 0 0 10px var(--gold-glow); }
-    .match-progress-rounds { display: flex; gap: var(--space-3); justify-content: center; margin-bottom: var(--space-6); }
-    .round-indicator { font-family: var(--font-display); font-size: 9px; padding: 4px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--fg-dim); }
-    .round-indicator.won { border-color: var(--accent); color: var(--accent); background: rgba(57,255,20,0.1); }
-    .round-indicator.lost { border-color: var(--danger); color: var(--danger); background: rgba(255,51,68,0.1); }
-    .round-indicator.current { border-color: var(--gold); color: var(--gold); background: rgba(255,215,0,0.1); }
-
-    /* ─── Campaign Complete ─────────────────────────────────────── */
-    .campaign-title { font-family: var(--font-display); font-size: 24px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: var(--space-6); }
-    .campaign-title.victory { color: var(--gold); text-shadow: 0 0 30px var(--gold-glow); }
-    .campaign-title.defeat { color: var(--danger); text-shadow: 0 0 30px var(--danger-glow); }
-    .match-results { display: flex; flex-direction: column; gap: var(--space-4); width: 100%; max-width: 500px; margin-bottom: var(--space-8); }
-    .match-result-card { display: flex; align-items: center; gap: var(--space-4); background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-md); padding: var(--space-4); }
-    .match-result-card.won { border-color: var(--accent-dim); }
-    .match-result-card.lost { border-color: var(--danger); }
-    .mrc-name { font-family: var(--font-body); font-size: var(--text-xl); color: var(--fg); flex: 1; }
-    .mrc-opponent { font-family: var(--font-body); font-size: var(--text-lg); color: var(--muted); }
-    .mrc-result { font-family: var(--font-display); font-size: 11px; padding: 4px 12px; border-radius: var(--radius-sm); }
-    .mrc-result.won { background: rgba(57,255,20,0.15); color: var(--accent); border: 1px solid var(--accent); }
-    .mrc-result.lost { background: rgba(255,51,68,0.15); color: var(--danger); border: 1px solid var(--danger); }
-
-    /* ─── Shared Button Styles ──────────────────────────────────── */
-    .btn { font-family: var(--font-display); font-size: 8px; text-transform: uppercase; letter-spacing: 0.06em; padding: 12px 24px; border: 2px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--fg); cursor: pointer; transition: all var(--motion-fast) ease; }
-    .btn:hover { border-color: var(--border-bright); background: var(--surface-raised); }
-    .btn-primary { border-color: var(--accent); color: var(--accent-on); background: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
-    .btn-primary:hover { background: var(--accent-dim); box-shadow: 0 0 12px var(--accent-glow); transform: translateY(-1px); }
-    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
-    .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; box-shadow: 0 0 12px var(--accent-glow); }
-    .pos-tab:focus-visible, .sub-tab:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
-    .player-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-    .btn-lg { padding: 16px 32px; font-size: 10px; }
-    .btn-danger { border-color: var(--danger); color: #fff; background: var(--danger); }
-
-    /* ─── Empty State ───────────────────────────────────────────── */
-    .empty-state { text-align: center; padding: var(--space-6) var(--space-4); color: var(--muted); font-family: var(--font-body); font-size: var(--text-lg); }
-    .big-icon { font-size: 36px; margin-bottom: var(--space-3); display: block; }
-
-    /* ─── Toast ─────────────────────────────────────────────────── */
-    .toast { position: fixed; top: var(--space-4); left: 50%; transform: translateX(-50%); background: var(--danger); color: #fff; font-family: var(--font-body); font-size: var(--text-lg); padding: var(--space-2) var(--space-5); border-radius: var(--radius-sm); box-shadow: 0 0 20px var(--danger-glow); z-index: 100; animation: toast-in 0.3s ease-out; }
-    @keyframes toast-in { 0% { transform: translateX(-50%) translateY(-20px); opacity: 0; } 100% { transform: translateX(-50%) translateY(0); opacity: 1; } }
-
-    /* ─── Responsive ────────────────────────────────────────────── */
-    @media (max-width: 920px) {
-      .game-area { grid-template-columns: 1fr; }
-      .team-sheet .ts-name { font-size: 15px; }
-      .team-sheet-row { grid-template-columns:22px 28px 1fr 44px 24px; padding:5px 10px; }
-      .match-sidebar { order: -1; }
-      .player-grid { gap: 8px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
-      .player-card { padding: 8px 10px; }
-      .pc-name { font-size: 15px; }
-      .pc-stat-val { font-size: 14px; }
-      .budget-track { width: 100px; }
-      .formations-grid { grid-template-columns: 1fr; }
-      .picker-modal { width: 96%; max-height: 90vh; }
-      .picker-row { grid-template-columns:1fr 36px 36px 36px 36px 36px 46px 28px; padding:6px 10px; }
-      .picker-cols { grid-template-columns:1fr 36px 36px 36px 36px 36px 46px 28px; }
-      .carousel-wrap { max-width: 100%; gap: var(--space-2); }
-      .carousel-card { padding: var(--space-3); }
-      .form-pitch { max-height: 180px; }
-      .form-detail { max-width: 100%; }
-    }
-    @media (max-width: 600px) {
-      .title-logo { font-size: 28px; }
-      .pr-score { font-size: 40px; }
-      .team-sheet .ts-name { font-size: 14px; }
-      .team-sheet-row { grid-template-columns:18px 24px 1fr 36px 20px; padding:4px 8px; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .title-logo, .team-sheet-row.slot-row, .pr-verdict.win,
-      .campaign-title.victory, .form-rec { animation: none !important; }
-      .title-logo { text-shadow: 0 0 10px var(--accent-glow); }
-      .phase-bar-icon { filter: none; }
-      .pr-verdict.win { text-shadow: 0 0 8px var(--accent-glow); }
-      .form-rec { box-shadow: 0 0 6px var(--accent-glow); }
-    }
-  
-    /* ─── Card Flip Animation ────────────────────────────────────── */
-    .ps-card {
-      perspective: 1000px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .ps-card:not(.picked):hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 0 24px var(--accent-glow);
-    }
-    .ps-card.selected {
-      animation: card-select-pop 0.4s ease-out;
-    }
-    @keyframes card-select-pop {
-      0% { transform: scale(1); box-shadow: 0 0 0 var(--gold-glow); }
-      50% { transform: scale(1.05); box-shadow: 0 0 40px var(--gold-glow); }
-      100% { transform: scale(1); box-shadow: 0 0 16px var(--gold-glow); }
-    }
-    .ps-card.picked {
-      animation: card-picked 0.6s ease-out;
-    }
-    @keyframes card-picked {
-      0% { transform: scale(1) rotateY(0); opacity: 1; }
-      30% { transform: scale(0.95) rotateY(90deg); opacity: 0.7; }
-      60% { transform: scale(0.95) rotateY(90deg); opacity: 0.7; }
-      100% { transform: scale(1) rotateY(0); opacity: 0.5; }
-    }
-    /* Phase card number badge */
-    .pc-order {
-      animation: order-pop 0.3s ease-out;
-    }
-    @keyframes order-pop {
-      0% { transform: scale(0); }
-      50% { transform: scale(1.4); }
-      100% { transform: scale(1); }
-    }
-    /* ─── Score Cascade ──────────────────────────────────────────── */
-    .pr-score {
-      font-variant-numeric: tabular-nums;
-    }
-    .score-cascading {
-      animation: score-glow-pulse 0.8s ease-in-out;
-    }
-    @keyframes score-glow-pulse {
-      0% { text-shadow: 0 0 0 var(--gold-glow); }
-      50% { text-shadow: 0 0 40px var(--gold-glow), 0 0 80px rgba(255,215,0,0.2); }
-      100% { text-shadow: 0 0 10px var(--gold-glow); }
-    }
-    /* ─── Synergy Particle Burst ─────────────────────────────────── */
-    .pr-syn-item {
-      animation: syn-appear 0.5s ease-out;
-    }
-    @keyframes syn-appear {
-      0% { transform: translateX(-20px); opacity: 0; }
-      60% { transform: translateX(5px); opacity: 1; }
-      100% { transform: translateX(0); opacity: 1; }
-    }
+/* ─── Responsive nav bar ──────────────────────────────────────────── */
+@media (max-width: 600px) {
+  #nav-bar .nav-center { display: none; }
+  #nav-bar { padding: 4px 10px; }
+  #screen-container { padding-top: 28px; }
+  .screen-frame { margin-top: 28px; }
+}
 </style>
 </head>
 <body>
-  <!-- CRT overlay handled by body::after in game.css -->
 
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- SCREEN: TITLE                                                 -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <section class="game-screen active" id="screen-title" data-od-id="title-screen">
-    <div class="title-logo" data-od-id="title-logo">SQUAD</div>
-    <div class="title-tagline" data-od-id="title-tagline">Football Card Roguelike</div>
-    <div class="title-info" data-od-id="title-info">
-      ⚽ Build. Form. Attack. Score. Repeat.<br>
-      Draft <span>11–12 players</span> · Pick a <span>formation</span> · Trigger <span>synergies</span> · Win <span>5 matches</span>
+<div id="game-shell">
+  <!-- Navigation Bar -->
+  <nav id="nav-bar">
+    <div class="nav-left">
+      <span class="nav-brand">SQUAD</span>
+      <span class="nav-sep"></span>
+      <span class="nav-screen-name" id="nav-screen-name">Loading…</span>
     </div>
-    <button class="btn btn-primary btn-lg" id="start-btn" data-od-id="start-campaign">Start Campaign ▸</button>
-    <button class="btn btn-secondary btn-lg" id="quick-start-btn" style="margin-top:var(--space-2)" data-od-id="quick-start">⚡ Quick Start</button>
-    <div class="title-help" data-od-id="title-help">
-      <a href="javascript:void(0)" onclick="showTutorial()" class="help-link">How to Play</a>
+    <div class="nav-center" id="nav-center"></div>
+    <div class="nav-right">
+      <span class="nav-progress" id="nav-progress"></span>
+      <button class="nav-arrow" id="btn-back" title="Back (Escape)">◀</button>
+      <button class="nav-arrow" id="btn-forward" title="Forward">▶</button>
     </div>
-  </section>
+  </nav>
 
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- SCREEN: SQUAD BUILDER — Compact List + Pill Grid             -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <section class="game-screen" id="screen-squad" data-od-id="squad-builder-screen">
-    <div class="squad-header">
-      <h2 style="font-family:var(--font-display);font-size:11px;color:var(--accent);text-shadow:0 0 8px var(--accent-glow);letter-spacing:0.06em;">Build Your Squad</h2>
-      <div class="budget-row">
-        <div class="budget-track"><div class="budget-fill" id="budget-fill" style="width:0%"></div></div>
-        <div class="budget-text">Budget: <span class="num" id="budget-used">0</span> / 360</div>
-      </div>
-    </div>
-
-    <!-- Position filter tabs -->
-    <div class="pos-tabs" id="pos-tabs" data-od-id="position-tabs"></div>
-    <div class="sub-tabs" id="sub-tabs" data-od-id="sub-position-tabs"></div>
-
-    <!-- Player card grid — tabbed position hub -->
-    <div class="player-grid" id="player-grid" data-od-id="player-cards"></div>
-
-    <!-- Squad summary — Pill grid -->
-    <div class="squad-section" id="squad-section" data-od-id="squad-summary">
-      <div class="squad-section-title">
-        Your Squad <span class="count" id="squad-count">0</span>
-        <span style="flex:1"></span>
-        <span id="squad-cost-display" style="color:var(--gold);font-size:7px;font-family:var(--font-display)">Cost: 0</span>
-      </div>
-      <div id="squad-pills"></div>
-      <div class="req-strip" id="req-strip"></div>
-      <div class="form-fit-preview" id="form-fit-preview" data-od-id="formation-fit"></div>
-    </div>
-
-    <!-- Error box -->
-    <div class="squad-error" id="squad-error"></div>
-
-    <!-- Actions -->
-    <div class="squad-actions">
-      <button class="btn" onclick="showScreen('title')">◂ Back</button>
-      <button class="btn btn-primary btn-lg" id="confirm-squad-btn">Confirm Squad ▸</button>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- SCREEN: FORMATION SELECT — Carousel                            -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <section class="game-screen" id="screen-formation" data-od-id="formation-select-screen">
-    <div class="form-header">
-      <h1 class="form-title" data-od-id="formation-title">Choose Formation</h1>
-      <p class="form-subtitle" data-od-id="formation-subtitle">Browse formations. Select the one that fits your squad.</p>
-    </div>
-
-    <div class="carousel-dots" id="carousel-dots"></div>
-
-    <div class="carousel-wrap">
-      <button class="carousel-arrow" id="carousel-prev" onclick="carouselPrev()" aria-label="Previous formation">◂</button>
-      <div class="carousel-frame">
-        <div class="carousel-card" id="carousel-card"></div>
-      </div>
-      <button class="carousel-arrow" id="carousel-next" onclick="carouselNext()" aria-label="Next formation">▸</button>
-    </div>
-
-    <div class="form-detail" id="form-detail"></div>
-
-    <div class="squad-actions">
-      <button class="btn" onclick="showScreen('squad')">◂ Back</button>
-      <button class="btn btn-primary btn-lg" id="confirm-formation-btn" disabled>Start Match ▸</button>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!-- SCREEN: PHASE SELECTION - pick 3 of 6 -->
-  <section class="game-screen" id="screen-phase-select" data-od-id="phase-select-screen">
-    <div class="ps-header">
-      <h1 class="form-title">Pick Your Phases</h1>
-      <p class="form-subtitle">Dealt 6 phase cards. Pick 3 to play. Order matters for carryover!</p>
-    </div>
-    <div id="ps-round-info" style="font-family:var(--font-body);font-size:var(--text-lg);color:var(--fg-dim);text-align:center;margin-bottom:var(--space-4)"></div>
-    <div id="ps-scouting" style="font-family:var(--font-body);font-size:var(--text-sm);color:var(--accent);text-align:center;margin-bottom:var(--space-2);padding:4px 8px;background:rgba(57,255,20,0.05);border-radius:4px;display:none"></div>
-    <div id="ps-available-syns" style="font-family:var(--font-body);font-size:var(--text-sm);color:var(--accent);text-align:center;margin-bottom:var(--space-4)"></div>
-    <div class="ps-cards" id="ps-cards"></div>
-    <div class="ps-picks" id="ps-picks"></div>
-    <div class="squad-actions" id="ps-actions">
-      <button class="btn btn-primary btn-lg" id="confirm-phases-btn" disabled>Confirm Phase Order ▸</button>
-    </div>
-    <style>
-      .ps-cards { display:grid; grid-template-columns: repeat(3, 1fr); gap:var(--space-3); max-width:900px; margin:0 auto; }
-      .ps-card { background:var(--surface); border:2px solid var(--border); border-radius:var(--radius-md); padding:var(--space-3); cursor:pointer; transition:all var(--motion-fast) ease; position:relative; }
-      .ps-card:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:0 0 12px var(--accent-glow); }
-      .ps-card.selected { border-color:var(--gold); box-shadow:0 0 16px var(--gold-glow); }
-      .ps-card.picked { opacity:0.5; border-color:var(--border); cursor:default; transform:none; box-shadow:none; }
-      .ps-card .pc-icon { font-size:28px; margin-bottom:var(--space-2); }
-      .ps-card .pc-name { font-family:var(--font-display); font-size:7px; color:var(--fg); margin-bottom:var(--space-1); text-transform:uppercase; letter-spacing:0.06em; }
-      .ps-card .pc-desc { font-family:var(--font-body); font-size:var(--text-sm); color:var(--muted); margin-bottom:var(--space-2); }
-      .ps-card .pc-slots { font-family:var(--font-mono); font-size:12px; color:var(--fg-dim); }
-      .ps-card .pc-syn { font-family:var(--font-body); font-size:var(--text-sm); color:var(--accent); margin-top:var(--space-1); }
-      .ps-card .pc-order { position:absolute; top:var(--space-2); right:var(--space-2); font-family:var(--font-display); font-size:10px; color:var(--gold); }
-      .ps-picks { text-align:center; font-family:var(--font-body); font-size:var(--text-lg); color:var(--gold); margin:var(--space-4) 0; min-height:2em; }
-    
-    /* ─── Card Flip Animation ────────────────────────────────────── */
-    .ps-card {
-      perspective: 1000px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .ps-card:not(.picked):hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 0 24px var(--accent-glow);
-    }
-    .ps-card.selected {
-      animation: card-select-pop 0.4s ease-out;
-    }
-    @keyframes card-select-pop {
-      0% { transform: scale(1); box-shadow: 0 0 0 var(--gold-glow); }
-      50% { transform: scale(1.05); box-shadow: 0 0 40px var(--gold-glow); }
-      100% { transform: scale(1); box-shadow: 0 0 16px var(--gold-glow); }
-    }
-    .ps-card.picked {
-      animation: card-picked 0.6s ease-out;
-    }
-    @keyframes card-picked {
-      0% { transform: scale(1) rotateY(0); opacity: 1; }
-      30% { transform: scale(0.95) rotateY(90deg); opacity: 0.7; }
-      60% { transform: scale(0.95) rotateY(90deg); opacity: 0.7; }
-      100% { transform: scale(1) rotateY(0); opacity: 0.5; }
-    }
-    /* Phase card number badge */
-    .pc-order {
-      animation: order-pop 0.3s ease-out;
-    }
-    @keyframes order-pop {
-      0% { transform: scale(0); }
-      50% { transform: scale(1.4); }
-      100% { transform: scale(1); }
-    }
-    /* ─── Score Cascade ──────────────────────────────────────────── */
-    .pr-score {
-      font-variant-numeric: tabular-nums;
-    }
-    .score-cascading {
-      animation: score-glow-pulse 0.8s ease-in-out;
-    }
-    @keyframes score-glow-pulse {
-      0% { text-shadow: 0 0 0 var(--gold-glow); }
-      50% { text-shadow: 0 0 40px var(--gold-glow), 0 0 80px rgba(255,215,0,0.2); }
-      100% { text-shadow: 0 0 10px var(--gold-glow); }
-    }
-    /* ─── Synergy Particle Burst ─────────────────────────────────── */
-    .pr-syn-item {
-      animation: syn-appear 0.5s ease-out;
-    }
-    @keyframes syn-appear {
-      0% { transform: translateX(-20px); opacity: 0; }
-      60% { transform: translateX(5px); opacity: 1; }
-      100% { transform: translateX(0); opacity: 1; }
-    }
-</style>
-  </section>
-
-  <!-- SCREEN: MATCH                                                 -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <section class="game-screen" id="screen-match" data-od-id="match-screen">
-    <!-- Match header -->
-    <div class="match-header" data-od-id="match-header">
-      <div class="match-vs">
-        <div class="match-team you"><div class="match-team-name">Your XI</div></div>
-        <div class="match-score"><span id="rounds-won">0</span><span class="score-dash">-</span><span id="rounds-lost">0</span></div>
-        <div class="match-team"><div class="match-team-name" id="opponent-name">—</div></div>
-      </div>
-      <div><span style="font-family:var(--font-display);font-size:7px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em" id="match-label"></span></div>
-      <div style="display:flex;gap:var(--space-4);font-family:var(--font-display);font-size:7px;color:var(--muted)">
-        <div>Target: <span id="target-num" style="color:var(--gold)">500</span></div>
-        <div>Score: <span id="live-score" style="color:var(--accent)">0</span></div>
-      </div>
-    </div>
-
-    <!-- Progress -->
-    <div class="match-progress" data-od-id="match-progress">
-      <div class="progress-group">
-        <div class="progress-label">Round <span id="round-num">1</span> / 3</div>
-        <div class="progress-dots" id="round-dots"></div>
-      </div>
-      <div class="progress-group">
-        <div class="progress-label">Phase <span id="phase-num">1</span> / 3</div>
-        <div class="progress-dots" id="phase-dots"></div>
-      </div>
-    </div>
-
-    <!-- Phase info bar -->
-    <div class="phase-bar" data-od-id="phase-bar">
-      <div class="phase-bar-icon" id="phase-icon">B</div>
-      <div class="phase-bar-info">
-        <div><span class="phase-bar-name" id="phase-name">Goal Kick</span><span class="phase-bar-weight" id="phase-weight">DEF</span></div>
-        <div class="phase-bar-desc" id="phase-desc"></div>
-        <div class="phase-bar-zone" id="phase-zone-label">Defensive Third</div>
-      </div>
-    </div>
-
-    <!-- Live Phase Score -->
-    <div class="live-score-bar" data-od-id="live-score-bar">
-      <div class="live-score-info">
-        <span class="live-score-label">Phase Score:</span>
-        <span class="live-score-value" id="live-phase-score">0</span>
-        <span class="live-score-unit">♣</span>
-        <span class="live-score-detail" id="live-score-detail"></span>
-      </div>
-      <div class="live-synergy-badges" id="live-synergy-badges">
-        <span class="live-syn-empty">Place players to trigger synergies</span>
-      </div>
-    </div>
-
-    <!-- Game area — Split Panel -->
-    <div class="match-panels" style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);align-items:start;">
-      <!-- LEFT: Phase slots as cards -->
-      <div class="slot-panel" data-od-id="slot-panel">
-        <div class="panel-title" style="margin-bottom:var(--space-2)">Phase Slots</div>
-        <div id="slot-cards" style="display:flex;flex-direction:column;gap:var(--space-2)"></div>
-        <div class="slot-summary" id="slot-summary" style="margin-top:var(--space-3);font-family:var(--font-body);font-size:var(--text-lg);color:var(--muted);text-align:center"></div>
-      </div>
-      <!-- RIGHT: Eligible players + Synergies -->
-      <div style="display:flex;flex-direction:column;gap:var(--space-3)">
-        <div class="sidebar-panel eligible-panel" data-od-id="eligible-panel">
-          <div class="panel-title" id="eligible-title">Tap a slot to see eligible players</div>
-          <div id="eligible-list" style="font-family:var(--font-body);font-size:var(--text-lg);color:var(--muted);text-align:center;padding:var(--space-4)">No slot selected</div>
-        </div>
-        <div class="sidebar-panel" data-od-id="synergy-panel">
-          <div class="panel-title">Synergies <span style="cursor:pointer;color:var(--accent);font-family:var(--font-body);font-size:12px" onclick="toggleSynergies()" id="syn-toggle">▼ expand</span></div>
-          <div class="synergy-list" id="synergy-list" style="max-height:0;overflow:hidden;transition:max-height 0.3s ease"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="submit-section">
-      <button class="btn btn-primary btn-lg" id="submit-phase-btn">Submit Phase ▸</button>
-      <button class="btn btn-secondary btn-lg" onclick="autoFillPhase()" style="margin-left:var(--space-2);background:var(--surface);color:var(--accent);border:1px solid var(--accent);padding:8px 16px;font-family:var(--font-body)">🤖 Auto-fill</button>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- PLAYER PICKER MODAL                                           -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <div class="picker-overlay" id="picker-overlay" style="display:none">
-    <div class="picker-modal">
-      <div class="picker-hdr">
-        <div class="picker-hdr-title"><span id="picker-pos"></span> SLOT</div>
-        <div class="picker-hdr-req" id="picker-req"></div>
-        <div class="picker-hdr-formula" id="picker-formula"></div>
-        <button class="picker-close" id="picker-close">✕</button>
-      </div>
-      <div class="picker-cols">
-        <span>Player</span><span>ATK</span><span>PAC</span><span>PAS</span><span>DEF</span><span>SPC</span><span>Chips</span><span>SYN</span>
-      </div>
-      <div class="picker-body" id="picker-body"></div>
+  <!-- Loading Spinner -->
+  <div id="loading-spinner">
+    <div class="spinner-content">
+      <span class="spinner-icon">⚽</span>
+      <div class="spinner-text">Loading…</div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- TUTORIAL MODAL — How to Play                                  -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <div class="tut-overlay" id="tut-overlay" style="display:none" onclick="closeTutorial(event)">
-    <div class="tut-modal" id="tut-modal">
-      <div class="tut-hdr">
-        <div class="tut-hdr-title">📖 How to Play SQUAD</div>
-        <button class="tut-close" onclick="closeTutorial()">✕</button>
-      </div>
-      <div class="tut-body" id="tut-body">
-        <div class="tut-slide">
-          <span class="tut-slide-icon">📋</span>
-          <div class="tut-slide-title">1. Build Your Squad</div>
-          <div class="tut-slide-text">
-            Pick <strong>11–12 players</strong> within a <strong>360 budget</strong>. Each player has five stats — ATK, PAC, PAS, DEF, SPC — plus unique <strong>traits</strong> (pacey, leader, technical, etc.). Traits unlock squad-wide <strong>persistent synergies</strong> that last the whole match. Choose wisely — every player counts.
-          </div>
-        </div>
-        <hr class="tut-slide-divider">
-        <div class="tut-slide">
-          <span class="tut-slide-icon">🏗️</span>
-          <div class="tut-slide-title">2. Pick a Formation</div>
-          <div class="tut-slide-text">
-            Formations give <strong>position bonuses</strong> (+chips) to certain roles and a <strong>global multiplier</strong> to all scores. Browse the carousel and pick the one that best fits your squad — a full 11-slot match gives the best results. Some formations boost certain positions at the cost of others.
-          </div>
-        </div>
-        <hr class="tut-slide-divider">
-        <div class="tut-slide">
-          <span class="tut-slide-icon">🃏</span>
-          <div class="tut-slide-title">3. Choose Phases</div>
-          <div class="tut-slide-text">
-            Each round you're dealt <strong>6 phase cards</strong>. Pick <strong>3 to play</strong>, and <strong>order matters</strong> — combo chains between consecutive phases (like Defensive → Transition) trigger bonus <strong>×mult</strong> or <strong>+chips</strong> effects. Plan your sequence for maximum scoring.
-          </div>
-        </div>
-        <hr class="tut-slide-divider">
-        <div class="tut-slide">
-          <span class="tut-slide-icon">✨</span>
-          <div class="tut-slide-title">4. Trigger Synergies</div>
-          <div class="tut-slide-text">
-            Pairing players by <strong>position</strong>, <strong>stats</strong>, and <strong>traits</strong> unlocks powerful <strong>synergies</strong> during phases — extra <strong>chips</strong>, <strong>add_mult</strong>, and <strong>×mult</strong> bonuses. Stack them high, clear each round's target, and win 2 out of 3 rounds per match to advance through <strong>5 matches</strong> to the final.
-          </div>
-        </div>
-      </div>
-      <div class="tut-footer">
-        <span class="tut-nav">Swipe through the guide above</span>
-        <div class="tut-dots">
-          <div class="tut-dot active"></div>
-          <div class="tut-dot"></div>
-          <div class="tut-dot"></div>
-          <div class="tut-dot"></div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- Screen Container -->
+  <div id="screen-container"></div>
 
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- SCREEN: PHASE RESULT                                          -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <section class="game-screen" id="screen-phase-result" data-od-id="phase-result-screen">
-    <div style="display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:var(--space-6);text-align:center;">
-      <!-- Hero Score -->
-      <div class="pr-hero">
-        <div class="pr-verdict" id="pr-verdict">Phase Complete</div>
-        <div class="pr-score" id="pr-score">0</div>
-        <div class="pr-target" id="pr-target">Target: 500</div>
-      </div>
+  <!-- Dev Mode Badge -->
+  <div id="dev-badge">DEV</div>
+</div>
 
-      <!-- Player Contributions Table -->
-      <div class="pr-table-wrap">
-        <div class="pr-table-title">Contributions</div>
-        <div id="pr-breakdown-rows"></div>
-      </div>
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- Shared Game Engine                                                 -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<script src="game-motion.js"></script>
+<script src="game-engine.js?v=2"></script>
 
-      <!-- Synergies Accordion -->
-      <div class="pr-syn-section">
-        <div class="pr-syn-header" id="pr-syn-toggle">
-          <span>▸▸ <span class="pr-syn-count" id="pr-syn-count">0</span> SYNERGIES FIRED</span>
-          <span class="pr-syn-total" id="pr-syn-total">+0</span>
-          <span class="pr-syn-arrow" id="pr-syn-arrow">▼</span>
-        </div>
-        <div class="pr-syn-body" id="pr-syn-body"></div>
-      </div>
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- Navigation Shell Script                                              -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<script>
+(function() {
+  'use strict';
 
-      <button class="btn btn-primary btn-lg" id="pr-continue-btn">Continue ▸</button>
-    </div>
-  </section>
+  /* ─── Screen Registry ────────────────────────────────────────── */
+  const SCREENS = {
+    'title':            { file:'screens/title-screen.html',          name:'Title' },
+    'squad':            { file:'screens/squad-builder.html',          name:'Squad Builder' },
+    'formation':        { file:'screens/formation-select.html',       name:'Formation' },
+    'phases':           { file:'screens/phase-select.html',           name:'Phase Select' },
+    'match':            { file:'screens/match-screen-fixed.html',   name:'Match' },
+    'phase-result':     { file:'screens/phase-result.html',           name:'Phase Result' },
+    'round-result':     { file:'screens/round-result.html',           name:'Round Result' },
+    'shop':             { file:'screens/shop-screen.html',            name:'Shop' },
+    'campaign-complete':{ file:'screens/campaign-complete.html',     name:'Campaign Complete' },
+  };
 
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- SCREEN: ROUND RESULT                                          -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <section class="game-screen" id="screen-round-result" data-od-id="round-result-screen">
-    <div class="result-screen">
-      <div class="round-verdict" id="rr-verdict">Round Won</div>
-      <div class="round-scores">
-        <div class="round-score-card"><div class="round-score-label">Your Score</div><div class="round-score-value yours" id="rr-your-score">0</div></div>
-        <div class="round-score-card"><div class="round-score-label">Target</div><div class="round-score-value target" id="rr-target">0</div></div>
-      </div>
-      <div class="match-progress-rounds" id="rr-rounds"></div>
-      <div id="rr-message" style="font-family:var(--font-body);font-size:var(--text-xl);color:var(--fg-dim);margin-bottom:var(--space-6)"></div>
-      <button class="btn btn-primary btn-lg" id="rr-continue-btn">Continue ▸</button>
-    </div>
-  </section>
+  /* ─── Game Flow Order (for progress) ──────────────────────────── */
+  const FLOW_ORDER = [
+    'title', 'squad', 'formation', 'phases', 'match',
+    'phase-result', 'round-result', 'shop', 'campaign-complete'
+  ];
 
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- SCREEN: CAMPAIGN COMPLETE                                     -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <section class="game-screen" id="screen-campaign" data-od-id="campaign-complete-screen">
-    <div class="result-screen">
-      <div class="campaign-title" id="cc-title">Campaign Complete</div>
-      <div class="match-results" id="cc-results" data-od-id="campaign-results"></div>
-      <div style="display:flex;gap:var(--space-4)">
-        <button class="btn btn-primary btn-lg" onclick="resetGame()">Play Again ▸</button>
-      </div>
-    </div>
-  </section>
+  /* ─── State ───────────────────────────────────────────────────── */
+  let currentScreenId = null;
+  let isTransitioning = false;
+  let loadedCache = {};       // screenId -> { html, scripts, styles }
+  let devMode = false;        // toggled by keyboard in dev
+  let devScreensEnabled = false; // 1-9 direct nav
+  let transitionHistory = []; // stack of screen IDs for back nav
 
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- SHOP SCREEN                                                   -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <section class="game-screen" id="screen-shop" data-od-id="shop-screen">
-    <div class="result-screen" style="padding:var(--space-6);text-align:center">
-      <div class="phase-title" style="color:var(--gold);font-size:var(--text-2xl);margin-bottom:var(--space-4)">💰 SHOP</div>
-      <div id="shop-morale" style="font-size:var(--text-lg);color:var(--accent);margin:var(--space-4) 0"></div>
-      <div id="shop-items" style="display:flex;flex-direction:column;gap:var(--space-3);max-width:400px;margin:0 auto;text-align:left"></div>
-      <div style="margin-top:var(--space-6)">
-        <button class="btn btn-secondary btn-lg" onclick="skipShop()">[0] Skip Shop — Continue ▸</button>
-      </div>
-    </div>
-  </section>
+  /* ─── DOM References ──────────────────────────────────────────── */
+  const container = document.getElementById('screen-container');
+  const spinner = document.getElementById('loading-spinner');
+  const navScreenName = document.getElementById('nav-screen-name');
+  const navProgress = document.getElementById('nav-progress');
+  const navCenter = document.getElementById('nav-center');
+  const btnBack = document.getElementById('btn-back');
+  const btnForward = document.getElementById('btn-forward');
+  const devBadge = document.getElementById('dev-badge');
 
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- GAME SCRIPTS: game-engine.js must load before game-ui.js -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <script src="game-engine.js"></script>
+  /* ─── Game Object ─────────────────────────────────────────────── */
+  // Exposed globally so screens can call Game.navigate()
+  window.Game = {
+    navigate: function(screenId, opts) {
+      if (!screenId || !SCREENS[screenId]) {
+        console.warn('[Game] Unknown screen:', screenId);
+        return;
+      }
+      if (isTransitioning) return;
+      navigateTo(screenId, opts);
+    },
+    back: function() {
+      if (transitionHistory.length >= 2) {
+        // Go back to the previous screen
+        var prev = transitionHistory[transitionHistory.length - 2];
+        if (prev && SCREENS[prev]) {
+          Game.transition = 'slide-right';
+          navigateTo(prev, { direction:'back' });
+        }
+      }
+    },
+    transition: 'slide-left',
+    _current: function() { return currentScreenId; },
+    _devMode: function() { return devScreensEnabled; },
+  };
 
-  <script src="game-ui.js" data-od-id="game-ui"></script>
-  
+  /* ─── Load Screen HTML (with caching) ─────────────────────────── */
+  function loadScreen(screenId) {
+    if (loadedCache[screenId]) {
+      return Promise.resolve(loadedCache[screenId]);
+    }
+
+    var info = SCREENS[screenId];
+    return fetch(info.file)
+      .then(function(r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status + ' loading ' + info.file);
+        return r.text();
+      })
+      .then(function(html) {
+        // Parse the fetched HTML document
+        var parsed = parseScreenHtml(html);
+        loadedCache[screenId] = parsed;
+        return parsed;
+      });
+  }
+
+  /* ─── Parse Fetched HTML ─────────────────────────────────────── */
+  function parseScreenHtml(html) {
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(html, 'text/html');
+
+    // Collect styles from head and body
+    var styles = [];
+    var styleEls = doc.querySelectorAll('style');
+    for (var i = 0; i < styleEls.length; i++) {
+      styles.push(styleEls[i].textContent);
+    }
+
+    // Collect link stylesheets (inline them as style tags)
+    var linkEls = doc.querySelectorAll('link[rel="stylesheet"]');
+    for (var j = 0; j < linkEls.length; j++) {
+      // We'll just note these — they load from external URLs (fonts etc.)
+      // The actual href will be preserved in the body content if needed
+    }
+
+    // Extract body content (everything inside <body> except <script> tags)
+    var bodyContent = '';
+    if (doc.body) {
+      // Clone body to manipulate safely
+      var bodyClone = doc.body.cloneNode(true);
+      // Remove script elements from body clone
+      var scriptsInBody = bodyClone.querySelectorAll('script');
+      for (var k = scriptsInBody.length - 1; k >= 0; k--) {
+        scriptsInBody[k].parentNode.removeChild(scriptsInBody[k]);
+      }
+      bodyContent = bodyClone.innerHTML;
+    }
+
+    // Collect scripts (both head and body)
+    var scripts = [];
+    var scriptEls = doc.querySelectorAll('script');
+    for (var m = 0; m < scriptEls.length; m++) {
+      var el = scriptEls[m];
+      scripts.push({
+        src: el.getAttribute('src') || '',
+        content: el.textContent || '',
+        type: el.getAttribute('type') || 'text/javascript',
+      });
+    }
+
+    return { styles: styles, bodyContent: bodyContent, scripts: scripts };
+  }
+
+  /* ─── Navigate To Screen ─────────────────────────────────────── */
+  function navigateTo(screenId, opts) {
+    if (isTransitioning) return;
+    isTransitioning = true;
+
+    opts = opts || {};
+    var transitionType = opts.transition || window.Game.transition || 'slide-left';
+    var oldScreenId = currentScreenId;
+    var isBack = opts.direction === 'back';
+
+    // Update state immediately so screen handlers observing Game._current() during transition see the target.
+    if (!isBack) {
+      transitionHistory.push(screenId);
+    }
+    currentScreenId = screenId;
+    updateNav(screenId);
+
+    // Save game state before transition
+    saveGameState(oldScreenId);
+
+    // Show loading spinner (max 300ms)
+    spinner.classList.add('visible');
+
+    // Set a max timeout for the spinner
+    var spinnerTimeout = setTimeout(function() {
+      // If load takes too long, we still show spinner — it'll hide on completion
+    }, 300);
+
+    loadScreen(screenId)
+      .then(function(screenData) {
+        clearTimeout(spinnerTimeout);
+        spinner.classList.remove('visible');
+
+        // Handle outgoing frame animation
+        var oldFrame = document.querySelector('.screen-frame.active');
+        if (oldFrame && oldScreenId) {
+          // Reset any previous animation state
+          oldFrame.classList.remove('active');
+          oldFrame.classList.add('screen-frame-gas'); // mark as "gas" (gone after screen)
+          // Apply outgoing animation
+          var outClass = transitionType + '-out';
+          oldFrame.classList.add(outClass);
+          // Remove old frame after animation completes
+          setTimeout(function() {
+            if (oldFrame.parentNode) {
+              oldFrame.parentNode.removeChild(oldFrame);
+            }
+          }, 320);
+        }
+
+        // Create new frame
+        var frame = document.createElement('div');
+        frame.className = 'screen-frame';
+        frame.dataset.screenId = screenId;
+
+        // Build content: injected styles + body content
+        var contentHtml = '';
+        // Inject screen-specific styles
+        for (var s = 0; s < screenData.styles.length; s++) {
+          contentHtml += '<style>' + screenData.styles[s] + '</style>';
+        }
+        // Wrap body content
+        contentHtml += '<div class="screen-content" id="screen-content-' + screenId + '">';
+        contentHtml += screenData.bodyContent;
+        contentHtml += '</div>';
+
+        frame.innerHTML = contentHtml;
+        container.appendChild(frame);
+
+        // Execute scripts
+        executeScripts(frame, screenData.scripts);
+
+        // Activate frame with transition animation
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() {
+            frame.classList.add('active');
+            var inClass = transitionType + '-in';
+            frame.classList.add(inClass);
+
+            // Clean up animation class
+            setTimeout(function() {
+              frame.classList.remove(inClass);
+              isTransitioning = false;
+            }, 320);
+          });
+        });
+
+        // Update state
+        if (!isBack) {
+          // already pushed before async load
+        }
+        currentScreenId = screenId;
+
+        // Update nav bar
+        updateNav(screenId);
+
+        // Load saved game state for this screen
+        loadGameState(screenId);
+
+        // Call screen setup if available
+        callScreenSetup(screenId);
+
+        // Update dev badge
+        updateDevBadge();
+
+        // Focus container for keyboard events
+        container.focus();
+      })
+      .catch(function(err) {
+        clearTimeout(spinnerTimeout);
+        spinner.classList.remove('visible');
+        isTransitioning = false;
+        console.error('[Game] Failed to load screen "' + screenId + '":', err);
+        showToast('Failed to load: ' + screenId);
+      });
+  }
+
+  /* ─── Execute Scripts ─────────────────────────────────────────── */
+  function executeScripts(frame, scripts) {
+    for (var i = 0; i < scripts.length; i++) {
+      var scr = scripts[i];
+      // Skip external src scripts (they'd reload from network)
+      if (scr.src && scr.src.trim() !== '') {
+        // Create a script tag with the src
+        var extScript = document.createElement('script');
+        extScript.src = scr.src;
+        extScript.type = scr.type || 'text/javascript';
+        extScript.async = false;
+        frame.appendChild(extScript);
+      } else if (scr.content.trim() !== '') {
+        // Inline script: eval in a fresh <script> tag
+        var inlineScript = document.createElement('script');
+        inlineScript.type = scr.type || 'text/javascript';
+        inlineScript.textContent = scr.content;
+        frame.appendChild(inlineScript);
+      }
+    }
+  }
+
+  /* ─── Call Screen Setup ───────────────────────────────────────── */
+  function callScreenSetup(screenId) {
+    // Screens can expose window.setupScreen(screenId, G) for initialization
+    if (typeof window.setupScreen === 'function') {
+      try {
+        window.setupScreen(screenId, window.G || {});
+      } catch (e) {
+        console.warn('[Game] setupScreen error for', screenId, e);
+      }
+    }
+  }
+
+  /* ─── Update Navigation Bar ───────────────────────────────────── */
+  function updateNav(screenId) {
+    var info = SCREENS[screenId];
+    if (!info) return;
+
+    navScreenName.textContent = info.name;
+
+    // Progress indicator
+    var idx = FLOW_ORDER.indexOf(screenId);
+    if (idx >= 0) {
+      navProgress.textContent = (idx + 1) + ' / ' + FLOW_ORDER.length;
+    } else {
+      navProgress.textContent = '';
+    }
+
+    // Center context (optional, can be set by screens)
+    navCenter.textContent = '';
+
+    // Back/forward buttons
+    btnBack.disabled = transitionHistory.length < 2;
+    btnForward.disabled = true; // forward nav not tracked
+  }
+
+  /* ─── Update Dev Badge ────────────────────────────────────────── */
+  function updateDevBadge() {
+    devBadge.classList.toggle('visible', devScreensEnabled);
+  }
+
+  /* ─── Save / Load Game State ──────────────────────────────────── */
+  function saveGameState(screenId) {
+    // Persist any global game state to window.G
+    if (window.G) {
+      try {
+        var key = 'squad_game_state';
+        var state = {
+          G: window.G,
+          screen: screenId || currentScreenId,
+          history: transitionHistory.slice(),
+          timestamp: Date.now()
+        };
+        sessionStorage.setItem(key, JSON.stringify(state));
+      } catch (e) {
+        // sessionStorage may not be available
+      }
+    }
+  }
+
+  function loadGameState(screenId) {
+    // Restore game state from sessionStorage only if no live engine state exists yet.
+    try {
+      if (window.G && (window.G.selectedIds && window.G.selectedIds.length)) {
+        return;
+      }
+      var key = 'squad_game_state';
+      var raw = sessionStorage.getItem(key);
+      if (raw) {
+        var state = JSON.parse(raw);
+        if (state.G) {
+          window.G = state.G;
+        }
+      }
+    } catch (e) {
+      // Ignore
+    }
+  }
+
+  /* ─── Toast Notification ──────────────────────────────────────── */
+  function showToast(msg) {
+    var toast = document.createElement('div');
+    toast.className = 'shell-toast';
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    setTimeout(function() {
+      toast.style.opacity = '0';
+      toast.style.transition = 'opacity 0.3s ease';
+      setTimeout(function() {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 300);
+    }, 2000);
+  }
+
+  /* ─── Set Center Context ──────────────────────────────────────── */
+  function setNavContext(text) {
+    navCenter.textContent = text;
+  }
+  // Expose for screens to call
+  window.Game.setNavContext = setNavContext;
+
+  /* ─── Keyboard Shortcuts ──────────────────────────────────────── */
+  document.addEventListener('keydown', function(e) {
+    // Dev mode toggle: Ctrl+Shift+D
+    if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+      e.preventDefault();
+      devScreensEnabled = !devScreensEnabled;
+      updateDevBadge();
+      showToast('Dev mode: ' + (devScreensEnabled ? 'ON' : 'OFF'));
+      return;
+    }
+
+    // Escape = back
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      if (transitionHistory.length >= 2) {
+        window.Game.transition = 'slide-right';
+        window.Game.back();
+      }
+      return;
+    }
+
+    // Enter = confirm (let screens handle their own Enter)
+    // But we can provide a fallback: if no active modal, go forward
+    // Actually, we leave Enter to the screens entirely.
+
+    // 1-9 = direct nav to screen (dev mode only)
+    if (devScreensEnabled && e.key >= '1' && e.key <= '9') {
+      e.preventDefault();
+      var idx = parseInt(e.key, 10) - 1;
+      var screenKeys = Object.keys(SCREENS);
+      if (idx < screenKeys.length) {
+        var target = screenKeys[idx];
+        // Choose appropriate transition
+        var flowIdx = FLOW_ORDER.indexOf(target);
+        var curIdx = FLOW_ORDER.indexOf(currentScreenId);
+        if (flowIdx >= 0 && curIdx >= 0) {
+          window.Game.transition = flowIdx > curIdx ? 'slide-left' : 'slide-right';
+        } else {
+          window.Game.transition = 'slide-left';
+        }
+        window.Game.navigate(target);
+      }
+      return;
+    }
+  });
+
+  /* ─── Nav Button Handlers ─────────────────────────────────────── */
+  btnBack.addEventListener('click', function() {
+    if (transitionHistory.length >= 2) {
+      window.Game.transition = 'slide-right';
+      window.Game.back();
+    }
+  });
+
+  btnForward.addEventListener('click', function() {
+    // Forward navigation not tracked in this simple implementation
+    // Could be extended
+  });
+
+  /* ─── Preload Title Screen (initial load) ─────────────────────── */
+  function init() {
+    // Restore any saved session
+    var restored = false;
+    try {
+      var raw = sessionStorage.getItem('squad_game_state');
+      if (raw) {
+        var state = JSON.parse(raw);
+        if (state.history && state.history.length > 0) {
+          transitionHistory = state.history;
+        }
+      }
+    } catch (e) {}
+
+    // Always start at title screen
+    window.Game.transition = 'fade';
+    navigateTo('title', { transition: 'fade' });
+  }
+
+  /* ─── Start ───────────────────────────────────────────────────── */
+  // Wait for DOM and game-engine to be ready
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    init();
+  } else {
+    document.addEventListener('DOMContentLoaded', init);
+  }
+})();
+</script>
 </body>
 </html>
