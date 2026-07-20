@@ -570,8 +570,8 @@ body{
 
   <!-- Bottom Strip -->
   <div class="bottom-strip">
-    <span>Best Run: <span class="stat-value">4 wins</span></span>
-    <span>High Score: <span class="stat-value">4.2M</span></span>
+    <span>Best Run: <span class="stat-value" id="bestRunWins">—</span></span>
+    <span>High Score: <span class="stat-value" id="bestRunScore">—</span></span>
   </div>
 
 </div>
@@ -766,7 +766,15 @@ btnReset.addEventListener('click', function(){
   // IMPORTANT: do NOT auto-reset the game just because the title screen mounted.
   // In SPA mode, navigating back through title must not destroy campaign state.
 
-  // 2. "Quick Start" — populate complete game state and navigate directly to match
+  // Populate best run stats from engine (if available)
+  if (window.G && G.bestRun) {
+    var bw = document.getElementById('bestRunWins');
+    var bs = document.getElementById('bestRunScore');
+    if (bw) bw.textContent = G.bestRun.wins + ' wins';
+    if (bs) bs.textContent = (G.bestRun.score || 0).toLocaleString();
+  }
+
+  // "Quick Start" — populate complete game state and navigate directly to match
   function quickStartGame() {
     if (window.G && typeof initNewGame === 'function') {
       // Reset to a fresh game

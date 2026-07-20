@@ -342,31 +342,31 @@ CAMPAIGN_MATCHES = [
     {
         "name": "Group Stage",
         "opponent": "Wolves FC",
-        "targets": [200000, 350000, 500000],
+        "targets": [4000, 6500, 9000],
         "tier": "Match 1/5 — Easy",
     },
     {
         "name": "Round of 16",
         "opponent": "Inter Your-Nan",
-        "targets": [350000, 500000, 700000],
+        "targets": [5000, 7500, 10000],
         "tier": "Match 2/5 — Moderate",
     },
     {
         "name": "Quarter Final",
         "opponent": "Borussia Mönchen-flapjack",
-        "targets": [500000, 700000, 900000],
+        "targets": [6000, 8500, 11500],
         "tier": "Match 3/5 — Challenging",
     },
     {
         "name": "Semi Final",
         "opponent": "Man City Oilers",
-        "targets": [700000, 900000, 1100000],
+        "targets": [7000, 10000, 13500],
         "tier": "Match 4/5 — Elite",
     },
     {
         "name": "THE FINAL",
         "opponent": "Galácticos FC",
-        "targets": [900000, 1100000, 1500000],
+        "targets": [8500, 12000, 16000],
         "tier": "Match 5/5 — Final Boss",
     },
 ]

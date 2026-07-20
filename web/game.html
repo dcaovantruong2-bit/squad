@@ -493,14 +493,16 @@
     // Show loading spinner (max 300ms)
     spinner.classList.add('visible');
 
-    // Set a max timeout for the spinner
-    var spinnerTimeout = setTimeout(function() {
-      // If load takes too long, we still show spinner — it'll hide on completion
-    }, 300);
+    // Set a max timeout for the spinner (3s — if screen fails to load, show error)
+    var screenLoadDeadline = setTimeout(function() {
+      spinner.classList.remove('visible');
+      isTransitioning = false;
+      showToast('Failed to load screen: ' + screenId + '. Check your connection.');
+    }, 3000);
 
     loadScreen(screenId)
       .then(function(screenData) {
-        clearTimeout(spinnerTimeout);
+        clearTimeout(screenLoadDeadline);
         spinner.classList.remove('visible');
 
         // Handle outgoing frame animation
@@ -579,7 +581,7 @@
         container.focus();
       })
       .catch(function(err) {
-        clearTimeout(spinnerTimeout);
+        clearTimeout(screenLoadDeadline);
         spinner.classList.remove('visible');
         isTransitioning = false;
         console.error('[Game] Failed to load screen "' + screenId + '":', err);

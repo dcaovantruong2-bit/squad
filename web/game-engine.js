@@ -292,11 +292,11 @@ var COMBO_CHAINS = {
    =================================================================== */
 
 var CAMPAIGN_MATCHES = [
-  { name:"Group Stage",          opponent:"Wolves FC",            targets:[400,650,900], tier:"Match 1/5", intro:"Relegation battlers. Forwards can't finish — exploit set pieces." },
-  { name:"Round of 16",         opponent:"Inter Your-Nan",       targets:[450,700,950], tier:"Match 2/5", intro:"Mid-table side. Solid defence but slow at the back." },
-  { name:"Quarter Final",       opponent:"Borussia Mönchen-flapjack", targets:[550,800,1100], tier:"Match 3/5", intro:"European contenders. Press hard." },
-  { name:"Semi Final",          opponent:"Man City Oilers",      targets:[650,950,1300], tier:"Match 4/5", intro:"Title favourites. No obvious weakness." },
-  { name:"THE FINAL",           opponent:"Galácticos FC",        targets:[800,1150,1500], tier:"Match 5/5", intro:"The best in the world. Leave nothing on the pitch." },
+  { name:"Group Stage",          opponent:"Wolves FC",            targets:[4000,6500,9000], tier:"Match 1/5", intro:"Relegation battlers. Forwards can't finish — exploit set pieces." },
+  { name:"Round of 16",         opponent:"Inter Your-Nan",       targets:[5000,7500,10000], tier:"Match 2/5", intro:"Mid-table side. Solid defence but slow at the back." },
+  { name:"Quarter Final",       opponent:"Borussia Mönchen-flapjack", targets:[6000,8500,11500], tier:"Match 3/5", intro:"European contenders. Press hard." },
+  { name:"Semi Final",          opponent:"Man City Oilers",      targets:[7000,10000,13500], tier:"Match 4/5", intro:"Title favourites. No obvious weakness." },
+  { name:"THE FINAL",           opponent:"Galácticos FC",        targets:[8500,12000,16000], tier:"Match 5/5", intro:"The best in the world. Leave nothing on the pitch." },
 ];
 
 /* ===================================================================
@@ -1212,10 +1212,10 @@ function applyFatigue(playerId) {
 /**
  * recoverFatigue(amount)
  * Global fatigue recovery between rounds.
- * amount = fraction of lost fatigue to recover (default 0.5).
+ * amount = fraction of lost fatigue to recover (default 0.3, matching Python's 50%→30% of lost).
  */
 function recoverFatigue(amount) {
-  var recovery = (amount !== undefined) ? amount : 0.5;
+  var recovery = (amount !== undefined) ? amount : 0.3;
   for (var pid in G.fatigue) {
     if (G.fatigue.hasOwnProperty(pid)) {
       G.fatigue[pid] = G.fatigue[pid] + (1.0 - G.fatigue[pid]) * recovery;
@@ -1291,7 +1291,7 @@ function resetRound() {
   });
 
   // Recover fatigue between rounds
-  recoverFatigue(0.5);
+  recoverFatigue(0.3);
 }
 
 /**
@@ -1510,7 +1510,7 @@ function startRound() {
   G.pickedPhases = [];
   G.field = [];
   G.phaseResults = [];
-  recoverFatigue(0.5);
+  recoverFatigue(0.3);
   G.dealtPhases = dealPhases();
 }
 
