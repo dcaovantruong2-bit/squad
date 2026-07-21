@@ -96,6 +96,9 @@ body{background:var(--bg);color:var(--fg);font:18px 'VT323',monospace;min-height
 
 <div class="pitch" id="pitchSlots"></div>
 
+<!-- SYNERGY PANEL — live feedback -->
+<div id="synergyPanel" style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:8px 16px;max-width:700px;margin:0 auto"></div>
+
 <div class="actions">
   <button onclick="autoFillAll()">⟳ AUTO-FILL</button>
   <button class="danger" onclick="clearAllSlots()">✕ CLEAR</button>
@@ -240,6 +243,41 @@ function renderPitch() {
   }
   updateScore();
   updateSubmit();
+  renderSynergyPanel();
+}
+
+function renderSynergyPanel() {
+  var panel = document.getElementById('synergyPanel');
+  if (!panel) return;
+  
+  // Build field array from current slots
+  var field = [];
+  for (var i = 0; i < slots.length; i++) {
+    if (slots[i] && slots[i].playerId) {
+      var p = getPlayerById(slots[i].playerId);
+      if (p) field.push([p, phaseSlots[i]]);
+    }
+  }
+  
+  // Get synergy state from engine
+  var synResult = (typeof detectSynergies === 'function' && field.length > 0)
+    ? detectSynergies(field) : null;
+  var firedNames = synResult ? synResult.fired : [];
+  
+  // Show all non-persistent synergies with status
+  var html = '';
+  var synergies = (typeof SYNERGIES !== 'undefined') ? SYNERGIES : [];
+  for (var i = 0; i < synergies.length; i++) {
+    var s = synergies[i];
+    if (s.persistent) continue; // skip persistent squad synergies
+    var isFired = firedNames.indexOf(s.name) >= 0;
+    var border = isFired ? '2px solid var(--acc)' : '1px dashed var(--bord)';
+    var bg = isFired ? 'var(--surf)' : 'transparent';
+    var opacity = isFired ? '1' : '0.5';
+    html += '<span style=\"font:12px \\'VT323\\',monospace;padding:3px 8px;border:' + border + ';background:' + bg + ';opacity:' + opacity + ';border-radius:4px;white-space:nowrap\" title=\"' + (s.description||'') + '\">' +
+      (isFired ? '🟢 ' : '⚪ ') + s.name + '</span>';
+  }
+  panel.innerHTML = html || '<span style=\"font:12px \\'VT323\\',monospace;color:var(--mut)\">Place players to unlock synergies</span>';
 }
 
 function updateScore() {
