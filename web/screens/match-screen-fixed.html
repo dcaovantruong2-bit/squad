@@ -74,35 +74,35 @@ body{background:var(--bg);color:var(--fg);font:18px 'VT323',monospace;min-height
 <div class="top-bar">
   <div class="team"><div class="name">YOU</div><div class="score" id="scoreYou">0</div></div>
   <div class="vs">VS</div>
-  <div class="team"><div class="name" id="oppName">—</div><div class="score" id="scoreOpp">0</div></div>
+  <div class="team"><div class="name" id="oppName">&mdash;</div><div class="score" id="scoreOpp">0</div></div>
   <div class="target" id="matchInfo">Match 1/5</div>
 </div>
 
 <div class="phase-info">
-  <div class="icon" id="phaseIcon">🥅</div>
+  <div class="icon" id="phaseIcon">&#x1F945;</div>
   <div class="name" id="phaseName">Goal Kick</div>
-  <div class="slots" id="phaseSlots">Slots: GK · CB · CB</div>
+  <div class="slots" id="phaseSlots">Slots: GK &middot; CB &middot; CB</div>
   <span class="tag" id="phaseTag" style="background:var(--def)22;color:var(--def)">DEFENSIVE</span>
 </div>
 
 <div class="score-bar">
   <div class="stat"><div class="val" id="chipsVal" style="color:var(--gold)">0</div><div class="lbl">CHIPS</div></div>
   <div class="stat"><div class="val" id="addMultVal">+0</div><div class="lbl">ADD</div></div>
-  <div class="stat"><div class="val" id="xMultVal" style="color:var(--purple)">×1.0</div><div class="lbl">×MULT</div></div>
+  <div class="stat"><div class="val" id="xMultVal" style="color:var(--purple)">x1.0</div><div class="lbl">xMULT</div></div>
   <div class="stat total"><div class="val" id="totalVal">0</div><div class="lbl">TOTAL</div></div>
-  <div class="stat" style="border-left:2px solid var(--bord);padding-left:16px"><div class="val" id="momentumVal" style="color:var(--gold)">×1.0</div><div class="lbl">MOMENTUM</div></div>
+  <div class="stat" style="border-left:2px solid var(--bord);padding-left:16px"><div class="val" id="momentumVal" style="color:var(--gold)">x1.0</div><div class="lbl">MOMENTUM</div></div>
   <div class="stat" style="border-left:2px solid var(--bord);padding-left:16px"><div class="val" id="targetVal" style="color:var(--danger)">0</div><div class="lbl">TARGET</div></div>
 </div>
 
 <div class="pitch" id="pitchSlots"></div>
 
-<!-- SYNERGY PANEL — live feedback -->
+<!-- SYNERGY PANEL -- live feedback -->
 <div id="synergyPanel" style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:8px 16px;max-width:700px;margin:0 auto"></div>
 
 <div class="actions">
-  <button onclick="autoFillAll()">⟳ AUTO-FILL</button>
-  <button class="danger" onclick="clearAllSlots()">✕ CLEAR</button>
-  <button class="primary" onclick="submitPhaseHandler()" id="submitBtn" disabled>⚡ SUBMIT PHASE</button>
+  <button onclick="autoFillAll()">&#x27F3; AUTO-FILL</button>
+  <button class="danger" onclick="clearAllSlots()">&#x2715; CLEAR</button>
+  <button class="primary" onclick="submitPhaseHandler()" id="submitBtn" disabled>&#x26A1; SUBMIT PHASE</button>
 </div>
 
 <!-- MODAL -->
@@ -110,7 +110,7 @@ body{background:var(--bg);color:var(--fg);font:18px 'VT323',monospace;min-height
   <div class="modal">
     <div class="modal-header">
       <h3 id="modalTitle">SELECT PLAYER</h3>
-      <button class="close" onclick="closeModal()">✕</button>
+      <button class="close" onclick="closeModal()">&#x2715;</button>
     </div>
     <div class="modal-body">
       <table>
@@ -168,35 +168,25 @@ if (ALL_PLAYERS.length === 0) {
     {id:'d2',name:'Stone Wall',pos:'CB',atk:35,pac:55,pas:50,def:85,spc:40,ovr:82,fatigue:.85,traits:[]},
     {id:'d3',name:'Flash Felipe',pos:'FB',atk:55,pac:82,pas:58,def:68,spc:35,ovr:78,fatigue:.80,traits:[]},
     {id:'d4',name:'Midfield Max',pos:'CM',atk:55,pac:58,pas:72,def:50,spc:48,ovr:79,fatigue:.90,traits:[]},
-    {id:'d5',name:'Magic Marco',pos:'CAM',atk:65,pac:60,pas:75,def:30,spc:68,ovr:80,fatigue:.85,traits:[]},
-    {id:'d6',name:'Wingy Winger',pos:'LW',atk:72,pac:85,pas:58,def:22,spc:45,ovr:80,fatigue:.88,traits:[]},
-    {id:'d7',name:'Salah Clone',pos:'RW',atk:74,pac:86,pas:60,def:24,spc:48,ovr:82,fatigue:.82,traits:[]},
-    {id:'d8',name:'Striker Sam',pos:'ST',atk:82,pac:72,pas:45,def:18,spc:50,ovr:84,fatigue:.78,traits:[]},
-    {id:'d9',name:'Shield Shaun',pos:'CDM',atk:45,pac:55,pas:62,def:74,spc:42,ovr:78,fatigue:.89,traits:[]},
-    {id:'d10',name:'Basti Bastille',pos:'CB',atk:38,pac:50,pas:52,def:82,spc:38,ovr:80,fatigue:.93,traits:[]},
-    {id:'d11',name:'Finn Finisher',pos:'ST',atk:80,pac:68,pas:44,def:22,spc:52,ovr:81,fatigue:.92,traits:[]}
   ];
 }
 
-// ===== PHASE CONFIG =====
-var phaseSlots = ['GK','CB','CB']; // default
+// ===== PHASE DATA =====
+var pid = (window.location.search.indexOf('debug=high')>=0||(typeof G !== 'undefined' && G.pickedPhases && G.pickedPhases.length > 0))
+  ? (typeof G !== 'undefined' && G.pickedPhases ? G.pickedPhases[G.phaseIdx||0] : null)
+  : 0;
 var phaseName = 'Goal Kick';
-var phaseIcon = '🥅';
+var phaseSlots = ['GK','CB','CB'];
 var phaseTag = 'DEFENSIVE';
-var phaseTagColor = '#39ff14';
-
-// Try to get phase from engine
-if (typeof G !== 'undefined' && G.pickedPhases && G.pickedPhases.length > 0) {
-  var pid = G.pickedPhases[G.phaseIdx || 0];
-  if (pid && window.ALL_PHASES) {
-    for (var i = 0; i < window.ALL_PHASES.length; i++) {
-      if (window.ALL_PHASES[i].id === pid) {
-        var ep = window.ALL_PHASES[i];
-        phaseName = ep.name || phaseName;
-        phaseSlots = (ep.slots || ['GK','CB','CB']).map(function(s){return typeof s==='string'?s:s[0]});
-        phaseTag = (ep.tag || ep.weight || 'DEF').toUpperCase();
-        break;
-      }
+var phaseIcon = '\u{1F945}';
+if (pid && window.ALL_PHASES) {
+  for (var i = 0; i < window.ALL_PHASES.length; i++) {
+    if (window.ALL_PHASES[i].id === pid) {
+      var ep = window.ALL_PHASES[i];
+      phaseName = ep.name || phaseName;
+      phaseSlots = (ep.slots || ['GK','CB','CB']).map(function(s){return typeof s==='string'?s:s[0]});
+      phaseTag = (ep.tag || ep.weight || 'DEF').toUpperCase();
+      break;
     }
   }
 }
@@ -274,10 +264,11 @@ function renderSynergyPanel() {
     var border = isFired ? '2px solid var(--acc)' : '1px dashed var(--bord)';
     var bg = isFired ? 'var(--surf)' : 'transparent';
     var opacity = isFired ? '1' : '0.5';
-    html += '<span style=\"font:12px \\'VT323\\',monospace;padding:3px 8px;border:' + border + ';background:' + bg + ';opacity:' + opacity + ';border-radius:4px;white-space:nowrap\" title=\"' + (s.description||'') + '\">' +
-      (isFired ? '🟢 ' : '⚪ ') + s.name + '</span>';
+    // Use double quotes for outer HTML string, with single quotes inside
+    html += "<span style='font:12px VT323,monospace;padding:3px 8px;border:" + border + ";background:" + bg + ";opacity:" + opacity + ";border-radius:4px;white-space:nowrap' title='" + (s.description || '') + "'>" +
+      (isFired ? '\uD83D\uDFE2 ' : '\u26AA ') + s.name + "</span>";
   }
-  panel.innerHTML = html || '<span style=\"font:12px \\'VT323\\',monospace;color:var(--mut)\">Place players to unlock synergies</span>';
+  panel.innerHTML = html || "<span style='font:12px VT323,monospace;color:var(--mut)'>Place players to unlock synergies</span>";
 }
 
 function updateScore() {
@@ -291,7 +282,7 @@ function updateScore() {
   if (filled >= 2) xMult = 1.25;
   var total = Math.round(chips * xMult);
   document.getElementById('chipsVal').textContent = Math.round(chips);
-  document.getElementById('xMultVal').textContent = '×' + xMult.toFixed(2);
+  document.getElementById('xMultVal').textContent = '\u00D7' + xMult.toFixed(2);
   document.getElementById('totalVal').textContent = total;
   document.getElementById('addMultVal').textContent = '+0';
 }
@@ -325,11 +316,10 @@ function openModal(slotIdx) {
     var p = players[i];
     var chips = calcChipsForSlot(p.id, slotPos);
     var fatigueClass = p.fatigue >= 0.9 ? 'fatigue-ok' : p.fatigue >= 0.8 ? 'fatigue-warn' : 'fatigue-tired';
-    var alreadyUsed = usedIds[p.id];
-    
-    var tr = document.createElement('tr');
-    if (alreadyUsed) tr.style.opacity = '0.3';
-    tr.innerHTML = 
+    var isUsed = usedIds[p.id] ? true : false;
+    var row = document.createElement('tr');
+    row.style.opacity = isUsed ? '0.35' : '1';
+    row.innerHTML =
       '<td title="' + (p.traits||[]).join(', ') + '">' + p.name + '</td>' +
       '<td>' + p.pos + '</td>' +
       '<td style="font-weight:bold">' + p.ovr + '</td>' +
@@ -340,15 +330,10 @@ function openModal(slotIdx) {
       '<td class="stat-spc">' + p.spc + '</td>' +
       '<td class="' + fatigueClass + '">' + Math.round(p.fatigue*100) + '%</td>' +
       '<td class="points">+' + Math.round(chips) + '</td>';
-    
-    if (!alreadyUsed) {
-      tr.onclick = function(pid) { return function() {
-        slots[activeSlotIdx] = {playerId: pid};
-        renderPitch();
-        closeModal();
-      };}(p.id);
-    }
-    tbody.appendChild(tr);
+    (function(playerId) { 
+      row.onclick = function() { selectPlayer(playerId); };
+    })(p.id);
+    tbody.appendChild(row);
   }
   
   document.getElementById('modalOverlay').classList.remove('hidden');
@@ -356,73 +341,77 @@ function openModal(slotIdx) {
 
 function closeModal() {
   document.getElementById('modalOverlay').classList.add('hidden');
-  activeSlotIdx = -1;
 }
 
-// ===== ACTIONS =====
+function selectPlayer(playerId) {
+  if (activeSlotIdx >= 0 && activeSlotIdx < slots.length) {
+    slots[activeSlotIdx].playerId = playerId;
+  }
+  closeModal();
+  renderPitch();
+  updateScore();
+  updateSubmit();
+}
+
+// ===== AUTO FILL =====
 function autoFillAll() {
+  var filledCount = 0;
   var used = {};
-  for (var i = 0; i < slots.length; i++) { if (slots[i] && slots[i].playerId) used[slots[i].playerId] = true; }
   for (var i = 0; i < slots.length; i++) {
-    if (!slots[i] || !slots[i].playerId) {
-      var best = null, bestChips = -1;
-      for (var j = 0; j < ALL_PLAYERS.length; j++) {
-        if (used[ALL_PLAYERS[j].id]) continue;
-        var chips = calcChipsForSlot(ALL_PLAYERS[j].id, phaseSlots[i]);
-        if (chips > bestChips) { bestChips = chips; best = ALL_PLAYERS[j]; }
-      }
-      if (best) { slots[i] = {playerId: best.id}; used[best.id] = true; }
+    if (slots[i] && slots[i].playerId) used[slots[i].playerId] = true;
+  }
+  for (var i = 0; i < slots.length; i++) {
+    if (slots[i] && slots[i].playerId) { filledCount++; continue; }
+    var slotPos = phaseSlots[i];
+    var bestPlayer = null;
+    var bestChips = -1;
+    for (var j = 0; j < ALL_PLAYERS.length; j++) {
+      if (used[ALL_PLAYERS[j].id]) continue;
+      var chips = calcChipsForSlot(ALL_PLAYERS[j].id, slotPos);
+      if (chips > bestChips) { bestChips = chips; bestPlayer = ALL_PLAYERS[j].id; }
+    }
+    if (bestPlayer) {
+      used[bestPlayer] = true;
+      slots[i].playerId = bestPlayer;
+      filledCount++;
     }
   }
   renderPitch();
+  updateScore();
+  updateSubmit();
 }
 
 function clearAllSlots() {
-  for (var i = 0; i < slots.length; i++) slots[i] = {playerId:null};
+  for (var i = 0; i < slots.length; i++) { if (slots[i]) slots[i].playerId = null; }
   renderPitch();
+  updateScore();
+  updateSubmit();
 }
 
+// ===== SUBMIT =====
 function submitPhaseHandler() {
-  // Build field array from filled slots
-  var filled = [];
+  var field = [];
   for (var i = 0; i < slots.length; i++) {
-    if (slots[i] && slots[i].playerId) filled.push({playerId: slots[i].playerId, slotId: phaseSlots[i]});
-  }
-  if (filled.length === 0) return;
-  
-  // Use engine's submitPhase which handles scoring, roundScore, phaseIdx, fatigue
-  if (typeof G !== 'undefined' && typeof submitPhase === 'function') {
-    var result = submitPhase(filled);
-    // Engine already set: G.roundScore, G.phaseIdx, G.phaseResults, G.field, fatigue
-    var total = result.score;
-  } else {
-    // Fallback: manual scoring
-    var chips = 0;
-    for (var i = 0; i < filled.length; i++) {
-      for (var j = 0; j < phaseSlots.length; j++) {
-        if (slots[j] && slots[j].playerId === filled[i].playerId) {
-          chips += calcChipsForSlot(filled[i].playerId, phaseSlots[j]);
-          break;
-        }
-      }
-    }
-    var xMult = filled.length === phaseSlots.length ? 1.5 : filled.length >= 2 ? 1.25 : 1.0;
-    var total = Math.round(chips * xMult);
-    if (typeof G !== 'undefined') {
-      if (!G.phaseResults) G.phaseResults = [];
-      G.phaseResults.push({score: total, chips: chips, xMult: xMult, field: filled});
-      G.roundScore = (G.roundScore || 0) + total;
-      G.phaseIdx = (G.phaseIdx || 0) + 1;
+    if (slots[i] && slots[i].playerId) {
+      field.push([slots[i].playerId, phaseSlots[i]]);
     }
   }
   
+  if (field.length === 0) {
+    alert('Place at least one player');
+    return;
+  }
+  
+  // Call engine submit
+  if (typeof submitPhase === 'function') {
+    submitPhase(field);
+  }
+  
+  // Save and navigate
   if (typeof saveGame === 'function') saveGame();
-  
   if (window.Game) {
-    Game.transition = 'slide-left';
-    Game.navigate('phase-result');
-  } else {
-    alert('Phase scored: ' + total + ' points!');
+    window.Game.transition = 'slide-left';
+    window.Game.navigate('phase-result');
   }
 }
 
@@ -430,17 +419,17 @@ function submitPhaseHandler() {
 (function initPhaseUI() {
   document.getElementById('phaseName').textContent = phaseName;
   document.getElementById('phaseIcon').textContent = phaseIcon;
-  document.getElementById('phaseSlots').textContent = 'Slots: ' + phaseSlots.join(' · ');
+  document.getElementById('phaseSlots').textContent = 'Slots: ' + phaseSlots.join(' \u00B7 ');
   document.getElementById('phaseTag').textContent = phaseTag;
   
-  // Match info — dynamic from engine
+  // Match info -- dynamic from engine
   if (typeof G !== 'undefined') {
     var match = (window.CAMPAIGN_MATCHES && G.matchIdx < window.CAMPAIGN_MATCHES.length) ? window.CAMPAIGN_MATCHES[G.matchIdx] : null;
-    document.getElementById('oppName').textContent = match ? match.opponent : '—';
-    document.getElementById('matchInfo').textContent = match ? match.name + ' · Round ' + ((G.roundIdx||0)+1) + '/3' : 'Match ' + ((G.matchIdx||0)+1) + '/5';
+    document.getElementById('oppName').textContent = match ? match.opponent : '\u2014';
+    document.getElementById('matchInfo').textContent = match ? match.name + ' \u00B7 Round ' + ((G.roundIdx||0)+1) + '/3' : 'Match ' + ((G.matchIdx||0)+1) + '/5';
     var target = (match && match.targets && match.targets[G.roundIdx]) ? match.targets[G.roundIdx] : 0;
     document.getElementById('targetVal').textContent = target.toLocaleString();
-    var mom = {0:'×1.0',1:'×1.2',2:'×1.5'}[G.phaseIdx] || '×1.0';
+    var mom = {0:'\u00D71.0',1:'\u00D71.2',2:'\u00D71.5'}[G.phaseIdx] || '\u00D71.0';
     document.getElementById('momentumVal').textContent = mom;
   }
   
@@ -457,15 +446,15 @@ window.setupScreen = function(screenId) {
   if (screenId === 'match') {
     // Re-init phase from G state
     if (typeof G !== 'undefined' && G.pickedPhases && G.pickedPhases.length > 0) {
-      var pid = G.pickedPhases[G.phaseIdx || 0];
-      if (pid && window.ALL_PHASES) {
+      var pid2 = G.pickedPhases[G.phaseIdx || 0];
+      if (pid2 && window.ALL_PHASES) {
         for (var i = 0; i < window.ALL_PHASES.length; i++) {
-          if (window.ALL_PHASES[i].id === pid) {
-            var ep = window.ALL_PHASES[i];
-            phaseName = ep.name;
-            phaseSlots = (ep.slots||['GK','CB','CB']).map(function(s){return typeof s==='string'?s:s[0]});
-            if (ep.icon) phaseIcon = ep.icon;
-            phaseTag = (ep.tag || ep.weight || 'DEF').toUpperCase();
+          if (window.ALL_PHASES[i].id === pid2) {
+            var ep2 = window.ALL_PHASES[i];
+            phaseName = ep2.name;
+            phaseSlots = (ep2.slots||['GK','CB','CB']).map(function(s){return typeof s==='string'?s:s[0]});
+            if (ep2.icon) phaseIcon = ep2.icon;
+            phaseTag = (ep2.tag || ep2.weight || 'DEF').toUpperCase();
             break;
           }
         }
@@ -475,17 +464,17 @@ window.setupScreen = function(screenId) {
     for (var i = 0; i < phaseSlots.length; i++) slots.push({playerId:null});
     document.getElementById('phaseName').textContent = phaseName;
     document.getElementById('phaseIcon').textContent = phaseIcon;
-    document.getElementById('phaseSlots').textContent = 'Slots: ' + phaseSlots.join(' · ');
+    document.getElementById('phaseSlots').textContent = 'Slots: ' + phaseSlots.join(' \u00B7 ');
     document.getElementById('phaseTag').textContent = phaseTag;
     // Update match info + opponent + momentum
     if (typeof G !== 'undefined') {
-      var match = (window.CAMPAIGN_MATCHES && G.matchIdx < window.CAMPAIGN_MATCHES.length) ? window.CAMPAIGN_MATCHES[G.matchIdx] : null;
-      document.getElementById('oppName').textContent = match ? match.opponent : '—';
-      document.getElementById('matchInfo').textContent = match ? match.name + ' · Round ' + ((G.roundIdx||0)+1) + '/3' : 'Match ' + ((G.matchIdx||0)+1) + '/5';
-      var target = (match && match.targets && match.targets[G.roundIdx]) ? match.targets[G.roundIdx] : 0;
-      document.getElementById('targetVal').textContent = target.toLocaleString();
-      var mom = {0:'×1.0',1:'×1.2',2:'×1.5'}[G.phaseIdx] || '×1.0';
-      document.getElementById('momentumVal').textContent = mom;
+      var match2 = (window.CAMPAIGN_MATCHES && G.matchIdx < window.CAMPAIGN_MATCHES.length) ? window.CAMPAIGN_MATCHES[G.matchIdx] : null;
+      document.getElementById('oppName').textContent = match2 ? match2.opponent : '\u2014';
+      document.getElementById('matchInfo').textContent = match2 ? match2.name + ' \u00B7 Round ' + ((G.roundIdx||0)+1) + '/3' : 'Match ' + ((G.matchIdx||0)+1) + '/5';
+      var target2 = (match2 && match2.targets && match2.targets[G.roundIdx]) ? match2.targets[G.roundIdx] : 0;
+      document.getElementById('targetVal').textContent = target2.toLocaleString();
+      var mom2 = {0:'\u00D71.0',1:'\u00D71.2',2:'\u00D71.5'}[G.phaseIdx] || '\u00D71.0';
+      document.getElementById('momentumVal').textContent = mom2;
     }
     renderPitch();
   }

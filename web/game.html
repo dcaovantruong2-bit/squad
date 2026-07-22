@@ -411,7 +411,7 @@
     }
 
     var info = SCREENS[screenId];
-    return fetch(info.file)
+    return fetch(info.file + '?cb=' + Date.now())
       .then(function(r) {
         if (!r.ok) throw new Error('HTTP ' + r.status + ' loading ' + info.file);
         return r.text();
