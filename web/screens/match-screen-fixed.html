@@ -393,7 +393,7 @@ function submitPhaseHandler() {
   var field = [];
   for (var i = 0; i < slots.length; i++) {
     if (slots[i] && slots[i].playerId) {
-      field.push([slots[i].playerId, phaseSlots[i]]);
+      field.push({playerId: slots[i].playerId, slotId: phaseSlots[i]});
     }
   }
   
