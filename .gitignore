@@ -37,3 +37,10 @@ events.jsonl
 *.log
 *.db
 landing_mimo.html
+
+# Archify artifacts
+.archify/
+archify.config.json
+archify.md
+.agents/
+.archifyignore
