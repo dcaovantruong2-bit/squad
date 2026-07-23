@@ -698,14 +698,10 @@ function shakeBtn(btn){
 
 // ===== DRAFT MODE BUTTON HANDLER =====
 btnDM.addEventListener('click', function(e){
-  // Use game shell navigation if available
-  if (window.Game) {
-    window.Game.transition = 'slide-left';
-    window.Game.navigate('squad');
-  } else {
-    shakeBtn(this);
-    showToast('Opening squad builder\u2026');
-  }
+  // Save current state before navigating to draft
+  if (window.G && typeof saveGame === 'function') saveGame();
+  // Navigate to the standalone draft screen
+  window.location.href = 'screens/draft-screen.html';
 });
 
 // ===== MODAL HELPERS =====

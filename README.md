@@ -1,144 +1,168 @@
 # Squad ⚽
 
-**Football card roguelike — build a squad, pick your phases, stack synergies like Balatro.**
+**Football card roguelike — draft a squad, pick phases from a dealt hand, stack synergies, and survive escalating opponent tactics.**
+
+Inspired by Balatro and Slay the Spire.
 
 ---
 
-## How to Play
+## Quick Start
 
 ```bash
 cd ~/games/squad
-.venv/bin/python3 main.py
+.venv/bin/python3 main.py    # Terminal version
 ```
 
-Or play in the browser: **http://100.82.27.85:8081/game.html**
+Or play in the browser: **http://100.82.27.85:8765**
+
+Click **DRAFT MODE** to build your squad, or **QUICK START** for an auto-filled team.
 
 ---
 
 ## Game Flow
 
-### 1. Squad Builder
-Pick **11+ players** from 36 within a **360 coin budget**.
-- Cost = ATK+PAC+PAS+DEF+SPC (stat sum)
-- Minimums: 1 GK · 3+ Defenders · 3+ Midfielders · 2+ Attackers
-- Every player has **traits** (pacey, clinical, technical, physical, playmaker, etc.) that affect OOP penalties and persistent synergies
-- **Persistent synergies** trigger based on your squad's trait composition — Iron Wall, Leadership Council, Tiki-Taka, etc.
+### 1. Draft (New!)
+Build your squad position-by-position from the full 55-player pool:
+- **GK**: Pick 1 from all 5 goalkeepers
+- **DEF**: Pick 4 defenders — **any mix of CBs & FBs** (2+2? 3+1? 4 CBs? Your call)
+- **MID**: Pick 3 from all 17 midfielders (CM/CDM/CAM)
+- **ATK**: Pick 2 from all 18 attackers (ST/LW/RW)
 
-### 2. Formation Pick
-6 formations with **position bonuses/penalties** and **global multipliers**:
+Every player in the pool is shown. Pick the ones that fit your strategy.
 
-| Formation | Global Mult | Identity |
-|-----------|-------------|----------|
-| **4-4-2** | ×1.00 | Balanced |
-| **4-3-3** | ×1.05 | Wingers thrive |
-| **5-3-2** | ×0.95 | Defence wins |
-| **3-4-3** | ×1.08 | All-out attack |
-| **4-2-3-1** | ×1.02 | CAM-focused |
-| **4-5-1** | ×0.98 | Counter-attack |
+### 2. Formation
+6 formations with position bonuses/penalties and global multipliers:
 
-### 3. Phase Selection (🃏 Pick 3 from 13)
-All **13 tactical focuses** are available every round — pick **3 in order**. Order matters for **combo chains** (sequences of phase tags unlock bonus effects).
+| Formation | Global | Identity |
+|-----------|--------|----------|
+| 4-4-2 | ×1.00 | Balanced |
+| 4-3-3 | ×1.03 | Wingers thrive, defence exposed |
+| 5-3-2 | ×0.95 | Defence wins, no width |
+| 3-4-3 | ×1.05 | All-out attack, risky at the back |
+| 4-2-3-1 | ×1.02 | CAM-focused possession |
+| 4-5-1 | ×0.98 | Counter-attacking, lone striker |
 
-**Categories:**
+### 3. Phase Selection — Hand-Based Dealing
+**5 of 8 phases dealt per round.** You pick 3. You don't always get what you want — adapt to the hand you're dealt.
 
-| Tag | Phases | Count |
-|-----|--------|-------|
-| 🛡️ Defensive | Goal Kick, Defensive Block, Regroup, Hold Shape | 4 |
-| 🔄 Possession | Build-Up, Tiki-Taka, Controlled Tempo | 3 |
-| ⚡ Transition | Direct Play, Counter Attack | 2 |
-| 🎯 Attacking | Wide Overload, Target Man, Late Run | 3 |
-| ✨ Specialist | Set Piece | 1 |
+8 phases across 5 tags:
 
-Each phase has **2-4 flexible slots** that accept multiple position options.
+| Tag | Phases |
+|-----|--------|
+| 🛡️ Defensive | Goal Kick, Defensive Block |
+| 🔄 Possession | Build-Up, Tiki-Taka |
+| ⚡ Transition | Direct Play, Counter |
+| 🎯 Attacking | Wide Attack |
+| ✨ Specialist | Set Piece |
 
-**Combo Chains** trigger when you sequence phases from specific categories:
-- 🛡️ Defensive → ⚡ Transition: **×1.5 mult** (absorb pressure, hit on break)
-- 🔄 Possession → 🎯 Attacking: **×1.3 mult** (patient build to incision)
-- 🔄 Possession → 🔄 Possession: **+25 chips** (keep the ball)
-- ⚡ Transition → ⚡ Transition: **+35 chips** (rapid succession)
-- 🛡️ Defensive → 🛡️ Defensive: **fatigue recovery** (rest while defending)
-- ✨ Specialist → any: **carryover +30 chips** (set piece leads to chance)
-- 🎯 Attacking → 🛡️ Defensive: **opponent -10%** (suck them in, hold firm)
-- 🔄 Possession → ⚡ Transition: **×1.2 mult** (unexpected speed shift)
+**Combo chains reward/punish your phase sequencing:**
 
-### 4. Match — 3 Phases × 3 Rounds
-Each phase you field players into **flexible slots**. Any player can fill any slot (except GK → GK only) but **OOP penalties** apply based on role adjacency:
+| Good Sequence | Bonus | Bad Sequence | Penalty |
+|--------------|-------|-------------|---------|
+| Defensive→Transition | ×1.5 | Attacking→Attacking | ×0.8 — Overcommitted! |
+| Possession→Attacking | ×1.3 | Transition→Defensive | ×0.85 — Panic clearance! |
+| Transition→Transition | +35 chips | Possession→Defensive | −15 chips — Killed tempo! |
+| Specialist→Any | +30 chips | Transition→Possession | ×0.85 — Lost momentum! |
 
-| Gap | Base | Max with traits |
-|-----|------|-----------------|
-| **Natural** (CB in DEF slot) | ×1.0 | ×1.0 |
-| **Adjacent** (FB at winger, CDM at CM) | ×0.85 | ×0.95 |
-| **Different** (CB at striker, CM at right-back) | ×0.70 | ×0.95 |
-| **Blocked** (GK anywhere outfield) | ×0.0 | ×0.0 |
+**No matching chain?** Mild ×0.95 penalty. Plan your phase order carefully.
 
-Each matching **trait** reduces the penalty by +0.10. A key stat ≥9 for that slot role adds +0.05.
+### 4. Match — 3 Phases per Round, Best of 3 Rounds
+Each phase you field players into slots. Scoring uses Balatro-style formula:
 
-**Example:** Your CB with `pacey` trait and PAC 10 in a winger slot:
-- Different role base: ×0.70
-- `pacey` fits WNG slots: +0.10
-- PAC ≥9 (key stat for WNG): +0.05
-- **Final: ×0.85** — that's a viable creative pick.
+```
+(chips + synergy_chips) × (1 + add_mult) × x_mult × formation × momentum × phase_mult
+```
+
+**Out-of-position penalties** apply based on role adjacency (natural ×1.0, adjacent ×0.85, different ×0.70). Traits and high stats reduce the penalty.
 
 ---
 
-## Scoring (Balatro-Style)
+## Energy System (Replaces Fatigue)
 
-```
-(player_chips + synergy_chips + carryover_chips + shop_chips)
-  × (1 + add_mult + shop_add_mult)
-  × x_mult × formation × momentum × phase_mult
-```
+Players have 3 energy per match. Each phase use costs 1 energy:
 
-Each phase, **chips × add_mult × x_mult** = total. Synergies trigger based on the fielded players and stack multiplicatively. **Momentum grows** across phases (×1.0 → ×1.2 → ×1.5).
+| State | Energy | Multiplier | Effect |
+|-------|--------|-----------|--------|
+| Fresh | 3 | ×1.0 | Full power |
+| Tired | 2 | ×0.85 | Slight penalty |
+| Exhausted | 1 | ×0.65 | Big penalty + **25% injury risk** |
+| Injured | 0 | ×0.0 | Cannot play rest of match |
 
-### Auto-Win
-If your running round score **exceeds the target** after any phase, you **immediately win the round** — remaining phases are skipped. You earn **morale** (spent in the shop) based on how decisively you won.
+- **Forced rotation**: can't spam your best player every phase
+- **Bench recovery**: unused players gain 1 energy between rounds
+- **Journeyman** trait: once-per-match full energy reset
 
 ---
 
-## Shop (Between Rounds)
+## Opponent Tactical System (Boss Blinds)
 
-Spend **morale** earned from round wins:
+Each campaign opponent has tactical styles that counter specific strategies:
 
-| Item | Cost | Effect |
-|------|------|--------|
-| Scout Report | 2 | See all 8 phase cards next round |
-| Inspired Sub | 2 | Restore one player's fatigue |
-| Formation Tweak | 3 | Swap to a different formation |
-| Set Piece Drill | 4 | Next round: +40 chips |
-| Tactical Shift | 5 | Next round: +5 add_mult |
-| Veteran's Wisdom | 6 | Random trait bonus |
+| Match | Opponent | Tactics | Effect |
+|-------|----------|---------|--------|
+| 1 | Wolves FC | Low Block | Transition & Attacking phases ×0.75 |
+| 2 | Inter Your-Nan | Possession Heavy | Transition phases ×0.7 |
+| 3 | Borussia Mönchen-flapjack | High Press + Counter Attack | Possession/Defensive ×0.7 + Attacking ×0.7 |
+| 4 | Man City Oilers | Man Mark + Time Waste | Best player ×0.6 + Phase 3 halved |
+| 5 | Galácticos FC | Dirty Team + Man Mark + High Press | +15% injury + man-mark + press |
+
+Scout the opponent, then adapt your phase picks and player placement.
+
+---
+
+## Momentum — Earned, Not Given
+
+Momentum starts at ×1.0. After each phase, if your score ≥ 15% of the round target → **+0.15 momentum** for the next phase. Consecutive hits stack to ×1.3 max. A miss resets to ×1.0.
+
+---
+
+## Scoring
+
+```
+Phase Score = Σ(player_chips × energy × OOP × persistent_buffs)
+            + synergy_chips + carryover
+            × (1 + add_mult)
+            × x_mult
+            × formation_mult
+            × momentum
+            × phase_mult (combo chains + opponent tactics)
+```
+
+- **Chips**: position-weighted stat formulas (ST: ATK×3+PAC×2+SPC×1)
+- **Synergies**: 18 phase-level + 12 persistent squad synergies
+- **Combo chains**: tag sequence bonuses and penalties
+- **Opponent tactics**: multiplicative nerfs on specific phase types
 
 ---
 
 ## Campaign
 
-5 matches, best-of-3 rounds each. Beat 2 rounds to win the match:
+5 escalating matches. Win 2 of 3 rounds to advance. Lose a match = game over.
 
-| Match | Targets | Difficulty |
-|-------|---------|------------|
-| Group Stage | 200K / 350K / 500K | Easy |
-| Round of 16 | 350K / 500K / 700K | Moderate |
-| Quarter Final | 500K / 700K / 900K | Challenging |
-| Semi Final | 700K / 900K / 1.1M | Elite |
-| THE FINAL | 900K / 1.1M / 1.5M | Final Boss |
-
-Lose a match = game over. Win 3+ to win the campaign.
+| Match | Opponent | Targets (R1/R2/R3) | Tactics |
+|-------|----------|-------------------|---------|
+| 1 | Wolves FC | 2000 / 3500 / 5000 | 1 |
+| 2 | Inter Your-Nan | 3000 / 5000 / 7000 | 1 |
+| 3 | Borussia Mönchen-flapjack | 4000 / 6500 / 9000 | 2 |
+| 4 | Man City Oilers | 5000 / 8000 / 11500 | 2 |
+| 5 | Galácticos FC | 6500 / 10000 / 14500 | 3 |
 
 ---
 
-## Key Features
+## Shop (Between Rounds)
 
-- **Balatro-style scoring**: chips × add_mult × x_mult with stacking synergies
-- **OOP penalty system**: any player anywhere, with role-adjacency, trait, and stat modifiers
-- **Combo chains**: phase sequencing unlocks bonus effects
-- **13 tactical focuses** across 5 categories (2-4 players per phase)
-- **Fatigue**: decays ×0.85 per phase use, partial recovery between rounds
-- **Opponent adjustments**: random buff/nerf per round encouraging adaptive phase picks
-- **Persistent squad synergies**: Iron Wall, Tiki-Taka, Leadership Council, and more
-- **Morale economy**: earn from wins, spend in shop between rounds
-- **Momentum**: ×1.0 → ×1.2 → ×1.5 across phases
-- **Auto-win**: beat the target mid-round to skip remaining phases
+Spend morale earned from round wins:
+
+| Item | Cost | Effect |
+|------|------|--------|
+| Energy Drink | 2 | Restore one player's energy |
+| Morale Boost | 1 | +5 morale |
+| Scout Report | 2 | See all 8 phases next round |
+| Set Piece Drill | 4 | +40 chips next round |
+| Tactical Shift | 5 | +5 add_mult next round |
+| Formation Tweak | 3 | +0.05 formation mult |
+| Super Sub | 2 | Fresh player gets ×1.3 |
+| Momentum Injector | 4 | Next phase ×1.5 momentum |
 
 ---
 
@@ -146,20 +170,23 @@ Lose a match = game over. Win 3+ to win the campaign.
 
 ```bash
 cd ~/games/squad
-.venv/bin/python3 -m pytest tests/ -v
+source .venv/bin/activate
+python3 -m pytest tests/ -v
 ```
 
-221 tests covering phases, OOP penalties, fatigue, scoring formulas, all synergies, full match end-to-end.
+312 tests covering: scoring formulas, synergy detection, energy system, opponent tactics, drafting, momentum, and full end-to-end integration.
 
 ---
 
 ## Architecture
 
-- **Python terminal game**: `main.py` + `src/` (phases, scoring, shop, match)
-- **Web UI**: Three-file split:
-  - `web/game-engine.js` — Pure game data + logic (PLAYERS, FORMATIONS, SYNERGIES, scoring, OOP)
-  - `web/game-ui.js` — Rendering, state management, event handlers, all 9 screens
-  - `web/game.html` — HTML layout + `<script>` loaders
-  - `web/game.css` — Dark neon design system
-- Both share the same game data (`data/players.toml`, `data/synergies.toml`) and logic
-- Tests in `tests/` use pytest
+| Layer | Files | Purpose |
+|-------|-------|---------|
+| **Python backend** | `src/` — cards, scoring, energy, opponents, draft, phases, match | Core game logic, data loading, tests |
+| **JS frontend** | `web/game-engine.js` + `web/game-data.js` | Browser game logic, all data (players, synergies, formations, opponents) |
+| **SPA shell** | `web/game.html` | Screen navigation shell, save/load, draft handoff |
+| **Screens** | `web/screens/` (title, draft, squad, formation, phases, match, etc.) | Individual game screens |
+| **Data** | `data/players.toml` + `data/synergies.toml` | Canonical player and synergy definitions |
+| **Tests** | `tests/` (10 files, pytest) | Unit + integration tests |
+
+Both Python and JS engines share the same game data and scoring logic.

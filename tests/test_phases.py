@@ -89,30 +89,33 @@ class TestIsPlayerEligible:
 
 
 class TestFatigue:
-    """Verify fatigue tracking."""
+    """Verify energy tracking (tiered system: Fresh→Tired→Exhausted)."""
 
     def test_fatigue_starts_at_one(self, terry_henri):
         state = MatchState(squad=[terry_henri], synergies=[])
-        assert state.get_fatigue(terry_henri.id) == 1.0
+        state.energy.init_squad([terry_henri.id])
+        assert state.get_fatigue(terry_henri.id) == 1.0  # FRESH = 3 energy
 
     def test_apply_fatigue_mul(self, terry_henri):
         state = MatchState(squad=[terry_henri], synergies=[])
-        state.apply_fatigue(terry_henri.id)
-        assert state.get_fatigue(terry_henri.id) == FATIGUE_PENALTY
+        state.energy.init_squad([terry_henri.id])
+        state.apply_fatigue(terry_henri.id)  # 3→2, TIRED = 0.85
+        assert state.get_fatigue(terry_henri.id) == 0.85
 
     def test_fatigue_stacks(self, terry_henri):
         state = MatchState(squad=[terry_henri], synergies=[])
-        state.apply_fatigue(terry_henri.id)  # ×0.7
-        state.apply_fatigue(terry_henri.id)  # ×0.49
-        assert state.get_fatigue(terry_henri.id) == pytest.approx(0.49, rel=0.01)
+        state.energy.init_squad([terry_henri.id])
+        state.apply_fatigue(terry_henri.id)  # 3→2, TIRED = 0.85
+        state.apply_fatigue(terry_henri.id)  # 2→1, EXHAUSTED = 0.65
+        assert state.get_fatigue(terry_henri.id) == 0.65
 
     def test_fatigue_resets_between_rounds(self, terry_henri):
         state = MatchState(squad=[terry_henri], synergies=[])
-        state.apply_fatigue(terry_henri.id)
+        state.energy.init_squad([terry_henri.id])
+        state.apply_fatigue(terry_henri.id)  # 3→2
         assert state.get_fatigue(terry_henri.id) < 1.0
-        start_round(state)  # 50% recovery
-        # After 50% recovery: 0.7 → 1.0 - (1.0 - 0.7) * 0.5 = 1.0 - 0.15 = 0.85
-        assert state.get_fatigue(terry_henri.id) == 0.85
+        start_round(state)  # bench_recovery: recovers 1 energy → back to 3
+        assert state.get_fatigue(terry_henri.id) == 1.0
 
 
 class TestPhaseFlow:
@@ -152,8 +155,8 @@ class TestPhaseFlow:
         result = resolve_phase(state)
         assert result["total"] > 0
         assert result["phase_name"] is not None
-        # Fatigue should have been applied
-        assert state.get_fatigue(full_squad[0].id) == FATIGUE_PENALTY
+        # Energy should have been consumed (3→2, TIRED = 0.85)
+        assert state.get_fatigue(full_squad[0].id) == 0.85
 
     def test_round_accumulates_phase_scores(self, full_squad):
         state = MatchState(squad=full_squad, synergies=[])

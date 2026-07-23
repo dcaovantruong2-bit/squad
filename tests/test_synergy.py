@@ -209,7 +209,7 @@ class TestBackThree:
         field = [(il_capitano, "CB"), (jt_rock, "CB"), (wall_claude, "CDM")]
         result = detect_synergies(field, [back_three_synergy])
 
-        assert result["x_mult"] == 1.3
+        assert result["x_mult"] == 1.2
         assert "Back Three" in [d["name"] for d in result["fired_details"]]
 
     def test_no_fire_low_def(self, il_capitano, jt_rock, bog_bob, back_three_synergy):
@@ -227,15 +227,14 @@ class TestMidfieldEngine:
     """Passing CM + defensive CM."""
 
     def test_fires_passer_and_grit(self, maestro_xav, captain_stevie, midfield_engine_synergy):
-        """Maestro PAS 10 + Stevie DEF 6 = 16 ≥ 15."""
+        """Maestro PAS 10 + Stevie DEF 6 = 16 < 17 (threshold raised). Does not fire."""
         field = [(maestro_xav, "CM"), (captain_stevie, "CM")]
         result = detect_synergies(field, [midfield_engine_synergy])
 
-        assert result["add_mult"] == 4
-        assert "Midfield Engine" in [d["name"] for d in result["fired_details"]]
+        assert result["add_mult"] == 0
 
     def test_two_playmakers_no_fire(self, maestro_xav, don_andres, midfield_engine_synergy):
-        """Maestro PAS 10 + Don DEF 3 = 13 < 15."""
+        """Maestro PAS 10 + Don DEF 3 = 13 < 17."""
         field = [(maestro_xav, "CM"), (don_andres, "CM")]
         result = detect_synergies(field, [midfield_engine_synergy])
 
@@ -248,20 +247,20 @@ class TestDoublePivot:
     """Two elite passing CMs set up next phase's attacker."""
 
     def test_fires_carryover(self, maestro_xav, captain_stevie, double_pivot_synergy):
-        """Maestro PAS 10 + Stevie PAS 8 = 18 ≥ 17. Sets carryover."""
+        """Maestro PAS 10 + Stevie PAS 8 = 18 ≥ 18. Sets carryover (+25 chips)."""
         field = [(maestro_xav, "CM"), (captain_stevie, "CM")]
         result = detect_synergies(field, [double_pivot_synergy])
 
         carryover = result.get("carryover")
         assert carryover is not None
-        assert carryover["chips"] == 40
+        assert carryover["chips"] == 25
         assert carryover["target_role"] == "attacker"
         assert "Double Pivot" in [d["name"] for d in result["fired_details"]]
 
     def test_carryover_applied_to_first_attacker(self, maestro_xav, captain_stevie,
                                                   terry_henri, il_capitano,
                                                   double_pivot_synergy):
-        """Full round score with carryover: first attacker (ST) gets +40 chips."""
+        """Full round score with carryover: first attacker (ST) gets +25 chips."""
         field1 = [(maestro_xav, "CM"), (captain_stevie, "CM")]
         phase1 = calculate_round_score(field1, [double_pivot_synergy])
         carryover = phase1.get("next_carryover")
@@ -286,7 +285,7 @@ class TestTrio:
         field = [(maestro_xav, "CM"), (captain_stevie, "CM"), (don_andres, "CM")]
         result = detect_synergies(field, [trio_synergy])
 
-        assert abs(result["x_mult"] - 2.535) < 0.01  # 1.3*1.5*1.3 = 2.535
+        assert abs(result["x_mult"] - 1.8) < 0.01  # 1.2*1.25*1.2 = 1.8
         assert "Trio" in [d["name"] for d in result["fired_details"]]
 
     def test_too_few_cms(self, maestro_xav, captain_stevie, trio_synergy):
@@ -386,41 +385,41 @@ class TestSquadPersistent:
     def test_pace_in_behind(self, pacey_squad, all_persistent_synergies):
         buffs = detect_squad_synergies(pacey_squad, all_persistent_synergies)
         assert "Pace in Behind" in buffs["fired_synergies"]
-        # Terry gets ×1.15 from Pace and ×1.25 from Silent Killers = 1.4375
-        assert buffs["player_mult"].get("terry_henri", 1.0) == 1.4375
+        # Terry gets ×1.08 from Pace (if Silent Killers also fires: ×1.08×1.15)
+        assert buffs["player_mult"].get("terry_henri", 1.0) == 1.08
 
     def test_iron_wall(self, physical_squad, all_persistent_synergies):
         buffs = detect_squad_synergies(physical_squad, all_persistent_synergies)
         assert "Iron Wall" in buffs["fired_synergies"]
-        assert buffs["fatigue_penalty"] == 0.6
+        assert buffs["fatigue_penalty"] == 0.65
         for p in physical_squad:
             if "physical" in p.traits:
-                assert buffs["player_mult"].get(p.id, 1.0) == 1.2
+                assert buffs["player_mult"].get(p.id, 1.0) == 1.12
 
     def test_leadership_council(self, leader_squad, all_persistent_synergies):
         buffs = detect_squad_synergies(leader_squad, all_persistent_synergies)
         assert "Leadership Council" in buffs["fired_synergies"]
-        assert buffs["global_add"] == 15
+        assert buffs["global_add"] == 10
 
     def test_tiki_taka(self, technical_squad, all_persistent_synergies):
         buffs = detect_squad_synergies(technical_squad, all_persistent_synergies)
         assert "Tiki-Taka" in buffs["fired_synergies"]
-        assert buffs["position_mult"].get("CM", 1.0) == 1.15
+        assert buffs["position_mult"].get("CM", 1.0) == 1.08
 
     def test_clinical_edge(self, clinical_squad, all_persistent_synergies):
         buffs = detect_squad_synergies(clinical_squad, all_persistent_synergies)
         assert "Clinical Edge" in buffs["fired_synergies"]
-        assert buffs["position_add"].get("ST", 0) == 15
+        assert buffs["position_add"].get("ST", 0) == 10
 
     def test_double_destroyer(self, destroyer_squad, all_persistent_synergies):
         buffs = detect_squad_synergies(destroyer_squad, all_persistent_synergies)
         assert "Double Destroyer" in buffs["fired_synergies"]
-        assert buffs["position_mult"].get("CB", 1.0) == 1.2
+        assert buffs["position_mult"].get("CB", 1.0) == 1.12
 
     def test_two_up_top(self, poacher_squad, all_persistent_synergies):
         buffs = detect_squad_synergies(poacher_squad, all_persistent_synergies)
         assert "Two Up Top" in buffs["fired_synergies"]
-        assert buffs["position_mult"].get("ST", 1.0) == 1.3
+        assert buffs["position_mult"].get("ST", 1.0) == 1.15
 
     def test_journeyman(self, journeyman_squad, all_persistent_synergies):
         buffs = detect_squad_synergies(journeyman_squad, all_persistent_synergies)
@@ -430,13 +429,13 @@ class TestSquadPersistent:
     def test_pace_and_power(self, pace_power_squad, all_persistent_synergies):
         buffs = detect_squad_synergies(pace_power_squad, all_persistent_synergies)
         assert "Pace & Power" in buffs["fired_synergies"]
-        # Bale gets ×1.2 from Iron Wall + ×1.3 from Pace & Power = 1.56
-        assert buffs["player_mult"].get("bale_out", 1.0) == 1.56
+        # Bale gets ×1.12 from Iron Wall + ×1.15 from Pace & Power = 1.288
+        assert buffs["player_mult"].get("bale_out", 1.0) == 1.288
 
     def test_silent_killers(self, silent_killers_squad, all_persistent_synergies):
         buffs = detect_squad_synergies(silent_killers_squad, all_persistent_synergies)
         assert "Silent Killers" in buffs["fired_synergies"]
-        assert buffs["player_mult"].get("terry_henri", 1.0) == 1.25
+        assert buffs["player_mult"].get("terry_henri", 1.0) == 1.15
 
     def test_threshold_not_met(self, all_persistent_synergies):
         from src.cards import PlayerCard

@@ -46,7 +46,7 @@ body{background:var(--bg);color:var(--fg);font:18px 'VT323',monospace;min-height
 
 <div class="header">
   <h1>⚽ PICK YOUR PHASES</h1>
-  <p>Select 3 phases to play this round</p>
+  <p id="phaseSubtitle">Select 3 phases to play this round</p>
   <div class="selection" id="selectionCounter">0 / 3 selected</div>
 </div>
 <div class="info">📊 Target this round: <span id="roundTarget">350</span> pts | Formation: <span id="formationLabel">4-3-3</span></div>
@@ -65,18 +65,43 @@ body{background:var(--bg);color:var(--fg);font:18px 'VT323',monospace;min-height
 </div>
 
 <script>
-// ===== GET PHASES =====
+// ===== GET PHASES — use dealt hand (5 of 8), not all phases =====
 var phases = [];
-if (typeof window !== 'undefined' && window.ALL_PHASES) {
-  // Engine phases
+// Prefer dealt phases from G.dealtPhases, fall back to ALL_PHASES
+var phaseSource = (window.G && window.G.dealtPhases && window.G.dealtPhases.length > 0)
+  ? window.G.dealtPhases
+  : null;
+
+if (phaseSource) {
+  // Use dealt hand — only show the 5 phases dealt this round
+  for (var i = 0; i < phaseSource.length; i++) {
+    var phId = phaseSource[i];
+    var ep = null;
+    for (var ai = 0; ai < window.ALL_PHASES.length; ai++) {
+      if (window.ALL_PHASES[ai].id === phId) { ep = window.ALL_PHASES[ai]; break; }
+    }
+    if (ep) {
+      phases.push({
+        id: ep.id,
+        name: ep.name || ep.id,
+        slots: (ep.slots||[]).map(function(s){return typeof s==='string'?s:s[0]}),
+        icon: getIcon(ep.tag||ep.weight||'DEF'),
+        category: (ep.tag||ep.weight||'DEF').toUpperCase(),
+        desc: ep.desc || ep.description || '',
+        weight: ep.weight || 'DEF'
+      });
+    }
+  }
+} else if (typeof window !== 'undefined' && window.ALL_PHASES) {
+  // Fallback: all 8 phases (demo / first load)
   for (var i = 0; i < window.ALL_PHASES.length; i++) {
     var ep = window.ALL_PHASES[i];
     phases.push({
       id: ep.id,
       name: ep.name || ep.id,
       slots: (ep.slots||[]).map(function(s){return typeof s==='string'?s:s[0]}),
-      icon: getIcon(ep.weight||ep.tag||'DEF'),
-      category: (ep.weight||ep.tag||'DEF').toUpperCase(),
+      icon: getIcon(ep.tag||ep.weight||'DEF'),
+      category: (ep.tag||ep.weight||'DEF').toUpperCase(),
       desc: ep.desc || ep.description || '',
       weight: ep.weight || 'DEF'
     });
@@ -108,6 +133,13 @@ var selectedIndices = []; // up to 3
 function renderGrid() {
   var grid = document.getElementById('phaseGrid');
   grid.innerHTML = '';
+
+  // Update subtitle to show dealt count
+  var subtitle = document.getElementById('phaseSubtitle');
+  if (subtitle && phases.length < 8) {
+    subtitle.textContent = 'Select 3 of ' + phases.length + ' phases — adapt to what you\'re dealt!';
+  }
+
   for (var i = 0; i < phases.length; i++) {
     var p = phases[i];
     var card = document.createElement('div');
@@ -175,9 +207,13 @@ function updateDisplay() {
 function confirmPhases() {
   var pickedIds = selectedIndices.map(function(i) { return phases[i].id; });
   
-  // Write to G
+  // Write to G and evaluate combo chains
   if (typeof G !== 'undefined') {
-    G.pickedPhases = pickedIds;
+    if (typeof commitPhases === 'function') {
+      commitPhases(pickedIds);
+    } else {
+      G.pickedPhases = pickedIds;
+    }
     G.phaseIdx = 0;
     G.roundScore = 0;
     G.phaseResults = [];

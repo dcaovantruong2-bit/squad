@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Squad — Squad Draft</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif}
+body{background:#161120;color:#f0ecf8;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:1.8rem;margin-bottom:0.3rem;color:#39ff14}
+h2{font-size:1rem;color:#c8b8e0;margin-bottom:1rem}
+.pick-label{font-size:1.2rem;color:#ffd700;margin-bottom:0.5rem}
+.pick-sub{font-size:0.85rem;color:#9a8ab0;margin-bottom:1.5rem}
+.card-grid{display:flex;gap:0.6rem;flex-wrap:wrap;justify-content:center;max-width:1100px;margin-bottom:1.5rem;max-height:55vh;overflow-y:auto;padding:0.5rem}
+.player-card{background:#231a3a;border:2px solid #2e2250;border-radius:8px;padding:0.6rem;width:148px;cursor:pointer;transition:all 0.15s;text-align:center;flex-shrink:0}
+.player-card:hover{border-color:#39ff14;background:#2e2250;transform:translateY(-2px)}
+.player-card.selected{border-color:#ffd700;background:#3a2d60;box-shadow:0 0 12px rgba(255,215,0,0.3)}
+.player-card .name{font-size:0.85rem;font-weight:bold;color:#f0ecf8;margin-bottom:0.3rem}
+.player-card .pos{font-size:0.7rem;color:#39ff14;margin-bottom:0.4rem;text-transform:uppercase}
+.player-card .stats{font-size:0.7rem;color:#9a8ab0;line-height:1.3}
+.player-card .stats span{color:#c8b8e0}
+.player-card .traits{font-size:0.65rem;color:#c084fc;margin-top:0.3rem}
+.player-card .cost{font-size:0.7rem;color:#ffd700;margin-top:0.3rem}
+.btn{background:#39ff14;color:#161120;border:none;padding:0.7rem 2rem;border-radius:6px;font-size:1rem;font-weight:bold;cursor:pointer;transition:all 0.15s}
+.btn:hover{background:#2bcc10;transform:translateY(-1px)}
+.btn:disabled{background:#3a3a3a;color:#666;cursor:not-allowed}
+.btn.danger{background:#ff3344;color:#fff}
+.progress{color:#9a8ab0;font-size:0.8rem;margin-top:0.5rem}
+.squad-preview{margin-top:1rem;font-size:0.75rem;color:#9a8ab0;text-align:center}
+.error-msg{color:#ff3344;font-size:0.8rem;margin-top:0.5rem;min-height:1.2rem}
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>⚽ SQUAD DRAFT</h1>
+  <h2>Build your squad — formation-first</h2>
+  <div id="pickLabel" class="pick-label"></div>
+  <div id="pickSub" class="pick-sub"></div>
+  <div id="cardGrid" class="card-grid"></div>
+  <div class="error-msg" id="errorMsg"></div>
+  <button id="confirmBtn" class="btn" disabled>Confirm Selection</button>
+  <div class="progress" id="progress"></div>
+  <div class="squad-preview" id="squadPreview"></div>
+</div>
+
+<script src="../game-data.js"></script>
+<script src="../game-engine.js"></script>
+<script>
+// Initialize draft on load
+(function() {
+  var selectedInPick = []; // IDs selected in current pick
+
+  // Generate draft from full player pool
+  if (!G.draftPicks || G.draftPicks.length === 0) {
+    generateDraftPicks(PLAYERS, Math.floor(Math.random() * 100000));
+  }
+
+  function render() {
+    var pick = getCurrentDraftPick();
+    var progress = getDraftProgress();
+
+    if (!pick) {
+      // Draft complete — store squad and redirect
+      G.selectedIds = G.draftedPlayers.map(function(p) { return p.id; });
+      document.getElementById('pickLabel').textContent = '✅ Draft Complete!';
+      document.getElementById('pickSub').textContent = 'Your squad of ' + G.draftedPlayers.length + ' is ready.';
+      document.getElementById('cardGrid').innerHTML = '';
+      document.getElementById('confirmBtn').textContent = 'Start Campaign →';
+      document.getElementById('confirmBtn').disabled = false;
+      document.getElementById('confirmBtn').className = 'btn';
+      document.getElementById('progress').textContent = '';
+      document.getElementById('squadPreview').textContent = G.draftedPlayers.map(function(p) {
+        return p.name + ' [' + p.position + ']';
+      }).join(' · ');
+      return;
+    }
+
+    document.getElementById('pickLabel').textContent = pick.label;
+    document.getElementById('pickSub').textContent = 'Pick ' + pick.count + ' player' + (pick.count > 1 ? 's' : '') + ' · ' + progress.pct + '% complete';
+    document.getElementById('progress').textContent = 'Pick ' + (progress.current + 1) + ' of ' + progress.total;
+
+    // Reset selection for new pick
+    selectedInPick = [];
+    updateConfirmButton();
+
+    // Render cards
+    var grid = document.getElementById('cardGrid');
+    grid.innerHTML = '';
+    for (var i = 0; i < pick.pool.length; i++) {
+      var p = pick.pool[i];
+      var card = document.createElement('div');
+      card.className = 'player-card';
+      card.setAttribute('data-id', p.id);
+      card.onclick = function() {
+        toggleSelection(this.getAttribute('data-id'));
+      };
+
+      var cost = p.atk + p.pac + p.pas + p.def_ + p.spc;
+      var ovr = Math.round(cost / 5);
+      card.innerHTML =
+        '<div class="name">' + p.name + '</div>' +
+        '<div class="pos">' + p.position + ' · OVR ' + ovr + '</div>' +
+        '<div class="stats">' +
+          '<span>ATK</span> ' + p.atk + ' <span>PAC</span> ' + p.pac + ' <span>PAS</span> ' + p.pas + '<br>' +
+          '<span>DEF</span> ' + p.def_ + ' <span>SPC</span> ' + p.spc +
+        '</div>' +
+        '<div class="traits">' + (p.traits ? p.traits.join(' · ') : '') + '</div>' +
+        '<div class="cost">⚡ ' + cost + ' pts</div>';
+      grid.appendChild(card);
+    }
+
+    updateSquadPreview();
+  }
+
+  function toggleSelection(id) {
+    var idx = selectedInPick.indexOf(id);
+    if (idx >= 0) {
+      selectedInPick.splice(idx, 1);
+    } else {
+      selectedInPick.push(id);
+    }
+
+    // Update visual selection
+    var cards = document.querySelectorAll('.player-card');
+    for (var i = 0; i < cards.length; i++) {
+      var cid = cards[i].getAttribute('data-id');
+      if (selectedInPick.indexOf(cid) >= 0) {
+        cards[i].classList.add('selected');
+      } else {
+        cards[i].classList.remove('selected');
+      }
+    }
+    updateConfirmButton();
+  }
+
+  function updateConfirmButton() {
+    var pick = getCurrentDraftPick();
+    var btn = document.getElementById('confirmBtn');
+    if (!pick) return;
+    if (selectedInPick.length === pick.count) {
+      btn.disabled = false;
+      btn.textContent = 'Confirm (' + selectedInPick.length + '/' + pick.count + ')';
+    } else {
+      btn.disabled = true;
+      btn.textContent = 'Select ' + pick.count + ' player' + (pick.count > 1 ? 's' : '') + ' (' + selectedInPick.length + '/' + pick.count + ')';
+    }
+    document.getElementById('errorMsg').textContent = '';
+  }
+
+  function updateSquadPreview() {
+    var preview = document.getElementById('squadPreview');
+    var names = G.draftedPlayers.map(function(p) { return p.name; });
+    preview.textContent = names.length > 0 ? 'Squad so far: ' + names.join(' · ') : '';
+  }
+
+  document.getElementById('confirmBtn').onclick = function() {
+    if (isDraftComplete()) {
+      // Draft is done — save squad and redirect
+      G.selectedIds = G.draftedPlayers.map(function(p) { return p.id; });
+      // Save to sessionStorage for the game shell to pick up
+      sessionStorage.setItem('squad_drafted_ids', JSON.stringify(G.selectedIds));
+      sessionStorage.setItem('squad_draft_complete', 'true');
+      // Redirect to game with drafted squad
+      window.location.href = '../game.html';
+      return;
+    }
+
+    var result = confirmDraftPick(selectedInPick);
+    if (result.error) {
+      document.getElementById('errorMsg').textContent = result.error;
+      return;
+    }
+    if (result.done) {
+      // Last pick confirmed — show completion
+      render();
+    } else {
+      render();
+    }
+  };
+
+  // Start
+  render();
+})();
+</script>
+</body>
+</html>

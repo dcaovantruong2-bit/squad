@@ -8,32 +8,32 @@ class TestChipsFormula:
     """Test that each position weights the right stats."""
 
     def test_striker_chips(self, terry_henri):
-        """ST: atk*4 + pac*2 + spc*1 = 9*4 + 9*2 + 8*1 = 36+18+8 = 62"""
-        assert calculate_chips(terry_henri, "ST") == 62
+        """ST: atk*3 + pac*2 + spc*1 = 9*3+9*2+8*1 = 27+18+8 = 53"""
+        assert calculate_chips(terry_henri, "ST") == 53
 
     def test_winger_chips(self, bale_out):
-        """LW: atk*2 + pac*3 + pas*1 = 8*2 + 10*3 + 6*1 = 16+30+6 = 52"""
-        assert calculate_chips(bale_out, "LW") == 52
+        """LW: atk*2 + pac*2 + pas*1 = 8*2+10*2+6*1 = 16+20+6 = 42"""
+        assert calculate_chips(bale_out, "LW") == 42
 
     def test_rw_chips(self, rob_cutter):
-        """RW: atk*2 + pac*3 + pas*1 = 8*2 + 9*3 + 6*1 = 16+27+6 = 49"""
-        assert calculate_chips(rob_cutter, "RW") == 49
+        """RW: atk*2 + pac*2 + pas*1 = 8*2+9*2+6*1 = 16+18+6 = 40"""
+        assert calculate_chips(rob_cutter, "RW") == 40
 
     def test_cm_chips(self, maestro_xav):
-        """CM: pas*3 + atk*2 + def*1 = 10*3 + 3*2 + 6*1 = 30+6+6 = 42"""
-        assert calculate_chips(maestro_xav, "CM") == 42
+        """CM: pas*3 + atk*1 + def_*1 = 10*3+3*1+6*1 = 30+3+6 = 39"""
+        assert calculate_chips(maestro_xav, "CM") == 39
 
     def test_cdm_chips(self, wall_claude):
-        """CDM: def*2 + pas*3 + atk*1 = 10*2 + 6*3 + 2*1 = 20+18+2 = 40"""
-        assert calculate_chips(wall_claude, "CDM") == 40
+        """CDM: def_*2 + pas*2 + atk*1 = 10*2+6*2+2*1 = 20+12+2 = 34"""
+        assert calculate_chips(wall_claude, "CDM") == 34
 
     def test_cb_chips(self, il_capitano):
-        """CB: def*3 + pac*2 + atk*1 = 10*3 + 6*2 + 3*1 = 30+12+3 = 45"""
-        assert calculate_chips(il_capitano, "CB") == 45
+        """CB: def_*3 + pac*1 + atk*1 = 10*3+6*1+3*1 = 30+6+3 = 39"""
+        assert calculate_chips(il_capitano, "CB") == 39
 
     def test_fb_chips(self, el_tren):
-        """FB: def*2 + pac*3 + pas*1 = 7*2 + 9*3 + 7*1 = 14+27+7 = 48"""
-        assert calculate_chips(el_tren, "FB") == 48
+        """FB: def_*2 + pac*2 + pas*1 = 7*2+9*2+7*1 = 14+18+7 = 39"""
+        assert calculate_chips(el_tren, "FB") == 39
 
     def test_unknown_position_raises(self, terry_henri):
         with pytest.raises(KeyError):

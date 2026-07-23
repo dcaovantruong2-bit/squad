@@ -450,7 +450,7 @@ function detectSquadSynergies(squad) {
     positionAdd: {},
     globalMult: 1.0,
     globalAdd: 0,
-    fatiguePenalty: 0.7,
+    // fatiguePenalty deprecated — energy system uses fixed tiered multipliers
     firedSynergies: [],
     journeymanAvailable: false
   };
@@ -539,7 +539,7 @@ function detectSquadSynergies(squad) {
     }
 
     if (syn.id === 'iron_wall') {
-      buffs.fatiguePenalty = 0.6;
+      // Energy system uses fixed tiers; iron_wall no longer modifies fatigue penalty
     }
   }
 
@@ -604,7 +604,7 @@ function calculatePhaseScore(field, phaseId) {
     var ppAdd = persistentBuffs.playerAdd[player.id] || 0;
     var posMult = persistentBuffs.positionMult[pos] || 1.0;
     var posAdd = persistentBuffs.positionAdd[pos] || 0;
-    var fatigue = G.fatigue[player.id] !== undefined ? G.fatigue[player.id] : 1.0;
+    var fatigue = getEnergyMultiplier(player.id);
     var oop = getPositionPenalty(player, pos);
 
     var effective = Math.round(
@@ -633,8 +633,17 @@ function calculatePhaseScore(field, phaseId) {
   var xMult = synResult.xMult || 1;
   var carryover = synResult.carryover || 0;
 
-  var momentumValues = [1.0, 1.2, 1.5];
-  var momentum = momentumValues[G.phaseIdx] || 1.0;
+  var momentum = 1.0;
+  // Momentum: earned by hitting ≥15% of round target in previous phase
+  if (G.phaseIdx > 0 && G.phaseResults && G.phaseResults.length > 0) {
+    var prevResult = G.phaseResults[G.phaseResults.length - 1];
+    var target = (CAMPAIGN_MATCHES[G.matchIdx] && CAMPAIGN_MATCHES[G.matchIdx].targets)
+      ? CAMPAIGN_MATCHES[G.matchIdx].targets[G.roundIdx] : 9999;
+    if (target && prevResult.score >= target * 0.15) {
+      momentum = Math.min(G.momentum + 0.15, 1.3);
+    }
+  }
+  G.momentum = momentum;
   var formationMult = formation ? formation.global : 1.0;
 
   var phaseMult = 1.0;
@@ -656,18 +665,56 @@ function calculatePhaseScore(field, phaseId) {
       if (chain) {
         if (chain.effect === 'xMult') {
           phaseMult = chain.value;
+          synResult.details.push({
+            name: 'Combo: ' + chain.desc,
+            type: chain.value >= 1.0 ? 'combo_xmult' : 'combo_penalty',
+            value: chain.value,
+            contributors: []
+          });
         } else if (chain.effect === 'addChips') {
           synChips += chain.value;
           synResult.details.push({
             name: 'Combo: ' + chain.desc,
-            type: 'combo_chips',
+            type: chain.value >= 0 ? 'combo_chips' : 'combo_penalty',
+            value: chain.value,
+            contributors: []
+          });
+        } else if (chain.effect === 'fatigueRecovery') {
+          // Fatigue recovery handled separately
+          synResult.details.push({
+            name: 'Combo: ' + chain.desc,
+            type: 'combo_recovery',
             value: chain.value,
             contributors: []
           });
         }
+      } else {
+        // No matching chain — apply mild penalty for bad sequencing
+        phaseMult = COMBO_NO_MATCH_PENALTY || 0.95;
+        synResult.details.push({
+          name: 'Combo: No tactical link — ×' + (COMBO_NO_MATCH_PENALTY || 0.95).toFixed(2),
+          type: 'combo_penalty',
+          value: COMBO_NO_MATCH_PENALTY || 0.95,
+          contributors: []
+        });
       }
     }
   }
+
+  // Apply opponent tactical modifier
+  var oppTacticalMult = 1.0;
+  if (currPhase) {
+    oppTacticalMult = getOpponentTacticalMultiplier(currPhase.tag, G.phaseIdx);
+  } else if (phaseId) {
+    // Find the phase to get its tag
+    for (var pi = 0; pi < ALL_PHASES.length; pi++) {
+      if (ALL_PHASES[pi].id === phaseId) {
+        oppTacticalMult = getOpponentTacticalMultiplier(ALL_PHASES[pi].tag, G.phaseIdx);
+        break;
+      }
+    }
+  }
+  phaseMult *= oppTacticalMult;
 
   var persistentChips = persistentBuffs.globalAdd || 0;
   var persistentXMult = persistentBuffs.globalMult || 1.0;
@@ -848,8 +895,8 @@ function dealPhases() {
     shuffled[i] = shuffled[j];
     shuffled[j] = tmp;
   }
-  // Python/tests: all 8 phases are available every round; only order is shuffled
-  return shuffled.map(function(p) { return p.id; });
+  // Deal 5 of 8 — player picks 3, creating tension
+  return shuffled.slice(0, 5).map(function(p) { return p.id; });
 }
 
 /**
@@ -897,28 +944,66 @@ function evaluateComboChains(pickedPhases) {
 }
 
 /**
- * applyFatigue(playerId)
- * Reduces fatigue after a player is used in a phase.
- * Fatigue multiplier decays multiplicatively (×0.7 each use by default).
+ * useEnergy(playerId)
+ * Consumes 1 energy for a player. Returns the new multiplier.
+ * Energy tiers: 3=FRESH(1.0), 2=TIRED(0.85), 1=EXHAUSTED(0.65), 0=INJURED(0.0)
+ * 25% injury risk when used at EXHAUSTED.
  */
-function applyFatigue(playerId) {
-  var current = G.fatigue[playerId] !== undefined ? G.fatigue[playerId] : 1.0;
-  G.fatigue[playerId] = current * 0.7;
-  return G.fatigue[playerId];
+function useEnergy(playerId) {
+  if (!G.energy[playerId]) G.energy[playerId] = {current: 3, injured: false};
+  var e = G.energy[playerId];
+  if (e.injured) return 0.0;
+  if (e.current <= 1) {
+    // Risk injury when using at exhausted
+    if (Math.random() < 0.25) {
+      e.injured = true;
+      e.current = 0;
+      return 0.0;
+    }
+  }
+  e.current = Math.max(0, e.current - 1);
+  G.roundUsedPlayers[playerId] = true;
+  return getEnergyMultiplier(playerId);
 }
 
 /**
- * recoverFatigue(amount)
- * Global fatigue recovery between rounds.
- * amount = fraction of lost fatigue to recover (default 0.3, matching Python's 50%→30% of lost).
+ * getEnergyMultiplier(playerId)
+ * Returns current energy multiplier for a player.
  */
-function recoverFatigue(amount) {
-  var recovery = (amount !== undefined) ? amount : 0.3;
-  for (var pid in G.fatigue) {
-    if (G.fatigue.hasOwnProperty(pid)) {
-      G.fatigue[pid] = G.fatigue[pid] + (1.0 - G.fatigue[pid]) * recovery;
+function getEnergyMultiplier(playerId) {
+  if (!G.energy[playerId]) return 1.0;
+  var e = G.energy[playerId];
+  if (e.injured) return 0.0;
+  return {3: 1.0, 2: 0.85, 1: 0.65, 0: 0.0}[e.current] || 1.0;
+}
+
+/** @deprecated — use useEnergy() instead */
+function applyFatigue(playerId) {
+  return useEnergy(playerId);
+}
+
+/**
+ * recoverEnergy()
+ * Bench recovery between rounds: unused players recover 1 energy.
+ * Used players (in roundUsedPlayers) do NOT recover.
+ */
+function recoverEnergy() {
+  for (var pid in G.energy) {
+    if (G.energy.hasOwnProperty(pid)) {
+      if (!G.roundUsedPlayers[pid]) {
+        var e = G.energy[pid];
+        if (!e.injured) {
+          e.current = Math.min(3, e.current + 1);
+        }
+      }
     }
   }
+  G.roundUsedPlayers = {}; // Reset for next round
+}
+
+/** @deprecated — use recoverEnergy() instead */
+function recoverFatigue(amount) {
+  recoverEnergy();
 }
 
 /**
@@ -945,7 +1030,7 @@ function buyShopItem(itemId) {
 
   // Handle recovery/instant effects
   if (eff.type === 'fullReset') {
-    G.fatigue = {};
+    G.energy = {};
   }
   if (eff.type === 'morale') {
     G.morale += eff.value;
@@ -998,7 +1083,7 @@ function saveGame() {
       phaseResults: G.phaseResults,
       roundResults: G.roundResults,
       matchResults: G.matchResults,
-      fatigue: G.fatigue,
+      energy: G.energy,
       morale: G.morale,
       shopBuffs: G.shopBuffs,
       campaignWon: G.campaignWon,
@@ -1034,7 +1119,7 @@ function loadGame() {
     G.phaseResults = saveData.phaseResults || [];
     G.roundResults = saveData.roundResults || [];
     G.matchResults = saveData.matchResults || [];
-    G.fatigue = saveData.fatigue || {};
+    G.energy = saveData.energy || {};
     G.morale = (saveData.morale !== undefined) ? saveData.morale : 0;
     G.shopBuffs = saveData.shopBuffs || [];
     G.campaignWon = saveData.campaignWon || false;
@@ -1082,7 +1167,8 @@ function initNewGame() {
   G.phaseResults = [];
   G.roundResults = [];
   G.matchResults = [];
-  G.fatigue = {};
+  G.energy = {};
+  G.roundUsedPlayers = {};
   G.morale = 0;
   G.shopBuffs = [];
   G.campaignWon = false;
@@ -1159,10 +1245,11 @@ function commitSquad(playerIds, formationId) {
 
   G.formation = formationId || null;
 
-  // Initialize all squad players' fatigue to 1.0 (fresh)
-  G.fatigue = {};
+  // Initialize all squad players' energy (3 uses per match, tiered penalties)
+  G.energy = {};
+  G.roundUsedPlayers = {};
   for (var i = 0; i < G.selectedIds.length; i++) {
-    G.fatigue[G.selectedIds[i]] = 1.0;
+    G.energy[G.selectedIds[i]] = {current: 3, injured: false};
   }
 
   G.currentScreen = 'formation';
@@ -1419,5 +1506,139 @@ function getCampaignProgress() {
     current: G.matchIdx,
     campaignWon: G.campaignWon || false,
     morale: G.morale || 0
+  };
+}
+
+/* ===================================================================
+   SECTION 11 — DRAFTING SYSTEM
+   Formation-first: GK → CB → FB → MID → ATK
+   =================================================================== */
+
+var DRAFT_ORDER = [
+  { group: 'GK',  count: 1, label: 'Pick your Goalkeeper (1)' },
+  { group: 'DEF', count: 4, label: 'Pick 4 Defenders \u2014 any mix of CBs & FBs' },
+  { group: 'MID', count: 3, label: 'Pick 3 Midfielders' },
+  { group: 'ATK', count: 2, label: 'Pick 2 Attackers' },
+];
+
+/** Group players by position for drafting */
+function groupPlayersByDraftGroup(players) {
+  var groups = { GK: [], DEF: [], MID: [], ATK: [] };
+  var posMap = {
+    GK: 'GK',
+    CB: 'DEF', FB: 'DEF',
+    CM: 'MID', CDM: 'MID', CAM: 'MID',
+    ST: 'ATK', LW: 'ATK', RW: 'ATK'
+  };
+  for (var i = 0; i < players.length; i++) {
+    var p = players[i];
+    var g = posMap[p.position];
+    if (g) groups[g].push(p);
+  }
+  return groups;
+}
+
+/** Shuffle array in place (Fisher-Yates) */
+function shuffleArray(arr, seed) {
+  // Simple deterministic shuffle if seed provided, else Math.random
+  var rng = seed !== undefined ? seededRandom(seed) : Math.random;
+  for (var i = arr.length - 1; i > 0; i--) {
+    var j = Math.floor(rng() * (i + 1));
+    var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+  }
+  return arr;
+}
+
+var _seedState = 0;
+function seededRandom(seed) {
+  return function() {
+    seed = (seed * 16807 + 0) % 2147483647;
+    return (seed - 1) / 2147483646;
+  };
+}
+
+/**
+ * generateDraftPicks(players, seed)
+ * Create a draft sequence from the player pool.
+ */
+function generateDraftPicks(players, seed) {
+  var groups = groupPlayersByDraftGroup(players);
+  for (var g in groups) {
+    shuffleArray(groups[g], seed);
+  }
+
+  var picks = [];
+  for (var ri = 0; ri < DRAFT_ORDER.length; ri++) {
+    var rd = DRAFT_ORDER[ri];
+    var pool = groups[rd.group];  // Show ALL players in this group
+    if (pool.length === 0) continue;
+    picks.push({
+      group: rd.group,
+      count: rd.count,
+      pool: pool,
+      label: rd.label,
+    });
+  }
+
+  // Store in G
+  G.draftPicks = picks;
+  G.draftPickIdx = 0;
+  G.draftedPlayers = [];
+  return picks;
+}
+
+/**
+ * getCurrentDraftPick()
+ * Returns the current draft pick or null if done.
+ */
+function getCurrentDraftPick() {
+  if (!G.draftPicks || G.draftPickIdx >= G.draftPicks.length) return null;
+  return G.draftPicks[G.draftPickIdx];
+}
+
+/**
+ * confirmDraftPick(chosenIds)
+ * Confirm the current pick with chosen player IDs. Advances to next.
+ */
+function confirmDraftPick(chosenIds) {
+  var pick = getCurrentDraftPick();
+  if (!pick) return { done: true, error: 'No active pick' };
+  if (chosenIds.length !== pick.count) return { done: false, error: 'Must pick exactly ' + pick.count };
+
+  // Validate all chosen are in pool
+  var poolIds = pick.pool.map(function(p) { return p.id; });
+  for (var i = 0; i < chosenIds.length; i++) {
+    if (poolIds.indexOf(chosenIds[i]) < 0) {
+      return { done: false, error: 'Invalid selection' };
+    }
+  }
+
+  // Add to drafted players
+  for (var i = 0; i < chosenIds.length; i++) {
+    var p = getPlayerById(chosenIds[i]);
+    if (p) G.draftedPlayers.push(p);
+  }
+
+  G.draftPickIdx++;
+  return { done: G.draftPickIdx >= G.draftPicks.length };
+}
+
+/**
+ * isDraftComplete()
+ */
+function isDraftComplete() {
+  return !G.draftPicks || G.draftPickIdx >= G.draftPicks.length;
+}
+
+/**
+ * getDraftProgress()
+ * Returns { current: N, total: N, pct: N }
+ */
+function getDraftProgress() {
+  if (!G.draftPicks || G.draftPicks.length === 0) return { current: 0, total: 0, pct: 100 };
+  return {
+    current: G.draftPickIdx,
+    total: G.draftPicks.length,
+    pct: Math.round((G.draftPickIdx / G.draftPicks.length) * 100)
   };
 }

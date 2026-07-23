@@ -25,14 +25,14 @@ from src.phases import get_position_penalty
 # CB cares about DEF, CM cares about PAS, etc.
 
 CHIPS_FORMULA = {
-    "ST":  lambda p: p.atk * 4 + p.pac * 2 + p.spc * 1,
-    "LW":  lambda p: p.atk * 2 + p.pac * 3 + p.pas * 1,
-    "RW":  lambda p: p.atk * 2 + p.pac * 3 + p.pas * 1,
-    "CM":  lambda p: p.pas * 3 + p.atk * 2 + p.def_ * 1,
-    "CAM": lambda p: p.pas * 3 + p.atk * 2 + p.spc * 1,
-    "CDM": lambda p: p.def_ * 2 + p.pas * 3 + p.atk * 1,
-    "CB":  lambda p: p.def_ * 3 + p.pac * 2 + p.atk * 1,
-    "FB":  lambda p: p.def_ * 2 + p.pac * 3 + p.pas * 1,
+    "ST":  lambda p: p.atk * 3 + p.pac * 2 + p.spc * 1,
+    "LW":  lambda p: p.atk * 2 + p.pac * 2 + p.pas * 1,
+    "RW":  lambda p: p.atk * 2 + p.pac * 2 + p.pas * 1,
+    "CM":  lambda p: p.pas * 3 + p.atk * 1 + p.def_ * 1,
+    "CAM": lambda p: p.pas * 2 + p.atk * 2 + p.spc * 1,
+    "CDM": lambda p: p.def_ * 2 + p.pas * 2 + p.atk * 1,
+    "CB":  lambda p: p.def_ * 3 + p.pac * 1 + p.atk * 1,
+    "FB":  lambda p: p.def_ * 2 + p.pac * 2 + p.pas * 1,
     "GK":  lambda p: p.def_ * 3 + p.spc * 1,
 }
 
@@ -555,7 +555,7 @@ def calculate_round_score(
     field: list[tuple[PlayerCard, str]],
     synergy_cards: list[SynergyCard],
     formation: FormationCard | None = None,
-    fatigue: dict[str, float] | None = None,
+    fatigue = None,  # dict[str, float] or SquadEnergy
     carryover: dict | None = None,
     persistent_buffs: dict | None = None,
     momentum: float = 1.0,
@@ -568,7 +568,7 @@ def calculate_round_score(
         field: List of (player, field_position) for every slot on the pitch.
         synergy_cards: Active synergy/joker cards.
         formation: Optional formation card.
-        fatigue: Optional map of player_id → multiplier (e.g. 0.7 for tired).
+        fatigue: Optional dict of player_id → multiplier, or SquadEnergy object.
         carryover: Optional carryover bonus from previous phase.
         persistent_buffs: Persistent buffs from detect_squad_synergies.
 
@@ -598,8 +598,13 @@ def calculate_round_score(
         # Formation position bonus
         pos_bonus = formation.position_bonus.get(pos, 0) if formation else 0
 
-        # Fatigue
-        fatigue_mult = fatigue.get(player.id, 1.0)
+        # Fatigue / Energy multiplier
+        if hasattr(fatigue, 'get_multiplier'):
+            fatigue_mult = fatigue.get_multiplier(player.id)
+        elif fatigue is not None:
+            fatigue_mult = fatigue.get(player.id, 1.0)
+        else:
+            fatigue_mult = 1.0
 
         # Per-player persistent buffs
         pp_mult = pb.get("player_mult", {}).get(player.id, 1.0)

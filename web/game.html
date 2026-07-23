@@ -773,6 +773,20 @@
 
   /* ─── Preload Title Screen (initial load) ─────────────────────── */
   function init() {
+    // Check for drafted squad from draft-screen.html
+    var draftedIds = null;
+    try {
+      if (sessionStorage.getItem('squad_draft_complete') === 'true') {
+        var rawIds = sessionStorage.getItem('squad_drafted_ids');
+        if (rawIds) {
+          draftedIds = JSON.parse(rawIds);
+          // Clear the draft flag so we don't loop
+          sessionStorage.removeItem('squad_draft_complete');
+          sessionStorage.removeItem('squad_drafted_ids');
+        }
+      }
+    } catch (e) {}
+
     // Restore any saved session
     var restored = false;
     try {
@@ -784,6 +798,31 @@
         }
       }
     } catch (e) {}
+
+    // If we have a drafted squad, apply it and skip to formation
+    if (draftedIds && draftedIds.length > 0 && window.G) {
+      window.G.selectedIds = draftedIds;
+      // Start fresh campaign
+      window.G.matchIdx = 0;
+      window.G.roundIdx = 0;
+      window.G.phaseIdx = 0;
+      window.G.roundScore = 0;
+      window.G.phaseResults = [];
+      window.G.roundResults = [];
+      window.G.matchResults = [];
+      window.G.morale = 0;
+      window.G.shopBuffs = [];
+      window.G.energy = {};
+      window.G.roundUsedPlayers = {};
+      // Auto-pick formation
+      if (typeof autoRecommendFormation === 'function') {
+        window.G.formation = autoRecommendFormation(draftedIds) || '4-3-3';
+      }
+      // Navigate to formation screen
+      window.Game.transition = 'fade';
+      navigateTo('formation', { transition: 'fade' });
+      return;
+    }
 
     // Always start at title screen
     window.Game.transition = 'fade';

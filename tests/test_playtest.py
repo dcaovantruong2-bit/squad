@@ -42,14 +42,14 @@ class TestCalculateChipsAllPositions:
     """Verify every position formula works correctly."""
 
     @pytest.mark.parametrize("pos,expected_formula", [
-        ("ST",  lambda p: p.atk * 4 + p.pac * 2 + p.spc * 1),
-        ("LW",  lambda p: p.atk * 2 + p.pac * 3 + p.pas * 1),
-        ("RW",  lambda p: p.atk * 2 + p.pac * 3 + p.pas * 1),
-        ("CM",  lambda p: p.pas * 3 + p.atk * 2 + p.def_ * 1),
-        ("CAM", lambda p: p.pas * 3 + p.atk * 2 + p.spc * 1),
-        ("CDM", lambda p: p.def_ * 2 + p.pas * 3 + p.atk * 1),
-        ("CB",  lambda p: p.def_ * 3 + p.pac * 2 + p.atk * 1),
-        ("FB",  lambda p: p.def_ * 2 + p.pac * 3 + p.pas * 1),
+        ("ST",  lambda p: p.atk * 3 + p.pac * 2 + p.spc * 1),
+        ("LW",  lambda p: p.atk * 2 + p.pac * 2 + p.pas * 1),
+        ("RW",  lambda p: p.atk * 2 + p.pac * 2 + p.pas * 1),
+        ("CM",  lambda p: p.pas * 3 + p.atk * 1 + p.def_ * 1),
+        ("CAM", lambda p: p.pas * 2 + p.atk * 2 + p.spc * 1),
+        ("CDM", lambda p: p.def_ * 2 + p.pas * 2 + p.atk * 1),
+        ("CB",  lambda p: p.def_ * 3 + p.pac * 1 + p.atk * 1),
+        ("FB",  lambda p: p.def_ * 2 + p.pac * 2 + p.pas * 1),
         ("GK",  lambda p: p.def_ * 3 + p.spc * 1),
     ])
     def test_formula_matches_chips_formula_dict(self, pos, expected_formula):
@@ -78,14 +78,14 @@ class TestCalculateChipsAllPositions:
     def test_max_stats_player(self):
         """Player with all stats = 10."""
         p = _mk_player("m", "Max", "ST", atk=10, pac=10, pas=10, def_=10, spc=10)
-        assert calculate_chips(p, "ST") == 10*4 + 10*2 + 10*1  # 70
-        assert calculate_chips(p, "CB") == 10*3 + 10*2 + 10*1  # 60
+        assert calculate_chips(p, "ST") == 10*3 + 10*2 + 10*1  # 60
+        assert calculate_chips(p, "CB") == 10*3 + 10*1 + 10*1  # 50
 
     def test_chips_is_integer(self):
         p = _mk_player("t", "T", "ST", atk=7, pac=8, pas=6, def_=4, spc=5)
         result = calculate_chips(p, "ST")
         assert isinstance(result, int)
-        assert result == 7*4 + 8*2 + 5*1  # 49
+        assert result == 7*3 + 8*2 + 5*1  # 42
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -329,11 +329,11 @@ class TestDetectSquadSynergiesEdgeCases:
         squad = [captain_stevie, jt_rock, bale_out, the_waz, big_zlat]
         result = detect_squad_synergies(squad, load_synergies())
         assert "Iron Wall" in result["fired_synergies"]
-        assert result["fatigue_penalty"] == 0.6
+        assert result["fatigue_penalty"] == 0.65
         # physical players should have ×1.2 multiplier
         for p in squad:
             if "physical" in p.traits:
-                assert result["player_mult"].get(p.id, 1.0) == 1.2
+                assert result["player_mult"].get(p.id, 1.0) == 1.12
 
     def test_multiple_persistent_synergy_stacking(self, terry_henri, bale_out, el_tren, cafu_express, kylian_express):
         """Multiple persistent synergies can fire simultaneously."""
@@ -384,14 +384,14 @@ class TestCalculateRoundScoreEdgeCases:
         fm = FormationCard("test", "Test", ["ST"], 11, 1.0,
                            position_bonus={"ST": 50})
         result = calculate_round_score([(terry_henri, "ST")], [], formation=fm)
-        assert result["total"] == 112
+        assert result["total"] == 103
 
     def test_formation_negative_bonus(self, terry_henri):
         """Negative formation bonus reduces chips."""
         fm = FormationCard("test", "Test", ["ST"], 11, 1.0,
                            position_bonus={"ST": -30})
         result = calculate_round_score([(terry_henri, "ST")], [], formation=fm)
-        assert result["total"] == 32
+        assert result["total"] == 23
 
     def test_formation_global_mult(self, terry_henri):
         """Formation global_mult applies after everything."""
@@ -499,16 +499,19 @@ class TestMatchStateTransitions:
         assert ms.round_targets == [100, 200, 300]
 
     def test_start_round_resets_state(self, terry_henri):
-        ms = MatchState(squad=[terry_henri], synergies=[],
-                        fatigue={terry_henri.id: 0.49})
+        ms = MatchState(squad=[terry_henri], synergies=[])
+        ms.energy.init_squad([terry_henri.id])
+        ms.energy.use_player(terry_henri.id)  # 3→2
+        ms.energy.use_player(terry_henri.id)  # 2→1, EXHAUSTED
+        ms._round_used_players.add(terry_henri.id)
         ms.round_score = 999
         ms.rounds_won = 3
         start_round(ms)
         assert len(ms.phase_hand) == 8  # all 8 phases
         assert len(ms.phases) == 0      # none selected yet
         assert ms.current_phase_idx == 0
-        # Fatigue recovers 50%: 0.49 → 1.0 - (1.0 - 0.49) * 0.5 = 0.745
-        assert ms.fatigue.get(terry_henri.id) == pytest.approx(0.745, rel=0.01)
+        # Bench recovery: used player was at energy 1, stays at 1 (EXHAUSTED, 0.65)
+        assert ms.energy.get_multiplier(terry_henri.id) == 0.65
         assert ms.round_score == 0
         assert ms.carryover is None
 
@@ -551,11 +554,13 @@ class TestMatchStateTransitions:
 
     def test_resolve_phase_applies_fatigue(self, terry_henri):
         ms = MatchState(squad=[terry_henri], synergies=[])
+        ms.energy.init_squad([terry_henri.id])
         ms.phases = [Phase("test", "Test", ["ST"], "ATK", 1, "test phase")]
         ms.current_phase_idx = 0
         ms.field = [(terry_henri, "ST")]
         resolve_phase(ms)
-        assert ms.get_fatigue(terry_henri.id) == FATIGUE_PENALTY
+        # After one use: energy 3→2, TIRED = 0.85
+        assert ms.get_fatigue(terry_henri.id) == 0.85
 
     def test_advance_phase(self):
         ms = MatchState(squad=[], synergies=[])
@@ -597,11 +602,14 @@ class TestMatchStateTransitions:
         assert ms.current_phase is None
 
     def test_apply_fatigue_with_persistent_buffs(self, terry_henri):
-        """apply_fatigue uses persistent_buffs fatigue_penalty if present."""
+        """With energy system, persistent_buffs fatigue_penalty no longer applies to energy use.
+        Energy system uses fixed tiered multipliers instead."""
         ms = MatchState(squad=[terry_henri], synergies=[],
                         persistent_buffs={"fatigue_penalty": 0.8})
+        ms.energy.init_squad([terry_henri.id])
         ms.apply_fatigue(terry_henri.id)
-        assert ms.get_fatigue(terry_henri.id) == 0.8
+        # Energy system ignores persistent fatigue_penalty — always 0.85 after one use
+        assert ms.get_fatigue(terry_henri.id) == 0.85
 
     def test_resolve_phase_carryover_flow(self, maestro_xav, captain_stevie, terry_henri):
         """End-to-end carryover: phase 1 produces carryover, phase 2 consumes it."""

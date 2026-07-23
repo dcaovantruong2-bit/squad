@@ -107,6 +107,7 @@ class Phase:
     weight: str            # Primary stat: DEF, PAS, PAC, ATK, SPC
     max_cards: int         # How many cards from hand to field
     description: str
+    tag: str = ""          # Category: Defensive, Possession, Attacking, Transition, Specialist
 
 
 def is_player_eligible(player, slot_spec: SlotSpec) -> bool:
@@ -202,6 +203,7 @@ PHASE_DEFS = {
         weight="DEF",
         max_cards=3,
         description="Keeper launches long — defenders win the header",
+        tag="Defensive",
     ),
     "build_up": Phase(
         id="build_up",
@@ -210,6 +212,7 @@ PHASE_DEFS = {
         weight="PAS",
         max_cards=3,
         description="Play out from the back — fullbacks push up, midfield controls tempo",
+        tag="Possession",
     ),
     "wide_attack": Phase(
         id="wide_attack",
@@ -218,6 +221,7 @@ PHASE_DEFS = {
         weight="PAC",
         max_cards=3,
         description="Overload the flanks — pacey wingers stretch the defence",
+        tag="Attacking",
     ),
     "direct_play": Phase(
         id="direct_play",
@@ -226,6 +230,7 @@ PHASE_DEFS = {
         weight="ATK",
         max_cards=3,
         description="Quick transition — bypass midfield, hit the attackers",
+        tag="Transition",
     ),
     "defensive_block": Phase(
         id="defensive_block",
@@ -234,6 +239,7 @@ PHASE_DEFS = {
         weight="DEF",
         max_cards=3,
         description="Compact defensive shape — tough to break down",
+        tag="Defensive",
     ),
     "tiki_taka": Phase(
         id="tiki_taka",
@@ -242,6 +248,7 @@ PHASE_DEFS = {
         weight="PAS",
         max_cards=3,
         description="Pass, move, repeat — creative midfielders control the game",
+        tag="Possession",
     ),
     "counter": Phase(
         id="counter",
@@ -250,6 +257,7 @@ PHASE_DEFS = {
         weight="PAC",
         max_cards=3,
         description="Explosive break — pacey attackers in behind",
+        tag="Transition",
     ),
     "set_piece": Phase(
         id="set_piece",
@@ -258,6 +266,7 @@ PHASE_DEFS = {
         weight="SPC",
         max_cards=3,
         description="Dead ball specialist meets aerial threat — CAM, CB, ST",
+        tag="Specialist",
     ),
 }
 
@@ -275,7 +284,7 @@ def shuffle_phases() -> list[Phase]:
 
 
 def deal_phases() -> list[Phase]:
-    """Return all 8 phases — no dealing, all always available."""
+    """Deal 5 random phases — player picks 3 from these. Creates tension."""
     phases = get_all_phases()
     random.shuffle(phases)
-    return phases
+    return phases[:5]  # Deal 5 of 8

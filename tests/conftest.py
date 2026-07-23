@@ -376,9 +376,9 @@ def back_three_synergy():
     return SynergyCard(
         id="back_three", name="Back Three", rarity="rare",
         trigger_type="back_three",
-        trigger={"stat": "def_", "threshold": 7},
+        trigger={"stat": "def_", "threshold": 8},
         effect_type="multiply",
-        effect={"multiply": 1.3}
+        effect={"multiply": 1.2}
     )
 
 
@@ -387,7 +387,7 @@ def midfield_engine_synergy():
     return SynergyCard(
         id="midfield_engine", name="Midfield Engine", rarity="common",
         trigger_type="midfield_engine",
-        trigger={"positions": ["CM", "CM"], "stat_a": "pas", "stat_b": "def_", "threshold": 15},
+        trigger={"positions": ["CM", "CM"], "stat_a": "pas", "stat_b": "def_", "threshold": 17},
         effect_type="add_mult",
         effect={"add_mult": 4}
     )
@@ -398,9 +398,9 @@ def double_pivot_synergy():
     return SynergyCard(
         id="double_pivot", name="Double Pivot", rarity="uncommon",
         trigger_type="double_pivot",
-        trigger={"positions": ["CM", "CM"], "stat": "pas", "threshold": 17},
+        trigger={"positions": ["CM", "CM"], "stat": "pas", "threshold": 18},
         effect_type="carryover",
-        effect={"add_chips": 40, "target_role": "attacker"}
+        effect={"add_chips": 25, "target_role": "attacker"}
     )
 
 
@@ -409,9 +409,9 @@ def trio_synergy():
     return SynergyCard(
         id="trio", name="Trio", rarity="rare",
         trigger_type="trio",
-        trigger={"position": "CM", "stat": "pas", "threshold": 7},
+        trigger={"position": "CM", "stat": "pas", "threshold": 8},
         effect_type="chain_multiply",
-        effect={"multipliers": [1.3, 1.5, 1.3]}
+        effect={"multipliers": [1.2, 1.25, 1.2]}
     )
 
 

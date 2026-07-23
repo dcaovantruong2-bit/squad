@@ -112,6 +112,59 @@ var PLAYERS = [
   { id:"saint_lloris", name:"Saint Lloris", position:"GK", atk:1, pac:2, pas:3, def_:10, spc:5, traits:["leader","aerial"], description:"Lightning reflexes." },
   { id:"rocket_raya", name:"Rocket Raya", position:"GK", atk:1, pac:5, pas:8, def_:6, spc:8, traits:["playmaker","technical"], description:"Sweeper keeper." },
   { id:"claudio_bravoops", name:"Claudio Bra-voops", position:"GK", atk:1, pac:5, pas:4, def_:7, spc:3, traits:["leader","technical"], description:"Solid shot-stopper." },
+
+  // === NEW PLAYERS (v2 rebalance) ===
+
+  // Ball-playing CB — van Dijk archetype
+  { id:"virg_van_dyk", name:"Virg Van Dyk", position:"CB", atk:4, pac:8, pas:7, def_:10, spc:7, traits:["leader","technical","aerial"], description:"Colossus. Reads everything." },
+
+  // Sweeper keeper — Ederson archetype
+  { id:"eddy_son", name:"Eddy-son", position:"GK", atk:1, pac:4, pas:9, def_:7, spc:8, traits:["playmaker","technical"], description:"Sweeper-keeper. Long balls." },
+
+  // Deep playmaker CDM — Rodri archetype
+  { id:"rodri_go", name:"Rodri-go", position:"CDM", atk:3, pac:5, pas:9, def_:10, spc:6, traits:["technical","playmaker","leader"], description:"The metronome. Always in control." },
+
+  // Target man ST — Haaland archetype
+  { id:"haal_and_oates", name:"Haal-and-Oates", position:"ST", atk:10, pac:9, pas:3, def_:2, spc:8, traits:["pacey","physical","poacher"], description:"Freak of nature. You can't stop him." },
+
+  // False 9 ST — Messi/Firmino archetype
+  { id:"lion_el_tidy", name:"Lion-el Tidy", position:"ST", atk:7, pac:7, pas:8, def_:2, spc:10, traits:["technical","playmaker","clinical"], description:"Drops deep. Orchestrates chaos." },
+
+  // Inverted fullback — Cancelo/Zinchenko archetype
+  { id:"zin_chenko", name:"Zin-chenko", position:"FB", atk:4, pac:7, pas:9, def_:6, spc:6, traits:["technical","playmaker"], description:"Steps into midfield. Quarterback." },
+
+  // Wide playmaker CM — De Bruyne archetype
+  { id:"kevin_de_brown", name:"Kevin De Brown", position:"CM", atk:7, pac:6, pas:10, def_:4, spc:8, traits:["playmaker","technical","clinical"], description:"The assist king. Let him talk." },
+
+  // Destroyer CDM — Casemiro archetype
+  { id:"casa_miro", name:"Casa-miro", position:"CDM", atk:2, pac:3, pas:5, def_:10, spc:3, traits:["destroyer","physical","aerial"], description:"The bouncer. Nothing gets past." },
+
+  // Physical ST — Drogba archetype
+  { id:"drog_baaaa", name:"Drog-baaaa", position:"ST", atk:9, pac:6, pas:5, def_:4, spc:9, traits:["physical","aerial","clinical"], description:"Hold-up play master. Big game player." },
+
+  // Pressing forward — Firmino archetype
+  { id:"firm_inho", name:"Firm-inho", position:"ST", atk:6, pac:7, pas:7, def_:5, spc:8, traits:["clinical","technical"], description:"Presses from the front. Selfless." },
+
+  // Aerial CB — Ramos archetype
+  { id:"sergio_ra_moose", name:"Sergio Ra-moose", position:"CB", atk:6, pac:5, pas:6, def_:9, spc:7, traits:["aerial","physical","leader"], description:"Attacking CB. Loves a header." },
+
+  // Box-to-box CM — Bellingham archetype
+  { id:"jude_bell_end", name:"Jude Bell-end", position:"CM", atk:8, pac:8, pas:7, def_:7, spc:8, traits:["physical","clinical","leader"], description:"Box-to-box engine. Does everything." },
+
+  // Tricky RW — Saka archetype
+  { id:"saka_potatoes", name:"Saka Potatoes", position:"RW", atk:7, pac:8, pas:8, def_:3, spc:9, traits:["technical","clinical","playmaker"], description:"Inverted winger. Cuts inside dangerously." },
+
+  // Sweeper CB — Stones archetype
+  { id:"john_stones_soup", name:"John Stones-soup", position:"CB", atk:3, pac:7, pas:8, def_:8, spc:5, traits:["technical","leader"], description:"Steps into midfield. Composed." },
+
+  // Attacking wingback — Theo Hernandez archetype
+  { id:"theo_her_nandez", name:"The-o Her-nandez", position:"FB", atk:6, pac:10, pas:6, def_:7, spc:6, traits:["pacey","physical"], description:"Rocket down the left. Goal threat." },
+
+  // Poacher ST — Inzaghi archetype
+  { id:"pippo_in_zag_me", name:"Pippo In-zag-me", position:"ST", atk:8, pac:6, pas:2, def_:1, spc:8, traits:["poacher","clinical","journeyman"], description:"Born offside. Scores anyway." },
+
+  // Long-shot CM — Lampard archetype
+  { id:"frank_lamp_post", name:"Frank Lamp-post", position:"CM", atk:8, pac:5, pas:7, def_:5, spc:8, traits:["clinical","physical"], description:"Late runs. Bullet shots." },
 ];
 
 // Helper: sum of all 5 stats = player cost
@@ -146,14 +199,14 @@ G.playerPool = PLAYERS.slice();
 
 var CHIPS_FORMULA = {
   GK:  function(p) { return Math.round(p.def_ * 3 + p.spc * 1); },
-  CB:  function(p) { return Math.round(p.def_ * 3 + p.pac * 2 + p.atk * 1); },
-  FB:  function(p) { return Math.round(p.def_ * 2 + p.pac * 3 + p.pas * 1); },
-  CDM: function(p) { return Math.round(p.def_ * 2 + p.pas * 3 + p.atk * 1); },
-  CM:  function(p) { return Math.round(p.pas * 3 + p.atk * 2 + p.def_ * 1); },
-  CAM: function(p) { return Math.round(p.pas * 3 + p.atk * 2 + p.spc * 1); },
-  LW:  function(p) { return Math.round(p.atk * 2 + p.pac * 3 + p.pas * 1); },
-  RW:  function(p) { return Math.round(p.atk * 2 + p.pac * 3 + p.pas * 1); },
-  ST:  function(p) { return Math.round(p.atk * 4 + p.pac * 2 + p.spc * 1); }
+  CB:  function(p) { return Math.round(p.def_ * 3 + p.pac * 1 + p.atk * 1); },
+  FB:  function(p) { return Math.round(p.def_ * 2 + p.pac * 2 + p.pas * 1); },
+  CDM: function(p) { return Math.round(p.def_ * 2 + p.pas * 2 + p.atk * 1); },
+  CM:  function(p) { return Math.round(p.pas * 3 + p.atk * 1 + p.def_ * 1); },
+  CAM: function(p) { return Math.round(p.pas * 2 + p.atk * 2 + p.spc * 1); },
+  LW:  function(p) { return Math.round(p.atk * 2 + p.pac * 2 + p.pas * 1); },
+  RW:  function(p) { return Math.round(p.atk * 2 + p.pac * 2 + p.pas * 1); },
+  ST:  function(p) { return Math.round(p.atk * 3 + p.pac * 2 + p.spc * 1); }
 };
 
 /* ===================================================================
@@ -194,22 +247,22 @@ var TRAIT_SLOT_FIT = {
 var FORMATIONS = [
   { id:"4-4-2", name:"4-4-2", handSize:11, global:1.0,
     slots:["CB","CB","FB","FB","CM","CM","ST","ST"],
-    bonuses:{}, description:"Balanced. No frills. Classic." },
-  { id:"4-3-3", name:"4-3-3", handSize:11, global:1.05,
+    bonuses:{CM:5,ST:5}, description:"Balanced. No frills. Classic." },
+  { id:"4-3-3", name:"4-3-3", handSize:11, global:1.03,
     slots:["CB","CB","FB","FB","CDM","CM","CM","LW","RW","ST"],
-    bonuses:{LW:20,RW:20,ST:-15,CDM:-10}, description:"Attacking. Wingers thrive." },
+    bonuses:{LW:10,RW:10,ST:-10,CDM:-5,CB:-5}, description:"Attacking. Wingers thrive, defence exposed." },
   { id:"5-3-2", name:"5-3-2", handSize:11, global:0.95,
     slots:["CB","CB","CB","FB","FB","CM","CM","CDM","ST","ST"],
-    bonuses:{CB:25,FB:12,LW:-20,RW:-20}, description:"Defence wins. CBs+25." },
-  { id:"3-4-3", name:"3-4-3", handSize:11, global:1.08,
+    bonuses:{CB:15,FB:8,CDM:8,LW:-15,RW:-15,ST:-5}, description:"Defence wins. No width." },
+  { id:"3-4-3", name:"3-4-3", handSize:11, global:1.05,
     slots:["CB","CB","CB","FB","FB","CM","CM","LW","ST","RW"],
-    bonuses:{ST:20,LW:15,RW:15,CB:-25}, description:"All-out attack." },
+    bonuses:{ST:15,LW:10,RW:10,CB:-15,CM:-5}, description:"All-out attack. Risky at the back." },
   { id:"4-2-3-1", name:"4-2-3-1", handSize:11, global:1.02,
     slots:["CB","CB","FB","FB","CM","CM","CAM","LW","RW","ST"],
-    bonuses:{CM:10,CAM:25,ST:-15}, description:"Possession. CAM+25." },
+    bonuses:{CAM:20,CM:5,ST:-10,FB:-5}, description:"Possession. CAM runs the show." },
   { id:"4-5-1", name:"4-5-1", handSize:11, global:0.98,
     slots:["CB","CB","FB","FB","CDM","CM","CM","LW","RW","ST"],
-    bonuses:{CDM:15,LW:20,RW:20,ST:-20,CB:-5}, description:"Counter. Wingers+20." }
+    bonuses:{CDM:10,LW:12,RW:12,ST:-15,CB:-5}, description:"Counter-attacking. Lone striker suffers." }
 ];
 
 /* ===================================================================
@@ -235,37 +288,37 @@ var ALL_PHASES = [
 
 var SYNERGIES = [
   // === Position-pair synergies ===
-  { id:"clean_sheet",         name:"Clean Sheet",       tag:"defensive",  trigger:{posA:"GK",posB:"CB",stat:"def_",threshold:18},   effect:{chips:20},   description:"GK DEF + CB DEF ≥ 18: +20 chips" },
-  { id:"organised_defence",   name:"Organised Defence", tag:"defensive",  trigger:{positions:["CB","CB"],stat:"def_",threshold:18},  effect:{chips:20},   description:"2 CBs DEF ≥ 18: +20 chips" },
-  { id:"wingback_overlap",    name:"Wingback Overlap",  tag:"attacking",  trigger:{posA:"FB",statA:"pac",posB:"CM",statB:"pas",threshold:15}, effect:{chips:25}, description:"FB PAC + CM PAS ≥ 15: +25 chips" },
-  { id:"overload",            name:"Overload",          tag:"attacking",  trigger:{minDuplicates:2},                                  effect:{addMult:15}, description:"2+ same position: +15 mult each" },
-  { id:"stretch_backline",    name:"Stretch Backline",  tag:"attacking",  trigger:{posA:"FB",statA:"pac",posB:"LW",statB:"pac",threshold:17}, effect:{xMult:1.5}, description:"FB PAC + LW PAC ≥ 17: ×1.5 mult" },
-  { id:"route_one",           name:"Route One",         tag:"transition", trigger:{posA:"CB",statA:"pas",posB:"ST",statB:"pac",threshold:14}, effect:{chips:30}, description:"CB PAS + ST PAC ≥ 14: +30 chips" },
-  { id:"battering_ram",       name:"Battering Ram",     tag:"transition", trigger:{posA:"CB",statA:"def_",posB:"ST",statB:"atk",threshold:17}, effect:{chips:20}, description:"CB DEF + ST ATK ≥ 17: +20 chips" },
-  { id:"defensive_duo",       name:"Defensive Duo",     tag:"defensive",  trigger:{stat:"def_",threshold:18},                         effect:{addMult:10}, description:"2 highest DEF ≥ 18: +10 add mult" },
-  { id:"back_three",          name:"Back Three",        tag:"defensive",  trigger:{stat:"def_",threshold:7,count:3},                  effect:{xMult:1.3}, description:"All 3 DEF ≥ 7: ×1.3 mult" },
-  { id:"midfield_engine",     name:"Midfield Engine",   tag:"possession", trigger:{positions:["CM","CM"],statA:"pas",statB:"def_",threshold:15}, effect:{addMult:10}, description:"CM PAS + CM DEF ≥ 15: +10 add mult" },
-  { id:"double_pivot",        name:"Double Pivot",      tag:"possession", trigger:{positions:["CM","CM"],stat:"pas",threshold:17},    effect:{carryover:40}, description:"2 CMs PAS ≥ 17: carryover +40 chips next phase" },
-  { id:"covering_defender",   name:"Covering Defender", tag:"defensive",  trigger:{position:"CB",statA:"pac",thresholdA:7,statB:"def_",thresholdB:9}, effect:{addMult:10}, description:"Fast CB + strong CB: +10 add mult" },
-  { id:"target_man_release",  name:"Target Man Release",tag:"attacking",  trigger:{posA:"ST",statA:"atk",wingerPos:["LW","RW"],statB:"pac",threshold:17}, effect:{xMult:1.5}, description:"ST ATK + winger PAC ≥ 17: ×1.5 mult" },
-  { id:"near_post_flick",     name:"Near Post Flick",   tag:"attacking",  trigger:{posA:"CAM",statA:"spc",posB:"ST",statB:"atk",threshold:16}, effect:{xMult:1.5}, description:"CAM SPC + ST ATK ≥ 16: ×1.5 mult" },
-  { id:"one_two",             name:"One-Two",           tag:"possession", trigger:{posA:"CM",statA:"pas",posB:"ST",statB:"pac",threshold:15}, effect:{xMult:1.5}, description:"CM PAS + ST PAC ≥ 15: ×1.5 mult" },
-  { id:"overlap",             name:"Overlap",           tag:"attacking",  trigger:{posA:"FB",statA:"pac",posB:"LW",statB:"pas",threshold:15}, effect:{xMult:1.5}, description:"FB PAC + LW PAS ≥ 15: ×1.5 mult" },
-  { id:"set_piece_threat",    name:"Set Piece Threat",  tag:"specialist", trigger:{statA:"def_",thresholdA:8,statB:"spc",thresholdB:7}, effect:{chips:35}, description:"DEF≥8 + SPC≥7: +35 chips" },
-  { id:"trio",                name:"Trio",              tag:"possession", trigger:{position:"CM",stat:"pas",threshold:7,count:3}, effect:{xMult:2.535}, description:"3 CMs PAS ≥ 7: ×2.535 mult" },
+  { id:"clean_sheet",         name:"Clean Sheet",       tag:"defensive",  trigger:{posA:"GK",posB:"CB",stat:"def_",threshold:20},   effect:{chips:15},   description:"GK DEF + CB DEF ≥ 18: +20 chips" },
+  { id:"organised_defence",   name:"Organised Defence", tag:"defensive",  trigger:{positions:["CB","CB"],stat:"def_",threshold:20},  effect:{chips:15},   description:"2 CBs DEF ≥ 18: +20 chips" },
+  { id:"wingback_overlap",    name:"Wingback Overlap",  tag:"attacking",  trigger:{posA:"FB",statA:"pac",posB:"CM",statB:"pas",threshold:17}, effect:{chips:20}, description:"FB PAC + CM PAS ≥ 15: +25 chips" },
+  { id:"overload",            name:"Overload",          tag:"attacking",  trigger:{minDuplicates:2},                                  effect:{addMult:10}, description:"2+ same position: +15 mult each" },
+  { id:"stretch_backline",    name:"Stretch Backline",  tag:"attacking",  trigger:{posA:"FB",statA:"pac",posB:"LW",statB:"pac",threshold:18}, effect:{xMult:1.25}, description:"FB PAC + LW PAC ≥ 17: ×1.5 mult" },
+  { id:"route_one",           name:"Route One",         tag:"transition", trigger:{posA:"CB",statA:"pas",posB:"ST",statB:"pac",threshold:16}, effect:{chips:20}, description:"CB PAS + ST PAC ≥ 14: +30 chips" },
+  { id:"battering_ram",       name:"Battering Ram",     tag:"transition", trigger:{posA:"CB",statA:"def_",posB:"ST",statB:"atk",threshold:18}, effect:{chips:15}, description:"CB DEF + ST ATK ≥ 17: +20 chips" },
+  { id:"defensive_duo",       name:"Defensive Duo",     tag:"defensive",  trigger:{stat:"def_",threshold:19},                         effect:{addMult:8}, description:"2 highest DEF ≥ 18: +10 add mult" },
+  { id:"back_three",          name:"Back Three",        tag:"defensive",  trigger:{stat:"def_",threshold:8,count:3},                  effect:{xMult:1.2}, description:"All 3 DEF ≥ 7: ×1.3 mult" },
+  { id:"midfield_engine",     name:"Midfield Engine",   tag:"possession", trigger:{positions:["CM","CM"],statA:"pas",statB:"def_",threshold:17}, effect:{addMult:8}, description:"CM PAS + CM DEF ≥ 15: +10 add mult" },
+  { id:"double_pivot",        name:"Double Pivot",      tag:"possession", trigger:{positions:["CM","CM"],stat:"pas",threshold:18},    effect:{carryover:25}, description:"2 CMs PAS ≥ 17: carryover +40 chips next phase" },
+  { id:"covering_defender",   name:"Covering Defender", tag:"defensive",  trigger:{position:"CB",statA:"pac",thresholdA:7,statB:"def_",thresholdB:9}, effect:{addMult:8}, description:"Fast CB + strong CB: +10 add mult" },
+  { id:"target_man_release",  name:"Target Man Release",tag:"attacking",  trigger:{posA:"ST",statA:"atk",wingerPos:["LW","RW"],statB:"pac",threshold:18}, effect:{xMult:1.3}, description:"ST ATK + winger PAC ≥ 17: ×1.5 mult" },
+  { id:"near_post_flick",     name:"Near Post Flick",   tag:"attacking",  trigger:{posA:"CAM",statA:"spc",posB:"ST",statB:"atk",threshold:17}, effect:{xMult:1.25}, description:"CAM SPC + ST ATK ≥ 16: ×1.5 mult" },
+  { id:"one_two",             name:"One-Two",           tag:"possession", trigger:{posA:"CM",statA:"pas",posB:"ST",statB:"pac",threshold:17}, effect:{xMult:1.3}, description:"CM PAS + ST PAC ≥ 15: ×1.5 mult" },
+  { id:"overlap",             name:"Overlap",           tag:"attacking",  trigger:{posA:"FB",statA:"pac",posB:"LW",statB:"pas",threshold:17}, effect:{xMult:1.25}, description:"FB PAC + LW PAS ≥ 15: ×1.5 mult" },
+  { id:"set_piece_threat",    name:"Set Piece Threat",  tag:"specialist", trigger:{statA:"def_",thresholdA:8,statB:"spc",thresholdB:8}, effect:{chips:25}, description:"DEF≥8 + SPC≥7: +35 chips" },
+  { id:"trio",                name:"Trio",              tag:"possession", trigger:{position:"CM",stat:"pas",threshold:8,count:3}, effect:{xMult:1.5}, description:"3 CMs PAS ≥ 7: ×2.535 mult" },
 
   // === Persistent squad synergies (trait-count based) ===
-  { id:"pace_in_behind",      name:"Pace in Behind",    persistent:true, trigger:{trait:"pacey",minCount:5},    effect:{playerMult:1.15,targetTrait:"pacey"},   description:"5+ pacey: all pacey ×1.15 per phase" },
-  { id:"iron_wall",           name:"Iron Wall",         persistent:true, trigger:{trait:"physical",minCount:3},  effect:{playerMult:1.2,targetTrait:"physical"}, description:"3+ physical: ×1.2 mult" },
-  { id:"leadership_council",  name:"Leadership Council",persistent:true, trigger:{trait:"leader",minCount:3},    effect:{addChips:15,target:"all"},              description:"3+ leaders: all get +15 chips per phase" },
-  { id:"tiki_taka_persistent",name:"Tiki-Taka",         persistent:true, trigger:{trait:"technical",minCount:3}, effect:{positionMult:1.15,targetPositions:["CM","CDM","CAM"]}, description:"3+ technical: midfielders ×1.15" },
-  { id:"clinical_edge",       name:"Clinical Edge",     persistent:true, trigger:{trait:"clinical",minCount:2},  effect:{addChips:15,targetPositions:["LW","RW","ST"]}, description:"2+ clinical: attackers +15 chips" },
-  { id:"double_destroyer",    name:"Double Destroyer",  persistent:true, trigger:{trait:"destroyer",minCount:2}, effect:{positionMult:1.2,targetPositions:["CB","FB","CDM"]}, description:"2+ destroyers: defenders ×1.2" },
-  { id:"two_up_top",          name:"Two Up Top",        persistent:true, trigger:{trait:"poacher",minCount:2},   effect:{positionMult:1.3,targetPositions:["ST"]}, description:"2+ poachers: STs ×1.3" },
-  { id:"playmaker_network",   name:"Playmaker Network", persistent:true, trigger:{trait:"playmaker",minCount:3}, effect:{positionMult:1.15,targetPositions:["CM","CAM","CDM"]}, description:"3+ playmakers: midfield ×1.15" },
-  { id:"aerial_fortress",     name:"Aerial Fortress",   persistent:true, trigger:{trait:"aerial",minCount:3},    effect:{positionMult:1.2,targetPositions:["ST","CB","GK"]}, description:"3+ aerial: ST/CB/GK ×1.2" },
-  { id:"pace_and_power",      name:"Pace & Power",      persistent:true, trigger:{traits:["pacey","physical"],minCount:2}, effect:{playerMult:1.3,targetTrait:"pacey"}, description:"2+ pacey+physical: ×1.3" },
-  { id:"silent_killers",      name:"Silent Killers",    persistent:true, trigger:{traits:["clinical","pacey"],minCount:2}, effect:{playerMult:1.25,targetTrait:"clinical"}, description:"2+ clinical+pacey: ×1.25" },
+  { id:"pace_in_behind",      name:"Pace in Behind",    persistent:true, trigger:{trait:"pacey",minCount:5},    effect:{playerMult:1.08,targetTrait:"pacey"},   description:"5+ pacey: all pacey ×1.15 per phase" },
+  { id:"iron_wall",           name:"Iron Wall",         persistent:true, trigger:{trait:"physical",minCount:3},  effect:{playerMult:1.12,targetTrait:"physical"}, description:"3+ physical: ×1.2 mult" },
+  { id:"leadership_council",  name:"Leadership Council",persistent:true, trigger:{trait:"leader",minCount:3},    effect:{addChips:10,target:"all"},              description:"3+ leaders: all get +15 chips per phase" },
+  { id:"tiki_taka_persistent",name:"Tiki-Taka",         persistent:true, trigger:{trait:"technical",minCount:3}, effect:{positionMult:1.08,targetPositions:["CM","CDM","CAM"]}, description:"3+ technical: midfielders ×1.15" },
+  { id:"clinical_edge",       name:"Clinical Edge",     persistent:true, trigger:{trait:"clinical",minCount:2},  effect:{addChips:10,targetPositions:["LW","RW","ST"]}, description:"2+ clinical: attackers +15 chips" },
+  { id:"double_destroyer",    name:"Double Destroyer",  persistent:true, trigger:{trait:"destroyer",minCount:2}, effect:{positionMult:1.12,targetPositions:["CB","FB","CDM"]}, description:"2+ destroyers: defenders ×1.2" },
+  { id:"two_up_top",          name:"Two Up Top",        persistent:true, trigger:{trait:"poacher",minCount:2},   effect:{positionMult:1.15,targetPositions:["ST"]}, description:"2+ poachers: STs ×1.3" },
+  { id:"playmaker_network",   name:"Playmaker Network", persistent:true, trigger:{trait:"playmaker",minCount:3}, effect:{positionMult:1.08,targetPositions:["CM","CAM","CDM"]}, description:"3+ playmakers: midfield ×1.15" },
+  { id:"aerial_fortress",     name:"Aerial Fortress",   persistent:true, trigger:{trait:"aerial",minCount:3},    effect:{positionMult:1.12,targetPositions:["ST","CB","GK"]}, description:"3+ aerial: ST/CB/GK ×1.2" },
+  { id:"pace_and_power",      name:"Pace & Power",      persistent:true, trigger:{traits:["pacey","physical"],minCount:3}, effect:{playerMult:1.15,targetTrait:"pacey"}, description:"2+ pacey+physical: ×1.3" },
+  { id:"silent_killers",      name:"Silent Killers",    persistent:true, trigger:{traits:["clinical","pacey"],minCount:3}, effect:{playerMult:1.15,targetTrait:"clinical"}, description:"2+ clinical+pacey: ×1.25" },
   { id:"journeyman",          name:"Journeyman",        persistent:true, trigger:{trait:"journeyman",minCount:1}, effect:{special:"fatigue_reset"}, description:"Journeyman: once-per-match fatigue reset" },
 ];
 
@@ -275,15 +328,28 @@ var SYNERGIES = [
    =================================================================== */
 
 var COMBO_CHAINS = {
+  // === Positive chains (good sequencing) ===
   'Defensive_Transition':    { effect:'xMult', value:1.5, desc:'Absorb pressure, hit on break — ×1.5' },
-  'Possession_Attacking':    { effect:'xMult', value:1.3, desc:'Switch of play — patient build to incision ×1.3' },
+  'Possession_Attacking':    { effect:'xMult', value:1.3, desc:'Patient build to incision — ×1.3' },
   'Possession_Possession':   { effect:'addChips', value:25, desc:'Keep the ball — wear them down +25 chips' },
-  'Transition_Transition':   { effect:'addChips', value:35, desc:'Rapid succession — no time to reset +35 chips' },
-  'Defensive_Defensive':     { effect:'fatigueRecovery', value:0.1, desc:'Rest while defending — fatigue recovery 0.1' },
-  'Specialist_Any':          { effect:'addChips', value:30, desc:'Set piece leads to a chance — +30 chips carryover' },
-  'Attacking_Defensive':     { effect:'oppPenalty', value:0.9, desc:'Suck them in, then hold firm — opp ×0.9' },
+  'Transition_Transition':   { effect:'addChips', value:35, desc:'Rapid succession — +35 chips' },
+  'Defensive_Defensive':     { effect:'fatigueRecovery', value:0.1, desc:'Rest while defending — fatigue recovery' },
+  'Specialist_Any':          { effect:'addChips', value:30, desc:'Set piece leads to chance — +30 chips' },
+  'Attacking_Defensive':     { effect:'xMult', value:1.15, desc:'Suck them in, hold firm — ×1.15' },
   'Possession_Transition':   { effect:'xMult', value:1.2, desc:'Unexpected speed shift — ×1.2' },
+
+  // === Negative chains (bad sequencing — penalty!) ===
+  'Attacking_Attacking':     { effect:'xMult', value:0.8, desc:'Overcommitted! Too aggressive, exposed — ×0.8' },
+  'Transition_Defensive':    { effect:'xMult', value:0.85, desc:'Panic clearance! Lost composure — ×0.85' },
+  'Defensive_Attacking':     { effect:'xMult', value:0.9, desc:'Disjointed! Route one failed — ×0.9' },
+  'Possession_Defensive':    { effect:'addChips', value:-15, desc:'Killed the tempo! Negative play — -15 chips' },
+  'Transition_Possession':   { effect:'xMult', value:0.85, desc:'Lost momentum! Hesitated on counter — ×0.85' },
+  'Attacking_Possession':    { effect:'xMult', value:0.9, desc:'Pulled back! Killed the attack — ×0.9' },
+  'Defensive_Possession':    { effect:'xMult', value:0.9, desc:'Too slow! Defence to possession transition — ×0.9' },
 };
+
+// Default penalty when no combo chain matches (encourages deliberate sequencing)
+var COMBO_NO_MATCH_PENALTY = 0.95;  // Mild ×0.95 for random phase ordering
 
 /* ===================================================================
    SECTION 9 — CAMPAIGN (5 matches)
@@ -292,12 +358,83 @@ var COMBO_CHAINS = {
    =================================================================== */
 
 var CAMPAIGN_MATCHES = [
-  { name:"Group Stage",          opponent:"Wolves FC",            targets:[4000,6500,9000], tier:"Match 1/5", intro:"Relegation battlers. Forwards can't finish — exploit set pieces." },
-  { name:"Round of 16",         opponent:"Inter Your-Nan",       targets:[5000,7500,10000], tier:"Match 2/5", intro:"Mid-table side. Solid defence but slow at the back." },
-  { name:"Quarter Final",       opponent:"Borussia Mönchen-flapjack", targets:[6000,8500,11500], tier:"Match 3/5", intro:"European contenders. Press hard." },
-  { name:"Semi Final",          opponent:"Man City Oilers",      targets:[7000,10000,13500], tier:"Match 4/5", intro:"Title favourites. No obvious weakness." },
-  { name:"THE FINAL",           opponent:"Galácticos FC",        targets:[8500,12000,16000], tier:"Match 5/5", intro:"The best in the world. Leave nothing on the pitch." },
+  { name:"Group Stage",          opponent:"Wolves FC",            targets:[2000,3500,5000],  tier:"Match 1/5", intro:"Relegation battlers. Sit deep — hard to break down.", tactics:["low_block"] },
+  { name:"Round of 16",         opponent:"Inter Your-Nan",       targets:[3000,5000,7000],  tier:"Match 2/5", intro:"Mid-table side. Possession-heavy — counters are tough.", tactics:["possession_heavy"] },
+  { name:"Quarter Final",       opponent:"Borussia Mönchen-flapjack", targets:[4000,6500,9000], tier:"Match 3/5", intro:"Heavy metal football. Press relentlessly, hit on the break.", tactics:["high_press","counter_attack"] },
+  { name:"Semi Final",          opponent:"Man City Oilers",      targets:[5000,8000,11500], tier:"Match 4/5", intro:"Title favourites. Elite man-marking. Score early.", tactics:["man_mark","time_waste"] },
+  { name:"THE FINAL",           opponent:"Galácticos FC",        targets:[6500,10000,14500], tier:"Match 5/5", intro:"The best in the world. Everything thrown at you.", tactics:["dirty_team","man_mark","high_press"] },
 ];
+
+/* ===================================================================
+   SECTION 9b — OPPONENT TACTICAL SYSTEM
+   Each tactical style nerfs specific phase types.
+   =================================================================== */
+
+var OPPONENT_TACTICS = {
+  high_press:       { target:"phaseTag", tags:["Possession","Defensive"], effect:"multiply", value:0.7,  desc:"High press disrupts build-up — Possession & Defensive phases ×0.7" },
+  low_block:        { target:"phaseTag", tags:["Transition","Attacking"], effect:"multiply", value:0.75, desc:"Low block — Counter & Attacking phases ×0.75" },
+  man_mark:         { target:"bestPlayer", effect:"multiply", value:0.6, desc:"Your best player is man-marked — their contribution ×0.6" },
+  time_waste:       { target:"phaseIndex", indices:[2], effect:"multiply", value:0.5, desc:"Time wasting — Phase 3 scores halved. Score early!" },
+  dirty_team:       { target:"injury", effect:"addRisk", value:0.15, desc:"Dirty tackles — +15% injury risk on exhausted players" },
+  possession_heavy: { target:"phaseTag", tags:["Transition"], effect:"multiply", value:0.7, desc:"They keep the ball — Transition phases ×0.7" },
+  counter_attack:   { target:"phaseTag", tags:["Attacking"], effect:"multiply", value:0.7, desc:"Sits deep and counters — Attacking phases ×0.7" },
+};
+
+/**
+ * getOpponentTacticalMultiplier(phaseTag, phaseIdx)
+ * Returns a multiplier for the current phase based on the current match opponent.
+ */
+function getOpponentTacticalMultiplier(phaseTag, phaseIdx) {
+  if (G.matchIdx === undefined || G.matchIdx >= CAMPAIGN_MATCHES.length) return 1.0;
+  var match = CAMPAIGN_MATCHES[G.matchIdx];
+  if (!match.tactics) return 1.0;
+  
+  var mult = 1.0;
+  var appliedCount = 0;
+  for (var ti = 0; ti < match.tactics.length; ti++) {
+    var tac = OPPONENT_TACTICS[match.tactics[ti]];
+    if (!tac) continue;
+    
+    var matches = false;
+    if (tac.target === 'phaseTag' && tac.tags && tac.tags.indexOf(phaseTag) >= 0) {
+      matches = true;
+    }
+    if (tac.target === 'phaseIndex' && tac.indices && tac.indices.indexOf(phaseIdx) >= 0) {
+      matches = true;
+    }
+    if (tac.target === 'bestPlayer' || tac.target === 'injury') {
+      matches = true; // Applied separately
+    }
+    
+    if (matches && tac.effect === 'multiply') {
+      mult *= tac.value;
+      appliedCount++;
+    }
+  }
+  
+  // Cap total penalty at 0.4
+  if (appliedCount >= 2 && mult < 0.4) mult = 0.4;
+  return mult;
+}
+
+/**
+ * getScoutingReport()
+ * Returns text describing the current opponent's tactical threats.
+ */
+function getScoutingReport() {
+  if (G.matchIdx === undefined || G.matchIdx >= CAMPAIGN_MATCHES.length) return '';
+  var match = CAMPAIGN_MATCHES[G.matchIdx];
+  if (!match.tactics) return match.intro;
+  
+  var lines = [match.tier + ': ' + match.opponent];
+  lines.push(match.intro);
+  lines.push('');
+  for (var ti = 0; ti < match.tactics.length; ti++) {
+    var tac = OPPONENT_TACTICS[match.tactics[ti]];
+    if (tac) lines.push('⚠ ' + tac.desc);
+  }
+  return lines.join('\n');
+}
 
 
 var ATTACKER_POSITIONS = { LW: true, RW: true, ST: true, CAM: true };

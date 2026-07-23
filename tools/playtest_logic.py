@@ -45,14 +45,14 @@ class TestCalculateChipsAllPositions:
 
     @pytest.mark.parametrize("pos,expected_formula", [
         ("ST",  lambda p: p.atk * 3 + p.pac * 2 + p.spc * 1),
-        ("LW",  lambda p: p.atk * 2 + p.pac * 3 + p.pas * 1),
-        ("RW",  lambda p: p.atk * 2 + p.pac * 3 + p.pas * 1),
-        ("CM",  lambda p: p.pas * 3 + p.atk * 1 + p.def_ * 2),
-        ("CAM", lambda p: p.pas * 3 + p.atk * 2 + p.spc * 1),
-        ("CDM", lambda p: p.def_ * 3 + p.pas * 2 + p.atk * 1),
-        ("CB",  lambda p: p.def_ * 4 + p.spc * 1 + p.pac * 1),
-        ("FB",  lambda p: p.def_ * 2 + p.pac * 3 + p.pas * 1),
-        ("GK",  lambda p: p.def_ * 3 + p.spc * 2),
+        ("LW",  lambda p: p.atk * 2 + p.pac * 2 + p.pas * 1),
+        ("RW",  lambda p: p.atk * 2 + p.pac * 2 + p.pas * 1),
+        ("CM",  lambda p: p.pas * 3 + p.atk * 1 + p.def_ * 1),
+        ("CAM", lambda p: p.pas * 2 + p.atk * 2 + p.spc * 1),
+        ("CDM", lambda p: p.def_ * 2 + p.pas * 2 + p.atk * 1),
+        ("CB",  lambda p: p.def_ * 3 + p.pac * 1 + p.atk * 1),
+        ("FB",  lambda p: p.def_ * 2 + p.pac * 2 + p.pas * 1),
+        ("GK",  lambda p: p.def_ * 3 + p.spc * 1),
     ])
     def test_formula_matches_chips_formula_dict(self, pos, expected_formula):
         """The CHIPS_FORMULA dict should contain the exact same formula."""
@@ -81,7 +81,7 @@ class TestCalculateChipsAllPositions:
         """Player with all stats = 10."""
         p = _mk_player("m", "Max", "ST", atk=10, pac=10, pas=10, def_=10, spc=10)
         assert calculate_chips(p, "ST") == 10*3 + 10*2 + 10*1  # 60
-        assert calculate_chips(p, "CB") == 10*4 + 10*1 + 10*1  # 60
+        assert calculate_chips(p, "CB") == 10*3 + 10*1 + 10*1  # 50
 
     def test_chips_is_integer(self):
         p = _mk_player("t", "T", "ST", atk=7, pac=8, pas=6, def_=4, spc=5)

@@ -630,7 +630,7 @@
       <!-- ACTION BUTTONS -->
       <div class="actions">
         <button class="btn btn-back" id="backBtn">← BACK</button>
-        <button class="btn btn-confirm" id="confirmBtn" onclick="var ci=window._formIdx||0;var fm=(window._form||window.FORMATIONS||[])[ci];if(fm&&window.G){G.formation=fm.id;try{saveGame()}catch(e){};try{sessionStorage.setItem('squad_pending_formation',JSON.stringify(G.formation))}catch(e){}}if(window.Game){window.Game.transition='slide-left';window.Game.navigate('phases')}">CONFIRM ✓</button>
+        <button class="btn btn-confirm" id="confirmBtn" onclick="var ci=window._formIdx||0;var fm=(window._form||window.FORMATIONS||[])[ci];if(fm&&window.G){G.formation=fm.id;try{saveGame()}catch(e){};try{sessionStorage.setItem('squad_pending_formation',JSON.stringify(G.formation))}catch(e){}}if(typeof startRound==='function')startRound();if(window.Game){window.Game.transition='slide-left';window.Game.navigate('phases')}">CONFIRM ✓</button>
       </div>
 
     </div>
